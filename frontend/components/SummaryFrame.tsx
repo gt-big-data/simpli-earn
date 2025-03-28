@@ -1,20 +1,23 @@
+import { Dispatch, SetStateAction } from "react";
 import ChatIcon from "./ChatIcon";
+import Image from "next/image";
 
-export default function SummaryFrame() {
+export default function SummaryFrame({ setExpandedChat }: { setExpandedChat: Dispatch<SetStateAction<boolean>> }) {
   return (
-    <div className="flex w-full h-full">
-      <div className="w-full h-full font-montserrat text-white mt-[40px] justify-center items-center bg-white/4 rounded-tr-[30px] rounded-bl-[30px] rounded-tl-[30px] border-t-[1px] border-l-[1px] border-white/25 relative">
-        <div className="bottom_section absolute h-[31px] w-[calc(100%-99px)] bg-transparent bottom-0 left-0 rounded-b-[30px] border-b-[1px] border-r-[1px] border-white/25"></div>
-        <div className="right_section absolute z-10 h-[calc(100%-99px)] w-[29px] bg-transparent top-0 right-0 rounded-tr-[30px] rounded-br-[30px] border-r-[1px] border-b-[1px] border-white/25"></div>
-        <div className="inset_area absolute z-1 h-[71px] w-[71px] bg-black/50 bottom-[29px] right-[29px] rounded-tl-[60px] border-t-[1px] border-l-[1px] border-white/25">
-            <div className="bottom_left_corner absolute w-[30px] aspect-square bg-[radial-gradient(circle_30px_at_top_left,_transparent_100%,rgba(0,0,0,0.5))] bottom-[-29px] left-[-30px]"></div>
-            <div className="top_right_corner absolute w-[30px] aspect-square bg-[radial-gradient(circle_30px_at_top_left,_transparent_100%,rgba(0,0,0,0.5))] right-[-29px] top-[-30px]"></div>
+    <div className="flex w-full">
+      <div className="w-full font-montserrat text-white mt-[40px] justify-center items-center bg-white/4 rounded-[30px] border-[1.5px] border-white/25 relative">
+        <ChatIcon setExpandedChat={setExpandedChat} />
+        <div
+          className="float-right h-full -ml-[20px] mt-[2.6px] -mr-[2.5px] flex items-end"
+          style={{
+            shapeOutside: "inset(calc(100% - 110px) 0 0)",
+          }}
+        >
+          <Image src="/inset-corner.svg" alt="" width={144} height={144} />
         </div>
-        <div className="inset_area_bot absolute z-1 h-[99px] w-[29px] bg-black/50 bottom-0 right-0"></div>
-        <div className="inset_area_right absolute z-1 h-[29px] w-[70px] bg-black/50 bottom-0 right-[29px]"></div>
-        <ChatIcon />
-        <h1 className="flex justify-center items-start pt-8 font-bold text-lg font-montserrat">Summary</h1>
-        <div className="flex flex-col justify-start items-start text-md px-10 py-8">
+        <div className="p-6">
+          <h1 className="font-bold text-lg font-montserrat w-full text-center mb-3">Summary</h1>
+
           <p>
             Ipsum duis deserunt incididunt do aliquip et nostrud elit consectetur consequat in. Et cupidatat cupidatat pariatur mollit consequat ut aliquip commodo duis laboris aliqua cillum nostrud nostrud.
             Voluptate voluptate sint voluptate ex excepteur culpa minim dolor. Aliqua aute cupidatat est consectetur nisi cillum do non eiusmod adipisicing esse anim est. Proident do sint sint reprehenderit commodo. Reprehenderit ipsum laboris nisi Lorem aliquip laboris amet veniam duis laborum.

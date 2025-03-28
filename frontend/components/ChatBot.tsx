@@ -20,7 +20,7 @@ export default function ChatBot() {
 
     return (
         <>
-            <div className="">
+            <div className="pb-[400px]">
                 {messages.map((message) => (
                     <Message
                         key={message.id}
