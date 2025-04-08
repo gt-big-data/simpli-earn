@@ -12,6 +12,8 @@ Bucket Name: 'simpliearn-audio'
 
 ## Prerequisites
 
+Right now you have to have your full earning call audio file within the same directory level as your main.py file. Might change this later on for better structure.
+
 1. Authorize SimpliEarn account (ask for access to the team leaders or so)
 
 ```bash
@@ -30,7 +32,7 @@ gcloud config set project simpliearn-452813
 gsutil ls gs://simpliearn-audio/
 ```
 
-4. Install the requirements
+4. Install the requirements (run a venv optimally)
 
 ```bash
 pip install -r requirements.txt
@@ -39,4 +41,3 @@ pip install -r requirements.txt
 5. Run the main.py
 
 You can modify what you want to run. Right now the chunks are already in the gcs, so you can exclude the chunking/storing part from the main.py code
-
