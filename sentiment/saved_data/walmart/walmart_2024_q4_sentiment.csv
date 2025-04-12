@@ -1,0 +1,623 @@
+sentence,start_time,end_time,label,certainty_score,sentiment_score
+"Greetings, welcome to Walmart fourth quarter fiscal year 2025 earnings call.",1.1,5.5,neutral,0.9996047616004944,0.0
+"At this time, all participants are in a listen-only mode.",5.5,8.3,neutral,0.9995656609535217,0.0
+A question and answer session will follow the formal presentation.,9.7,12.1,neutral,0.9995707869529724,0.0
+"If anyone should require operator assistance during the conference, please press star Zero from your telephone keypad.",12.1,18.8,neutral,0.9994114637374878,0.0
+Please note.,20.1,20.7,neutral,0.9988253712654114,0.0
+This conference is being recorded.,20.7,21.6,neutral,0.9994768500328064,0.0
+"And if this time, I'll now turn the conference over to Steph whistling senior vice president, investor relations Steph.",23.1,28.9,neutral,0.9995872378349304,0.0
+You may begin.,28.9,30.0,neutral,0.9990770816802979,0.0
+Thank you.,30.5,31.0,neutral,0.9991152882575989,0.0
+Welcome everyone.,31.0,32.0,neutral,0.9991484880447388,0.0
+"We appreciate you joining us and your interest in Walmart, joining me today from our home office in Bentonville, AR Walmart CEO, Doug mcmillon and CFO John David Rainey.",32.3,42.4,neutral,0.9995582699775696,0.0
+Doug and John David will First.,43.3,44.9,neutral,0.9994857311248779,0.0
+Share their views on the quarter and then we'll open up the line for your questions during the question and answer portion.,44.9,50.9,neutral,0.9995120763778687,0.0
+"We will be joined by our segment CEOs, John furniture from Walmart U.S, Kath Maclay from Walmart International, and Chris Nicholas from Sam's Club for additional detail on our results.",50.9,63.5,neutral,0.9996223449707031,0.0
+"Including highlights by segment, please see our earnings release and accompanying presentation on our website.",63.5,69.8,neutral,0.999640941619873,0.0
+We will make every effort to answer as many of your questions as we can in the hour.,70.8,74.8,positive,0.9882562756538391,0.9882562756538391
+We have scheduled for this call as a courtesy to others.,74.8,78.1,neutral,0.9993196725845337,0.0
+Please limit yourself to one question.,78.1,80.2,neutral,0.9979349374771118,0.0
+"Today's call is being recorded and management may make forward-looking statements, these statements are subject to risks and uncertainties that could cause actual results to differ materially from these statements.",81.4,92.9,neutral,0.9995896220207214,0.0
+"These risks and uncertainties include, but are not limited to the factors.",93.5,97.6,neutral,0.9994787573814392,0.0
+"Identified in our filings with the sec, please review our press release and accompanying.",97.6,102.8,neutral,0.9996273517608643,0.0
+Slide presentation for a cautionary.,102.8,105.1,neutral,0.9995375871658325,0.0
+Statement regarding forward-looking statements as well as our entire Safe Harbor and non-gaap Reconciliation.,105.1,111.1,neutral,0.9995939135551453,0.0
+Ins on our website at stock dot Walmart.com.,111.2,114.5,neutral,0.9985179305076599,0.0
+Doug that concludes my intro.,114.7,116.9,neutral,0.9993255138397217,0.0
+We're ready to begin.,116.9,118.0,positive,0.9976179003715515,0.9976179003715515
+"Good morning, and thanks for joining us.",118.4,120.5,neutral,0.9994120597839355,0.0
+"We finished the year with another quarter of strong results are Associates, are doing a great job, serving our customers and members for the quarter, we had sales growth of 5.2% and adjusted operating income was up, 9.4% in constant currency, we continue to gain market, share across countries and income levels as with, First three quarters of the Year, transaction counts and unit volumes were up across markets as we look at our results for the quarter.",120.8,148.7,positive,0.9982398748397827,0.9982398748397827
+And the Year we're pleased to see first a healthy top line or strengthening our ability to serve people.,148.7,155.2,positive,0.998335063457489,0.998335063457489
+How they want to be served in the moment.,155.2,157.3,neutral,0.9992105960845947,0.0
+That's what's driving.,157.3,158.5,neutral,0.9994617104530334,0.0
+"Our growth, our prices are low and we're becoming more convenient.",158.5,162.6,positive,0.9982843995094299,0.9982843995094299
+"Customers are shopping with us more often and buy more items including in general merchandise categories, which were up low.",162.6,169.0,positive,0.9938185811042786,0.9938185811042786
+Single digits in Walmart.,169.0,170.1,neutral,0.9745500087738037,0.0
+"U.S and Sam As us for the quarter second we're going profit faster than sales and we have Runway to scale, our higher margin, businesses like membership, Marketplace and advertising, we're mixing ourselves up.",170.1,183.0,positive,0.9982128143310547,0.9982128143310547
+"While simultaneously investing in lower prices and Associates wages third, we're able to improve Roi even as we invest higher levels of capital to take advantage of the opportunities, we see to strengthen the company.",183.0,196.0,positive,0.998214602470398,0.998214602470398
+All three segments of our business.,197.1,198.5,neutral,0.9990744590759277,0.0
+"Had a good year, I'm proud of our leaders and all of our associates.",198.5,202.2,positive,0.9977164268493652,0.9977164268493652
+They earned it.,202.2,203.6,positive,0.996653139591217,0.996653139591217
+"They're learning, they're acting fast and they're working hard for the quarter in the year.",203.8,209.1,positive,0.9972991347312927,0.9972991347312927
+We're pleased with our performance during the holiday seasons around the world we performed.,209.3,213.8,positive,0.9982728958129883,0.9982728958129883
+Well in the u.s. Mexico Canada.,213.8,215.9,neutral,0.9995115995407104,0.0
+"And in China where Sam's Club just wrapped up a strong Lunar New Year, we also performed well in India and I'd like to share the news that foam pay.",215.9,225.0,positive,0.998337984085083,0.998337984085083
+Our fintech business is making Preparations for an IPO and India are phone pay.,225.0,230.0,positive,0.9953756332397461,0.9953756332397461
+Team has long aspired to be a public company and we're excited to be taking these early steps.,230.0,235.2,positive,0.9871998429298401,0.9871998429298401
+"As a company, we drove a lot of volume during the holidays and ended with our inventory level in good shape, up 2.8 percent.",236.3,243.1,positive,0.998252809047699,0.998252809047699
+"As always, we're working hard to help bring down prices and Walmart.",244.0,248.4,positive,0.998078465461731,0.998078465461731
+"U.S last year, we had over 22,000 rollbacks.",248.4,251.3,neutral,0.9962263107299805,0.0
+We're wired to help people save money and live better.,251.3,254.3,positive,0.9809900522232056,0.9809900522232056
+"The work, we're doing to expand.",255.7,257.1,positive,0.9982393980026245,0.9982393980026245
+"Our assortment is another reason for our growth as more customers are finding what they're looking for, in addition to low prices and a growing assortment to choose from, We're focused on delivery speed and accuracy.",257.1,268.3,positive,0.9980401396751404,0.9980401396751404
+"If I could change anything about how we are perceived today, it'd be that more people know about, our breadth of Assortment online and are increasing, delivery speed for Walmart U.S. We recently announced same day, Pharmacy delivery and the early response has been strong.",268.3,284.3,positive,0.9972968697547913,0.9972968697547913
+Customers love being able to get a basket of items delivered to their door.,285.0,288.2,positive,0.9842396974563599,0.9842396974563599
+That includes fresh frozen general merchandise and now Pharmacy.,288.2,292.2,neutral,0.9995061159133911,0.0
+"And because we're so close to them, they can get it fast.",292.2,295.8,positive,0.9971889853477478,0.9971889853477478
+Sam's Club recently launched new shipping offer including Same or next day delivery from the club members asked for it.,296.0,303.8,positive,0.9978267550468445,0.9978267550468445
+And the team delivered listening to our members and solving for what they want.,303.9,307.7,positive,0.9659044742584229,0.9659044742584229
+Is a big reason why Sam's was recently ranked number one in customer satisfaction for retailers and the latest American customer satisfaction index.,307.7,315.6,positive,0.9977506995201111,0.9977506995201111
+Around the world were making great progress on delivering Goods faster to customers and members.,317.3,321.7,positive,0.9981791973114014,0.9981791973114014
+We're taking learnings from markets like China and quickly standing up Fast Delivery Solutions and other markets.,322.3,327.7,positive,0.9982379674911499,0.9982379674911499
+We continue to be excited about our investments in supply chain Automation and will share even more on that topic during our investor conference in April.,329.1,335.6,positive,0.9981414079666138,0.9981414079666138
+"These past few quarters, we've talked about how we're using AI.",337.2,340.2,neutral,0.9703198075294495,0.0
+"The progress we've made over the years with technology has put us in a position to leverage, today's fast-moving, capabilities closer to real time.",340.8,348.2,positive,0.9981818199157715,0.9981818199157715
+"I'm very proud of Suresh, our Tech Team and all our leaders for how they're leaning in to adapt quickly.",349.2,355.0,positive,0.9978020787239075,0.9978020787239075
+"Today, I'd like to share two more examples.",355.5,358.0,neutral,0.9995566010475159,0.0
+"The first is related to a new AI agent for our Merchants called Wally while he's learning to help us get to the root cause of issues related to things, like out of stocks or overstocks with more accuracy and speed s for developers on our Tech Team.",358.4,374.8,neutral,0.99849534034729,0.0
+We now have new coding assistance and completion tools.,375.0,377.9,positive,0.998023271560669,0.998023271560669
+They're helping Mine deployments and deliver code faster with fewer bugs.,378.2,382.4,positive,0.9979984164237976,0.9979984164237976
+"Last year, these tools helped us save about 4 million, developer hours this year.",383.2,388.8,positive,0.9975208640098572,0.9975208640098572
+"We plan to make these tools available to all developers in North America and India as we become more productive and reduce the amount of time we work on routine, tasks, that gives us time to develop tools, that help us grow the business and move faster.",388.8,402.9,positive,0.9977585077285767,0.9977585077285767
+I love how we're changing.,403.9,404.8,positive,0.9981801509857178,0.9981801509857178
+How we think and work without changing who we are.,404.8,407.6,neutral,0.9995434880256653,0.0
+I can see us getting faster.,408.2,409.9,positive,0.9982320666313171,0.9982320666313171
+"Earlier this year, we began opening some of our new home Office Buildings in Bentonville will be transitioning to the new home office throughout the year.",411.0,418.1,positive,0.9980667233467102,0.9980667233467102
+It's an exciting time.,418.4,419.5,positive,0.9977329969406128,0.9977329969406128
+"It's also a time to remember, the special things about this company that we want to strengthen and perpetuate.",420.2,425.4,neutral,0.9799133539199829,0.0
+"Moving to a new location, doesn't change who we are cultural characteristics like servant leadership, humility.",426.1,432.8,neutral,0.9992974996566772,0.0
+And a sense of urgency remain critical operating with an everyday low cost culture and mindset is as important as ever.,432.8,440.5,neutral,0.9985237717628479,0.0
+We have a meaningful purpose of saving people money and helping them to live better.,441.6,445.4,positive,0.9977936744689941,0.9977936744689941
+"And we have a set of Timeless values that shape our culture, regardless of the address of our home office characteristics and beliefs like these Driver results and make us unique.",446.1,456.0,neutral,0.9994903802871704,0.0
+"I hope you'll come see our home office when you visit during our Associates and shareholders week in June, and that you'll feel the momentum.",456.7,462.8,neutral,0.6688923835754395,0.0
+We know who we are and we like where we're going.,462.8,466.4,positive,0.9502032399177551,0.9502032399177551
+We feel like we're just getting started.,466.5,467.9,neutral,0.9055294990539551,0.0
+Here's John David.,469.7,470.6,neutral,0.9992955923080444,0.0
+Thanks Doug.,471.9,472.7,neutral,0.9992502331733704,0.0
+"I'm excited to discuss our fourth quarter and full year performance, provide some context on how we're executing against our strategic priorities, and offer our outlook for the first quarter and full fiscal year 2026.",473.0,485.0,neutral,0.999506950378418,0.0
+"Let's start with the headline, Walmart delivered, another strong quarter, exceeding our sales profit and earnings expectations.",485.6,492.0,positive,0.998319685459137,0.998319685459137
+"This performance, reflects the strength of our business model and the dedicated work of our Associates around the globe.",492.7,498.7,positive,0.9983322024345398,0.9983322024345398
+Our Focus remains on delivering value.,498.7,501.2,positive,0.997999370098114,0.997999370098114
+To customers and members while driving.,501.6,503.4,neutral,0.9970844388008118,0.0
+"Sustainable growth for shareholders, customers continue to respond to our value proposition.",503.4,508.7,positive,0.9983008503913879,0.9983008503913879
+As we provide lower prices a broader assortment and greater levels of convenience with improved customer experience.,508.9,516.3,positive,0.9981333613395691,0.9981333613395691
+"We're earning their trust and seeing share gains as a result, looking at the full year.",516.4,521.6,positive,0.9982903599739075,0.9982903599739075
+Consolidated Revenue grew 5.6 percent in constant currency adding approximately 36 billion dollars versus last year.,521.9,529.8,positive,0.9981786012649536,0.9981786012649536
+Adjusted operating income increased nearly 10% in constant currency and adjusted EPS was up 13 percent currency was a headwind to report.,530.6,540.5,positive,0.9978094696998596,0.9978094696998596
+It sells of approximately 3.2 billion dollars or fifty basis points to growth and pressure DPS by about 2 cents.,540.5,548.4,positive,0.9912944436073303,0.9912944436073303
+Our business model is delivering as it's designed to do.,548.9,552.5,positive,0.9975862503051758,0.9975862503051758
+"This is the second consecutive year that we've grown sales more than 5% and operating income meaningfully faster relative to our plan out performance has been broad-based across segments, Ecommerce, Ecommerce, continue to improve.",552.7,566.4,positive,0.9982038736343384,0.9982038736343384
+Most notably in Walmart.,566.4,567.8,neutral,0.9987325072288513,0.0
+U.S are newer digital businesses have contributed to faster growth and more diversification of our product mix.,567.8,574.2,positive,0.99825519323349,0.99825519323349
+"Over the last year Global advertising grew, 27 percent to about four point four billion dollars.",575.1,581.7,positive,0.9981406927108765,0.9981406927108765
+"Walmart U.S, Marketplace Revenue grew 37% with nearly 45 percent of orders fulfilled by wfs and lastly Global membership income, grew 21 percent to about 3.8 billion dollars.",581.7,595.9,positive,0.9981634020805359,0.9981634020805359
+Over our planning Horizon.,597.1,598.4,neutral,0.999195396900177,0.0
+The growth of this portfolio.,598.7,599.8,positive,0.9982282519340515,0.9982282519340515
+Is expected to be one of the largest drivers of operating income growing faster than sells.,600.2,604.7,positive,0.9981141090393066,0.9981141090393066
+"These new profit streams allow us to fund investments in our Core Business, while also expanding our operating margins return on investment improved, approximately 50 basis points to 15.5% a level last achieved in 2016.",604.7,620.0,positive,0.9980630278587341,0.9980630278587341
+Capex total twenty three point eight billion dollars our investments in stores and clubs through remodels and new construction have improved customer member experience.,620.2,629.7,positive,0.9982333183288574,0.9982333183288574
+"It's and have enabled us to broaden our last mile catchment area for digital orders investments, in supply chain Automation and productivity are expected to lower our cost to serve, which supports our edlp commitment cash, flow remains strong.",630.0,644.0,positive,0.9982472658157349,0.9982472658157349
+"And as we announced this morning, we're pleased to raise the dividends by 13 percent this year.",644.0,649.0,positive,0.9982874989509583,0.9982874989509583
+"The largest increase in over a decade reinforcing our commitment, to strong cash returns to shareholders.",649.0,654.6,positive,0.9982795715332031,0.9982795715332031
+Our business has transformed over the past five years and we're benefiting from the Investments.,656.0,661.0,positive,0.9982823133468628,0.9982823133468628
+"We've made in our Core omni-customer Business, Global eCommerce, penetration is now, 18% of cells, about Eleven Hundred basis points higher than it was.",661.0,670.3,positive,0.9980574250221252,0.9980574250221252
+"In FY 2010, the u.s. specifically, we've built Marketplace capabilities to broaden our assortment while also growing the average number of eCommerce orders fulfilled from stores by over 500 million orders without new store.",670.3,683.0,positive,0.9982390403747559,0.9982390403747559
+"Growth during that time, period, We're utilizing our stores in new ways to serve more customers and maximize returns, but we obviously don't have a Stores Only approach for fulfillment.",683.0,692.5,positive,0.9972440004348755,0.9972440004348755
+"We're growing our fulfillment center capacity, including through investments.",692.5,696.8,positive,0.99826979637146,0.99826979637146
+"In FC Automation, in parallel while the shift in Channel mix creates some cost pressure is we fulfill more orders through eCommerce.",696.8,703.8,neutral,0.5833571553230286,0.0
+We've seen improved profitability during this period with efficiencies gained as we densify our delivery routes in with the contributions from newer businesses that are enabled by eCommerce growth.,703.8,714.5,positive,0.9982815980911255,0.9982815980911255
+"We've achieved this, despite the margin pressure from merchandising category, mix of cells shifting toward Grocery, and health and wellness in a way from General Merchandise.",715.4,723.1,positive,0.987224817276001,0.987224817276001
+As consumer wallets have been stretched over the past couple of years.,723.1,726.5,negative,0.9985342025756836,-0.9985342025756836
+The way we've designed and grown are evolving business model with more Diversified and durable sources of profit like advertising and membership has enabled us to grow operating income faster than cells.,727.9,738.7,positive,0.9982543587684631,0.9982543587684631
+"Despite these headwinds turning to our quarterly performance for the fourth quarter, Consolidated Revenue, increased more than 5% in constant, currency driven by strong results across segments, aided by 16% eCommerce growth.",738.8,753.0,positive,0.9981498718261719,0.9981498718261719
+"Currency, headwinds reduced reported sales by over two billion dollars or 120 basis points of growth.",753.9,760.1,negative,0.9988229870796204,-0.9988229870796204
+"Walmart U.S comp sales, increased 4.6 percent including eCommerce, sales growth of 20% with ongoing share gains across categories.",760.7,770.9,positive,0.998161256313324,0.998161256313324
+Comp growth was led by increased customer transactions in both stores and Ecommerce.,770.9,776.2,positive,0.9980723857879639,0.9980723857879639
+"Grocery remains a standout category with mid-single digit growth and we saw mid-teens growth in health and wellness, due largely to glp-1 cells, which contributed about a point to the segment comp consistent with prior quarters.",776.2,790.1,positive,0.9981566071510315,0.9981566071510315
+We're encouraged by the Improvement in general merchandise where we had low single-digit comp sales growth for the second consecutive quarter including strength and hardlines toys home and fashion.,791.0,801.0,positive,0.9975798726081848,0.9975798726081848
+"Us customers, remain resilient, exhibiting behaviors that have been largely consistent over the past year.",802.0,807.5,positive,0.9951784610748291,0.9951784610748291
+"As always, people are looking for value and they want to save time becoming more convenient is helping to drive our growth during the quarter.",807.5,816.6,positive,0.9982276558876038,0.9982276558876038
+We expanded our store-fulfilled delivery catchment areas.,816.6,819.7,positive,0.998235821723938,0.998235821723938
+"To now, reach 93 percent of us households with same day delivery, the popularity of expedited delivery has resulted in more than 30% of orders coming from customers and members that elected to pay a Fee to receive their scheduled delivery in less than one hour or less than three hours.",819.7,836.3,positive,0.9962323307991028,0.9962323307991028
+We're also encouraged by the initial response to our launch of same day.,837.4,840.8,positive,0.998291552066803,0.998291552066803
+"Pharmacy, delivery were the first to integrate Pharmacy, general merchandise and grocery in a single online order and have gained new Pharmacy, customers with the service Our focus on bringing down pricing through rollbacks continues.",840.8,854.6,positive,0.9981940388679504,0.9981940388679504
+"Despite pockets of food inflation in areas like eggs, bacon and ground beef like-for-like pricing and general merchandise.",854.6,861.8,neutral,0.5279086232185364,0.0
+"And consumables was deflationary while food remained inflation Airy in the low single digits, we're seeing higher engagement, across income cohorts, with upper-income households continuing to account for the majority of share gains are international business and constant currency, delivered sales, growth of 5.7%.",861.8,880.1,positive,0.9979650974273682,0.9979650974273682
+Reflecting strength in China Wall Max and Canada.,881.3,883.9,positive,0.9982252717018127,0.9982252717018127
+While operating income grew faster.,884.2,885.9,positive,0.9972860813140869,0.9972860813140869
+"We saw positive traffic and unit growth across markets with cell strength, in general merchandise, during festive events as expected.",885.9,894.3,positive,0.9982695579528809,0.9982695579528809
+The timing of flipkart's big billion days event negatively affected year-over-year.,894.3,899.3,negative,0.9985492825508118,-0.9985492825508118
+"So, Persons outside of India, eCommerce shells, grew more than 20 percent across all markets.",899.3,905.3,positive,0.9980996251106262,0.9980996251106262
+Speed of delivery continues to be important to customers in the past 12 months.,906.6,911.0,neutral,0.5378760695457458,0.0
+"International delivered over 2.3 billion items same day or next day, which is an increase of over 30% with about 45% of those items.",911.0,920.9,positive,0.9980265498161316,0.9980265498161316
+"Delivered in under three hours in our business, in China, continue to grow double digits with strength and Sam's Club and Ecommerce, Sam's Club, u.s., comp sales X fuel increased, 6.8% with strong growth and transaction and unit volumes.",920.9,936.5,positive,0.9982663989067078,0.9982663989067078
+"Us, including increased penetration of Members, Mark eCommerce, grew 24%, including triple digit growth in club fulfilled delivery as new perks, like express delivery and the elimination of curbside pickup fees for the club membership level.",936.6,951.1,positive,0.998222291469574,0.998222291469574
+"Continue to resonate with members, with tech enabled convenience, prevalent both inside the club, through scanning, go and Jesco exit towers, as well as via eCommerce.",951.1,959.8,positive,0.9979426264762878,0.9979426264762878
+We're deploying digital solutions to differentiate ourselves in the warehouse club Channel.,959.8,965.3,positive,0.9982441663742065,0.9982441663742065
+"From a margin standpoint Consolidated, gross margin expanded 53.",967.0,970.8,positive,0.998167872428894,0.998167872428894
+Basis points in our press release and earnings presentation and you'll see new disclosure regarding gross margins by segment.,970.8,977.3,neutral,0.9995825886726379,0.0
+"In Walmart U.S, improved gross, margins.",977.4,980.9,positive,0.9981772899627686,0.9981772899627686
+Reflected strong inventory management as well as lower levels of markdowns and Improvement in business mix.,980.9,986.1,positive,0.9982341527938843,0.9982341527938843
+"That has allowed us to manage pricing aligned to competitive price gaps and offset, sustained, merchandise category, mix pressure, gross margins and international benefited from the timing shift of flipkart's, big billion days event as our business model evolves.",986.1,1000.4,positive,0.9977449178695679,0.9977449178695679
+It's encouraging to see our profitability improve from a diverse set of offerings globally.,1000.4,1006.4,positive,0.9982407093048096,0.9982407093048096
+ECommerce eCommerce.,1006.4,1007.4,neutral,0.999081015586853,0.0
+"Economics continue to improve in Q4, aided by an approximately 20% reduction in u.s. net delivery cost per order.",1007.4,1014.9,positive,0.9980777502059937,0.9980777502059937
+We also continue to diversify our profit composition through business mix.,1015.7,1019.5,positive,0.9982422590255737,0.9982422590255737
+"As we skilled advertising membership Marketplace, in fulfillment, and data, analytics, and insights.",1019.8,1025.5,neutral,0.9986175298690796,0.0
+Our Global advertising business increased 29% led by 24 percent growth from Walmart connect in the US we're making good progress on expanding the number of u.s. marketplace.,1026.8,1036.5,positive,0.9982695579528809,0.9982695579528809
+Sellers that also utilize Walmart connect advertising with seller advertising counts up about 50 percent versus last year.,1036.5,1043.3,positive,0.998030960559845,0.998030960559845
+We're also excited about the addition of Vizio and it's smart cast operating system to our portfolio of advertising capabilities.,1043.5,1050.9,positive,0.9980916380882263,0.9980916380882263
+Vizio will help us serve customers and new ways to enhance their shopping Journeys while also creating new opportunities.,1050.9,1056.5,positive,0.9980711340904236,0.9980711340904236
+Attorneys for advertisers to connect with customers and boost product.,1056.5,1059.7,positive,0.7640969157218933,0.7640969157218933
+"Discovery empowering Brands to realize greater impact from their advertising, spend with Walmart.",1059.7,1064.2,positive,0.9981204867362976,0.9981204867362976
+"Membership income was up 16% across the Enterprise in the u.s. Sam's Club, continue to grow membership account and increase its penetration of Plus members resulting, in more than 12 percent membership, income growth, while Walmart Plus Membership income, grew double digits within International membership, income from Sam's Club.",1065.7,1085.0,positive,0.9982337951660156,0.9982337951660156
+"China, grew more than 35% is member of counts.",1085.0,1088.4,positive,0.9981397390365601,0.9981397390365601
+Continue to increase.,1088.4,1089.3,positive,0.9980112314224243,0.9980112314224243
+Helped by the opening of for new clubs in Q4.,1089.3,1092.1,positive,0.9980777502059937,0.9980777502059937
+For Marketplace and Walmart fulfillment services and the u.s. marketplace grew 34% continuing the strong Trends.,1093.6,1101.3,positive,0.9981856942176819,0.9981856942176819
+We've seen all year with the broader assortment of the general merchandise Brands and items customers want Marketplace cells and home management automotive and seasonal.,1101.3,1110.6,positive,0.9975181818008423,0.9975181818008423
+"All grew more than 20% and with our low-cost fulfillment offering for sellers, wfs penetration reached record highs of nearly 50 percent, which is up nearly six hundred basis points versus last year.",1110.6,1122.8,positive,0.9981846213340759,0.9981846213340759
+We're outside the US.,1123.0,1125.0,neutral,0.999214768409729,0.0
+We're seeing similar encouraging Trends in both Mexico and Canada.,1125.5,1128.9,positive,0.9981833100318909,0.9981833100318909
+The number of wfs sellers increased over 20% and sales of items delivered through wfs grew over 85%.,1129.1,1136.9,positive,0.998144268989563,0.998144268989563
+Within data analytics and insights Walmart data.,1138.0,1140.6,neutral,0.9994422793388367,0.0
+"Ventures continues to grow rapidly with net sales up double digits, our client base, nearly doubled over the past year, and we're excited about continuing to broaden our reach to New Markets with the launch of the platform in Canada.",1140.6,1152.6,positive,0.9982684850692749,0.9982684850692749
+Sgna expenses deal averaged 46 basis points in the quarter.,1153.6,1157.4,neutral,0.9989953637123108,0.0
+Walmart U.S D. Leverage was primarily driven by the timing of tech Investments increase variable pay as we exceeded plan performance and higher marketing and utilities cost transaction related expenses for the busy on also impacted the quarter and we're not considered in our guidance.,1157.6,1174.5,negative,0.8684210777282715,-0.8684210777282715
+"In addition, International was impacted by the timing shift to flipkart's.",1174.5,1179.4,negative,0.9920335412025452,-0.9920335412025452
+BBD event in Sam's Club us was affected by the previous eCommerce.,1179.4,1183.6,neutral,0.5782824754714966,0.0
+We announced wage Investments.,1183.6,1185.1,positive,0.9981430768966675,0.9981430768966675
+While wage investments will pressure profit at Sam's for a couple of quarters.,1185.4,1189.1,negative,0.9977636337280273,-0.9977636337280273
+We're pleased with the member response tied to increased renewals as well as the Improvement and Associates turnover for continuing to optimize our business to deliver greater efficiency and we're committed.,1189.3,1199.9,positive,0.998325765132904,0.998325765132904
+"To balancing ongoing Investments with improved, returns for customers Associates and shareholders.",1200.0,1205.7,positive,0.9978742599487305,0.9978742599487305
+Our business model provides the ability to fund wage Investments for associates and Price investments for customers while.,1205.7,1212.3,positive,0.9968563318252563,0.9968563318252563
+"Also, delivering on our financial framework, summarizing the quarter in constant currency sales were over 5% and adjusted operating income grew.",1212.3,1221.6,positive,0.9981915354728699,0.9981915354728699
+More than 9%.,1221.6,1222.3,neutral,0.5818179845809937,0.0
+Both exceeding.,1222.3,1223.6,positive,0.9975302815437317,0.9975302815437317
+"The upper bound of our guided ranges adjusted EPS of 66 cents, compared favorably to our Expectations and reflected strong, underlying business performance and lower tax expense reported EPS included, headwinds of approximately 1 cent from currency and nearly one cent from costs related to the acquisition of Visio.",1223.6,1243.6,positive,0.9978566765785217,0.9978566765785217
+"Now, let me turn to guidance.",1244.7,1245.9,neutral,0.9995854496955872,0.0
+We've been operating in a highly Dynamic backdrop for several years.,1246.8,1250.1,neutral,0.9971952438354492,0.0
+And we expect this year to be no different.,1250.2,1252.2,neutral,0.9989147186279297,0.0
+"Our Outlook assumes, a relatively stable, macroeconomic environment.",1252.5,1256.2,neutral,0.9978073239326477,0.0
+"But acknowledges that there are still uncertainties related to Consumer behavior, and global economic and geopolitical conditions as a result.",1256.2,1264.1,negative,0.9971476197242737,-0.9971476197242737
+"We've taken a similar approach to our initial guidance View for the year as we have in the past couple of years, balancing known risk, with what we can control.",1264.3,1271.8,neutral,0.9992042183876038,0.0
+We remain confident that Walmart is Position to navigate as it has over the pet last several years while continuing to deliver value for customers and shareholders alike.,1272.5,1281.3,positive,0.9978779554367065,0.9978779554367065
+"For fiscal year 2026, we expect Consolidated, net sales, growth of approximately, three to four percent, including the negative impact from lapping leap year.",1282.2,1291.6,positive,0.9965336322784424,0.9965336322784424
+"In the favorable contribution from Vizio cells, operating income is projected to grow faster than sales at three and a half to five and a half percent, including 150 basis points of negative impacts.",1291.7,1304.3,positive,0.997739315032959,0.997739315032959
+"For the Vizio acquisition related to integration investments in transition cost, as well as from lapping leap.",1304.4,1309.6,neutral,0.999504566192627,0.0
+"Year, adjusted EPS is expected to be in the range of $2.50 to two dollars and sixty cents.",1309.6,1316.5,neutral,0.9995365142822266,0.0
+This includes a headwind from currency of approximately five cents per share in a higher effective tax rate compared to last year.,1316.7,1323.6,negative,0.9986422657966614,-0.9986422657966614
+"Recall that we guide sales and operating income growth on a constant currency basis, volatility and currency rates had a meaningful impact on last year's results.",1323.7,1332.9,neutral,0.9993144273757935,0.0
+If current exchange change rates were to Prevail for the full year.,1332.9,1336.5,neutral,0.9994949102401733,0.0
+"We would expect a headwind of approximately 100 basis points to sales growth, and approximately 150 basis points to operating income growth with more significant headwinds.",1336.7,1346.4,negative,0.9985388517379761,-0.9985388517379761
+"In the first half, given the degree of change in exchange rates versus last year, we expect capex to range between 3 and 3 & a half percent of cells.",1346.4,1354.6,neutral,0.9990272521972656,0.0
+"As we invest in technology, to optimize our supply chain remodel stores and open new stores and clubs in both the US and certain International markets.",1354.6,1362.8,positive,0.9981623291969299,0.9981623291969299
+"For the first quarter, it's important to note that our year over year, comparisons can have an outsized impact on quarterly growth rates we expect Consolidated, net sales, growth of three to four percent in constant currency.",1363.9,1375.9,positive,0.7249895930290222,0.7249895930290222
+"This includes the negative effect of approximately 100 basis points to sales growth from lapping, leash leap year and accounts for the shift in Easter, timing from Q, 1 into Q 2 and our International portfolio, namely Womack's.",1376.4,1388.7,negative,0.9979972243309021,-0.9979972243309021
+"Operating income is projected to grow, 0.5% to 2% in constant currency, including the approximately 70 basis.",1389.7,1397.5,positive,0.9979548454284668,0.9979548454284668
+"Point headwind from, the Vizio acquisition, as well as the 250 basis point head.",1397.5,1402.4,negative,0.9982272982597351,-0.9982272982597351
+"When to growth from lapping leap, Dave are operating income guidance.",1402.4,1406.6,neutral,0.999599277973175,0.0
+"Also takes into account, the Easter timing shift and lapping.",1406.6,1409.7,neutral,0.9995366334915161,0.0
+"Last year's consumer, stimulus, time and in q1 for Walmart X.",1409.7,1412.8,neutral,0.9993886947631836,0.0
+"All of these items affect the year over year of growth rates, but let me emphasize our Core Business is still performing very strong on a two-year stacked basis.",1413.9,1423.6,positive,0.9973727464675903,0.9973727464675903
+"The, midpoint of our guidance would suggest operating income growth of 15 percent, reflecting strength and consistency in the underlying business.",1423.8,1431.6,positive,0.9982897639274597,0.9982897639274597
+We expect Enterprise net sales and operating income growth to be relatively consistent across quarters.,1431.6,1437.1,neutral,0.9981144666671753,0.0
+"After adjusting for calendar impacts additionally, we expect first half sales and operating income to grow in the The range of our full-year guidance.",1437.1,1445.3,positive,0.9980179071426392,0.9980179071426392
+"Notably, if current exchange rates were to stay where they are for the entire first quarter, we would expect a headwind of approximately 150 basis points to cells growth and approximately two hundred and fifty basis points.",1446.1,1457.8,negative,0.9980747699737549,-0.9980747699737549
+To operating income growth.,1457.8,1459.0,positive,0.9980554580688477,0.9980554580688477
+"First quarter EPS, range is expected to be 57 cents to 58 cents.",1459.0,1464.5,neutral,0.9995176792144775,0.0
+"This includes a headwind from currency of approximately two cents per share in a higher effective tax rate versus last year as we've said in the past, the Ation ship of operating income growing faster than cells.",1464.7,1476.2,negative,0.9915090799331665,-0.9915090799331665
+May not occur every quarter.,1476.2,1477.4,neutral,0.9995470643043518,0.0
+That we expect the framework to hold on an annual basis at the Enterprise level.,1477.4,1481.2,neutral,0.9996001124382019,0.0
+Before I turn it over to questions.,1481.2,1483.4,neutral,0.9994619488716125,0.0
+"I want to take a moment to thank our Associates around the world for their hard work, this past quarter and throughout fiscal year 2025 their dedication and commitment to serving our customers and members every day, is what makes Walmart such a special company.",1483.4,1497.7,neutral,0.9991281628608704,0.0
+As we look ahead to Year 2026 and I speak for the whole team here.,1497.7,1503.4,neutral,0.9995841383934021,0.0
+We're incredibly excited about our business.,1503.9,1506.1,positive,0.9982460737228394,0.9982460737228394
+"It's not to say that there aren't challenges ahead, but our strategy is the right one.",1506.2,1509.9,neutral,0.7159271240234375,0.0
+This team is executing on it.,1510.1,1511.7,positive,0.9981284737586975,0.9981284737586975
+We're serving our customers and members better than ever before in our Associates and shareholders are benefiting.,1511.9,1517.5,positive,0.9982187151908875,0.9982187151908875
+"And yet in some ways it feels like we're just getting started, we appreciate your interest in our company and are now ready to take your questions.",1517.5,1524.6,neutral,0.9994565844535828,0.0
+"Thank you, will now be conducting a question and answer session.",1527.0,1530.1,neutral,0.9995622038841248,0.0
+"If you like to ask a question at this time, you may press star one from your telephone keypad and a confirmation tone.",1530.8,1536.0,neutral,0.9995248317718506,0.0
+Indicate your lines in the question Q.,1536.0,1537.9,neutral,0.9995588660240173,0.0
+You may press star two.,1538.6,1539.6,neutral,0.9993014335632324,0.0
+If you'd like to remove your question from the queue.,1539.6,1541.5,neutral,0.9993242025375366,0.0
+"For participants using speaker equipment, it may be necessary to pick up your handset before pressing the star keys.",1542.1,1547.2,neutral,0.9995672106742859,0.0
+So then we may address questions as many participants as possible.,1548.1,1551.1,neutral,0.9988725781440735,0.0
+"We ask you, please.",1551.2,1551.8,neutral,0.9983958601951599,0.0
+Zoom yourself to one question.,1551.8,1553.3,neutral,0.9995726943016052,0.0
+Thank you.,1554.9,1555.2,neutral,0.9991152882575989,0.0
+And our first question is from Line of Michael Lasser with UBS.,1555.2,1558.7,neutral,0.999402642250061,0.0
+Good morning.,1560.9,1561.5,neutral,0.9989935755729675,0.0
+"Thank you so much for taking my question, over the last several quarters as Walmart was in the early stages of generating returns from the longer-term Investments that it's been making it appeared that the company was more insulated to the macro as it was gaining significant market.",1561.5,1579.0,positive,0.997819185256958,0.997819185256958
+Share.,1579.0,1579.1,neutral,0.9966779947280884,0.0
+"Now, is Walmart entering a phase where there's just simply more economic sensitivity to the model or perhaps, even less of a Cackle benefit.",1579.4,1590.7,negative,0.9954055547714233,-0.9954055547714233
+"And a, how is this factored into the sales and EPS guidance for 2026.",1591.0,1597.0,neutral,0.9995347261428833,0.0
+"And if this macroeconomic sensitivity results in a sale shortfall, what will be the course of action.",1597.0,1604.2,neutral,0.9925066828727722,0.0
+It may be a helpful to frame this with some insight into how the exit rate for 20-25.,1604.2,1612.7,neutral,0.9996028542518616,0.0
+"Physical 2025, unfolded.",1613.4,1616.1,neutral,0.9991000890731812,0.0
+Thank you very much.,1616.1,1617.1,neutral,0.9990378618240356,0.0
+"Hey, Michael, this is Doug.",1617.8,1618.8,neutral,0.9993036985397339,0.0
+"I'll Pain quickly and then handed over to John David, basically, we feel the same way, we have been feeling, customers members are going to be looking for Value.",1618.8,1625.9,neutral,0.9979084730148315,0.0
+"There can be looking for convenience, the changes that we're making them, the company continued to have us appealing to them in those respects and in an even better way.",1625.9,1633.8,positive,0.9980013966560364,0.9980013966560364
+So our confidence level is high.,1633.8,1635.2,positive,0.998268723487854,0.998268723487854
+"I'm really pleased to see such a strong quarter, being up five and up.",1635.6,1638.8,positive,0.9983238577842712,0.9983238577842712
+Nine on the bottom line feels really good.,1638.8,1640.9,positive,0.99806147813797,0.99806147813797
+Great to see that the momentum is still their stores and Club still driving volume eCommerce changes are happening.,1641.3,1647.4,positive,0.9982557892799377,0.9982557892799377
+So I think it's It's really consistent in terms of our view of how we look at the external environment.,1647.4,1653.1,neutral,0.9953959584236145,0.0
+Sure.,1653.6,1653.7,neutral,0.9936195015907288,0.0
+Michael this is John David.,1653.7,1655.2,neutral,0.9994086027145386,0.0
+With respect to the sensitivity of our model to the macro environment.,1655.8,1661.6,neutral,0.9994787573814392,0.0
+I hope investors think differently about Walmart because our customers and members are telling us that they do.,1661.9,1667.1,neutral,0.9882653951644897,0.0
+We're not just known for Value.,1667.1,1669.1,neutral,0.9976822137832642,0.0
+We're also increasingly known for convenience.,1669.3,1671.4,positive,0.9824046492576599,0.9824046492576599
+Our business is performing.,1671.5,1672.7,positive,0.9981324076652527,0.9981324076652527
+"Well, you asked about how we exited the year January was actually our strongest comp and the US - but there's this increased relevance translates into improved, financial performance for us as well as we grow these digital businesses like eCommerce.",1672.7,1689.0,positive,0.9982256293296814,0.9982256293296814
+The the incremental margins and our Ecommerce business globally for us.,1689.0,1693.6,positive,0.9976309537887573,0.9976309537887573
+"In the quarter, were 11% twice the rate over twice the rate of what our overall margin is, but let me address.",1693.6,1699.7,positive,0.9974555373191833,0.9974555373191833
+"What is maybe the question behind the question as it relates to the outlook for next year, our business out performed on virtually every operational.",1699.7,1709.1,positive,0.9979621171951294,0.9979621171951294
+And financial metric in the quarter.,1709.2,1710.8,neutral,0.9994576573371887,0.0
+We feel like we're performing exceptionally.,1710.8,1713.7,positive,0.9982820749282837,0.9982820749282837
+"Well, the guidance that we provided, we feel is very consistent with what we've done in Prior years.",1713.7,1719.2,neutral,0.9926151037216187,0.0
+"Keep in mind each of the last two years, we've got it operating income of four to six percent growth annually.",1719.2,1725.2,positive,0.9982367753982544,0.9982367753982544
+"This year, if you normalize for the effect of leap day and the bisio transaction, our guidance suggests an Outlook of five to seven percent that reflects how we all feel about this business.",1725.2,1735.9,neutral,0.9995964169502258,0.0
+We're really excited about what the year.,1735.9,1739.2,positive,0.998238205909729,0.998238205909729
+Holds for us.,1740.2,1741.0,neutral,0.9992203712463379,0.0
+"And what we can do there, we're one month into the year.",1741.0,1744.4,neutral,0.9987882971763611,0.0
+So I think it's prudent to have an Outlook.,1744.4,1748.4,neutral,0.9995611310005188,0.0
+That is somewhat measured.,1748.4,1749.5,neutral,0.999541163444519,0.0
+We don't want to get ahead of ourselves.,1749.5,1750.9,neutral,0.9990330934524536,0.0
+There is certainly some unpredictability in any environment that we have.,1751.6,1756.3,negative,0.9063348770141602,-0.9063348770141602
+But we feel really good about our ability to navigate that we feel really good about our relevance with customers.,1756.3,1762.9,positive,0.998314619064331,0.998314619064331
+And we feel really good about how our business model is changing to inflect our prophets upwards.,1762.9,1768.6,positive,0.9983128309249878,0.9983128309249878
+"Yeah, when you take that noise out of the guidance, you can see that we're stepping things up a bit.",1769.4,1773.6,positive,0.9972475171089172,0.9972475171089172
+I think that reflects our confidence and to be in the position we're in right now with this momentum on the top line and the bottom line and inventory levels being so healthy.,1773.6,1781.4,positive,0.9982989430427551,0.9982989430427551
+"We're for like, you're in a great spot to start the year.",1781.4,1783.2,positive,0.9967864751815796,0.9967864751815796
+"The 2.8 percent increase in inventory, is what we would want our in stock levels.",1783.2,1787.3,neutral,0.9742311835289001,0.0
+Look good.,1787.3,1787.6,positive,0.9981124401092529,0.9981124401092529
+"We did pull a little bit forward around the edges but, you know, we're selling through that stuff quickly.",1788.0,1792.7,positive,0.9264444708824158,0.9264444708824158
+So really in a good place to begin February.,1792.7,1795.2,positive,0.9982470273971558,0.9982470273971558
+Our next question is from the line of cases.,1798.3,1799.8,neutral,0.9995741248130798,0.0
+"Shane with Goldman Sachs, please shoot your question.",1800.0,1802.5,neutral,0.9991694688796997,0.0
+I can morning.,1804.0,1804.6,neutral,0.9988464117050171,0.0
+"Thanks for taking our question, like, you had mentioned in the prepared comments that gross margins are still being impacted by mix.",1804.6,1810.7,negative,0.9956616759300232,-0.9956616759300232
+How should we think about the mix impact to gross margin in this upcoming fiscal year?,1811.1,1815.5,neutral,0.9992761015892029,0.0
+"Especially as general merchandise growth continues to improve and just as a second question to that for your alternative Revenue, businesses have any of those businesses now reached scale.",1815.8,1827.1,positive,0.997530996799469,0.997530996799469
+"And if not, would you expect them to reach scale in fiscal year?",1827.1,1830.8,neutral,0.9972628355026245,0.0
+"Twenty five, thank you.",1830.8,1832.0,neutral,0.9992409944534302,0.0
+I think we get a lot of room.,1832.1,1833.5,positive,0.9978251457214355,0.9978251457214355
+Room to run on the on the newer businesses mean you can see our Shares are really low.,1833.7,1838.2,negative,0.9975478053092957,-0.9975478053092957
+"It would be great to have general merchandise, be strong.",1838.4,1841.2,positive,0.9912945628166199,0.9912945628166199
+You guys might want to comment a little bit on what you're seeing right now.,1841.2,1843.6,neutral,0.9995463490486145,0.0
+"Sure, your morning Kate, it's John.",1843.9,1845.6,neutral,0.9993041753768921,0.0
+"Thanks to the question that I would just start by saying I'm really proud of our Associates in our team for for the quarter that they just had up for six, like, a 24 year ago and really excited about the way they're taking care of customers.",1845.6,1858.1,positive,0.9973904490470886,0.9973904490470886
+Momentum that they have.,1858.1,1860.1,positive,0.9961431622505188,0.9961431622505188
+"In terms of mix, we did have in the material that Are encouraged by the recent couple quarters in general merchandise.",1860.1,1867.1,positive,0.9981825351715088,0.9981825351715088
+"We're seeing better better sales, better units, we're seeing unit flow through all across the box which is great.",1867.1,1874.5,positive,0.9982357025146484,0.9982357025146484
+We measure ourselves and units to ensure that we're delivering for customers.,1874.5,1877.8,neutral,0.682702362537384,0.0
+"Doug mentioned inventory, performance being up just about 3% we're really pleased with that.",1877.9,1884.0,positive,0.998252809047699,0.998252809047699
+Performance.,1884.0,1884.4,neutral,0.9960190653800964,0.0
+As mentioned are in stock is better selling through and seasonal.,1884.4,1889.4,positive,0.9980286955833435,0.9980286955833435
+Sell-through has been really strong the last couple quarters which has helped our gross margin.,1889.4,1893.6,positive,0.9983054399490356,0.9983054399490356
+Arjun.,1893.7,1894.2,neutral,0.9968164563179016,0.0
+"I'm obviously that results in savings of markdowns and on pricing, just, I would just say, again, thanks to the team.",1894.2,1901.8,positive,0.9971375465393066,0.9971375465393066
+We have we have are over 1500 rollbacks in stores today over 1000 of those are new and just the last couple weeks.,1901.8,1907.3,neutral,0.998968243598938,0.0
+"So we remain focused on value and and I think we're in a really good position to be able to deliver flexibly for customers anyway, they want to deliver and the team has done a great job, understanding all the moving pieces and how they build that into the cost structure.",1907.3,1923.2,positive,0.9982497096061707,0.9982497096061707
+I'm really proud of the way the team's position going into this year.,1923.9,1926.6,positive,0.9981702566146851,0.9981702566146851
+"Yeah, I think he's Chris Nicholas here K. What I would say is we are seeing a lot of momentum.",1927.6,1934.4,positive,0.9980777502059937,0.9980777502059937
+"John, David talked about January, being the strongest month of the quarter and we saw the same thing too.",1934.4,1939.1,positive,0.6250216364860535,0.6250216364860535
+"We're investing across the member value proposition and it's really paying dividends and making it easier through digital engagement, making it easier through the member experience with creating to buy everything you want.",1939.6,1951.9,positive,0.9981811046600342,0.9981811046600342
+"Whether it's groceries, whether it's consumables, whether it's general merchandise or apparel.",1951.9,1956.9,neutral,0.9995125532150269,0.0
+"We see all resonating and you know it's interesting, we're seeing our third quarter of GM comp growth even though it's still a little deflated.",1957.4,1965.7,positive,0.9980079531669617,0.9980079531669617
+So units are running ahead of comps and we're seeing strength in TVs and technology and the Peril.,1965.7,1971.5,positive,0.9981916546821594,0.9981916546821594
+So we're seeing we're seeing good strength on incredible items that incredible value so it's not getting old.,1971.9,1977.2,positive,0.9983128309249878,0.9983128309249878
+"Yeah, and I'll just say cross international.",1979.1,1981.3,neutral,0.9988880753517151,0.0
+Is that look at kind of GM sales would really strong germ cells in Q4 particularly in events.,1981.3,1987.8,positive,0.9980327486991882,0.9980327486991882
+"So if I look across Mexico and Canada, we saw a really strong response from our customers.",1988.3,1994.0,positive,0.9983165264129639,0.9983165264129639
+We had our largest sales day ever in Walmart X in during Elfin are resistible.,1994.0,2000.2,positive,0.9979903697967529,0.9979903697967529
+And a lot of the cells that we saw particularly with coming through GM and apparel.,2000.2,2004.0,neutral,0.999029278755188,0.0
+So happy with how that's all mixing out.,2004.0,2006.0,positive,0.9982471466064453,0.9982471466064453
+Kate.,2006.0,2007.3,neutral,0.9957996010780334,0.0
+"This is John David, we are They have a lot to say about this since we're all talking but I want to directly answer your question over the last year.",2007.3,2015.0,neutral,0.9996247291564941,0.0
+The Mix Change for general merchandise.,2015.0,2016.5,neutral,0.9970001578330994,0.0
+"In our business was down about 100 basis points, we're assuming this year is about half of that but we're quite excited about what we're doing, in general merchandise.",2016.5,2024.7,neutral,0.5023699402809143,0.0
+One of the things that we didn't mention was the benefit that our Marketplace is providing there.,2024.7,2030.2,positive,0.9915197491645813,0.9915197491645813
+"We have categories in our Marketplace business, like Automotive toys patio that are all growing north of Twenty percent.",2030.2,2039.3,positive,0.9981704950332642,0.9981704950332642
+"So these are good examples of things that are specific to Walmart, and maybe not just a general macro effect of customers, maybe not having their wallet stretched as much, but things that we're doing to provide better assortment where our customers are buying more general merchandise.",2039.4,2053.6,neutral,0.9957141280174255,0.0
+"Our next question is from the line of Simeon, government with Morgan Stanley.",2057.7,2060.9,neutral,0.9994567036628723,0.0
+This is your question.,2061.1,2062.1,neutral,0.9991967082023621,0.0
+"Hey, good morning.",2063.1,2063.6,neutral,0.999139666557312,0.0
+My question is on reinvesting and growing the business faster.,2064.0,2069.0,positive,0.8526496887207031,0.8526496887207031
+"It was mentioned that the Ecommerce incremental, margins were 11.",2069.1,2073.6,neutral,0.8765302896499634,0.0
+It looks like the Enterprise in Q4 was seven and and if we think there's upward pressure on this overtime.,2073.6,2079.9,neutral,0.783386766910553,0.0
+So the idea of reinvesting at a healthy rate and growing earnings faster.,2079.9,2085.6,positive,0.9944753050804138,0.9944753050804138
+You can clearly do both which Doug called out a couple of years ago.,2085.6,2088.4,neutral,0.9776744246482849,0.0
+The question is why not invest faster?,2088.6,2090.8,neutral,0.9964356422424316,0.0
+"Because if incremental margins are right, England, top of funnel things like marketing and plus and anything related to eCommerce should be even more profitable.",2090.8,2099.8,positive,0.5253305435180664,0.5253305435180664
+And higher returns and I think John David said we're leaving in a little bit if you can speak to that and then talk about this debate of investing in a faster rate Simeon.,2100.0,2110.0,positive,0.9943589568138123,0.9943589568138123
+Thanks for the question.,2110.0,2111.0,neutral,0.99937903881073,0.0
+I feel that we're striking the right balance right now between investment and margin expansion.,2111.4,2116.0,positive,0.9983282685279846,0.9983282685279846
+There are some tables take items in our business and that's investing in price investing in our Associates.,2116.0,2121.8,neutral,0.9995941519737244,0.0
+We're always going to do that over the more recent years.,2121.8,2125.4,neutral,0.831873893737793,0.0
+We've invested a lot in our technology platform as well as supply chain automation.,2125.4,2129.8,positive,0.9982471466064453,0.9982471466064453
+But those Investments are actually driving the improvements that you see in our results this quarter you don't deliver the bottom line at twice.,2130.0,2137.5,positive,0.9954315423965454,0.9954315423965454
+The rate of growth is the Top Line without some of these Investments that we've made.,2137.5,2140.8,neutral,0.9995601773262024,0.0
+"So as we look forward and into the coming years, we certainly see the type of opportunity and incremental margins that we've had this quarter and maybe even something beyond that, but we can do that while investing for the business.",2140.8,2152.7,positive,0.9981971383094788,0.9981971383094788
+We don't want to get overly focused on one quarters performance at the expense of investing for the long-term.,2152.7,2159.1,neutral,0.9957343935966492,0.0
+"We're trying to To build a great company here, continue to build a great company and drive these kind of returns for a long period of time, and that requires investment.",2159.3,2166.8,positive,0.79378342628479,0.79378342628479
+"The next questions for the line of Kelly Bania with BMO Capital markets, please receive with your question.",2170.3,2175.0,neutral,0.9995085000991821,0.0
+Good morning.,2177.0,2177.5,neutral,0.9989935755729675,0.0
+Thanks for taking my questions.,2177.7,2179.6,neutral,0.9993129968643188,0.0
+Doug and John David.,2179.9,2180.8,neutral,0.9993071556091309,0.0
+You framed the five to seven percent constant currency either gross kind of excluding the noise from the Vizio and leap year and it is consistent or maybe even slightly better than the past few years originally.,2180.8,2195.1,positive,0.9730596542358398,0.9730596542358398
+But it does seem a little conservative relative to what you achieved this year and to the momentum you have in the business.,2195.1,2202.4,negative,0.5612388253211975,-0.5612388253211975
+"So I was wondering if you could just touch on two factors A couple of factors one, the tariffs, and just what you're assuming and how the consumer responds to that, how you're planning on passing that through.",2202.4,2214.7,neutral,0.9991459846496582,0.0
+And if that is assumed to be some any sort of headwind to earnings this year and then also the demand for expedited orders that you're seeing that continues.,2214.7,2225.5,negative,0.9957559704780579,-0.9957559704780579
+I think to be helping the Ecommerce profitability.,2225.5,2227.5,positive,0.9982044696807861,0.9982044696807861
+Are you assuming that that continues at the same Pace or any changes there on that front?,2227.5,2234.9,neutral,0.9993405938148499,0.0
+"Let me talk About tariffs and expedited orders, John David, then turn it over to you as we've been saying tariffs or something.",2235.3,2241.8,neutral,0.9995772242546082,0.0
+We managed for many years and we'll just continue to manage that.,2241.8,2244.9,neutral,0.9993663430213928,0.0
+We've got a great team.,2244.9,2245.8,positive,0.9983110427856445,0.9983110427856445
+We know how to do that.,2245.8,2246.8,positive,0.9688951373100281,0.9688951373100281
+"We can't predict what will happen in the future, but we can manage it really well.",2246.9,2249.8,neutral,0.9681826233863831,0.0
+And we're wired to try and save people money.,2250.3,2252.1,positive,0.995317816734314,0.995317816734314
+"So that'll be our ultimate ultimate goal, and it relates to delivery speed, it's important.",2252.1,2257.6,neutral,0.9993773102760315,0.0
+And we're seeing Behavior with our customers and members around the world that causes us to be excited about what's possible and having these assets.,2257.7,2264.5,positive,0.9982611536979675,0.9982611536979675
+So close to people is such a big advantage and the stores are doing a great job of improving water quality and delivering with speed.,2264.5,2271.4,positive,0.9980194568634033,0.9980194568634033
+"And I think that that would just get better and better as things go through the year, we will have is kind of Simeon, was pointing to flexibility.",2271.4,2281.3,positive,0.9982668161392212,0.9982668161392212
+"You know, we manage the year.",2281.8,2283.2,neutral,0.9995224475860596,0.0
+We don't just start the year with a plan and execute the plan.,2283.2,2286.6,neutral,0.9995379447937012,0.0
+Things change me.,2286.6,2287.5,neutral,0.9956119060516357,0.0
+"Look at what's happening with generative aii, right generative, AI right now and the opportunity to build code in different ways we've got opportunities.",2287.5,2295.8,positive,0.9975912570953369,0.9975912570953369
+"Save money, get faster, the wood making fluid decisions about how much we invest in technology.",2295.9,2301.2,neutral,0.9556678533554077,0.0
+What do we put into wages?,2302.0,2303.4,neutral,0.9994332194328308,0.0
+"And we're what needs to be done on prices this week and to have the business model be morphing the way it is, just gives us the room to be able to do what we want to do, strategically and manage the business for the mid and longer term.",2303.4,2315.5,positive,0.9875305891036987,0.9875305891036987
+"Not just the short term, while we deliver result each quarter growing profit faster than sales, Kelly couple things.",2315.5,2322.9,neutral,0.640731692314148,0.0
+We don't have any explicit assumption in omni-customer Our guidance around tariffs we feel like we'll be able to navigate that it will it turn out differently than maybe what we expect today perhaps and we feel good about our ability to do that though.,2322.9,2336.6,positive,0.9733846187591553,0.9733846187591553
+With respect to the guidance.,2337.2,2338.6,neutral,0.999495267868042,0.0
+Look I think similar to last year.,2339.3,2342.0,neutral,0.9994864463806152,0.0
+"The last couple of years very consistently, we have to acknowledge that we are in an uncertain time.",2342.0,2347.1,negative,0.9986125230789185,-0.9986125230789185
+We don't want to get out over our skis here.,2348.1,2350.8,neutral,0.65272456407547,0.0
+There's a lot of the year to play out again.,2350.8,2353.2,neutral,0.9993669390678406,0.0
+We feel good about our ability to navigate the environment.,2353.2,2355.8,positive,0.9982753992080688,0.9982753992080688
+Whether it's tariffs are other macro uncertainty on delivery with eCommerce.,2355.9,2361.4,neutral,0.9521704912185669,0.0
+"Like, overall, you're continuing to see this diversification of our business that is improving our profitability, the newer businesses.",2361.4,2370.3,positive,0.9982627034187317,0.9982627034187317
+"And by newer businesses, I'll just suggest, like, advertising membership wfs.",2370.3,2376.6,neutral,0.9995713829994202,0.0
+"Some of those categories, they contributed to over half of the operating income growth, this quarter, so you're seeing this change in our business, as we We leverage more of these digital channels.",2376.6,2388.9,positive,0.9928458333015442,0.9928458333015442
+A lot of the faster growing parts of our business or the higher-margin ones.,2389.2,2392.6,neutral,0.8905285596847534,0.0
+Densification of our network is one.,2392.9,2395.1,neutral,0.5591521263122559,0.0
+"And so, you're seeing as more customers, availed themselves of the services that we provide It's same day delivery, things like that and even paying for that if they want it within one hour or three hours, that's continued to improve our eCommerce profitability.",2395.9,2408.8,positive,0.9982525706291199,0.9982525706291199
+Just in the us alone.,2408.8,2410.7,neutral,0.9994109869003296,0.0
+"Just in the us alone, we saw an 80% Improvement and the level of Ecommerce losses in the last year.",2410.7,2416.7,positive,0.9978457689285278,0.9978457689285278
+So we feel really good about how the business is changing here.,2416.7,2419.3,positive,0.9983119964599609,0.9983119964599609
+This omni-customer position really is an advantage.,2419.3,2421.8,positive,0.9982579350471497,0.9982579350471497
+We're still seeing curbside growth.,2422.1,2423.6,positive,0.9982838034629822,0.9982838034629822
+We're seeing in store in club growth and we've got this this growth and delivery and being able to do all of those things all the time.,2423.6,2430.0,positive,0.9982055425643921,0.9982055425643921
+"The time, there's a big advantage.",2430.0,2431.7,positive,0.9973688125610352,0.9973688125610352
+Next question comes from the line of Chuck ROM with Gordon haskett.,2435.4,2438.6,neutral,0.9990847110748291,0.0
+Please use your question.,2438.8,2439.8,neutral,0.9994288086891174,0.0
+"Thanks, I'm good morning.",2440.6,2441.6,neutral,0.999279797077179,0.0
+Congrats on a great quarter and a great year.,2441.6,2443.8,positive,0.9971379041671753,0.9971379041671753
+So can you could discuss what you're seeing in Walmart plus membership and whether that's accelerated or held steady in recent quarters?,2444.3,2451.2,neutral,0.9988579750061035,0.0
+And then how much of the growth in Walmart plus is being driven by Walmart plus assist.,2451.2,2455.7,neutral,0.9975698590278625,0.0
+"And then separately, can you talk about the underlying assumptions you have in the next year for like, for like inflation, both in grocery?",2455.7,2463.4,neutral,0.9995536208152771,0.0
+"And within general merchandise, Thank you.",2463.4,2465.6,neutral,0.9994317889213562,0.0
+"Hey, Chuck morning's John ferner good to talk to you, continue to make, be excited about Walmart.",2466.6,2472.8,positive,0.9554218649864197,0.9554218649864197
+"Plus I mean by consistent growth of the last couple years, last couple quarters the number of deliveries and the number of orders they're placing continue to rise which is, which is great to see.",2472.8,2484.0,positive,0.9982819557189941,0.9982819557189941
+I just want to pick up one point.,2484.5,2486.6,neutral,0.9991331696510315,0.0
+"We're talking about and with the last question with fast delivery and then our same day of our deliveries under three hours and under one hour We grew a hundred and eighty percent year on year, which is really exciting.",2486.6,2498.3,positive,0.998195469379425,0.998195469379425
+So we see that offer continue to grow and a large part of that offer is Walmart plus member.,2498.3,2503.2,positive,0.9982665777206421,0.9982665777206421
+So Plus members are seeing the value.,2503.2,2504.7,positive,0.9982153177261353,0.9982153177261353
+"We see the repeat rates coming through our same-day delivery, over over 5 billion units last year.",2504.7,2510.5,positive,0.9981979727745056,0.9981979727745056
+Over 100 percent growth for the year.,2510.5,2512.7,positive,0.9981434345245361,0.9981434345245361
+And then the third thing that we mentioned this morning which is really exciting to see how strongly it started is.,2512.7,2518.6,positive,0.9971625208854675,0.9971625208854675
+Our Pharmacy delivery program.,2518.6,2520.2,neutral,0.9672688245773315,0.0
+We are seeing a lot of members and customers participate in this program.,2520.2,2524.9,positive,0.9979865550994873,0.9979865550994873
+And we think this head will have a lot of momentum as the year goes.,2525.5,2528.1,positive,0.9983868598937988,0.9983868598937988
+And it's exciting to see the number of customers who are building baskets while they have their prescription delivered.,2528.1,2534.8,positive,0.9980735778808594,0.9980735778808594
+And that's true for both acute prescriptions where maybe have a sick child and you need groceries with it or it's your regular prescription.,2535.1,2542.1,neutral,0.9994122982025146,0.0
+So that's exciting to see.,2542.1,2543.1,positive,0.9969297051429749,0.9969297051429749
+"And then the second party question, in terms of inflation we planned a variance a normalized year and a this is one to two percent.",2543.1,2551.5,neutral,0.999528169631958,0.0
+"There will always be some anomalies like what we're saying, right?",2552.1,2554.9,neutral,0.9978243112564087,0.0
+"Now with eggs, as a result of avian flu last fall those those 10 things tend to work themselves out over time so we don't have a large inflation number planned into this year.",2555.1,2563.6,neutral,0.9981232285499573,0.0
+"Yeah, maybe I know choke, you didn't ask about it but seeing as we're talking about membership membership, in Sam's Club is all time highs as our renewal rates and the reason for that is because of our incredible Associates and because we're investing across the member value proposition.",2563.7,2579.2,positive,0.9979715943336487,0.9979715943336487
+"So, our first year renewal rates this year are up hundreds of basis points and When we've talked to you all about the associates Investments, and the wage Investments were seeing that paying dividend with turnover down Seventeen, hundred basis points year-on-year.",2579.2,2595.5,positive,0.9980428218841553,0.9980428218841553
+"So yeah, good things, still to come for Sam's Club to.",2596.0,2598.7,positive,0.9981479644775391,0.9981479644775391
+"And then, if you think about membership from an international flavor, if I look at Sam's Club, wherever straight membership, membership income grew there by over thirty five percent this year.",2598.7,2608.9,positive,0.9981928467750549,0.9981928467750549
+"So a strong resin strong resonating CBP with the Sam's Club, China business.",2608.9,2615.0,positive,0.9982293248176575,0.9982293248176575
+Yes.,2615.1,2615.2,neutral,0.9881481528282166,0.0
+"But we also think about membership from a know your customer perspective and over the last year, we launched a program called beneficios in Mexico and we have had over 45 million customers sign up for that which enables us to know them to enable us to also personalize armed services and offerings to them.",2615.3,2634.7,positive,0.9980399012565613,0.9980399012565613
+Our next question comes from the line of Mike Baker with the a Davidson.,2638.1,2641.6,neutral,0.9993367791175842,0.0
+"Who's you see, what's your question?",2642.0,2643.0,neutral,0.9992190599441528,0.0
+"Great, thanks.",2644.1,2645.3,neutral,0.9230592250823975,0.0
+I just wanted to ask about the overall consumer environment.,2645.4,2649.4,neutral,0.9989542961120605,0.0
+"What you're seeing, I think after we call it was right after the election, you had said that there was a little bit more consumer confidence after the election dog.",2649.4,2659.0,positive,0.9771389365196228,0.9771389365196228
+"In December, you had said something about storm clouds lifting or something along those lines.",2659.0,2663.9,neutral,0.9888985753059387,0.0
+Are you still seeing that has anything changed in the last couple months?,2664.3,2667.8,neutral,0.9993643164634705,0.0
+Seems like the environment.,2667.9,2668.9,neutral,0.9950153231620789,0.0
+"Maybe he's gotten a little bit more volatile, volatile and related to that.",2668.9,2672.7,negative,0.9969852566719055,-0.9969852566719055
+"I know this is asked a lot, but I'll ask it again.",2672.7,2674.7,neutral,0.9994791150093079,0.0
+The rollback number of 5800 seems to be a little bit less than it was in the last few quarters.,2674.8,2679.6,positive,0.7430765628814697,0.7430765628814697
+Remind us how we think about that.,2679.6,2682.0,neutral,0.999396562576294,0.0
+"I don't think it's that you're investing Less in price but love to hear that explanation, again, thanks, Mike, this is Doug, let me clarify father, storm clouds thing.",2682.6,2691.4,neutral,0.9979814291000366,0.0
+What I said was we had seen clouds on the horizon and they never came and I kind of feel that same way.,2691.4,2696.1,negative,0.8804588913917542,-0.8804588913917542
+Right now we're just seeing a lot of consistency.,2696.1,2697.8,positive,0.9862112998962402,0.9862112998962402
+See at Doug?,2697.9,2699.2,neutral,0.9994737505912781,0.0
+I agree.,2699.2,2699.8,positive,0.9763756990432739,0.9763756990432739
+"Consumer environment, very consistent.",2700.0,2702.7,positive,0.8926944732666016,0.8926944732666016
+We mentioned the word resilient mixes as shifted slightly throughout the year but really encouraged by the trends we saw in the last couple quarters.,2702.7,2711.3,positive,0.9979829788208008,0.9979829788208008
+So no we're optimistic.,2711.3,2713.6,negative,0.9962122440338135,-0.9962122440338135
+"Given all the things that we've done to improve our strategy working in omni-customer, exciting way to work on behalf of customers and what that means is we'll be ready to fulfill customers wants and needs any way they want to, whether it's in the store at the curb, at their home, we're seeing growth rates across those and so, we're ready for any environment.",2713.6,2731.7,positive,0.9982010126113892,0.9982010126113892
+This is a team that's experienced.,2731.7,2733.7,neutral,0.9987608194351196,0.0
+"They've been through a lot of changes in the economy, the last 5, to 10 years and they know how to manage things really well.",2733.7,2739.8,positive,0.9916818737983704,0.9916818737983704
+"So will react accordingly but we again, we see a consistent resilient consumer.",2739.8,2744.4,neutral,0.7481077313423157,0.0
+The next question is from the line of Polish.,2748.1,2749.8,neutral,0.999315619468689,0.0
+Wait with Citigroup pleased to see their question.,2749.8,2752.2,neutral,0.9923698902130127,0.0
+"Thanks, guys, you mentioned seeing low markdowns in the fourth quarter, curious how that came in relative to your plan and also what you assume about the promotional landscape ref 26.",2754.1,2765.4,neutral,0.7264872193336487,0.0
+Whether you build in significant price investment into your guidance and just remind us how that all shake out this year versus what you thought coming into the year.,2765.4,2774.8,neutral,0.9993271827697754,0.0
+And then The bigger picture question.,2774.8,2777.7,neutral,0.9995612502098083,0.0
+"You mentioned some increase investment in Canada, a few weeks back, just curious how you viewed the, the long-term opportunity of that market.",2777.7,2785.6,positive,0.9974372386932373,0.9974372386932373
+"Thanks, this is John.",2785.6,2787.8,neutral,0.9991846680641174,0.0
+I let me pick up the question on on margins markdowns.,2787.8,2791.1,neutral,0.9992914199829102,0.0
+"First time, it's really important for us that we can we control and manage our inventory based on what our customers are wanting to buy the teams and the supply chain and stores.",2791.1,2800.8,neutral,0.9968101382255554,0.0
+Fulfillment centers that are really nice job flowing inventory.,2800.8,2803.4,neutral,0.9644477367401123,0.0
+"We made a number of improvements Technology, both in store and across the supply chain.",2803.4,2808.6,positive,0.9981800317764282,0.9981800317764282
+"Have a really accurate understanding of what we have where it is, how quickly we can deploy that inventory for customers and so the results did show an increase in gross margin that we're proud of but there's some pieces there than important, there's gross margin for merchandise.",2808.6,2823.9,positive,0.9975583553314209,0.9975583553314209
+There are also some other things in there like ad revenues and and some things that increase margin that are part of our newer businesses are our new digital services.,2823.9,2833.4,neutral,0.9894877672195435,0.0
+So our core margins.,2833.4,2835.4,neutral,0.9976996779441833,0.0
+Our core markdowns management.,2836.0,2837.4,neutral,0.9357282519340515,0.0
+We're proud of the way that we've managed that I feel great about inventory going into this year.,2837.4,2841.1,positive,0.9983363747596741,0.9983363747596741
+That number 50.,2841.1,2842.5,neutral,0.9994009733200073,0.0
+"100 Robux is a large number of Roebucks, historically that will fluctuate quarter to quarter.",2842.5,2846.7,neutral,0.9994943141937256,0.0
+"Again, we've added about 1,000 the last few weeks and we're prepared for all sorts of environments whether it's more promotional or less promotional.",2847.2,2855.2,positive,0.9966545104980469,0.9966545104980469
+We're going to focus on value for our customers and we're going to do everything we can do to control prices and keep prices low.,2855.2,2860.7,positive,0.9981064796447754,0.9981064796447754
+"And if I pick up on Canada, I would say white plays with the Top Line growth.",2862.1,2866.4,positive,0.9072422981262207,0.9072422981262207
+"We're getting in Canada, but one of the real highlights for me, has been the eCommerce formance which has been up 30% and the growth has accelerated every quarter over the last year.",2866.4,2876.8,positive,0.9982860684394836,0.9982860684394836
+And so we are seeing our offering and Canada really resonating with the customer.,2876.8,2881.6,positive,0.9982859492301941,0.9982859492301941
+We're focused on value.,2881.6,2882.6,positive,0.9982245564460754,0.9982245564460754
+"We were able to offer a Canadian Thanksgiving lunch for $40, 40 Canadian dollars for four people and so really the inning into making sure.",2882.6,2892.0,positive,0.9972122311592102,0.9972122311592102
+"We have the price positioning, right?",2892.1,2893.7,positive,0.989584743976593,0.989584743976593
+But also the customers really responding from a convenience perspective.,2893.7,2898.0,positive,0.9981411695480347,0.9981411695480347
+So we're excited about the business we have in Canada.,2898.0,2900.2,positive,0.9982776641845703,0.9982776641845703
+Our next question comes from the line of Seth segment with Barclays.,2903.6,2906.5,neutral,0.9994136095046997,0.0
+Please proceed with your question.,2906.5,2908.3,neutral,0.9993680119514465,0.0
+Hey good morning everyone.,2908.4,2909.4,neutral,0.9991891980171204,0.0
+I wanted to ask about Vizio can you talk about some of the details around the dilution that you've embedded here and then perhaps discuss plans to integrate that?,2909.8,2919.1,neutral,0.993979811668396,0.0
+"How do you expect to leverage their platform and in general, as you think about Walmart, connect pretty incredible momentum there even really disciplined and building that out.",2919.4,2927.9,positive,0.9983001351356506,0.9983001351356506
+I'm just curious.,2927.9,2928.5,neutral,0.9975274205207825,0.0
+How do you think about the growth Outlook?,2928.5,2929.8,neutral,0.9906479716300964,0.0
+Thanks so much.,2929.8,2930.6,neutral,0.9984402060508728,0.0
+Sure.,2931.8,2932.1,neutral,0.9936195015907288,0.0
+"Seth, we're really excited about having the Vizio team, join Walmart.",2932.1,2936.7,positive,0.9980206489562988,0.9980206489562988
+And what's that new platform will do for our customers?,2936.7,2938.9,neutral,0.9952006340026855,0.0
+We do have some dilution related to the transaction cost with that in the first quarter about 70 basis points.,2938.9,2947.6,negative,0.9969584941864014,-0.9969584941864014
+"But we expect this transaction to be, to begin, being a creative to Walmart next year.",2947.6,2954.3,neutral,0.9623765349388123,0.0
+"And so, this will create new channels for us to reach out to our customers, and allow them to Avail themselves of all the thing that one, Arts and Sam's provides but John you want to add anything else.",2954.3,2964.2,positive,0.9977450370788574,0.9977450370788574
+Sure.,2964.2,2964.5,neutral,0.9936195015907288,0.0
+Sure.,2964.5,2965.0,neutral,0.9936195015907288,0.0
+I'm really excited about the addition of Visio to the Walmart family.,2965.0,2968.3,positive,0.9982324242591858,0.9982324242591858
+I've knowed William and the team for a long time and and it's just great to have them a part of the team.,2968.3,2974.7,neutral,0.5919405817985535,0.0
+"The operating system in Visio is an impressive operating system, it works with very little friction, it's easy to set up and install have several.",2975.0,2984.0,positive,0.9963417649269104,0.9963417649269104
+"These personally and I've acquired more since we started talking about this acquisition, I'm just really pleased with the way.",2984.0,2989.0,positive,0.9982985854148865,0.9982985854148865
+"It works for the Walmart connect Business to have more ways to distribute advertising for Sellers, and and suppliers.",2989.0,2997.0,positive,0.9968838095664978,0.9968838095664978
+That's really exciting for them.,2997.0,2998.4,positive,0.9982374906539917,0.9982374906539917
+We hope to be able to do that in a very Way.,2998.4,3000.2,positive,0.9980769157409668,0.9980769157409668
+So we're starting the process of integration and over.,3000.2,3003.5,positive,0.9903929829597473,0.9903929829597473
+"This next year, we'll be working on bigger plans for the brand, as the team's get more time to work together.",3003.5,3008.6,positive,0.998113751411438,0.998113751411438
+The next question is for the line of Zeon Mart was Bernstein.,3012.2,3015.7,neutral,0.9994692206382751,0.0
+Please proceed with your question.,3015.9,3017.0,neutral,0.9993680119514465,0.0
+We thank you very much for taking my question.,3017.9,3020.3,neutral,0.999323844909668,0.0
+I guess I wanted to follow up on the eCommerce by the if you could just help us understand what are those top three drivers of you improving eCommerce?,3020.3,3031.4,neutral,0.9980531930923462,0.0
+Profitability between the alternative revenue streams and also reducing Court Ecommerce cost.,3031.4,3037.2,positive,0.9975142478942871,0.9975142478942871
+"And you mentioned retail, media membership kind of driving more than 50% of Egypt.",3037.2,3043.9,neutral,0.9995515942573547,0.0
+"Growth, are you able to share What proportion of ebit dollars?",3043.9,3047.5,neutral,0.985211968421936,0.0
+Bernal coming from the high margin alternative revenue streams.,3047.9,3051.1,positive,0.9966893196105957,0.9966893196105957
+Thank you.,3051.2,3051.7,neutral,0.9991152882575989,0.0
+Let me give you a couple data points here starting with the last part of your question.,3051.8,3056.1,neutral,0.9996390342712402,0.0
+"So, if you just take advertising and membership, just those two categories that was a little more than a quarter of the overall operating income for us in the quarter.",3056.1,3066.4,neutral,0.9995794892311096,0.0
+"So really encouraged about these new parts of our business, in terms of the drivers of Ecommerce profitability and no particular order.",3066.5,3075.4,positive,0.9983003735542297,0.9983003735542297
+There are a few things that I would call out.,3075.4,3077.1,neutral,0.999482274055481,0.0
+One is the densification of our Network.,3077.9,3079.8,neutral,0.9987142086029053,0.0
+"So think of this of as one of our drivers instead of delivering a package, to one house on a street is now hitting four or five houses on that street.",3079.8,3089.4,neutral,0.9988325238227844,0.0
+So we're able to spread those costs over more volume and as more customers come to us this is really improving the the unit economically here.,3089.5,3097.7,positive,0.998129665851593,0.998129665851593
+The second area would be the fact that over 30% of our customers that are having something delivered from a store are paying something.,3098.1,3107.5,neutral,0.9992357492446899,0.0
+"Try to have that delivered within one hour or three hours on Christmas Eve, 77% of the orders were this Express type delivery.",3107.9,3115.8,neutral,0.9982163310050964,0.0
+So that that certainly helps with the unit economically there and the third area are these newer parts of our business.,3115.8,3122.7,neutral,0.8083505034446716,0.0
+"Like membership, like, advertising that continue to have a lot of Runway and improve our margins.",3122.7,3127.7,positive,0.9980981945991516,0.9980981945991516
+"the next question is from the line of Edward Kelly was Wells Fargo to see if your question Hi, good morning everyone.",3131.4,3138.0,neutral,0.9993977546691895,0.0
+"I wanted to start just with a follow up on that question, around eCommerce economics.",3138.2,3144.5,neutral,0.9994779229164124,0.0
+"So incremental margin of around 11% Obviously good margin, but what does that look like over time?",3144.5,3151.9,positive,0.9960606694221497,0.9960606694221497
+"You know, does that grow?",3151.9,3153.7,neutral,0.9982126951217651,0.0
+How do we think about Ecommerce?,3153.7,3156.2,neutral,0.9993195533752441,0.0
+"We're all returning the profitability or should say, attaining profitability.",3156.2,3160.9,positive,0.9981787204742432,0.9981787204742432
+"And then, as we look out over time, Addition to that just kind of curious issues like immigration.",3160.9,3170.8,neutral,0.9993915557861328,0.0
+Does that how are you thinking about that?,3171.1,3173.5,neutral,0.9993797540664673,0.0
+Any impact that you think that might that might have this year?,3173.5,3176.3,neutral,0.9806059002876282,0.0
+This is Doug when you look at the second pnl.,3177.5,3181.2,neutral,0.9996020197868347,0.0
+"As we've described it, it ends up being more profitable than the first PL.",3181.2,3184.6,positive,0.9981024861335754,0.9981024861335754
+"First pnl being kind of the traditional retail store PL when you put together Ecommerce components, like membership and advertising data.",3184.6,3193.2,neutral,0.9996125102043152,0.0
+Monetization all the things that we get to do is we scale an e-commerce business.,3193.2,3196.6,neutral,0.9852222800254822,0.0
+"That's both first party, and third party.",3196.6,3198.7,neutral,0.9995321035385132,0.0
+"By the way, it just lifts the overall operating income percentage of the business.",3198.7,3202.4,positive,0.9981811046600342,0.9981811046600342
+Then that's what's happening.,3202.4,3203.9,neutral,0.9991582632064819,0.0
+"So, the key is keep the foot on the gas as it relates to eCommerce grocery Both serving people how they want to be served.",3203.9,3209.0,neutral,0.9991912245750427,0.0
+"And, as I mentioned a minute ago, the great thing about omni-customer, Our next question is from the line of Robbie ohms with Bank of America.",3209.0,3239.4,neutral,0.9982106685638428,0.0
+Please see if your question.,3239.4,3241.5,neutral,0.9994291663169861,0.0
+"Oh, hey, thanks for taking my question.",3241.5,3243.1,neutral,0.9993343949317932,0.0
+"I think this might be for John David Rainey, just, you know, operating expenses deal ever.",3243.1,3249.2,neutral,0.9995104074478149,0.0
+"And I think was 50 plus basis points in the fourth quarter, excluding the opioid settlement.",3249.2,3254.9,neutral,0.9992215633392334,0.0
+Can you can you just help us tell us how we should think about you know the sua ratio for Walmart?,3255.1,3261.9,neutral,0.9994984865188599,0.0
+You know the puts and takes you know for opportunities?,3261.9,3265.8,neutral,0.9993510842323303,0.0
+To be better than expected this year versus worse.,3265.9,3268.5,positive,0.9758533239364624,0.9758533239364624
+But also the sort of way we should think about that long term for Walmart.,3268.5,3273.0,neutral,0.9995405673980713,0.0
+"Sure, Robbie is good to speak with you to start with.",3273.0,3276.5,neutral,0.9994589686393738,0.0
+I think we need to be grounded in how our business is changing.,3276.5,3280.6,neutral,0.9994994401931763,0.0
+"I talked about in my prepared remarks that our businesses 18% Ecommerce right now, let's Eleven Hundred basis points, higher than it was five years ago.",3280.6,3289.7,positive,0.9981454610824585,0.9981454610824585
+The sg&a related to a digital transaction and eCommerce transaction is higher than it is As for brick-and-mortar.,3290.1,3296.8,neutral,0.8332513570785522,0.0
+"So historically, we thought of our business when it was more Mortar has 20% or maybe slightly below, that was a good way to think about the cost profile of that business.",3296.8,3306.1,neutral,0.9994193315505981,0.0
+"As our business moves more digital, it's going to create pressure there.",3306.1,3310.0,negative,0.9980401396751404,-0.9980401396751404
+"It's just a channel mix equation, but at the same time, we've got a hyper Focus as we always have on every day low cost, but we have an opportunity to make investments in the business as well.",3310.0,3321.2,positive,0.9963207244873047,0.9963207244873047
+"If you look at the fourth quarter marketing, is an area that stands out that we invested a little bit more heavily into it.",3321.2,3327.2,positive,0.9884917736053467,0.9884917736053467
+Also drove some of the Improvement that we saw in general merchandise.,3327.2,3329.9,positive,0.991959273815155,0.991959273815155
+"And ice, but fundamentally, if you think about our cost structure going forward, one of the big drivers is going to be the improvements that we see in supply chain automation.",3330.0,3338.8,neutral,0.9359434843063354,0.0
+We're already seeing that we were encouraged by some of the the early productivity metrics but still today less than half of the stores in the US or served fully by Automation.,3338.8,3349.6,neutral,0.7912006378173828,0.0
+"And so, there's a lot of benefits still to come here as we automate our supply chain.",3349.6,3354.2,positive,0.982203483581543,0.982203483581543
+As we continue to automate our stores that will drive improvements in sgna.,3354.2,3358.2,positive,0.9981709718704224,0.9981709718704224
+We're excited to show you a few facilities.,3358.2,3359.8,positive,0.9927862286567688,0.9927862286567688
+"Ella T's and Alice and April, you'll remember the trip to Florida.",3360.0,3363.0,neutral,0.9994155168533325,0.0
+"Those of you that came, I think we're going to have a similar positive experience when you see what we're doing there.",3363.0,3367.9,positive,0.9982526898384094,0.9982526898384094
+"Yeah, Our next question is from the line of Corey toilet with Jeffries.",3368.2,3374.0,neutral,0.9994439482688904,0.0
+Please.,3374.1,3374.3,neutral,0.9981942772865295,0.0
+"You see if their question Hi, good morning, and thank you for taking my question.",3374.3,3378.7,neutral,0.999420166015625,0.0
+Doug mentioned some exciting news regarding foam pay.,3379.8,3383.9,positive,0.9975964426994324,0.9975964426994324
+I was wondering if you could share any details around the business around the growth or profitability today.,3384.4,3390.4,neutral,0.9989675283432007,0.0
+"And then just as another cone question, John, David you prepared remarks you mentioned that Roi is an interesting stat that I think it's the highest it's been since 2016.",3391.0,3401.1,positive,0.9976811408996582,0.9976811408996582
+Is there a way to maybe put into context how just how high You think your Roi can go and where some of these newer Investments rank as you think about the trajectory for your return on investment?,3401.5,3414.3,neutral,0.9926021695137024,0.0
+Thank you so much.,3414.3,3416.0,neutral,0.998915433883667,0.0
+I'll pick up the one on just on phone pay.,3417.1,3419.0,neutral,0.9985804557800293,0.0
+"I mean the phone pay business to, by the end of 31st of January, hit one point seven trillion tpv and they have something like 310 million transactions daily.",3419.0,3431.4,neutral,0.9995647072792053,0.0
+It's a very strong business and we're excited to make the Meant that they are going to commence their preparation towards IPO.,3431.7,3439.4,positive,0.9983092546463013,0.9983092546463013
+That's a significant milestone for phone pay.,3439.4,3442.0,positive,0.9980031847953796,0.9980031847953796
+I think who's also going to celebrate its 10-year anniversary this year so their business spans both Financial Services through to Technology Solutions and you know excited to be able to make that announcement.,3442.3,3454.4,neutral,0.9858973026275635,0.0
+"On Roi first, I think we're fortunate to be a 63 year old company.",3455.6,3461.2,positive,0.9885010719299316,0.9885010719299316
+That has the type of opportunities to invest in itself and drive the returns that we see.,3461.2,3467.3,positive,0.8586521148681641,0.8586521148681641
+"I mentioned supply chain automation is one example, but there are many, but these are returns that are approaching 20% in some cases, the standard that we're holding ourselves to is that we want to see our Roi go up every single year and we've seen that result over the last couple of years.",3467.6,3485.2,positive,0.998075008392334,0.998075008392334
+"And so, you know, I'd hope that we'd be able to get to historical highs over some period of time, but we want to continue to see that these Investments pay off with our Roi going up.",3485.4,3495.3,positive,0.998234748840332,0.998234748840332
+Thank you.,3498.1,3498.5,neutral,0.9991152882575989,0.0
+Our next question is from rupesh Parikh with Oppenheimer pleased to see if your question.,3498.9,3503.8,neutral,0.9993708729743958,0.0
+Good morning and thanks for taking my questions.,3504.0,3505.6,neutral,0.9993454813957214,0.0
+I'll be quick here.,3505.6,3506.7,neutral,0.997654139995575,0.0
+"Just, you know, as we look for this year, I think free cash flow was down versus last year.",3507.1,3511.0,negative,0.9988386034965515,-0.9988386034965515
+"Just want to get a sense of her, getting closer to positive, free cash flow and flexion.",3511.0,3515.1,positive,0.9971082806587219,0.9971082806587219
+And then we did see an increase in the dividends.,3515.1,3517.6,positive,0.9981020092964172,0.9981020092964172
+So just any updates on Capital allocation going forward.,3517.6,3520.0,neutral,0.9993715882301331,0.0
+"Sure, I'll take that rupesh good to speak with you.",3521.1,3523.3,neutral,0.9990799427032471,0.0
+"We do feel like we're getting really close to both in earnings and a free cash flow and flexion, as you look at the benefits of a lot of these changes in our business, just becoming larger as the composition of our overall business and and hopefully, our Capital allocation reflects the conviction and an excitement that we have in our business, we announced a 13% increase in our dividend, our plan, this year assumes, that we're going to buy back more stock than And then we did last year and certainly if the early reaction to today's announcement is any indication we have an opportunity to right now but we're also going to invest in our business with capex and so I think we can be very balanced, they're going forward with both returning, cash to shareholders and investing in ourselves.",3524.9,3568.6,positive,0.9982197880744934,0.9982197880744934
+Thank you.,3571.2,3571.6,neutral,0.9991152882575989,0.0
+At this time.,3572.0,3572.5,neutral,0.9970837235450745,0.0
+We've reached the end of a question-and-answer session.,3572.5,3574.4,neutral,0.9994503855705261,0.0
+I'll turn the call over to management for closing.,3574.4,3576.0,neutral,0.9995787739753723,0.0
+Remark.,3576.0,3577.3,neutral,0.9979520440101624,0.0
+"Yeah, this is Doug, John David just mentioned how old we are and what went through my mind was we feel young.",3577.6,3583.0,neutral,0.998981773853302,0.0
+"Like if you look at what's happening around the company, whether it's what we're doing with tech or moving to this new office location.",3583.5,3589.4,neutral,0.9993904829025269,0.0
+There's a lot of freshness and newness and the momentum is helping to fuel.,3589.4,3593.4,positive,0.9981908202171326,0.9981908202171326
+That we're really pleased to see that the consistent momentum and the fourth quarter showed up in our results.,3593.4,3599.8,positive,0.9983362555503845,0.9983362555503845
+"We're obviously known for saving people, money, but were increasingly saving them time and that matters.",3600.4,3605.9,positive,0.9958025813102722,0.9958025813102722
+And it's driving our growth and not only are our is the team.,3605.9,3610.2,positive,0.9982132911682129,0.9982132911682129
+"Executing in the short term with things like unit growth and market share improvements and pricing investments in Inventory management, but they're building for the long term and seeing Roi grow at the same time.",3610.2,3621.3,positive,0.9980273842811584,0.9980273842811584
+"And I'm really impressed by that and grateful for that it's awesome to be in the position, we are for international Internationals.",3621.3,3628.2,positive,0.9972293972969055,0.9972293972969055
+"Got a really bright future had a Really strong year yet again, on top of strong years in the past all three segments, had a good year.",3628.2,3635.5,positive,0.9982554316520691,0.9982554316520691
+So we feel like we're in a good spot to start the year and we'll just stay focused on on playing offense and making the most of our opportunity.,3635.9,3642.8,positive,0.9982156753540039,0.9982156753540039
+Thank you all for dialing in This concludes today's conference.,3643.1,3647.4,neutral,0.999450147151947,0.0
+Great disconnect your lines at this time.,3647.5,3649.2,neutral,0.9976523518562317,0.0
+Thank you for your participation.,3649.2,3650.8,neutral,0.9994586110115051,0.0

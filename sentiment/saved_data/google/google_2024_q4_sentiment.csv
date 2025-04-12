@@ -1,0 +1,519 @@
+sentence,start_time,end_time,label,certainty_score,sentiment_score
+Welcome everyone.,2.2,3.2,neutral,0.9991484880447388,0.0
+"Thank you for standing by for the alphabet fourth quarter, and fiscal year, 2024 earnings conference call.",3.7,9.1,neutral,0.9996416568756104,0.0
+"At this time, all participants are in a listen-only mode.",9.1,12.6,neutral,0.9995656609535217,0.0
+"After the speaker presentation, there will be a question-and-answer session to ask a question during the session.",13.8,19.7,neutral,0.9994729161262512,0.0
+You will need to press star one on your telephone.,19.7,21.4,neutral,0.9995130300521851,0.0
+I would now like to turn the conference over to our speaker today.,22.0,25.1,neutral,0.9995917677879333,0.0
+"Jim Freeland, senior director of investor relations.",25.1,27.8,neutral,0.999336302280426,0.0
+Please go ahead Thank you.,28.5,31.6,neutral,0.9989891648292542,0.0
+Good afternoon everyone and welcome to alphabet.,31.7,33.7,neutral,0.9993035793304443,0.0
+"Search fourth quarter 2024 earnings conference call with us today are Sundar pichai, Phillip Schindler, and an Ashkenazi.",33.7,40.5,neutral,0.9994404911994934,0.0
+"Now, I'll quickly cover the Safe Harbor.",40.5,42.5,neutral,0.9959564805030823,0.0
+"Some of the statements that we make today regarding our business operations, and financial performance, may be considered forward-looking such statements are based on current expectations and assumptions that are subject to a number of risks and uncertainties actual results to differ materially.",42.5,58.1,neutral,0.999607503414154,0.0
+Please refer to our forums 10.,58.1,60.4,neutral,0.9995489716529846,0.0
+"And 10-q, including the risk factors.",60.9,63.0,neutral,0.9995777010917664,0.0
+We undertake no obligation to update any forward-looking statement.,63.3,67.1,neutral,0.9993661046028137,0.0
+"During this call, we will present both Gap and non-gaap financial measures.",67.8,71.3,neutral,0.9996429681777954,0.0
+"A Reconciliation of non-gaap to gaap measures included in today's earnings press release, which is distributed and available to the public through our investor relations website located at abc dot x y, z /e, investor, our comments will be on year-over-year comparisons, unless we State otherwise, and now I'll turn the call over to Sundar.",71.7,91.3,neutral,0.9996473789215088,0.0
+Thanks Jim and hello everyone.,93.2,95.0,neutral,0.9994581341743469,0.0
+We delivered another strong quarter in Q4 driven by our leadership in the eye and our unique full stack approach.,95.6,102.2,positive,0.9983335137367249,0.9983335137367249
+We are making dramatic progress across compute model capabilities.,102.8,107.0,positive,0.9982399940490723,0.9982399940490723
+"And in driving efficiencies, we are rapidly shipping product improvements and seeing terrific momentum with consumer and developer usage.",107.1,115.6,positive,0.9982882142066956,0.9982882142066956
+"And we're pushing the next Frontiers from AI agents, reasoning and Dupree search to state-of-the-art video.",116.1,122.6,positive,0.9974929094314575,0.9974929094314575
+Quantum Computing and more.,123.3,124.9,neutral,0.9992809891700745,0.0
+"The company, is in a great Rhythm and Cadence, building, testing and launching products faster than ever before.",125.6,132.0,positive,0.9983406066894531,0.9983406066894531
+"This is translating into product usage, Revenue growth and results in search AIO views are now available in, more than 100 countries, they continue to drive higher satisfaction and search usage.",132.5,146.0,positive,0.9982183575630188,0.9982183575630188
+Meanwhile Circle to search is now available on over 200 million Android devices.,146.3,151.2,positive,0.9620782136917114,0.9620782136917114
+Cloud and YouTube.,153.1,154.0,neutral,0.9952272176742554,0.0
+"We said at the beginning of 2024 that we expected to exit the year that a combined annual revenue run rate of over 100 billion dollars, we met that goal and ended the year at around rate of 110 billion dollars, we are set up well for continued growth.",154.0,171.4,positive,0.9982825517654419,0.9982825517654419
+So today I'll provide an update on Rai progress and how its improving our core consumer products.,171.4,177.2,neutral,0.9460235238075256,0.0
+"Then I'll touch on Cloud YouTube platforms and devices and waymo Let's start with a I last quarter, I outline the three areas of are differentiated full-stack approach to AI.",177.2,190.1,neutral,0.9994470477104187,0.0
+Innovation are leading AI infrastructure.,190.1,192.9,positive,0.9981858134269714,0.9981858134269714
+"Our world-class research, including models, and tooling and our products and platforms that bring these Innovations to people at scale.",192.9,201.5,neutral,0.9978850483894348,0.0
+"First, AI, infrastructure are sophisticated, Global Network of cloud regions and data centers provides a powerful foundation for us.",203.0,211.7,positive,0.9971302151679993,0.9971302151679993
+And our customers directly driving Revenue.,211.7,214.5,neutral,0.9993079900741577,0.0
+"We have a unique Advantage because we develop every component of our technology stack, including Hardware compilers models and products.",214.5,223.6,positive,0.9942485094070435,0.9942485094070435
+This approach allows us to drive efficiencies at every level from training and serving to developer productivity.,223.8,230.0,positive,0.9978827834129333,0.9978827834129333
+"In 2024, we broke ground on Levin, new Cloud regions, and data center campuses in places like South Carolina, Indiana, Missouri.",231.6,240.8,positive,0.9981174468994141,0.9981174468994141
+And around the world.,240.8,241.9,neutral,0.997703492641449,0.0
+"We also announced plans for seven, new Sub C cable projects.",242.4,245.7,positive,0.998211145401001,0.998211145401001
+Strengthening Global connectivity are leading.,245.9,249.1,positive,0.9981290698051453,0.9981290698051453
+Infrastructure is also among the world's most efficient Google data centers deliver.,249.1,253.8,positive,0.9953269958496094,0.9953269958496094
+Nearly four times more computing power per unit of electricity compared to just five years ago.,253.8,259.5,positive,0.997259259223938,0.997259259223938
+"These efficiencies coupled with the scalability cost and performance we offer, or why organizations increasingly choose Google Cloud platform in fact today.",260.5,270.5,neutral,0.5539631843566895,0.0
+Cloud customers consume more than eight times.,270.5,272.9,neutral,0.9977571368217468,0.0
+The compute capacity for training and inferencing compared to 18 months ago.,272.9,278.0,positive,0.7815279960632324,0.7815279960632324
+Will continue to invest in our Cloud business to ensure we can address the increase in customer demand.,278.0,283.7,positive,0.9983491897583008,0.9983491897583008
+Second world class research including models in December.,285.8,289.4,positive,0.9967511892318726,0.9967511892318726
+We unveil Gemini 2.0 our most capable AI model yet bill for the agent acara.,289.4,294.9,positive,0.9980237483978271,0.9980237483978271
+We launched an experimental version of Gemini 2.0 flash.,294.9,298.3,positive,0.9977165460586548,0.9977165460586548
+Our work.,298.3,299.8,neutral,0.9984973669052124,0.0
+This model with low latency and enhanced performance flashes.,300.0,304.3,positive,0.9975557327270508,0.9975557327270508
+Already rolled out to the Gemini app and tomorrow we are making 2.0.,304.3,308.0,positive,0.9981116056442261,0.9981116056442261
+Flash generally available for developers and customers along with other model updates.,308.0,313.5,neutral,0.9994925260543823,0.0
+So stay tuned late.,313.5,315.7,neutral,0.9993023872375488,0.0
+"Last year, we also debuted our experimental, Gemini 2.0, flash thinking model, the progress to scale thinking has been super fast and the reviews, so far have been extremely positive.",315.7,326.6,positive,0.9982581734657288,0.9982581734657288
+We are working on even better thinking models.,326.6,329.9,positive,0.9982513785362244,0.9982513785362244
+And look forward to sharing those with the developer Community.,330.0,333.2,neutral,0.814822256565094,0.0
+"Soon, Gemini 2.0 is advances in multi modality and Native tool use enable us to build new agents that brings us closer to our vision of a universal assistant.",333.2,344.2,positive,0.9982026815414429,0.9982026815414429
+"One, early example is deep research.",344.4,346.8,neutral,0.9994725584983826,0.0
+It uses agent to capabilities to explore complex topics on your behalf and give key findings along with sources.,346.8,355.1,neutral,0.9995430707931519,0.0
+It launched in Gemini advanced in December and is rolling out to Android.,355.1,359.9,neutral,0.6971586346626282,0.0
+Add users all over the world.,360.0,361.7,positive,0.9934205412864685,0.9934205412864685
+We are seeing great product momentum with our consumer Gemini app which debuted on iOS last November.,362.6,368.5,positive,0.9983174800872803,0.9983174800872803
+And we have opened up trusted tester.,370.0,371.7,positive,0.9982132911682129,0.9982132911682129
+Access to a handful of research prototypes including project Mariner which can understand and reason across information on a browser screen to complete tasks and project.,371.7,382.1,neutral,0.999414324760437,0.0
+Astra we expect to bring features from both to the Gemini app later this year.,382.1,386.6,positive,0.9955469369888306,0.9955469369888306
+We'd also excited by the progress of our video and image and duration models.,387.9,392.2,positive,0.9982616305351257,0.9982616305351257
+We owe to our state-of-the-art video generation model and imagine three our highest quality text image model.,392.2,399.3,neutral,0.979478120803833,0.0
+"These generative, media models, as well as Gemini.",399.3,402.7,neutral,0.9994120597839355,0.0
+Consistently top industry leader boards and score top marks across industry benchmarks.,402.7,408.2,positive,0.9981697797775269,0.9981697797775269
+That's why more than 4.4 million developers are using a Gemini models today.,408.2,413.1,neutral,0.999316930770874,0.0
+"Double the number from just six months ago, And we continue to drive research breakthroughs in Quantum Computing.",413.1,420.3,positive,0.998251736164093,0.998251736164093
+"At the end of last year, we announced Willow.",420.9,422.7,positive,0.945027232170105,0.945027232170105
+Our new state-of-the-art Quantum Computing chip that can reduce errors exponentially as we scale up.,422.7,427.9,positive,0.9980022311210632,0.9980022311210632
+"Using more qubits below is an important step in our journey to build a useful, quantum computer with practical applications, this technology holds so much promise, which is why there was real excitement around this breakthrough.",427.9,441.0,positive,0.9792582392692566,0.9792582392692566
+"Third, our products and platforms, put AI into the hands of billions of people around the world.",442.4,447.5,positive,0.8525861501693726,0.8525861501693726
+We have seven products and platforms with over 2 billion.,448.3,451.1,neutral,0.9992576241493225,0.0
+"Users in all are using Gemini, that includes search.",451.1,455.3,neutral,0.9993107318878174,0.0
+"Where Gemini is powering, our AIO abuse people use search more with the io views and usage.",455.3,461.6,neutral,0.9983358979225159,0.0
+Growth increases over time as people learn that they can ask new types of questions.,461.6,465.3,positive,0.9977960586547852,0.9977960586547852
+This behavior is even more pronounced with the younger users who really appreciate the speed and efficiency.,465.8,471.8,neutral,0.9973813891410828,0.0
+"And see if this new format, we are also pleased to see how Circle to search.",472.0,476.6,positive,0.9907047152519226,0.9907047152519226
+Is driving additional search use and opening up even more types of questions.,476.6,480.6,positive,0.9941719174385071,0.9941719174385071
+"This feature is also popular among younger users, those who have tried Circle to search before.",480.8,486.5,neutral,0.8266739845275879,0.0
+"Now use it to start more than 10% of their search has, as AI continues to expand the universe of queries that people can ask 2025 is going to be one of the biggest years for Search innovation yet.",486.5,499.0,positive,0.998026430606842,0.998026430606842
+"Now, let me turn to key highlights from the quarter across Cloud, YouTube platforms, and devices, and waymo first.",499.7,508.1,neutral,0.9996121525764465,0.0
+"Google Cloud, our ai-powered Cloud offerings enabled us to win customers, such as Mercedes-Benz Mercado, Libre and Survey in 2024, the number of First Time commitments more than double compared to 2023.",508.1,522.6,positive,0.9982224106788635,0.9982224106788635
+"We also deepen customer relationships, last year we closed several strategic deals over 1 billion.",522.9,529.5,positive,0.9982957243919373,0.9982957243919373
+"Dollars and the number of deals over 250 million, double from the prior year or partners are further accelerating our growth with customers purchasing billions of dollars of solutions.",529.7,541.5,positive,0.9981796741485596,0.9981796741485596
+"Through our Cloud Marketplace, we continue to see strong growth across our broad portfolio of ai-powered cloud Solutions.",541.5,549.6,positive,0.998329222202301,0.998329222202301
+"It begins with Rai Rai per computer, which delivers leading performance and cost across both gpus and CPUs, these advantages.",549.9,559.4,positive,0.9972032308578491,0.9972032308578491
+EPS Citadel with modeling markets and training and enabled.,559.6,563.4,neutral,0.9127826690673828,0.0
+"Wayfarer to modernize its platform, improving performance and scalability by nearly 25%.",563.4,569.5,positive,0.9982129335403442,0.9982129335403442
+"In Q4, we saw strong, uptake of Trillium, our sixth generation TPU, which delivers four times better training, performance and three times greater inference.",569.5,580.6,positive,0.9982593655586243,0.9982593655586243
+Throughput compared to the previous generation.,580.6,582.3,positive,0.939740002155304,0.939740002155304
+We also continue our strong relationship with Nvidia.,583.7,587.1,positive,0.9983317255973816,0.9983317255973816
+"We recently delivered their hedge 200 based platforms to customers and just last week, we were the first to announce a customer running on the highly anticipated.",587.6,596.8,positive,0.9980522394180298,0.9980522394180298
+"Blackwell platform Rai Per platform vertex, AI.",597.1,601.4,neutral,0.999559223651886,0.0
+"So of 5x increase in customers year over year with Brands, like Mondelez International, and wpp, building new applications and benefiting from our 200 plus Foundation models, vertex, usage increased 20x during 2024 with particularly strong developer, adoption of Gemini, flash, Gemini 2.0, imagine three and most recently video We also seeing strong growth in our ai-powered databases data analytics and cybersecurity platforms.",601.4,632.8,positive,0.9982863068580627,0.9982863068580627
+"Customers, including Radisson, hotels are now using Gemini to search and analyze multimodal data from across multiple clouds, are ai-powered, threat intelligence and security operations products.",632.8,646.2,positive,0.9908278584480286,0.9908278584480286
+"Help customers, including what a phone and AstraZeneca identify protect and defend against rats.",646.2,653.2,neutral,0.9665043354034424,0.0
+Our growing portfolio of AI applications is also seeing strong customer adoption in Q4.,654.3,660.8,positive,0.9983365535736084,0.9983365535736084
+We introduce Google agent space which helps Enterprises synthesize data with Google quality.,660.8,666.8,positive,0.9973806738853455,0.9973806738853455
+Search create Gemini ai-powered agents and automate transactions for employees.,666.8,671.7,neutral,0.9922828078269958,0.0
+"In addition, we recently gave all Google workspace, business and Enterprise customers access to all of our powerful, Gemini AI capabilities to help booster productivity.",671.7,683.9,positive,0.9977447986602783,0.9977447986602783
+Moving to YouTube.,685.7,686.7,neutral,0.9879400730133057,0.0
+Need some data shows.,686.7,688.3,neutral,0.9995906949043274,0.0
+"YouTube continues to be number one in streaming, watch time, in the US, with our share of streaming.",688.3,694.5,positive,0.9972304701805115,0.9972304701805115
+"Now, at a record high on Election Day alone, over 45 million viewers across the u.s. watched election related content on YouTube.",694.5,703.7,positive,0.9980823993682861,0.9980823993682861
+Our early investment in podcast is paying off.,703.7,707.4,positive,0.998290479183197,0.998290479183197
+"We integrated podcast into the core YouTube experience, particularly with video.",707.6,712.8,positive,0.9973741769790649,0.9973741769790649
+"We are now the most most frequently used service for consuming podcast in the US according to a recent Edison report, the success reflects our long-term approach of investing in emerging Trends from Mobile to the living room.",712.8,727.3,positive,0.9982157945632935,0.9982157945632935
+"We now have over 250,000 creators in the YouTube shopping, affiliate program in the US and Korea alone.",728.1,734.5,positive,0.646236777305603,0.646236777305603
+"We expand YouTube shopping at the end of last year to three additional countries, allowing even more creators to share their favorite products with fans and grow their Businesses for look, we'll talk more about YouTube performance later in the call.",734.5,749.6,positive,0.9981362819671631,0.9981362819671631
+Next platforms and devices.,751.7,753.4,neutral,0.9918820261955261,0.0
+Google wants performance has been outstanding and is one of our fastest growing subscription products in terms of subscribers and revenue.,753.4,761.9,positive,0.9983091354370117,0.9983091354370117
+"Growth last month, we announced the first paid off Android 16, plus new Android updates, including a deeper Gemini integration coming to the new Samsung Galaxy S 25 series.",761.9,774.2,positive,0.9981938004493713,0.9981938004493713
+"We also recently announced Android XR, the first Android platform built for the Gemini era.",774.2,779.9,positive,0.9972150325775146,0.9972150325775146
+Dated with Samsung and Qualcomm.,780.7,782.3,neutral,0.9994012117385864,0.0
+"Android, XR is designed to power an ecosystem of next-generation, extended reality devices, like, headsets and glasses.",782.3,790.0,neutral,0.9989514350891113,0.0
+"Finally, a few words on waymo which made tremendous progress last year, safely serving more than 4 million passenger trips.",791.2,799.3,positive,0.9980946183204651,0.9980946183204651
+"It's now, averaging over 150,000 trips each week and growing looking ahead, waymo will be expanding its Network and operations Partnerships to open up new markets, including Austin and Atlanta this year in Miami next year.",799.3,815.2,positive,0.9982107877731323,0.9982107877731323
+And in the coming weeks waymo one Vehicles will arrive in Tokyo for the first International.,815.2,821.1,neutral,0.8340258002281189,0.0
+Channel road trip.,821.2,822.0,neutral,0.9982036352157593,0.0
+"We are also developing the sixth generation waymo driver, which will significantly.",822.1,827.0,positive,0.9981498718261719,0.9981498718261719
+Lower Hardware costs.,827.0,828.7,positive,0.9978240728378296,0.9978240728378296
+I want to thank our employees around the world for another great quarter 2025 is going to be exciting and we are all ready for it.,830.0,837.6,positive,0.9957327246665955,0.9957327246665955
+"Philip, I'll hand it over to you.",838.1,839.9,neutral,0.9994346499443054,0.0
+Thanks wonder and hello everyone.,841.7,843.3,neutral,0.9992914199829102,0.0
+"I'll quickly cover performance for the quarter, then frame the rest of my remarks around the progress.",843.6,847.9,neutral,0.9996439218521118,0.0
+We're delivering across search as YouTube and Partnerships.,847.9,851.0,positive,0.7962982654571533,0.7962982654571533
+Highlighting the impact AI is having on our business and our customers.,851.0,855.1,neutral,0.9946038126945496,0.0
+"Google services revenues were 84 billion dollars for the quarter up, 10% driven primarily by 11 percent year-on-year growth in advertising revenues, strong growth and search and YouTube advertising was partially offset by your and your decline in network revenues.",855.1,870.0,positive,0.9980663657188416,0.9980663657188416
+"In terms of vertical performance, the 13 percent increase in Search and other revenues, was led by Financial Services, followed by retail.",871.0,877.6,neutral,0.5950033068656921,0.0
+The 14% growth in YouTube.,877.6,879.7,positive,0.9981679916381836,0.9981679916381836
+"Advertising revenues was driven by strong spend on u.s. Election advertising with combined, spend from both parties, almost doubling.",879.7,885.9,positive,0.9981728792190552,0.9981728792190552
+From what we saw in the 2020 elections.,885.9,888.3,neutral,0.9965072274208069,0.0
+Now in Q4 we search continued strong growth in revenues from search.,888.3,892.8,positive,0.9982615113258362,0.9982615113258362
+We had lots of exciting updates and December and we're rapidly integrating Rai Innovation into our consumer experiences.,892.8,899.2,positive,0.9983077049255371,0.9983077049255371
+"We've already started testing Gemini 2.0 and Ai, overviews and plan to roll it out more.",900.0,904.2,positive,0.9981583952903748,0.9981583952903748
+"Broadly later in the year in search, we're seeing people increasingly asked entirely new questions using their voice camera or in ways that were not possible before.",904.2,913.7,positive,0.9899052977561951,0.9899052977561951
+"Like, with circle to search, we're making these benefits available to more consumers.",913.7,918.2,positive,0.9980948567390442,0.9980948567390442
+"Google is already present in over half of Journeys, where a new brand product or retailer or discovered by offering new ways for people to search.",918.2,927.0,neutral,0.9852609038352966,0.0
+"We're expanding commercial opportunities for our advertisers These Shoppers can now take a photo of a product and using lens quickly, find information about the product reviews similar products and where they can get it for a great price.",927.0,939.6,positive,0.9964752793312073,0.9964752793312073
+Lens is used for over 20 billion visual search queries every month.,940.1,944.2,neutral,0.9994243383407593,0.0
+"And the majority of these searches are incremental, retail was particularly strong this holiday season, especially on Black Friday and Cyber Monday, which each generated over 1 billion and AD Revenue.",944.2,955.8,positive,0.9981608986854553,0.9981608986854553
+"Interestingly despite the u.s. holiday shopping season being the shortest since 19 retail sales began much earlier in October causing the season to extend longer than anticipated, people shop more than a billion times a day across.",955.8,969.9,neutral,0.970310389995575,0.0
+"Google last quarter, we introduced the reinvented Google shopping experience, rebuilt from the ground up with AI.",969.9,975.6,positive,0.9975190162658691,0.9975190162658691
+This December search or roughly 13% more daily active users and Google shopping in the u.s. compared to the same period in 2023.,975.6,983.2,positive,0.9961971044540405,0.9961971044540405
+Closing out on search with travel and sharing.,984.5,987.2,neutral,0.9985870122909546,0.0
+Another interesting Trend will be so spend expand to travel Tuesday.,987.2,991.2,positive,0.8770713806152344,0.8770713806152344
+"This contributed to twenty percent year-on-year, Revenue growth for travel advertisers across, Cyber Monday and travel Tuesday, moving to ads, we continue investing in AI capabilities across media, buying and creative and measurement.",991.4,1004.2,positive,0.9982467889785767,0.9982467889785767
+"As I've said before, we believe that a I will revolutionize every part of the marketing value chain.",1004.2,1008.9,positive,0.9975273013114929,0.9975273013114929
+"And over the past quarter, we've seen how our customers are increasingly focusing on optimizing their use of ai-powered.",1008.9,1014.4,positive,0.9981217980384827,0.9981217980384827
+"II as an example, Petco used demand gen campaigns across targeting creative generation and bidding to find new pet parent audiences across YouTube.",1014.6,1023.0,neutral,0.5874618887901306,0.0
+"They achieved a two hundred seventy five percent higher return on ad spend, and a 74 percent higher click-through rate than their social benchmarks on media buying, we made YouTube select Creator takeovers generally available in the US and will be expanding to more markets this year creators know Their audience, the best and Creator takeovers.",1023.0,1041.7,positive,0.9981301426887512,0.9981301426887512
+"Help businesses connect with consumers, through authentic and Rather than content looking at creative, we introduce new controls and made reporting easier and pmax, helping customers, better understand and reinvest into their best performing assets using as a generation and P Max event tickets Center achieved a five times increase in production of creative assets saving time and effort they also increased conversions by 300 percent compared to the previous period when they used manual assets.",1041.7,1070.1,positive,0.9981234669685364,0.9981234669685364
+"And finally measurement, last week we made Meridian or marketing mix model generally available for customers helping more business, reinvest into creative and media, buying strategies, that they know work based on a Nielsen meta-analysis of marketing mix models on average.",1070.8,1086.9,neutral,0.8506568670272827,0.0
+"Google ai-powered video campaigns on YouTube, Deliver 17% higher return on Advertising, spend than manual campaigns.",1086.9,1093.6,positive,0.9980289340019226,0.9980289340019226
+"Turning to YouTube, we saw a robust Revenue growth back by continued growth and watch time across ad-supported and premium experiences.",1094.8,1102.1,positive,0.9983258843421936,0.9983258843421936
+Our Focus here remains on building a streaming platform that enables creators to thrive and unlock the full potential of AI expanding on our state-of-the-art video generation model.,1102.1,1112.4,positive,0.9973946809768677,0.9973946809768677
+We announced VO2 which creates incredibly high-quality video in a wide range of subjects and styles.,1112.4,1117.7,positive,0.9976934790611267,0.9976934790611267
+It's been inspiring to see how people are experimenting with it will make it available to craters on YouTube in the coming months.,1117.8,1124.2,positive,0.9807429313659668,0.9807429313659668
+"We continue to invest in helping YouTube creators to work with Brands, all advertisers globally, can now promote YouTube, Creator, videos, and AD campaigns across all ai-powered campaign types, in Google ads, and creators can Tech Partners in the brand videos.",1124.9,1138.0,positive,0.9976595640182495,0.9976595640182495
+"Sephora, use demand, Jen's shorts, only channel to boost traffic.",1138.0,1142.9,positive,0.9979245662689209,0.9979245662689209
+"And brand searches for the holiday gift guide, campaign, and leverage Creator, collaborations to find the best.",1142.9,1148.9,neutral,0.9989274144172668,0.0
+"Give this drove in 82 percent relative, uplift and searches for Sephora holiday.",1148.9,1153.6,positive,0.9980725049972534,0.9980725049972534
+"Shorts continues, its ascent and is closing the Gap with long-form in 2024, the monetization rate of shorts relative to in-stream, viewing increased by more than 30 percentage points in the US and we expect to make additional progress in 2025.",1154.6,1168.3,positive,0.9980666041374207,0.9980666041374207
+We're making it easier for advertisers to benefit from shorts on all screens.,1168.5,1172.4,positive,0.9981012940406799,0.9981012940406799
+"We're particularly excited by its success on connected TV, which now makes up 15% of shorts.",1172.6,1178.0,positive,0.998207688331604,0.998207688331604
+Viewing in the u.s. using a combination of AD formats.,1178.0,1181.0,neutral,0.9995706677436829,0.0
+Louis Vuitton reach their overall objectives on both long verily.,1181.0,1184.6,positive,0.9979560375213623,0.9979560375213623
+"Four, men short form content.",1184.6,1186.2,neutral,0.9991217255592346,0.0
+"They're short succeeded luxury goods, Benchmark.",1186.6,1189.1,negative,0.9887956380844116,-0.9887956380844116
+"For average view, duration by 89%.",1189.1,1191.4,neutral,0.9994176626205444,0.0
+"For equivalent video lengths, while the long form content, exceeded the Benchmark, over 15% with strong engagement from gen Z.",1191.4,1199.8,positive,0.9981362819671631,0.9981362819671631
+And millennials.,1200.0,1200.9,neutral,0.9963950514793396,0.0
+"Looking into the living room, we continue to be number one in streaming, watch time in the US for nearly two years according to Nielsen and our share of streaming is at a record high, viewers globally, streamed over 1 billion, hours of YouTube content, daily on their TVs, and 2024, YouTube makes multi-year Investments.",1202.5,1220.0,positive,0.9982433319091797,0.9982433319091797
+"To tap into shifting consumer Behavior, the current search in living room viewership directly, reflects years of work to build the right product.",1220.0,1227.1,neutral,0.9995212554931641,0.0
+"And Partnerships creators are not prioritizing high-quality viewing experiences, that truly, Shown on TV screens inspiring even more viewers to tune in.",1227.1,1235.5,negative,0.9968486428260803,-0.9968486428260803
+"In fact, the number of craters making majority of revenue from TV is up over thirty percent year-on-year.",1236.1,1241.5,positive,0.9974088072776794,0.9974088072776794
+"We have also invested in podcasts, where popular shows like Club Shay, Shay and legs Friedman, or increasingly a visual format YouTube creators, and viewers are embracing this.",1242.9,1251.8,positive,0.9978723526000977,0.9978723526000977
+"In 2024 people watched over 400 million hours of podcast, each month on living room devices Alone.",1251.8,1258.5,neutral,0.9979854822158813,0.0
+"YouTube is now the most popular service for podcast listening in the US according to Edison, as always, let me wrap with a strong momentum.",1258.5,1267.0,positive,0.9982037544250488,0.9982037544250488
+We're seeing in Partnerships with a breadth of what Google has to offer is increasingly being recognized Sundar mentioned are deepening.,1267.0,1273.7,positive,0.9981139898300171,0.9981139898300171
+"Partnership with Samsung, another expanding partnership is with City whose modernizing its technology infrastructure with Google Cloud to transform employee and customer experiences.",1273.7,1283.0,positive,0.9980973601341248,0.9980973601341248
+Using Google Cloud.,1283.0,1284.5,neutral,0.9883838891983032,0.0
+It will improve.,1284.5,1285.7,positive,0.9981277585029602,0.9981277585029602
+"Its digital products, streamline employee workflows, and use the advanced high-performance Computing to enable millions of daily.",1285.7,1292.0,positive,0.9942037463188171,0.9942037463188171
+"Computations this partnership also fuels cities generative, AI initiatives, across customer service document, summarization and search to reduce manual processing.",1292.0,1301.7,positive,0.9977078437805176,0.9977078437805176
+"With that, allow me a moment to thank Google search everywhere, for the extraordinary commitment, and to our customers and partners for their continued.",1302.7,1309.3,neutral,0.9949126243591309,0.0
+Trust a not over to you.,1309.3,1311.5,neutral,0.9992721676826477,0.0
+Thank you Phillip.,1311.5,1313.5,neutral,0.9991408586502075,0.0
+We're pleased with the continued momentum.,1313.7,1315.0,positive,0.9983501434326172,0.9983501434326172
+We're seeing across the business is alphabet revenue for 2024.,1315.0,1318.6,negative,0.9705128073692322,-0.9705128073692322
+Reach 350 billion dollars up 14% on a reported basis and 15% in constant currency versus 2023.,1318.6,1327.3,positive,0.9980574250221252,0.9980574250221252
+My comments will focus on your of a year comparisons for the fourth quarter and less a state.,1328.2,1333.0,neutral,0.9996358156204224,0.0
+Otherwise I will start with the results at the alphabet level.,1333.0,1337.0,neutral,0.9996237754821777,0.0
+In more than cover our segment results.,1337.0,1339.3,neutral,0.9995790123939514,0.0
+I'll end with some commentary and expectations for the first quarter and full year 2025.,1339.3,1344.5,neutral,0.9996405839920044,0.0
+We had another strong quarter in Q4 with robust momentum across the business Consolidated.,1346.3,1352.1,positive,0.998322069644928,0.998322069644928
+Revenue of ninety six point five billion dollars increased by 12%.,1352.1,1356.7,positive,0.9981629252433777,0.9981629252433777
+In both reported and constant currency search Remain the largest contributor to revenue growth followed by cloud.,1356.9,1363.9,neutral,0.9967514276504517,0.0
+Total cost of Revenue was forty point six billion up.,1365.1,1368.1,negative,0.9981135129928589,-0.9981135129928589
+"8% Tech was fourteen point eight billion up 6%, we continue to see a revenue, mix shift with Google search growing at Double Digit levels will Network revenues which have a much higher attack rate declines.",1368.1,1381.3,positive,0.9981593489646912,0.9981593489646912
+"Other cost of Revenue was twenty, five point eight billion up 9% with the increased primarily driven by content Acquisitions costs primarily for YouTube, followed by depreciation due to increasing investments in our Uncle infrastructure.",1381.3,1395.8,neutral,0.7270761132240295,0.0
+Growth and content.,1397.0,1397.8,positive,0.8700433969497681,0.8700433969497681
+"Acquisition depreciation were partially offset by a year-over-year decline in Hardware costs, due to the shift and timing of are made by Google launches through the third quarter 2024 compared to the fourth quarter of 2023.",1397.8,1410.4,positive,0.9333509206771851,0.9333509206771851
+"In terms of total expenses, the year-over-year comparisons reflect 1.2 billion in extra charges, that we took in the fourth core of 2023 in connection with actions to EPS, optimize our Global office space.",1412.0,1424.5,neutral,0.9980505704879761,0.0
+It's previously disclosed those charges were allocated across the expense lines in other cost of Revenue and objects based on Associated headcount.,1424.7,1433.5,neutral,0.9995788931846619,0.0
+Total operating expenses decreased one percent to twenty four point.,1434.9,1438.6,positive,0.997830331325531,0.997830331325531
+"Nine billion dollars are in the Investments increased by 8%, primarily driven by increase in compensation and depreciation expenses.",1438.6,1447.1,positive,0.9960667490959167,0.9960667490959167
+"Partially offset by the impact of charges for apis, space optimization and the fourth quarter of 2023.",1447.6,1454.2,neutral,0.9975494742393494,0.0
+Sales and marketing expenses.,1455.9,1457.3,neutral,0.9995275735855103,0.0
+"Decrease 5% primarily reflecting the optimization charges last year, as well as the clients in compensation and in ads and promotion, expenses, due to the timing shift of the pixel launched from q42, Q3 G & A expenses declined by 15 percent reflecting a shift of timing and our charitable contributions as well as the optimization charges last year.",1457.3,1480.1,positive,0.9972541928291321,0.9972541928291321
+Operating income increased 31% the scorer to Thirty 1 billion dollars in operating margin.,1481.7,1487.1,positive,0.9981119632720947,0.9981119632720947
+Increase of 32% representing four point six points of margin expansion.,1487.1,1492.6,positive,0.9982037544250488,0.9982037544250488
+"Net income increased, Twenty Eight percent to twenty six point five billion dollars in earnings per share.",1494.3,1499.9,positive,0.998172402381897,0.998172402381897
+Increased 31 percent to $2.15.,1500.2,1503.9,positive,0.9980375170707703,0.9980375170707703
+We delivered free cash flow of twenty four point eight billion dollars in the fourth quarter and 70 2.8 billion for the full year 2024.,1505.2,1513.8,positive,0.9972507357597351,0.9972507357597351
+We ended the quarter with 96 billion in cash and marketable securities.,1515.1,1519.3,neutral,0.9991297125816345,0.0
+"Turn into segments results, Google service revenues increased ten percent to eighty four point 1 billion dollars reflecting the strong momentum across Google search and YouTube ads, Google search and other advertising revenues increased by 13 percent to fifty four billion dollars.",1521.3,1537.7,positive,0.9982590079307556,0.9982590079307556
+"The robust performance of search was once again broad-based across verticals led by the financial service protocol, do to strengthen Insurance followed by retail.",1537.7,1547.8,positive,0.9982178807258606,0.9982178807258606
+YouTube advertising Revenue.,1548.8,1550.5,neutral,0.7063248753547668,0.0
+Increased 14% the ten point five billion driven by brand followed by direct response advertising.,1550.5,1556.3,positive,0.9980968832969666,0.9980968832969666
+"Network advertising revenue of eight billion dollars were down four percent in the fourth quarter, the year of a year comparison.",1558.2,1565.3,negative,0.9988154172897339,-0.9988154172897339
+"In all of our advertising, Revenue lines was impacted by the increase in strength in advertising Revenue, in Q4 2023 in part from a pack, based retailers, subscription platforms and device revenues increase 8% to eleven point six billion dollars per merely reflecting growth in subscription revenues.",1565.3,1585.3,positive,0.9982340335845947,0.9982340335845947
+Partially offset by the shifting timing of the law.,1585.6,1587.9,neutral,0.9954197406768799,0.0
+Search of are made by Google devices through the third quarter compared with the fourth quarter in 2023.,1588.0,1593.3,neutral,0.9995844960212708,0.0
+We continue to have significant growth in our subscription products.,1594.7,1598.0,positive,0.9982717037200928,0.9982717037200928
+"Primarily due to increase in the number of paid subscribers across YouTube TV YouTube music, premium, and Google one with regards to platform.",1598.3,1607.2,positive,0.9974563717842102,0.9974563717842102
+"We saw a slight increase in the growth rate in play primarily due to a strong increase in the number of buyers, Google services operating income increased 23%.",1607.2,1616.7,positive,0.9982477426528931,0.9982477426528931
+The 32 point eight billion dollars and operating margin increased from 35 percent to 39 percent.,1616.7,1623.7,positive,0.9980489015579224,0.9980489015579224
+"Representing a meaningful margin expansion, turning to the Google Cloud segment, which continue to deliver very strong results.",1624.5,1632.8,positive,0.9983378648757935,0.9983378648757935
+"This quarter Revenue increased by 30% to 12 billion dollars in the fourth quarter reflecting growth in gcp, across core gcp products, AI infrastructure and generative AI Solutions.",1632.8,1645.9,positive,0.9982779026031494,0.9982779026031494
+"Once again, gcp grew at a rate that was much higher than Cloud overall.",1646.1,1650.8,positive,0.9978623986244202,0.9978623986244202
+"healthy Google workspace, growth was primarily driven by increase in everage Revenue proceeds Google Cloud, operating income increased to two point 1 billion dollars in operating margin increased from 9.4% to 17.5%.",1651.8,1666.7,positive,0.9981864094734192,0.9981864094734192
+"We're pleased with the work that cloud team is doing to deliver, valuable solutions to customer and generate Revenue growth as well as its continued focus on driving efficiencies across the cloud business.",1666.7,1677.5,positive,0.9983530044555664,0.9983530044555664
+Esther other bets for the fourth quarter Revenue were four hundred million dollars in the operating loss was 1.2 billion.,1679.7,1686.7,negative,0.9968374967575073,-0.9968374967575073
+"The year-over-year decline in revenue and increase in operating loss, per merely reflect the mouse down payment, in the fourth quarter of 2023.",1686.7,1694.4,negative,0.9380844235420227,-0.9380844235420227
+"For one of the other bets, turn into alphabet level activities.",1694.4,1698.9,neutral,0.9996129870414734,0.0
+"The largest component of this line is our investments, in AI research and development activities, which support all of alphabet.",1698.9,1705.4,neutral,0.999492883682251,0.0
+"As a reminder, alphabet level activities have included nearly all set.",1705.4,1709.6,neutral,0.9996029734611511,0.0
+France charges from reductions in Workforce and office space charges in the fourth quarter of 2024 biggest factor in year of your comparison is the one point two billion dollars in charges in the fourth core of 2023 almost entirely in connection with office space.,1709.7,1725.9,neutral,0.9924907088279724,0.0
+Optimization with respect to capitalg are reported.,1725.9,1729.8,neutral,0.999440610408783,0.0
+Capitalg quarter was fourteen billion dollars primarily reflecting investments in our technical infrastructure with the largest component being investment in servers.,1729.8,1739.1,neutral,0.9975293278694153,0.0
+By data centers to support the growth of our business across Google services.,1739.7,1743.8,positive,0.9979467988014221,0.9979467988014221
+"Google cloud in Google deepmind In Q4, we return value to shareholders in the form of fifteen billion dollars in share repurchases and 2.4 billion in dividend payments.",1743.8,1755.9,positive,0.9978121519088745,0.9978121519088745
+"Overall, we return a total of nearly 70 billion dollars to shareholders in 2024 Turning to 2025, I would like to provide some commentary on several factors that will impact our business performance in both the first quarter and the full year 2025 first, in terms of Revenue, I'll highlight two items that will have meaningful impact on q1 Revenue across the company.",1756.4,1779.0,neutral,0.7757541537284851,0.0
+The first is the impact of foreign exchange rates at the current spot rates.,1779.4,1783.4,neutral,0.999471127986908,0.0
+We expect the larger headwind to revenues from the strength of the u.s. dollar relative to key currencies and q1 versus Q for 2024.,1783.4,1792.1,negative,0.998344898223877,-0.998344898223877
+"Second is the impact of leap year, we expect a headwind from having won the last day of Revenue in q1 2025. compared with sleep here, in the first quarter of 2024, As for segments, Google services, advertising Revenue, in 2025 will be impacted by lapping.",1793.0,1810.6,negative,0.9980142116546631,-0.9980142116546631
+"The strength, we experience in the financial service vertical throughout 2024, and in Cloud given the revenues are correlated with the timing of deployment of new capacity.",1810.6,1820.1,positive,0.9981313347816467,0.9981313347816467
+"We could see variability in Cloud Revenue growth rates, depending on when you capacity comes online during 2025 Moving to investment starting with our expectation for capitalg full year 2025, as we mentioned on the Q3 call X, we expand our efforts.",1820.1,1837.5,neutral,0.9957982897758484,0.0
+We expect to increase our investments in capital expenditure for technical infrastructure primarily for servers followed by data centers and networking.,1837.5,1845.6,positive,0.9980892539024353,0.9980892539024353
+We expect to invest approximately 75 billion dollars in capital sin 2025 with approximately sixteen billion dollars to 18 billion dollars of that in the first quarter.,1845.6,1856.4,neutral,0.9743590950965881,0.0
+The expected total investment level May fluctuate from quarter to quarter primarily due to timing of deliveries and construction schedules in terms of expenses first increase in our investment in capital.,1857.8,1870.2,neutral,0.9995297193527222,0.0
+For the past few years will increase pressure on the pnl primarily in the form of higher depreciation.,1870.2,1875.8,negative,0.9988502264022827,-0.9988502264022827
+"In 2024, we saw 28 percent year-over-year growth and depreciation is we put more technical infrastructure assets into service.",1876.7,1884.7,positive,0.9982138872146606,0.9982138872146606
+Given the increase in capitalg estimates over the past four years.,1885.2,1888.4,positive,0.9590027332305908,0.9590027332305908
+We expect the growth rate and depreciation to accelerate in 2025.,1888.4,1893.0,positive,0.990947425365448,0.990947425365448
+"Second, we expect some headcount growth in 2025, in key investment areas, such as Ai and Cloud as you just heard from Sundar or delivering products, and solutions to customer at a rapid Pace Building testing and launching products faster than ever before.",1894.2,1908.8,positive,0.998228132724762,0.998228132724762
+"And as I mentioned on the Q3 call, we're doing that while also focusing on driving further efficiencies in how we operate the business.",1909.3,1916.3,positive,0.9980508089065552,0.9980508089065552
+"Before we take questions, I'd like to recap the financial results for the year.",1917.9,1921.5,neutral,0.9996246099472046,0.0
+"For the full year, 2024 Revenue grew by 14%, or by forty three billion dollars, reaching 350 billion dollars, Google services and Google Cloud.",1922.5,1932.8,positive,0.9982022047042847,0.9982022047042847
+"Each continue to see double digit Revenue growth, coupled with margin expansion, YouTube, and Cloud Revenue has combined end of the year at 110, billion dollars annual run rate.",1932.8,1943.8,positive,0.9982656836509705,0.9982656836509705
+"And in 2024, we generate total income of a hundred twelve billion dollars an increase of 33 percent from 2023.",1945.1,1952.9,positive,0.998188316822052,0.998188316822052
+We're pleased with the momentum.,1953.2,1955.6,positive,0.9982814788818359,0.9982814788818359
+We're seeing in AI Innovation and monetization.,1955.6,1958.1,positive,0.998145341873169,0.998145341873169
+"We've been using AI to improve the performance of our ads, business for well, over a decade and cloud is generating billions in annual revenue from AI infrastructure in generative AI Solutions.",1958.1,1969.4,positive,0.997657060623169,0.997657060623169
+"We're also excited about the potential to bring new experiences to users, that will provide additional opportunities for monetization and I look forward to sharing more in our progress throughout the year.",1969.4,1979.8,positive,0.9981632828712463,0.9981632828712463
+"Sundar Philip, and I will make now take your questions.",1980.9,1983.1,neutral,0.9994767308235168,0.0
+"Thank you as a reminder to ask a question, you will need to press star one on your telephone to prevent any background noise.",1983.7,1991.6,neutral,0.9994651675224304,0.0
+"We ask that you, please mute your line.",1991.6,1993.1,neutral,0.9984322190284729,0.0
+Once your question has been stated in.,1993.1,1995.3,neutral,0.9995309114456177,0.0
+Our first question comes from Brian Nowak with Morgan Stanley.,1995.3,1998.2,neutral,0.9993771910667419,0.0
+Your line is now open.,1998.6,1999.6,neutral,0.9672595858573914,0.0
+Thanks to my questions.,2000.0,2002.0,neutral,0.9993529915809631,0.0
+"I have to 14, Sundar 14, not Sundar, maybe kind of step back on search.",2002.0,2006.5,neutral,0.9995750784873962,0.0
+There's a exert a lot of advances to come with.,2006.5,2009.6,neutral,0.999139666557312,0.0
+Jen Ai and agentic.,2009.6,2010.7,neutral,0.9988862872123718,0.0
+Possibilities with search.,2010.9,2012.2,neutral,0.9994168281555176,0.0
+"Can you just sort of walk us through your your big picture Vision over the next few years of how you think about your search productivity YouTube evolved to stay at the top of the funnel and drive, more engagement and monetization for your users and advertisers?",2012.2,2027.9,positive,0.9590762257575989,0.9590762257575989
+Then the second one a not.,2027.9,2030.1,neutral,0.9990837574005127,0.0
+"I think about 90 days ago, you talked about sort of further efficiencies in areas of simplification on the Outback space.",2030.1,2036.4,positive,0.995876669883728,0.995876669883728
+Could you just sort of walk us through some examples of where you see the potential for?,2036.5,2040.4,neutral,0.9994532465934753,0.0
+For their efficiencies to that to the optic space.,2040.9,2043.1,neutral,0.9954713582992554,0.0
+"Excluding the, the DNA step ups that we have to come in 2025.",2043.1,2046.7,neutral,0.999563992023468,0.0
+Thanks.,2046.8,2047.2,neutral,0.9988258481025696,0.0
+"Thanks, Brian on search.",2049.1,2050.5,neutral,0.9992948770523071,0.0
+"You know, obviously you know, we view them in.",2050.5,2056.1,neutral,0.9995276927947998,0.0
+This has been a long continuous Journey.,2056.1,2057.6,neutral,0.9995555281639099,0.0
+AIO of use has been Next Step.,2057.6,2060.9,neutral,0.999538779258728,0.0
+It's playing out positively.,2061.2,2063.9,positive,0.9982234835624695,0.9982234835624695
+"As we have indicated, the metrics look, great.",2063.9,2067.6,positive,0.9983152151107788,0.9983152151107788
+"And we are obviously trading on their experience, bringing better and better models, expanding to the number of queries where it works and so on.",2067.6,2077.2,positive,0.9982393980026245,0.9982393980026245
+"But But there's a lot more to come, you know, I think we'll continue bringing AI in more powerful ways.",2077.2,2085.6,positive,0.997991681098938,0.997991681098938
+"In multimodal ways, things like what we've done with lens Circle to search.",2086.8,2092.5,neutral,0.9977941513061523,0.0
+You can imagine the future with project Astra.,2092.5,2094.5,neutral,0.9991692304611206,0.0
+"You can also Imagine areas like we have done in Gemini, deep research, you know?",2094.5,2099.5,neutral,0.9995200634002686,0.0
+"You swear, you know, you are really dramatically expanding the types of use cases for which search can work things, which don't always get answered instantaneously, but can take some time to answer.",2100.0,2112.3,positive,0.9972798824310303,0.9972798824310303
+"Those are all areas of expirations and you will see us, you know, putting new experiences in front of users, through the course of 20 25.",2112.3,2123.5,neutral,0.9986616373062134,0.0
+And so I do feel the opportunity space with AI.,2123.5,2128.3,positive,0.9983004927635193,0.9983004927635193
+There's a lot of unlock ahead.,2128.3,2129.6,positive,0.9927627444267273,0.9927627444267273
+Thanks and for the question with regards to.,2133.3,2135.8,neutral,0.9994229078292847,0.0
+Where do we see our?,2135.8,2136.6,neutral,0.9994750618934631,0.0
+Where do I see leverage?,2136.6,2138.0,positive,0.8622416257858276,0.8622416257858276
+Moving forward.,2138.0,2138.7,neutral,0.9909681677818298,0.0
+And some of the comments I've made on the on the previous call I certainly see opportunities for further productivity and efficiency in.,2138.7,2145.9,positive,0.9982341527938843,0.9982341527938843
+This is one of our one of our priority areas and we're going to do that so that we can make sure we continue to invest in areas such as Ai and Cloud where we see potential for continued growth.,2145.9,2156.8,positive,0.9982854723930359,0.9982854723930359
+"I'll remain focus on areas that I've mentioned before, which include the technical.",2157.3,2163.0,neutral,0.999602735042572,0.0
+Structure.,2163.2,2163.6,neutral,0.9993902444839478,0.0
+So the 75 billion dollars in capital side mentioned for this year.,2163.6,2167.5,neutral,0.999524712562561,0.0
+The majority of that is going to go towards our technical infrastructure which includes servers and data centers.,2168.1,2172.8,neutral,0.9995842576026917,0.0
+So ensuring we do that in the most efficient way is critical.,2172.8,2176.3,neutral,0.99885094165802,0.0
+"Second is managing headcount growth and we're going to be investing in areas of growth such as Ai and Cloud, but looking across the organization and moderating, that growth will be important optimizing.",2177.1,2188.3,neutral,0.8681204319000244,0.0
+"A real estate footprint is one of the area's, I've mentioned were continue to focus on that.",2188.3,2192.1,neutral,0.9995337724685669,0.0
+As well as looking at how we simplify the organization.,2193.1,2196.0,positive,0.779664158821106,0.779664158821106
+We've previously mentioned bringing like areas together Sundar talked about bringing some of the AI research teams together so that we can operate with increased speed but also how we operate within the organization using our own AI tools to how you run the business.,2196.0,2211.2,positive,0.9928460717201233,0.9928460717201233
+Whether it's the code that's under mention on the previous code writing code with AI or even running some of our key processes using AI tools.,2211.2,2221.7,neutral,0.9994865655899048,0.0
+So we're looking at all that That it's going to its this is not a 1/4 type of efforts going to continue throughout the year and we're going to continue to focus on that so that we can support the growth in other areas.,2221.8,2232.6,positive,0.99830162525177,0.99830162525177
+Our next question comes from Doug.,2237.4,2239.2,neutral,0.9994741082191467,0.0
+Onions would JP Morgan.,2239.2,2241.0,neutral,0.9942763447761536,0.0
+Your line is now open.,2241.1,2242.3,neutral,0.9672595858573914,0.0
+"Thanks for taking the questions, one for Philip, and one for a not till can you just talk more about the expanded rollout of ads, on AI, overviews and perhaps, what additional things you may have learned in for Q.",2243.9,2257.1,neutral,0.9993175268173218,0.0
+"And I guess in particular, just curious, if you rolled out to a higher percentage of commercial queries and is it still fair to say that your monetizing nearly on par with existing search?",2257.1,2269.0,neutral,0.9947240948677063,0.0
+"And then, a not just on the on cloud growth?",2269.0,2273.3,neutral,0.9992994070053101,0.0
+"Little bit of decel 3Q to 4q, but it sounded like you also suggested that your capacity constrained in the fourth quarter.",2274.3,2282.1,negative,0.996134877204895,-0.996134877204895
+"I use just wanted to push on that a little bit more, you know?",2283.0,2285.6,positive,0.6771856546401978,0.6771856546401978
+How is that accurate?,2285.6,2287.0,neutral,0.9992390871047974,0.0
+And is it fair to say that Revenue growth could have been higher with with more with much more capacity.,2287.0,2292.3,neutral,0.9772406220436096,0.0
+Thanks.,2292.9,2293.2,neutral,0.9988258481025696,0.0
+"So on your first question, first of all, yeah, overuse, which is a really nice to see you continue to drive a higher satisfaction and search usage.",2293.3,2302.3,positive,0.9982134103775024,0.9982134103775024
+So that's really good.,2302.3,2303.4,positive,0.9981628060340881,0.9981628060340881
+Good.,2303.6,2303.8,positive,0.9972946047782898,0.9972946047782898
+"And as you know, we recently launched the ads within a overviews on mobile than the US which Builds on our previous rolled out of ads above and below.",2304.5,2313.1,positive,0.9961870312690735,0.9961870312690735
+"And as I talked about before, the AI overviews overall, we actually see monetization at approximately the same rate, which I think really gives us a strong base on which we can innovate even more On the cloud question, search first, I'm excited that we ended the quarter at 12 billion dollars in a 30 percent year-over-year growth, very impressive growth.",2313.6,2334.9,positive,0.9983521699905396,0.9983521699905396
+"And as I mentioned, the prepared remark gcp grid a much higher rate than overall Cloud 2 items to think about from a deceleration perspect.",2334.9,2345.8,neutral,0.9973018169403076,0.0
+"The first as we are laughing, a very strong core of in a deployment in Q4 2023.",2345.8,2351.3,positive,0.9982574582099915,0.9982574582099915
+The second is the one you've alluded to.,2351.3,2353.7,neutral,0.9994016885757446,0.0
+We do see and have been seeing very strong demand for our ai-powered.,2353.7,2356.5,positive,0.9982832670211792,0.9982832670211792
+Products in the fourth quarter and 2024 and we exited the year with more demand than we had available capacity.,2356.8,2364.8,positive,0.9980717897415161,0.9980717897415161
+So we are in a tight Supply demand situation working very hard to bring more capacity online.,2365.4,2370.9,negative,0.9885645508766174,-0.9885645508766174
+"As I mentioned, we've increased capacity investment in capital sin 20 in 2024.",2371.3,2376.9,positive,0.9982197880744934,0.9982197880744934
+Continue to increase in 2025 and will bring more capacity throughout the year.,2377.1,2381.2,positive,0.9982587695121765,0.9982587695121765
+"Thank you, both.",2383.2,2383.8,neutral,0.9991191029548645,0.0
+Your next question comes from Eric Sheridan with Goldman Sachs your line is now open.,2386.4,2391.3,neutral,0.9993506073951721,0.0
+Thank you for taking the question.,2392.2,2393.4,neutral,0.9993646740913391,0.0
+I'll just ask one Summer with the news that came out of China.,2393.4,2397.2,neutral,0.9989528656005859,0.0
+"A little over two weeks ago, I think investors.",2397.3,2399.8,neutral,0.9988607168197632,0.0
+"Asking a lot of questions about the long-term cost curve for AI as AI, moves from the infrastructure layer to the application layer or from training to inference and maybe even custom silicon becomes more dominant across the theme.",2400.0,2414.6,neutral,0.9992214441299438,0.0
+"I would love to get your perspective on your take on that news, couple weeks ago and what it might mean for alphabet longer-term.",2414.6,2420.2,neutral,0.9994902610778809,0.0
+Thank you.,2420.2,2420.9,neutral,0.9991152882575989,0.0
+"Yeah, thanks Eric.",2423.2,2424.7,neutral,0.9992877840995789,0.0
+"Look, I think there's been a lot of observations on deep seek, first of all you know I think tremendous team.",2425.3,2432.9,positive,0.9453001618385315,0.9453001618385315
+I think they've done very very good work.,2433.3,2435.4,positive,0.9982485771179199,0.9982485771179199
+"Look I think for us it's always been obvious, you know, over time, you know there's Frontier Model development but you know, you can drive a lot of efficiency to serve these models really, really well.",2436.6,2449.0,positive,0.9220861792564392,0.9220861792564392
+"And if you look at, you know, One of the areas in which the Gemini model shine is the parade of Frontier of cause performance in latency.",2449.1,2458.2,positive,0.817603349685669,0.817603349685669
+"And if you look at all three attributes, I think we are.",2458.2,2461.2,positive,0.9973945617675781,0.9973945617675781
+"We lead this parade of Frontier and I would say both are 2.0 flash models or 2.0 flash thinking models, you know, they are some of the most efficient models out there including comparing two, deep seeks, V3 and R1.",2461.2,2477.8,positive,0.9901954531669617,0.9901954531669617
+And I think a lot of it is our strength of the full stack.,2477.8,2481.6,positive,0.9915158748626709,0.9915158748626709
+Went into an optimization or obsession with cost per query.,2481.9,2486.3,neutral,0.9938967823982239,0.0
+"All of that I think sets us all sets us up well for the workloads head, both on board to serve billions of users across our products and on the cloud side, couple of things I would say are you know if you look at the trajectory over the past three years you know the proportion of the spend towards inference compared to training as being in capitalg.",2486.3,2511.9,positive,0.997638463973999,0.997638463973999
+"Increasing, which is good because you know, obviously inferences to support businesses with good roic and so I think I think that trend is good.",2511.9,2522.1,positive,0.9983031749725342,0.9983031749725342
+"I think the reasoning models, if anything axe rates that Trend because you know, it's obviously scaling upon inference Dimension as well.",2522.5,2532.0,neutral,0.9995930790901184,0.0
+"And and so I think look, I think we, you know, part of the reason we are so excited about the AI opportunity is, we know, we can drive Extraordinary use cases because the cost of actually using it is going to keep coming down which will make more, use cases feasible and that's the opportunity space.",2532.5,2552.2,positive,0.9982340335845947,0.9982340335845947
+You know it's as big as it comes and that's why you're seeing ass invest to meet that moment.,2552.2,2558.1,neutral,0.5986602306365967,0.0
+Thank you.,2560.0,2560.5,neutral,0.9991152882575989,0.0
+Your next question comes from Michael Nathanson with Muffet Nathanson.,2562.7,2566.7,neutral,0.9993602633476257,0.0
+Your line is now open.,2566.9,2568.1,neutral,0.9672595858573914,0.0
+Thank you.,2569.2,2569.7,neutral,0.9991152882575989,0.0
+I have to 14 top one from Bill question for you is we're starting to see more AI tools on e-commerce sites and something like research with aii recommendations is on Google shopping.,2569.7,2581.6,positive,0.889462411403656,0.889462411403656
+He talked about how that product other AI tools are impacting shopping Behavior.,2581.8,2586.2,neutral,0.9990750551223755,0.0
+I found that in fact to monetization and then I guess the 75 billion dollar question and not is how you think about long-term capital intensity for this business?,2586.5,2596.0,neutral,0.9995831847190857,0.0
+Sounds like there's a bit of constrained from the getting you're getting things built.,2596.6,2600.5,negative,0.9987340569496155,-0.9987340569496155
+But how do you think or how you think about the modeling of capital intensity going forward?,2600.5,2606.1,neutral,0.9995514750480652,0.0
+And what are things that you're looking forward to in terms of whether or not?,2606.4,2609.3,neutral,0.9991682767868042,0.0
+This is the right level of spend.,2609.3,2610.7,positive,0.9789019227027893,0.9789019227027893
+"Thank you, look, excellent question.",2610.8,2614.1,neutral,0.9870578646659851,0.0
+We've been using our advances in AI to make search for products on Google even easier obviously.,2614.6,2620.6,positive,0.9980677962303162,0.9980677962303162
+And in Q4 we actually introduced quite a transform.,2620.6,2624.3,positive,0.9903084635734558,0.9903084635734558
+Google shopping experience which we rebuild from the ground up with AI and People show up more than a billion times a day across Google.,2624.3,2633.0,neutral,0.9990171194076538,0.0
+Last quarter we introduced this this fully reinvented Google shopping experience in December.,2633.0,2639.7,positive,0.9897466897964478,0.9897466897964478
+"We saw roughly, I mentioned as 13% more daily active users and Google shopping in the u.s. compared to the same period last year.",2639.7,2646.9,positive,0.9977002739906311,0.9977002739906311
+So that's a good development here.,2647.2,2648.5,positive,0.998263418674469,0.998263418674469
+"And then you Google shopping experiences, specifically at your question, uses are to really intelligently show the most relevant products helping to speed up and simplify your Search, you get an A, I generated brief with top things to consider for your search, plus maybe products that meet your needs.",2648.5,2666.2,neutral,0.997657060623169,0.0
+"So Shoppers very often one, low prices.",2666.6,2670.2,neutral,0.9903824925422668,0.0
+"So the new page not only includes like deal finding tools like price comparison price, insights price tracking throughout but those also new and dedicated personalized deals page where you can browse deals for you and all this is really built on the backbone of a I so.",2670.3,2685.3,neutral,0.9967672824859619,0.0
+So we think this is a very interesting opportunity.,2685.3,2687.1,positive,0.9983267188072205,0.9983267188072205
+And on the question of capital expenditure and I think you may have two questions in there.,2688.4,2692.6,neutral,0.9996034502983093,0.0
+One is just the capital and tensity and then how would we think about return on that invested Capital?,2692.6,2696.9,neutral,0.9995700716972351,0.0
+"So in the first one, certainly we're Head but we're managing very responsibly with a with a very rigorous even internal governance process looking at.",2696.9,2708.1,positive,0.8124037384986877,0.8124037384986877
+"How do we allocate the capacity and what would we need to support the customer demand externally but also across the Google, the alphabet business.",2708.1,2716.9,neutral,0.9995167255401611,0.0
+And as you've seen the common I've just made on cloud.,2716.9,2720.2,neutral,0.9992094039916992,0.0
+We do have demanded exceeds our available capacity so we'll be working hard to to address that and make sure we bring more capacity online.,2720.2,2727.1,positive,0.8200516700744629,0.8200516700744629
+"We do have the benefit of having a very Broad Add business and we can repurpose capacity, whether it's through Google services or Google Cloud to support is they said whether it's search or gdm or Google Cloud customers we can do that in a more efficient manner.",2727.1,2744.9,positive,0.9980212450027466,0.9980212450027466
+We also look at every investment that we make to ensure that we're doing it in the most cost efficient way to optimize your data center.,2745.3,2752.9,positive,0.9981011748313904,0.9981011748313904
+As you know our strategies mostly to rely on are also our own self design and build data centers.,2752.9,2759.9,neutral,0.9995825886726379,0.0
+So they're industry-leading in terms of both cost and power efficiency at scale.,2760.0,2764.3,positive,0.9981662631034851,0.9981662631034851
+We have our own customized TPU.,2764.3,2766.5,neutral,0.9676457643508911,0.0
+Is there a customized her own workload?,2766.5,2768.1,neutral,0.9995076656341553,0.0
+So they do deliver outstanding the superior performance and capital formation C. So we're going to be looking at all that when we make decisions as to how we're going to progress capitalg vestments throughout the coming years.,2768.1,2780.2,positive,0.9979641437530518,0.9979641437530518
+Thank you.,2783.1,2783.4,neutral,0.9991152882575989,0.0
+Your next question comes from Mark shmulik with Bernstein.,2785.7,2789.2,neutral,0.9992089867591858,0.0
+Your line is now open.,2789.3,2790.6,neutral,0.9672595858573914,0.0
+"Yes, thanks for taking the question Senator.",2791.9,2794.3,neutral,0.9992908239364624,0.0
+I just wanted to follow up to Brian's question from earlier.,2794.3,2796.9,neutral,0.9994644522666931,0.0
+"You know, with your own project Mariner efforts in a competitor's recent launch seems there's suddenly really strong momentum on AI consumer agents and kind of catching up to that old Google duplex Vision.",2796.9,2807.4,positive,0.9978256821632385,0.9978256821632385
+"I think, when you look a few years ahead, where do you see consumer agents going?",2807.4,2811.5,neutral,0.999480664730072,0.0
+And really what does it mean?,2811.5,2812.7,neutral,0.9993367791175842,0.0
+To Google search outside of lens is there room for both to flourish or will they eventually be in conflict with each other?,2812.9,2818.6,neutral,0.9985950589179993,0.0
+"Thank you, look.",2818.9,2821.1,neutral,0.99893718957901,0.0
+"I think first of all, you know, we are definitely seeing a lot of progress in the underlying capabilities of these models.",2821.1,2829.2,positive,0.9983214735984802,0.9983214735984802
+"You know, Gemini 2.0 is was definitely built with the view of enabling more agent dick use cases.",2829.2,2836.3,positive,0.979769229888916,0.979769229888916
+And and so you know I actually and we are definitely seeing progress inside and And I think we'll be able to do more agent experiences for our users.,2836.3,2847.7,positive,0.9983030557632446,0.9983030557632446
+Look II.,2848.5,2849.4,neutral,0.9991260170936584,0.0
+Actually think all of this expands the opportunity space.,2849.4,2852.2,positive,0.9983397722244263,0.9983397722244263
+"I think you know it you know, historically we've had information, use cases.",2852.2,2858.8,neutral,0.9995254278182983,0.0
+But now you can have you can act on your information needs in a much deeper way.,2858.8,2863.4,positive,0.9948241710662842,0.9948241710662842
+It's always been our vision when we have talked about Google Assistant Etc.,2864.2,2867.7,neutral,0.9987087249755859,0.0
+"So I think I think the opportunity space expands I think there's Plenty of, it feels very far from a zero-sum game.",2867.7,2876.0,positive,0.9982774257659912,0.9982774257659912
+"The this plenty of room, I think for many new types of use cases to flourish and I think for us, you know, we have, we have a clear sense of additional use cases.",2876.5,2887.3,positive,0.9977741837501526,0.9977741837501526
+We can start to tackle for our users in Google search and all the.,2887.3,2891.7,positive,0.9971850514411926,0.9971850514411926
+All the early work with AIO view shows that users will react positively to that.,2891.7,2897.2,positive,0.9982979893684387,0.9982979893684387
+"So, you know, I'm pretty excited about what's ahead.",2897.2,2899.4,positive,0.9983280301094055,0.9983280301094055
+Your next question comes from Ross.,2904.2,2906.0,neutral,0.9994271993637085,0.0
+Sandler with Barclays.,2906.0,2907.4,neutral,0.9927777647972107,0.0
+Your line is now open.,2907.5,2908.7,neutral,0.9672595858573914,0.0
+"Great one on infrastructure and then one, and on the, the guidance on Revenue sooner, if we look at the inference cost per 1 million tokens and and not the API pricing.",2910.8,2923.9,neutral,0.9994363188743591,0.0
+"We see for Gemini versus something like GPT for, but the raw cost of generating inference tokens on your TPU stack.",2923.9,2932.7,neutral,0.9994812607765198,0.0
+How much more efficient?,2932.7,2934.4,positive,0.8906432390213013,0.8906432390213013
+Do you think you guys are in terms of generating 1 million token?,2934.4,2939.5,positive,0.8768002986907959,0.8768002986907959
+Ins compared to inference costs running on your Cloud peers.,2939.6,2944.2,neutral,0.9718517065048218,0.0
+Do you see this?,2944.2,2944.9,neutral,0.9973614811897278,0.0
+As a as an advantage is everything shifts to inference and then a not you called out laughing.,2944.9,2950.7,neutral,0.9994226694107056,0.0
+The financial services category strength in 2025 is a bit of a problem for search.,2950.7,2958.4,negative,0.9806169271469116,-0.9806169271469116
+Can you quantify a little bit of that?,2958.4,2961.2,neutral,0.9991740584373474,0.0
+Is that kind of the same as when you guys talk about lapping?,2961.2,2964.9,neutral,0.9995418787002563,0.0
+The Asia outbound Advertiser Channel any numbers you could put around.,2964.9,2969.6,neutral,0.9993916749954224,0.0
+Not that headwind.,2969.7,2971.4,positive,0.7616299986839294,0.7616299986839294
+Thank you very much for all this.,2971.4,2974.6,neutral,0.9992989301681519,0.0
+"Like you know, look at the whole TPU project started.",2974.6,2977.9,neutral,0.999437153339386,0.0
+"Our V1 was effectively an inferencing chip, you know, so we've always part of the reason we have taken the into in stack approaches that so that we can definitely drive, you know, a strong differentiation in into an optimizing and not only on a cost, but on a latency Basis.",2977.9,2999.8,positive,0.996362030506134,0.996362030506134
+A performance basis.,3000.0,3001.3,neutral,0.9994398951530457,0.0
+Be at the parade of Frontier.,3002.1,3003.3,neutral,0.997464656829834,0.0
+"We mentioned and I think our full stack approach and our TPU efforts all play, you know, give a meaningful meaningful advantage and we plan, you know you already see that you know I know you asked about the cost but you know it's effectively captured you know when we when we price outside you know we pass on that differentiation it's part it's partly why we've been able to bring forward flash models.",3003.3,3029.0,positive,0.9981315732002258,0.9981315732002258
+"At very attractive value props which is what is driving both developer growth, you know of we've doubled our developers to 4.4 million in just about six months vertex, usage is up 20x last year and and so, all of that is a direct result of that approach and will search Google continue doing that.",3030.0,3050.5,positive,0.9980828762054443,0.9980828762054443
+"And on the question regarding my comment on lapping, the strength in financial services.",3051.9,3056.9,positive,0.9979524612426758,0.9979524612426758
+This is primarily related to the structural changes with regards to Insurance search more specifically within Financial Services.,3056.9,3063.8,neutral,0.9995923638343811,0.0
+It was the insurance segment and we saw that continued but it was a one-time kind of a step up and then we saw throughout the year not going to give any specific numbers as to what we expect to see in 2025.,3063.8,3075.4,neutral,0.9979117512702942,0.0
+But I'm pleased with the fact that we're seeing and continue to see strength across really all verticals.,3075.4,3081.5,positive,0.9983564019203186,0.9983564019203186
+And including retail and exiting the year in a position of position of strength.,3082.3,3088.8,positive,0.9982277750968933,0.9982277750968933
+"If anything, I would highlight, as you think about the year, the comments I've made about the impact of FX as well, as the fact that we have one less day of Revenue in q1, your next question comes from Justin post with Bank of America, your line is now open Great.",3089.3,3109.9,neutral,0.9981060028076172,0.0
+"Thank you a couple for Philip, you mentioned higher, search usage with overviews.",3109.9,3115.5,positive,0.9917224049568176,0.9917224049568176
+"Just wondering how you're feeling about overall search usage, you know, is it, is it accelerating as you integrate more AI?",3115.5,3123.1,positive,0.9885315895080566,0.9885315895080566
+"I know there's a lot of traffic growth that competitors with AI but just wondering if you're seeing a real increase in total volumes of information gathering and then second on YouTube, thinking about kind of maybe a move from a more professional content to you.",3123.1,3139.3,positive,0.9408117532730103,0.9408117532730103
+Has your generated content?,3139.4,3140.9,neutral,0.9989641904830933,0.0
+What is that doing for your usage?,3141.1,3143.1,neutral,0.9989928603172302,0.0
+And how do you think about that?,3143.1,3144.2,neutral,0.9994662404060364,0.0
+The margin impact from that?,3144.2,3145.6,neutral,0.9434603452682495,0.0
+Thank you.,3145.6,3146.0,neutral,0.9991152882575989,0.0
+"It may be on Justin, on on search usage or all our metrics are healthy.",3148.0,3153.4,neutral,0.9989548921585083,0.0
+We are continuing to see growth in search on a year-on-year basis in terms of overall usage.,3153.4,3161.9,positive,0.9982141256332397,0.9982141256332397
+"Of course, within that AIO of use has seen stronger growth, particularly, you know, across all segments of users, including in younger users.",3161.9,3173.4,positive,0.9982438087463379,0.9982438087463379
+"So it's being well received, but overall, Oh, I think, you know, through this AI moment, I think search is continuing to perform well, and, as I said earlier, we have a lot more Innovations to come this year.",3173.4,3185.8,positive,0.9983384609222412,0.9983384609222412
+"I think the product will evolve even more and I think as you make search, you know, as you give as you make it more easy for people to interact and ask follow-up questions, Etc.",3185.8,3198.1,positive,0.9973059892654419,0.9973059892654419
+I think we have an opportunity to drive further growth.,3198.1,3201.6,positive,0.998336911201477,0.998336911201477
+And some color on your YouTube question.,3203.1,3204.7,neutral,0.9994710087776184,0.0
+"Look, YouTube words, overall had a very healthy growth in Q4 driven by brand followed, by a direct response.",3205.0,3210.7,positive,0.9983035326004028,0.9983035326004028
+"The u.s. election advertising, let brand Revenue growth, and we saw nearly double the spending from 2020.",3210.7,3219.1,positive,0.9980529546737671,0.9980529546737671
+I mentioned that we also had a strong contribution from Finance retail in the tech verticals.,3219.3,3223.7,positive,0.9982441663742065,0.9982441663742065
+So overall strong operating metrics.,3223.7,3226.1,positive,0.9982936978340149,0.9982936978340149
+"Watch time growth remains robust, particularly in key, monetization opportunity areas such as shorts.",3226.1,3232.5,positive,0.9982128143310547,0.9982128143310547
+"Every room just to, to set the stage here.",3232.7,3234.8,neutral,0.9994596838951111,0.0
+"One more time on your question, specifically on the ugc side.",3234.8,3238.6,neutral,0.9995179176330566,0.0
+"Look, we have a very strong position with creators.",3238.6,3240.7,positive,0.998293936252594,0.998293936252594
+"And we've always said, creators are at the center of YouTube success.",3240.7,3243.4,neutral,0.994437575340271,0.0
+"Here, they're the number one.",3243.4,3245.0,neutral,0.9995087385177612,0.0
+"Most important thing we care about and this strong position, really gives us a lot of confidence here.",3245.0,3249.7,positive,0.9982643723487854,0.9982643723487854
+"Today, we have more than 3 million channels that are actually in the YouTube Partner program which is, which is really an incredible program.",3249.7,3257.2,positive,0.5162217617034912,0.5162217617034912
+"So we're very, very confident with the position we have and where this goes Thank you.",3257.2,3265.5,positive,0.9983522891998291,0.9983522891998291
+And our last question comes from kangaroo skin with Wells.,3267.6,3271.1,neutral,0.9994756579399109,0.0
+"Fargo, your line is now open.",3271.1,3273.0,neutral,0.9294028282165527,0.0
+Thank you very much to please.,3273.9,3275.7,neutral,0.9990574717521667,0.0
+I want to focus on Gemini and the consumer agent side Sundar.,3275.7,3282.8,neutral,0.9995785355567932,0.0
+There was some press reports that suggest that you have an ambitious goal on growing.,3282.8,3287.5,positive,0.9982239603996277,0.9982239603996277
+"The usage by the end of twenty, five, two questions on that please first, what's that?",3287.5,3294.2,neutral,0.999514102935791,0.0
+How should we think about the approach that you're going to employ to achieve this goal?,3294.2,3298.8,neutral,0.9994458556175232,0.0
+"More aggressive marketing for Gemini as a standalone product, or is it tighter integration into existing experiences, you know, whether it be search met male Maps, Etc.",3300.0,3311.5,neutral,0.9247562289237976,0.0
+"And then the second one is, how how should we think about the future?",3311.5,3317.4,neutral,0.9995236396789551,0.0
+Monetization opportunity of Gemini today?,3317.4,3320.3,neutral,0.9992586970329285,0.0
+It's it's really a premium subscription offering or a free offering over time.,3320.3,3326.0,neutral,0.9994078874588013,0.0
+Do you see in an ad component and anything you can share on that?,3326.2,3329.8,neutral,0.9995287656784058,0.0
+"Please, thank you.",3330.0,3330.9,neutral,0.9992915391921997,0.0
+"First of all, we've had in a strong momentum for our for Gemini on on the, on the app side, particularly through the second half of 2024.",3332.4,3343.7,positive,0.9982858300209045,0.9982858300209045
+And some of it is we've made it more easily accessible.,3343.7,3347.2,positive,0.9960696697235107,0.9960696697235107
+"You know, we've brought it to, for example, with a dedicated app on iOS, which has been super positively received and definitely getting a lot of traction there, so definitely driving Organic growth by putting the product out we just last week, rolled out with our 2.0 series of models.",3347.8,3369.5,positive,0.9982748031616211,0.9982748031616211
+So 2.0 flash.,3369.5,3371.6,neutral,0.9993316531181335,0.0
+"I mean, I think that's one of the most capable models you can access at the free tier, so that's definitely contributing as well.",3371.6,3379.0,positive,0.9972898960113525,0.9972898960113525
+"And so, you know, we are rapidly training.",3379.4,3382.1,positive,0.9970707893371582,0.9970707893371582
+"We've had a couple of, you know, you know, key Innovation, stare Gemini, life.",3382.1,3386.9,neutral,0.9981649518013,0.0
+I think has been definitely a hit with users.,3386.9,3391.4,positive,0.9981870055198669,0.9981870055198669
+"As well as for advanced users, Gemini deep research.",3392.0,3394.8,neutral,0.9986762404441833,0.0
+"So I think a combination of innovation continually trading on the product and making it better is driving a lot of usage and, you know, we'll have a lot more to come as we go at this here, you know, and we're obviously have a partnership with Samsung.",3394.8,3410.3,positive,0.9971978664398193,0.9971978664398193
+"So there are, you know, other other things which who contributed do it as well on the monetization side, you know?",3410.3,3418.0,neutral,0.9994848966598511,0.0
+Obviously for now we are focused on a free tier and subscriptions.,3418.0,3421.9,neutral,0.9994519352912903,0.0
+"But obviously you know, you know, as you've seen in Google over time, we always want to lead with user experience and you know, we do have, you know, a very good ideas for Native ad Concepts, but you will see as lead with the user experience.",3422.6,3439.1,neutral,0.9968512654304504,0.0
+And but I do think we're always committed to making the products work and reach billions of users at scale.,3439.1,3445.3,positive,0.9964137673377991,0.9964137673377991
+"And you know, advertising has been a great aspect of that strategy.",3445.3,3448.8,positive,0.9871788024902344,0.9871788024902344
+And so just just like you've seen with YouTube.,3448.8,3451.6,neutral,0.9991863369941711,0.0
+"Will give people options over time, but for this year, I think you'll see us be focused on the subscription Direction.",3452.2,3458.7,neutral,0.998785674571991,0.0
+Thank you.,3460.8,3461.2,neutral,0.9991152882575989,0.0
+Thank you.,3463.3,3463.7,neutral,0.9991152882575989,0.0
+And that concludes our question and answer session for today.,3463.7,3466.3,neutral,0.9995347261428833,0.0
+I'd like to turn the conference back over to Jim Friedland for any further.,3466.5,3469.7,neutral,0.999601423740387,0.0
+"Remarks, thanks everyone for joining us today.",3469.7,3472.8,neutral,0.9994919300079346,0.0
+We look forward to speaking with you again.,3473.1,3475.0,neutral,0.9993638396263123,0.0
+"On our first quarter 2025 call, thank you and have a good evening.",3475.1,3478.6,neutral,0.9994378685951233,0.0

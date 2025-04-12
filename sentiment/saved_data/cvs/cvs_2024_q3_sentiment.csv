@@ -1,0 +1,546 @@
+sentence,start_time,end_time,label,certainty_score,sentiment_score
+"Good morning, and thank you all for attending the CVS house that quota 2024.",1.3,7.7,neutral,0.9993940591812134,0.0
+"And in school and webcast, my name is Reka and I will be your moderator for today.",7.7,13.1,neutral,0.999537467956543,0.0
+All lines will be muted during the presentation portion of the call.,14.0,17.4,neutral,0.9995768666267395,0.0
+"We look at Unity for questions and answers at the end, I would now like to pass the conference over to your host.",17.4,24.2,neutral,0.9995976090431213,0.0
+"Narrowing a grass at CVS Health, thank you.",24.2,27.4,neutral,0.9992846846580505,0.0
+You may proceed Larry.,27.6,29.0,neutral,0.9974000453948975,0.0
+Good morning.,29.6,30.2,neutral,0.9989935755729675,0.0
+And welcome to the CVS Health.,30.5,31.8,neutral,0.9991443157196045,0.0
+Third quarter 2024 earnings call on webcast.,31.8,34.7,neutral,0.9994373917579651,0.0
+I'm Larry McGraw.,34.7,36.0,neutral,0.9994428753852844,0.0
+Chief strategy officer.,36.0,36.9,neutral,0.999454915523529,0.0
+"I'm joined this morning by David Joyner, president and chief executive officer and Tom.",36.9,41.6,neutral,0.9995799660682678,0.0
+"Cali, Chief Financial Officer following our prepared.",41.6,45.0,neutral,0.9995524287223816,0.0
+Remarks will host a question and answer session that will include additional members of the leadership team.,45.0,49.5,neutral,0.9978647828102112,0.0
+"Our press release and slide presentation have been posted to our website along with our form 10-q, filed this morning with the SEC.",50.8,57.3,neutral,0.9996340274810791,0.0
+"Today's call is also being broadcast on our website, where it will be archived for one year.",58.5,63.2,neutral,0.9994409680366516,0.0
+During this call will make certain forward-looking statements are forward-looking statements are subject to significant risks and uncertainties that could cause actual results to differ materially from currently projected results.,65.0,77.9,neutral,0.9995942711830139,0.0
+"We strongly encourage you, to review the reports we filed with the SEC regarding these risks and uncertainties in particular.",77.9,84.7,neutral,0.9993347525596619,0.0
+"Those that are described in the cautionary statement concerning, forward-looking statements and risk factors in our most recent annual report filed on form 10-K. Our quarterly report on form 10-q while this morning and our recent filings on form 8-k including this morning's earnings press release.",84.7,102.6,neutral,0.9995798468589783,0.0
+Nice.,103.2,103.5,positive,0.9949107766151428,0.9949107766151428
+During this call will use non-gaap measures when talking about the company's financial performance and financial condition and you can find a Reconciliation of these non-gaap measures in this morning's press release.,103.5,114.5,neutral,0.9996410608291626,0.0
+And in the reconciliation document posted to the investor relations portion of our website with us.,114.5,120.0,neutral,0.9995668530464172,0.0
+I'd like to turn the call over to David David.,120.1,123.2,neutral,0.9995597004890442,0.0
+"Thank you, Larry and good morning everyone.",124.1,126.4,neutral,0.9994586110115051,0.0
+Before I begin.,126.5,127.5,neutral,0.9994404911994934,0.0
+"I would like to thank Karen Lynch for her years of leadership, dedication and strategic Vision here in as a friend, to me and many others across the CVS Health Organization, and we wish her all the best.",127.6,138.2,neutral,0.9995124340057373,0.0
+"I am incredibly honored to leave CVS health, during this critical time my entire career is deeply connected with this Enterprise.",140.1,146.8,neutral,0.9829713702201843,0.0
+"When I return to CVS health and 2023, it was because of my strong belief and our purpose and strategy.",146.8,154.4,positive,0.9889040589332581,0.9889040589332581
+"Today, CVS Health, serve, 185 million people across the u.s. and we are uniquely positioned to help them navigate their Healthcare journey and the past few weeks.",154.4,166.1,positive,0.997032880783081,0.997032880783081
+"Since I took on this role, I have seen firsthand and the dedication pride and commitment of our employees to CVS health and our vision to deliver lower cost better experiences and Better Health outcomes for our members clients and patients I began my career at Aetna, and that's spent the last 37 years managing, Health Care Services, teams with the focus on driving Innovation, strong execution, and consistent financial performance.",166.1,193.6,positive,0.9943175911903381,0.9943175911903381
+Our career has been defined by navigating through change and evolving markets.,193.6,198.7,neutral,0.9995518326759338,0.0
+Is the leader Caremark.,200.0,201.1,positive,0.9981054067611694,0.9981054067611694
+"I engage with health plans, employers pharmacies and the broader Health Care delivery system in our country.",201.1,206.7,positive,0.9973999261856079,0.9973999261856079
+These experiences gave me a diverse set of perspectives on the challenges and opportunities inherent to our system.,206.7,214.5,positive,0.9736223220825195,0.9736223220825195
+I've mobilized teams who have helped reshape the pharmacy benefit landscape by lowering cost increasing transparency and driving greater accessibility.,214.9,224.3,positive,0.9982432126998901,0.9982432126998901
+Many of those Innovations have been made possible by integrating the sets across this Enterprise at CVS Health.,224.3,233.0,neutral,0.9975718855857849,0.0
+"Each of our businesses is formidable and its own, right?",233.0,236.4,neutral,0.9987509250640869,0.0
+"We have the leading PBM, the best run Pharmacy in this country.",236.8,241.2,positive,0.9981050491333008,0.9981050491333008
+The storied franchise through Aetna and Industry leading Healthcare delivery assets or collection of businesses and on reach and capabilities.,241.2,251.5,neutral,0.9996144771575928,0.0
+Allow us to leave the industry forward with Innovative and Market Moving Solutions.,251.5,256.3,positive,0.9979907274246216,0.9979907274246216
+We were Pioneers in advancing the biosimilar adoption by establishing a CO manufacturing capacity through Cordova's making the necessary formulary changes with Caremark and executing through our CVS specially operations.,258.2,272.6,positive,0.9982089996337891,0.9982089996337891
+They were our leadership and Innovation.,274.0,276.0,neutral,0.9995162487030029,0.0
+We were able to drive down commercial specially trend for clients that use our integrated biosimilar approach to 1.3 percent the lowest level in recent history.,276.1,287.7,positive,0.9924267530441284,0.9924267530441284
+We continue to expand our product offering and drive Innovation for Aetna.,287.8,291.4,positive,0.9982681274414062,0.9982681274414062
+"Self-insured customers last month, we introduced simple pay, the differentiated offering for our commercial customers that Greater price certainty before a visit or treatment instead of bills.",291.4,305.6,positive,0.9972611665725708,0.9972611665725708
+And benefit details members receive just one simple monthly statement that summarizes all of their medical and Pharmacy claims.,305.6,312.8,neutral,0.9992448091506958,0.0
+Its offering provides a simpler end-to-end member experience and access to affordable.,313.9,319.2,positive,0.9897865056991577,0.9897865056991577
+Quality Innovative Healthcare remembers and plan sponsors.,319.4,323.5,neutral,0.9958192110061646,0.0
+"In addition, this product has been shown to drive a 60% increase in the use of top quality providers and a 12 percent total cost of care savings for employers and members.",324.7,337.1,positive,0.9980748891830444,0.9980748891830444
+Last month.,337.9,338.7,neutral,0.9988445043563843,0.0
+"The MS, released his 2025 star ratings, CVS, Health Integrated teams helped Aetna, deliver an exceptional result.",338.7,346.4,positive,0.9982525706291199,0.9982525706291199
+We built upon our strong momentum from last year with 88% of our Medicare Advantage members and forced our plans or higher.,346.4,354.4,positive,0.9981964230537415,0.9981964230537415
+Higher and more than two out of every three Aetna ma members and a plan rated four and a half Stars.,354.5,360.5,positive,0.9976847171783447,0.9976847171783447
+Our commitment to outstanding service resulted in our highest ever member experience score since CMS launch the quality bonus to our program in 2012.,360.5,369.7,positive,0.9982116222381592,0.9982116222381592
+"This was an impressive result, particularly as CMS continues to raise the bar, on what it takes to achieve a four star rating.",371.5,378.8,positive,0.9980722665786743,0.9980722665786743
+"During our success, in this, crucial area was achieved by enhancing our cross.",379.6,383.5,positive,0.9982008934020996,0.9982008934020996
+"Enterprise processes, and driving focused, and deliberate execution.",383.5,388.2,neutral,0.999071478843689,0.0
+Strengthening our position for the future.,388.3,391.4,positive,0.9983502626419067,0.9983502626419067
+This framework and approach are critical elements.,391.4,394.4,neutral,0.9995226860046387,0.0
+As I Look to lead this organization through the opportunities and challenges ahead.,394.4,399.4,neutral,0.9995436072349548,0.0
+"Ed, it will also require the right leadership.",400.1,402.6,neutral,0.9994454979896545,0.0
+Team.,402.6,403.4,neutral,0.9884114265441895,0.0
+"Today, we announced two leadership appointments that will help us drive better performance across the Enterprise and at Aetna.",403.4,410.0,positive,0.9981503486633301,0.9981503486633301
+Specifically first Prime Shaw who has been running our Pharmacy and consumer.,410.0,415.9,neutral,0.9995156526565552,0.0
+Wellness business is elevated to group president and will now also be responsible for the health services segment s. We appointed Steve Nelson as president of Aetna.,415.9,426.5,neutral,0.999276340007782,0.0
+"Steve is an industry veteran who has successfully LED diverse managed care, companies and driven Innovation and growth throughout his career.",427.5,436.1,positive,0.9105883836746216,0.9105883836746216
+Steve was a former CEO of United Healthcare and held.,437.2,440.1,neutral,0.999295711517334,0.0
+Several leadership roles with a proven track record of delivering growth.,440.1,444.2,positive,0.992426872253418,0.992426872253418
+Profitability.,444.6,445.6,neutral,0.9941014647483826,0.0
+Improved Employee Engagement and customer satisfaction.,446.0,449.1,positive,0.9982037544250488,0.9982037544250488
+I am confident both Prem and Steve will help us Advance our strategy and enable us to realize opportunities across Our businesses.,450.0,458.3,positive,0.9983375072479248,0.9983375072479248
+"Shifting now to the results in the third quarter, we delivered adjusted earnings per share of a dollar 95 total revenues for the company of more than 95 billion dollars.",460.0,470.1,neutral,0.899882435798645,0.0
+"CVS health is made up of three attractive operating segments, which are all critical to the Health Care system to of those segments, continue to perform consistent with our expectations.",470.3,480.9,positive,0.9982840418815613,0.9982840418815613
+"Our health services segment had another strong quarter, while delivering on our commitments, to lower drug cost, to our clients and members, our Pharmacy and consumer Wellness.",482.5,491.7,positive,0.9982588887214661,0.9982588887214661
+"Business continues to be the best run, National Pharmacy, and the country increasing its share of scripts filled and delivering, important Community Health Access Across the Nation results.",491.7,503.0,positive,0.9982283711433411,0.9982283711433411
+"In our Healthcare benefits, business, remain challenged.",503.0,505.7,negative,0.9988822340965271,-0.9988822340965271
+As a result of continued elevated levels of utilization.,505.8,509.1,negative,0.9977226853370667,-0.9977226853370667
+"While we are clearly under performing at H CB today, this business has incredible earnings potential and is an essential element to our strategy.",509.9,519.1,neutral,0.9962559938430786,0.0
+We expect the elevated levels of utilization will continue to pressure or 2024 performance.,520.2,525.5,negative,0.9989107847213745,-0.9989107847213745
+"And as a result, we are not providing a formal Outlook today.",525.5,529.0,neutral,0.9720324277877808,0.0
+Although Tom will provide some comments on what we may expect.,529.9,533.1,neutral,0.9996128678321838,0.0
+"Directionally I appreciate and understand your desire for us to provide guidance at this stage establishing credibility and earning, your trust is one of my top priorities, as the new leader, a CVS health.",533.1,545.9,positive,0.9523495435714722,0.9523495435714722
+"I recognize that in order to achieve that any guidance, we provide should be achievable, but clear opportunities for our performance.",545.9,553.7,neutral,0.9994825124740601,0.0
+This must be a core principle in order to deliver on that commitment to you.,553.8,559.2,neutral,0.999427318572998,0.0
+"I want to spend more time, understanding the complexities and challenges facing our business.",559.2,564.6,neutral,0.9992951154708862,0.0
+And will provide an update when appropriate.,565.2,567.3,neutral,0.9986592531204224,0.0
+"There are clearly both macro and Company specific factors driving the challenges within our Aetna business, the entire industry has seen pressure including elevated.",568.8,577.8,negative,0.9988341927528381,-0.9988341927528381
+Utilization coming out of the covid-19 pandemic and higher Acuity as a result of the Medicaid redeterminations however are recognized that we have been more acutely impacted than others and the industry.,577.8,590.5,negative,0.997088611125946,-0.997088611125946
+"As a result of our disappointing star ratings for 2024, we began the year with the known and temporary reimbursement challenge.",592.2,599.4,negative,0.9989230036735535,-0.9989230036735535
+"When we priced our Medicare Advantage business for 2024, we clearly underestimated, the medical cost and this Rising Trend environment.",601.0,608.9,negative,0.9966905117034912,-0.9966905117034912
+We are pretty rich benefits which exacerbated our utilization pressures and group membership rapidly.,608.9,614.8,negative,0.9841943383216858,-0.9841943383216858
+"Our individual exchange business, another area where we had a large increase in membership has seen pockets of higher utilization, and several disappointing risk adjustment updates.",616.2,627.1,negative,0.9984343647956848,-0.9984343647956848
+"These miscalculations during the 2023 bit processes, have significantly burdened Aetna as current results.",627.2,633.9,negative,0.9989535808563232,-0.9989535808563232
+This performance is unacceptable.,634.0,636.5,negative,0.9990490078926086,-0.9990490078926086
+"However, I am confident and the long-term prospects of Aetna, we will make the hard choices and take the necessary actions to drive a multi.",636.7,645.9,positive,0.9981350898742676,0.9981350898742676
+Year earnings recovery at Aetna.,646.0,647.6,positive,0.9979131817817688,0.9979131817817688
+Our benefit design and price changes and Medicare Advantage.,647.6,651.7,neutral,0.9990389347076416,0.0
+And the individual exchange are down payments on this enduring commitment.,651.7,656.2,neutral,0.9984214305877686,0.0
+We are making Mark progress to realign the Aetna organization and enhanced management processes.,658.2,663.2,positive,0.998250424861908,0.998250424861908
+We have taken meaningful steps to ensure the stability of the Aetna business and strengthen the leadership team.,663.2,669.3,positive,0.9982459545135498,0.9982459545135498
+In addition to the appointment of Steve Nelson.,669.3,672.0,neutral,0.9957000017166138,0.0
+"We also recently added and Rihanna santangelo a season Managed Care CFO to the Aetna organization who has also been working closely with me, Tom and our chief operating officer Katrina gura's to help Drive operational enhancements.",672.5,687.5,positive,0.9970582723617554,0.9970582723617554
+Improve forecasting and greater accountability or risk management processes have been restructured to pull underwriting and pricing Authority out of the business units and into the financial Chang.,688.0,699.5,positive,0.9966714382171631,0.9966714382171631
+This realignment will help improve transparency and accountability as we execute our margin recovery and drive profitable growth.,699.8,707.3,positive,0.9982172846794128,0.9982172846794128
+"Of course, Tom and I will work closely with Steve Katrina and and Rihanna to scrutinize and support the underwriting and pricing decisions.",708.5,715.7,positive,0.9610110521316528,0.9610110521316528
+Going forward.,715.7,716.8,neutral,0.9980292916297913,0.0
+"We've also been making operational changes identifying and prioritizing those gaps and inefficiencies, that create the most significant impacts to Performance.",717.9,726.7,positive,0.9932082295417786,0.9932082295417786
+"Our teams have been addressing the challenge that's trained, clinical operations, by improving, Staffing and training.",727.8,733.1,positive,0.9978476762771606,0.9978476762771606
+We are utilizing technology to automate and streamline processes.,734.4,737.9,positive,0.9982142448425293,0.9982142448425293
+"For example, through the power of AI, we have simplified clinical case preparation and meaningfully reduce the amount of time.",738.4,746.0,positive,0.9981812238693237,0.9981812238693237
+"Our care managers, spend, on, Case Prep.",746.0,748.4,neutral,0.9993221759796143,0.0
+"We are improving our services and claim operations, increasing our accuracy and reducing abrasion for members and providers.",749.4,757.6,positive,0.9981426000595093,0.9981426000595093
+"By utilizing Technologies, we are driving greater insights across Aetna, including expanded integration with the Caremark team to understand and manage Pharmacy, spend and enhance Data Insights to improve our ability to rapidly identify emerging utilization trends.",758.6,776.3,positive,0.9982395172119141,0.9982395172119141
+They're working that day is underway and we are confident.,777.7,780.4,positive,0.9981858134269714,0.9981858134269714
+We are taking the right steps to address the underlying issues and drive improved performance with that program to our Pharmacy and consumer Wellness business.,780.4,788.7,positive,0.9982359409332275,0.9982359409332275
+"We continue to effectively navigate a challenging and dynamic consumer backdrop, our performance reflects, strong execution, and the benefit of strategic investments in our workflows and our colleagues.",788.7,801.5,positive,0.9982739686965942,0.9982739686965942
+This quarter we achieved another record higher Retail Pharmacy.,801.5,805.6,positive,0.9982622265815735,0.9982622265815735
+Script share at Three percent and impressive accomplishment as we continue to optimize our store footprint.,805.6,813.7,positive,0.9981977343559265,0.9981977343559265
+"By the end of November, we will have completed.",814.7,816.6,positive,0.9929774403572083,0.9929774403572083
+Our previously announced three-year store optimization initiative targeting 900 stores and expect to close approximately 270 stores and 2025.,816.6,827.6,positive,0.9434525966644287,0.9434525966644287
+We recognize the importance of retail pharmacy.,828.2,830.4,neutral,0.9487898945808411,0.0
+"In the communities we serve and will continue to be thoughtful and deliberate as we execute on our footprint, optimization efforts, We are progressing our transition to the CVS cost management model and have reached agreements covering more than half of our total commercial scripts, the ongoing discussions with their large, PBM Partners remain active and constructive as we move forward with the full commercial contract, implementation on January 25.",830.4,857.5,positive,0.9982216954231262,0.9982216954231262
+"You have also been deliberate and enhancing the durability and strength of our store operations to ensure we consistently serve our role as a community, help destination.",859.3,868.6,positive,0.9982726573944092,0.9982726573944092
+"This was clear on the aftermath of the recent hurricanes, our colleagues were instrumental in ensuring our operations were back online quickly.",869.6,877.6,positive,0.9851586222648621,0.9851586222648621
+"With most stores open within 48 hours, we utilized our Dynamic approach to workload sharing capability used across most of our Fleet allowing us to rapidly recover.",878.0,889.0,positive,0.9971389770507812,0.9971389770507812
+"Packed the stores, ensure patient access to critical medications and provide continuity of care for our customers.",889.1,895.6,positive,0.9980159997940063,0.9980159997940063
+And our Pharmacy Services business.,897.2,898.8,neutral,0.9990113973617554,0.0
+"We had another very strong Quarter delivering on our commitments, to our clients and customers in spite of the intense scrutiny and rhetoric that Caremark in the PBM industry base.",898.8,909.2,positive,0.9980769157409668,0.9980769157409668
+We continue to play a crucial role in managing drug costs in this country.,909.2,912.9,positive,0.9981339573860168,0.9981339573860168
+I've highlighted the progress we've made on the biosimilar space and our customers continue to see the value that we're delivering with our capabilities.,913.5,921.2,positive,0.9983282685279846,0.9983282685279846
+We are once again position to close out.,923.3,925.7,positive,0.9981974959373474,0.9981974959373474
+A robust selling season achieving a retention rate in the high 90s.,925.7,930.0,positive,0.998267650604248,0.998267650604248
+"We continue to offer our clients choice, and Innovation and our true cost offering is resonating in the market for 20-25 clients representing 70% of our commercialized have chosen to implement multiple elements of the true cost model and to their benefit design options.",930.8,946.4,positive,0.998231828212738,0.998231828212738
+"And finally, our Healthcare delivery business to continue to progress our strategy of delivering Superior Care to the patient's.",948.0,954.4,positive,0.9982903599739075,0.9982903599739075
+"We serve signified, deliberate, another strong quarter Aetna, member served by signify have nearly doubled compared to last year supported by our ability to utilize touch points across CVS health or Enterprise connections.",954.4,969.1,positive,0.9981801509857178,0.9981801509857178
+"Also continue to accelerate patient growth at Oak Street are at risk membership, is up 32% from the same quarter last year, And the number of Aetna members enrolled at Oak Street has approximately quadrupled since the close of the acquisition through thoughtful benefit design.",969.1,986.1,positive,0.9982477426528931,0.9982477426528931
+"We continue to introduce Aetna, members to high quality providers, like Oak Street Health, allowing us to improve member experiences and deliver Better Health outcomes.",986.1,995.2,positive,0.9982818365097046,0.9982818365097046
+"As we look ahead to 2025 and Beyond, there are reasons to be optimistic and I'm excited about our path forward.",997.0,1003.7,positive,0.9983775615692139,0.9983775615692139
+We have implemented a disciplined approach to Medicare Advantage benefit design.,1003.7,1007.6,positive,0.9981864094734192,0.9981864094734192
+We continue to accelerate progress on our Innovative Pharmacy models and biosimilar strategy.,1007.6,1013.9,positive,0.9982781410217285,0.9982781410217285
+We've delivered wins in both Caremark and Aetna selling season and we are rapidly advancing.,1013.9,1020.7,positive,0.9982660412788391,0.9982660412788391
+The integration of our health care delivery assets.,1020.7,1023.3,neutral,0.9987757802009583,0.0
+"We're making the necessary changes to return our business to profitable growth in 2025, we are committed to a discipline Financial policy and with improved profitability expect to strengthen our balance sheet.",1024.8,1038.2,positive,0.9983396530151367,0.9983396530151367
+We have strong leadership across the country.,1038.9,1040.9,positive,0.9983384609222412,0.9983384609222412
+We have a powerful collection of businesses operating in some of the most critical areas of healthcare which provide us with a unique opportunity to deliver value for our customers colleagues and shareholders.,1041.6,1052.2,positive,0.9981081485748291,0.9981081485748291
+"I also want to extend our appreciation to our over 300,000 colleagues.",1053.4,1058.8,neutral,0.9995194673538208,0.0
+"I'm grateful for your continued dedication for our collaboration to drive, continuous Improvement.",1058.9,1064.8,neutral,0.8476746678352356,0.0
+"And for all that you do every single day, for the millions of customers and members, we serve with that, I'll pass the call over to Tom Tom.",1064.8,1073.6,neutral,0.9995675683021545,0.0
+Thank you David and thanks to everyone for joining us this morning.,1074.9,1078.0,neutral,0.9994534850120544,0.0
+I'll start with a few highlights on total company performance.,1078.6,1081.4,neutral,0.9996181726455688,0.0
+"Third quarter revenues were approximately ninety five point four billion dollars an increase of approximately 6% over the prior year quarter primarily reflecting growth in our health care benefits, and Pharmacy and consumer Wellness.",1082.2,1094.2,positive,0.9982615113258362,0.9982615113258362
+"Segments, we delivered adjusted operating income of approximately 2.5 billion dollars and adjusted EPS of a dollar.",1094.2,1101.7,positive,0.7328197956085205,0.7328197956085205
+99?,1101.7,1102.0,neutral,0.9977403879165649,0.0
+Year-to-date cash flow from operations.,1103.2,1105.4,neutral,0.9991632699966431,0.0
+"Were approximately 7.2 billion dollars a lower result as compared to the same period last year primarily due to the timing of CMS receipts and the impact of higher utilization on each CD, our necks Let's look at the performance in each of our segments in our Healthcare benefits segment.",1105.6,1123.3,negative,0.9985038042068481,-0.9985038042068481
+"We grew revenues to approximately thirty three billion dollars, an increase of over 25 percent year over year reflecting growth and all lines of business.",1123.3,1131.2,positive,0.9982811212539673,0.9982811212539673
+"Medical membership grew to approximately 27 point, 1 million, an increase of 178,000 member sequentially primarily reflecting growth in the Medicare and individual Exchange.",1131.2,1142.8,positive,0.9982469081878662,0.9982469081878662
+"During the quarter of the segment generated, an adjusted operating loss of 924 million dollars.",1144.2,1149.7,negative,0.9989972710609436,-0.9989972710609436
+This result includes the impact of Premium deficiency reserves of approximately 1.1 billion dollars recorded primarily in our Medicare and individual exchange businesses.,1150.4,1160.6,neutral,0.9995482563972473,0.0
+As a reminder pdrs generally measure variable losses in a product and do not contemplate fixed expenses.,1161.2,1167.7,neutral,0.9995738863945007,0.0
+"The aggregate of the pdrs was comprised of approximately six hundred and seventy million dollars of health care costs, and 394 million dollars of operating expenses, specifically related to the right off of unamortized deferred acquisition, cost substantially, all of the charges were associated.",1168.8,1185.3,neutral,0.9991523027420044,0.0
+"With the 2024 policy, here Shifting, the earnings Cadence between the third and fourth quarters.",1185.3,1191.0,neutral,0.9995379447937012,0.0
+Are medical benefit ratio of ninety.,1192.5,1194.2,neutral,0.9852227568626404,0.0
+"Five point two percent increase nine hundred and fifty basis points from the prior year quarter, including a 120 basis, point impact from the pdrs.",1194.2,1202.7,positive,0.9979742169380188,0.9979742169380188
+"This increase was primarily driven by higher utilization, higher Acuity and Medicaid.",1203.2,1207.9,neutral,0.7681785225868225,0.0
+The premium impact of lower stores.,1207.9,1210.1,negative,0.9969000816345215,-0.9969000816345215
+"Ratings, for payment year 2024 and an update to our 2020 for individual exchange risk adjustment accrual, Medical costs remain elevated in our Medicare book, and at levels above, what was contemplated in our previous guidance, pressure is largely attributable to the same category as we discussed last quarter including inpatient outpatient, supplemental, benefits and Pharmacy during the third quarter.",1210.1,1236.2,negative,0.9985820055007935,-0.9985820055007935
+We also saw unfavorable development of 2024 medical costs primarily related to second quarter dates of service which is adversely impacted our Trend outlook for the remainder of the year.,1236.3,1247.7,negative,0.9989922642707825,-0.9989922642707825
+"Medical costs, and our individual exchange business.",1249.5,1251.8,neutral,0.9991496801376343,0.0
+"Also accelerated during the quarter, the broad levels of higher utilization above our prior expectations.",1251.8,1258.0,positive,0.9980645775794983,0.9980645775794983
+"The pressure we've experienced thus far, has been primarily driven by certain high-cost geographies where the combination of our growth and metal tear mix have led to higher medical costs.",1258.8,1269.2,negative,0.9970118999481201,-0.9970118999481201
+"During the third quarter, we also received updated risk adjustment data for individual exchange business, as a result, we increase our risk adjustment accrual for the 2024 plan year by approximately 275 million dollars in the quarter.",1270.2,1286.2,positive,0.7595952153205872,0.7595952153205872
+"We will continue to evaluate our revenue accruals for potential additional pressure as we receive updated data, on our risk for is later this year and into early 2025, I've in our Medicaid business consistent with others in the industry.",1286.4,1300.6,neutral,0.9975693821907043,0.0
+We continue to experience higher Acuity related to the impact of redeterminations.,1300.6,1305.7,positive,0.9982119798660278,0.9982119798660278
+We believe the level of dislocation between Acuity and rates stabilized.,1305.7,1310.6,positive,0.9968336224555969,0.9968336224555969
+Towards the end of the third quarter.,1310.6,1311.8,neutral,0.9985834360122681,0.0
+"We continue to work closely, with our state Partners to align rates with changes in Acuity.",1312.6,1317.7,positive,0.9980490207672119,0.9980490207672119
+"Although the engagement with our state Partners has been constructive, we have seen some rate updates in the second half of 2024, they remain inadequate to cover.",1317.7,1327.0,negative,0.9983806610107422,-0.9983806610107422
+Current levels of elevated acuity.,1327.4,1329.2,positive,0.9964540004730225,0.9964540004730225
+"In light of the utilization pressure, as we have seen across the healthcare benefits segment in 2024, we continue to closely, watch our group Commercial Business, the date pressures.",1331.1,1341.0,neutral,0.9305016994476318,0.0
+In this business have largely been manageable as we have proactively pushed rate to cover emerging medical cost rents.,1341.0,1347.6,positive,0.9970400929450989,0.9970400929450989
+"This will result in lower commercial risk membership in 2025 hindering, our ability to grow earnings in this business These coins payable the end of the quarter was forty four point six days up.",1347.6,1360.2,negative,0.9946603178977966,-0.9946603178977966
+One point five days sequentially primarily driven by the impact of the premium deficiency.,1360.2,1364.9,negative,0.9974861145019531,-0.9974861145019531
+Reserves CCP was down five point.,1364.9,1367.9,negative,0.9982593655586243,-0.9982593655586243
+Seven days from the prior year quarter primarily driven by growth in our Medicare business and the impact of increased Pharmacy Trends.,1367.9,1375.2,positive,0.998039186000824,0.998039186000824
+We remain confident in the adequacy of our Reserves.,1375.3,1378.6,positive,0.998320996761322,0.998320996761322
+"Our health services segment delivered, another strong quarter.",1380.0,1383.5,positive,0.9983088970184326,0.9983088970184326
+"We generated revenue of forty four point, 1 billion dollars during the quarter.",1383.6,1387.5,positive,0.9921475052833557,0.9921475052833557
+"A decrease of approximately six percent year over year, primarily driven by the previously, announced loss of large client and continued.",1387.6,1394.6,negative,0.9988359808921814,-0.9988359808921814
+"Pharmacy, client price improvements.",1394.6,1397.2,positive,0.854823887348175,0.854823887348175
+These decreases were partially offset by Pharmacy.,1397.2,1399.6,neutral,0.9874562621116638,0.0
+Drug mix increased contributions from our health care delivery assets and growth in Specialty Pharmacy.,1399.6,1405.7,positive,0.9982506632804871,0.9982506632804871
+Adjusted operating income of approximately 2.2 billion dollars increase 17 percent from the prior year.,1407.3,1412.7,positive,0.9982048273086548,0.9982048273086548
+"Quarter reflecting improved, purchasing economics, partially offset by continued.",1412.7,1417.4,positive,0.9978790283203125,0.9978790283203125
+"Pharmacy, client price improvements and the previously announced lost a large client.",1417.4,1421.5,negative,0.9983184337615967,-0.9983184337615967
+"Total, Pharmacy claims process in the quarter were approximately 484 million and Total Pharmacy Services membership.",1423.7,1430.3,neutral,0.9995449185371399,0.0
+As of the end of the quarter was approximately 90 million We continue to be encouraged by the growth of our Healthcare delivery at sets.,1430.4,1437.5,positive,0.9982402324676514,0.9982402324676514
+"As David mentioned signified, continued, its strong performance in the quarter, generating Revenue growth of approximately 37 percent over the prior year quarter.",1437.9,1446.4,positive,0.9982540011405945,0.9982540011405945
+"Oak Street, Revenue increased significantly in the quarter growing approximately 36% driven by strong membership growth at risk members, The increased by approximately 32 percent, compared to the same quarter last year supported by our ability to use to Each points across CVS Health.",1446.4,1464.6,positive,0.9982168078422546,0.9982168078422546
+We are encouraged by Oak streets performance.,1464.6,1467.4,positive,0.9983231425285339,0.9983231425285339
+"In this challenging environment During the quarter or Pharmacy and consumer Wellness segment, generated revenue of approximately thirty, two point, four billion dollars an increase of over 12 percent versus the prior year and over 15% on a same store basis.",1467.4,1482.3,positive,0.9981353282928467,0.9981353282928467
+"Adjusted operating income of nearly one-point-six billion dollars increased approximately 15% versus the prior year driven by increased prescription volume, including increased contributions from vaccines and improved drug purchasing, partially offset by continued.",1483.0,1497.6,positive,0.9981396198272705,0.9981396198272705
+"Pharmacy, reimbursement, pressure, and lowers.",1497.6,1499.9,neutral,0.9875977635383606,0.0
+On store volumes.,1500.0,1501.2,negative,0.9783398509025574,-0.9783398509025574
+"Steam store, pharmacy sales in the quarter, increased by nearly 20% versus the prior year in same store, prescription volume is increased by approximately 9%.",1503.8,1512.0,positive,0.9980992674827576,0.9980992674827576
+"As David mentioned, we continue to grow our Retail.",1512.0,1515.5,positive,0.9983023405075073,0.9983023405075073
+Pharmacy scripture position achieving a share of approximately 27.3%.,1515.5,1520.3,positive,0.9977484345436096,0.9977484345436096
+"Same storefront store sales were down, approximately one percent versus the same quarter last year.",1520.3,1526.4,negative,0.9988952875137329,-0.9988952875137329
+One other item.,1527.5,1528.2,neutral,0.9992786049842834,0.0
+I would like to highlight for investors is that we took a restructuring charge of nearly one point two billion dollars in the quarter.,1528.2,1533.7,negative,0.9983879327774048,-0.9983879327774048
+"This amount reflects several components, including impairment charges for approximately 270 stores.",1534.3,1539.4,negative,0.9914809465408325,-0.9914809465408325
+We expect to close in 2025 costs related to the discontinuation of non core businesses and costs associated with Workforce optimization.,1539.4,1548.0,neutral,0.5042965412139893,0.0
+"Shifting now to cash flow in the balance sheet for a third quarter, we generated year-to-date cash flow from operations of approximately 7.2 billion dollars during the quarter we returned 837 million dollars to shareholders to our quarterly dividend and we ended the quarter with approximately 1.2 billion dollars of cash at the parent and unrestricted.",1549.8,1569.2,positive,0.9966135621070862,0.9966135621070862
+"Subsidiaries Our leverage ratio, at the end of the quarter was approximately 4.6 X, which is above our long-term Target, we remain committed to maintaining our current investment-grade ratings and expect our leverage to return to more normalized levels as we execute on margin recovery in the Aetna business.",1569.2,1587.8,positive,0.9979469180107117,0.9979469180107117
+"As David mentioned, we are not providing a formal output for 2024 at this stage.",1590.2,1594.8,neutral,0.9985620379447937,0.0
+"However, we would like to provide some directional commentary to help.",1595.4,1598.7,neutral,0.9993981122970581,0.0
+You better understand how we see the moving parts.,1598.7,1601.0,neutral,0.9994239807128906,0.0
+Starting with our health services and Pharmacy and consumer Wellness segments.,1602.2,1605.7,neutral,0.999572217464447,0.0
+"As we have previously, highlighted those businesses continue to deliver strong results in pcw, while the immunization season got off to a stronger start than we expected, shifting demand into the third quarter.",1606.3,1618.9,positive,0.9982568621635437,0.9982568621635437
+"Strong script growth continues to give us confidence in the previous Outlook, we shared with investors.",1619.2,1624.0,positive,0.9983263611793518,0.9983263611793518
+"In the health services segment, Caremark surnames progression in 2024 started slow but a steadily built momentum over the second and third quarters.",1625.4,1633.6,positive,0.9976450800895691,0.9976450800895691
+While we maintain a cautious outlook on our Healthcare delivery business as we evaluate the potential for additional Medicare Trend related risk.,1633.6,1641.2,negative,0.9298276305198669,-0.9298276305198669
+We remain confident in our ability to deliver on the health services segment earnings output.,1641.2,1646.2,positive,0.9983720183372498,0.9983720183372498
+We share with investors on our second quarter call.,1646.2,1648.6,neutral,0.9995265007019043,0.0
+Within Healthcare benefits.,1649.7,1651.2,neutral,0.9994028806686401,0.0
+We continue to Grapple with both environmental and Company specific challenges.,1651.2,1655.9,negative,0.9984452128410339,-0.9984452128410339
+"As you have seen with our third quarter results, similar to others within the industry.",1655.9,1661.1,neutral,0.999491810798645,0.0
+"Medicare Advantage, utilization continues to be elevated, we have also grown membership, very rapidly with a very rich benefit offering, which has resulted in benefit induced utilization Medicaid continues to be pressured by the dislocation between Acuity and rates as well as seeing some pockets of higher utilization.",1661.1,1680.4,positive,0.9962093830108643,0.9962093830108643
+"We have also seen rapid growth and our individual exchange business, which has led to several disappointing updates on risk-adjusted revenue, and in some states higher than expected utilization.",1680.4,1691.9,negative,0.9770210385322571,-0.9770210385322571
+Even to date the combination of these factors has challenged our visibility and our 20 24 hour.,1693.4,1699.8,negative,0.9986624717712402,-0.9986624717712402
+"Well, we are not providing formal guidance today.",1700.7,1703.6,neutral,0.9993855953216553,0.0
+Let me walk you through one potential scenario.,1703.7,1706.4,neutral,0.9994874000549316,0.0
+"If Trends develop unfavorably and persist that the significant levels, we have experienced in recent months, our fourth quarter reported and BR could increase by over seven hundred basis points as compared to the fourth quarter of 2023.",1707.3,1722.1,negative,0.7363556623458862,-0.7363556623458862
+"Additionally, in this scenario, we would likely need to take a PDR in our group Medicare Advantage, business related to 2025 dates of service which would further pressure 2024 results.",1722.9,1734.5,negative,0.9978317618370056,-0.9978317618370056
+"Despite challenges in 2024, we have taken deliberate actions that position us for growth in 2025 and Beyond.",1736.6,1744.3,positive,0.9982398748397827,0.9982398748397827
+"Well, we will not give formal 2025 guidance.",1744.4,1746.9,neutral,0.9991570711135864,0.0
+"Until next year, when we have better visibility on our 2020 for medical cost base line and are changing membership.",1746.9,1753.5,neutral,0.9885146021842957,0.0
+I want to provide an update on some of the key headwinds entails starting first with the head ones and our pcw segment.,1753.6,1763.0,neutral,0.9984910488128662,0.0
+We expect earnings to decline in line with our long-term guidance framework.,1763.0,1767.3,negative,0.9987481832504272,-0.9987481832504272
+"As David mentioned, we are encouraged by the adoption of CVS cost Vantage and the shift of commercial scripts, to this model on January 1st.",1767.8,1775.3,positive,0.9981315732002258,0.9981315732002258
+We expect 2025 to be a transition year that positions us for out performance of our long-term growth Target in future years.,1775.3,1783.0,positive,0.9982811212539673,0.9982811212539673
+"We also remain cautious in our outlook for front store sales, which have been pressured and recent quarters consistent with the broader macroeconomic backdrop.",1784.9,1793.9,negative,0.9986097812652588,-0.9986097812652588
+"As we previously discussed, we expect the return of certain variable corporate expenses We also expect higher interests as we annualize the expense from our May 20 2014 and seeing a decline in net investment income and modest dilution from the increase in our shared count.",1795.0,1811.4,neutral,0.9964474439620972,0.0
+Shifting.,1813.0,1813.4,neutral,0.9479101896286011,0.0
+Now to the Tailwinds we expect Improvement and contributions from our health care benefits segment.,1813.4,1819.4,positive,0.9982267022132874,0.9982267022132874
+"We Believe are deliberate approach to our 2025, Medicare Advantage bids and our Focus changes to our footprint which we expect to result in membership disenrollment of 5 to 10%.",1819.5,1830.0,positive,0.9967384934425354,0.9967384934425354
+When combined with our improved star ratings will result in margin recovery.,1830.0,1835.5,positive,0.9981487989425659,0.9981487989425659
+This is a significant first step on our journey back to Target margins of three to five percent.,1835.5,1841.5,positive,0.9978801012039185,0.9978801012039185
+"We continue to view the dislocation between Acuity and rates and Medicaid as temporary and expect this to be resolved over, subsequent pricing Cycles.",1843.2,1851.5,neutral,0.9779406785964966,0.0
+"However, we do not expect the dislocation to be fully resolved before the end of 2025.",1851.5,1857.3,negative,0.9981428384780884,-0.9981428384780884
+"We expect improvement in our individual exchange business, as a result of our pricing actions and deliberate product repositioning, which we project will decrease membership in this block of business.",1858.9,1869.5,positive,0.9976995587348938,0.9976995587348938
+"In 2025, we will continue to refine our product offerings for long-term sustainability.",1869.5,1875.4,positive,0.998212456703186,0.998212456703186
+We also expect underlying growth in our health services business including growth and Pharmacy Services.,1876.7,1882.1,positive,0.9983313679695129,0.9983313679695129
+As we continue to drive value for our clients and incremental improvement in our Healthcare delivery businesses.,1882.4,1888.2,positive,0.998304009437561,0.998304009437561
+"We expect our initial outlook for this segment will be below our long-term growth framework, but will prudently provide opportunities for upside, over the course of the year.",1888.9,1897.9,neutral,0.9814821481704712,0.0
+"finally, we have executed the first step of our multi-year cost savings initiative that we expect will generate over 500 million dollars next year, helping to offset the return of variable expense in 2025 I've taking a step back.",1899.1,1914.6,positive,0.998173713684082,0.998173713684082
+2024 has been a disappointing year for performance in our Healthcare benefits segment.,1915.1,1919.1,negative,0.9989879727363586,-0.9989879727363586
+We could experience mid-single digit percentage losses in our Medicare business.,1919.1,1924.0,negative,0.998677670955658,-0.998677670955658
+Our foray into the individual exchange business could result in negative margins that approached double digits.,1924.0,1930.6,negative,0.9987886548042297,-0.9987886548042297
+We're also projecting modest negative margins in our Medicaid business.,1930.7,1934.8,negative,0.9985756874084473,-0.9985756874084473
+"It is possible that our health care benefits business could show operating losses in 2024, after generating over Point five billion of adjusted operating income in 2023.",1935.0,1946.9,negative,0.9975239634513855,-0.9975239634513855
+"Conversely, this means that there are well over three dollars of embedded adjusted EPS, if we could return Aetna, profitability to 2023 levels, open enrollment for both Medicare Advantage.",1948.4,1961.7,neutral,0.9981178045272827,0.0
+And individual exchange has demonstrated that we took meaningful action in curtailing benefits adjusting products and where appropriate raising prices.,1961.7,1971.6,positive,0.9980792999267578,0.9980792999267578
+"Well, we are confident, we have taken the right, initial actions, the road to recovery will take time.",1972.1,1977.6,neutral,0.8087164759635925,0.0
+"We look forward to providing more details on our 2025 Outlook, and those first steps on our journey, we have more clarity on the moving Parts in our Healthcare benefits business.",1978.5,1987.6,neutral,0.9074167013168335,0.0
+"Next year with that, we will now open the call to your questions, operator.",1987.6,1992.3,neutral,0.9992045760154724,0.0
+Thank you.,1994.9,1995.7,neutral,0.9991152882575989,0.0
+We will now begin the question-and-answer session.,1995.9,1998.6,neutral,0.9993687272071838,0.0
+"If you would like to ask a question, please press star.",1998.9,2001.3,neutral,0.9994186162948608,0.0
+Followed by 1 on your telephone keypad.,2001.3,2004.2,neutral,0.999567449092865,0.0
+"As a reminder, if you were using a speakerphone, please remember to pick up your handset before asking your question questions are registered.",2004.2,2013.1,neutral,0.9994518160820007,0.0
+We have the first question on the phone lines from Lisa.,2016.5,2019.8,neutral,0.9994112253189087,0.0
+"Gill will JPMorgan, you may proceed.",2019.8,2023.2,neutral,0.9957612156867981,0.0
+"Thanks very much and thanks for the detail, Tom.",2025.2,2028.9,neutral,0.9994693398475647,0.0
+I just wanted to make sure that I understand a couple of things.,2028.9,2031.6,neutral,0.9989044666290283,0.0
+"One when I think about the ma bids that you put in for 20-25, you talked about and we all saw in the plan finder, you know that the kinds.",2032.0,2040.7,neutral,0.9994006156921387,0.0
+Can you maybe just talk about?,2040.7,2041.8,neutral,0.9991699457168579,0.0
+I know we're only one month and but are you seeing the disenrollment that you expected and to just given that the size of the surprise that we've seen here in the back half of the year?,2041.8,2051.7,negative,0.9982002973556519,-0.9982002973556519
+"You know, the level of confidence that you have.",2052.3,2054.3,neutral,0.9992735981941223,0.0
+"Around the the bids that you did put in for 20-25 if I could understand that and then just secondly you know you talked about Pharmacy, we've heard others, talk about Pharmacy Trends here in the back half of the year really shifting and changing because of the inflation reduction act and changes around catastrophic coverage.",2054.5,2071.5,neutral,0.9127403497695923,0.0
+"Just curious one, did you see that as well specific to those changes?",2071.6,2076.7,neutral,0.9993625283241272,0.0
+And is it benefiting perhaps some of the other sides of your business?,2076.7,2080.2,positive,0.9962809681892395,0.9962809681892395
+I know obviously a really big specialty business and you talked about the strength in The pharmacy business.,2080.2,2087.0,positive,0.9982359409332275,0.9982359409332275
+Let me start with your first question.,2089.8,2092.0,neutral,0.9995575547218323,0.0
+"So we're early in the open enrollment season but you know, I did reiterate the guidance.",2092.0,2099.8,neutral,0.9992536902427673,0.0
+Been giving for a couple of months.,2100.0,2101.4,neutral,0.9992840886116028,0.0
+"Now, our early indicators would suggest that we would be down that in that 5 to 10% range.",2101.4,2107.8,negative,0.9978235960006714,-0.9978235960006714
+On the total book will have more stability on the group book.,2107.8,2111.0,neutral,0.9724295139312744,0.0
+So that's a higher percentages.,2111.0,2112.5,positive,0.9978457689285278,0.9978457689285278
+"Think about the individual and the Dual eligible populations, that will see declines on.",2112.5,2117.6,negative,0.9943031072616577,-0.9943031072616577
+"But we feel me a reasonably good about how the membership is coming in and that it would be within that range that we've been guiding investors to, as you think about ability and confidence, It's in the bids, the bids are clearly designed to improve results mixture, and maybe there's a couple of things I can.",2118.0,2138.3,positive,0.998101532459259,0.998101532459259
+I can talk you through at a high level just to give you a framework to think about that.,2138.3,2142.7,neutral,0.999609649181366,0.0
+"The first is Improvement in stars and so because of the, you know, the contract that we have that are now going to be four stars a better for 20-25 payment year.",2143.4,2152.4,positive,0.9977460503578186,0.9977460503578186
+That's going to be about an 800 million-dollar headwind.,2152.6,2155.4,negative,0.999030351638794,-0.999030351638794
+No matter what the Baseline is.,2155.6,2156.9,neutral,0.999336302280426,0.0
+"Excuse me, tell wind it, keep doing that.",2157.7,2159.8,neutral,0.9992771744728088,0.0
+"It's used to be a Tailwind it, a headwind, and now it's going to be a Tailwind next year.",2159.9,2163.6,positive,0.9955028891563416,0.9955028891563416
+"The individual blocks of business, we have made a deliberate benefit design changes to supplemental benefits, which will fundamentally change how these benefits function in 2025, which will also improve margins.",2163.6,2178.2,positive,0.9981556534767151,0.9981556534767151
+"Finally, we've both exited underperforming counties, and we've Pulled Under performing products that will impact nearly half a million members.",2178.2,2187.6,positive,0.9394151568412781,0.9394151568412781
+Those changes should also improve profitability in 25.,2187.6,2192.0,positive,0.9981160163879395,0.9981160163879395
+"As many of those members will choose newly designed products, that will have an improved margin profile.",2192.0,2197.1,positive,0.998164713382721,0.998164713382721
+We expect that those changes are going to drive margin expansion and we have when we have a better understanding of what that membership mix looks like for 20-25 as well as our 24 Baseline will be able to better provide specifics on the level of anticipated provement Improvement next year.,2197.6,2213.3,positive,0.9981741905212402,0.9981741905212402
+"As at Lisa, this is David.",2215.2,2216.3,neutral,0.9995119571685791,0.0
+"Maybe just one, one additional follow on here.",2216.3,2219.4,neutral,0.9994580149650574,0.0
+I think one is we are feeling very good about the improvements that we've made going into 25.,2219.9,2225.7,positive,0.9982761144638062,0.9982761144638062
+"So the recognizing obviously, the challenge in 24 we had, we believe we made the appropriate course correction.",2225.7,2232.0,positive,0.9973903298377991,0.9973903298377991
+"Then as it relates to Pharmacy which was your last question, I think this is the unique opportunity of this Enterprise.",2232.0,2237.7,positive,0.9976668357849121,0.9976668357849121
+We the goal here is not to be surprised especially as it relates to the pharmacy costs.,2237.7,2243.7,neutral,0.9940489530563354,0.0
+"We think we've anticipated and contemplated the changes both in Ira, as well as the broader macro trends that we see Within In Pharmacy.",2243.7,2250.5,positive,0.9817144870758057,0.9817144870758057
+"And the goal here, especially with now with the addition of both Steve and Prem we're going to see further integration and not just the pharmacy benefit integration, but more importantly, the medical pharmacy.",2250.5,2260.5,positive,0.9979668259620667,0.9979668259620667
+"Which is a piece that obviously I think is driving some of the, some of the increased costs in the back of the year.",2260.8,2265.5,negative,0.9978368878364563,-0.9978368878364563
+"Thank you as a reminder, we do.",2269.9,2272.5,neutral,0.9988507032394409,0.0
+"Also, you, please limit yourself to one question and one follow-up.",2272.5,2275.4,neutral,0.9993466734886169,0.0
+Did you have any further to please rejoin the queue?,2275.4,2277.8,neutral,0.9992683529853821,0.0
+We have our next question.,2278.2,2279.4,neutral,0.9994211196899414,0.0
+From Justin lake with wolf research.,2279.4,2282.2,neutral,0.996412456035614,0.0
+"Your line is open Thanks, good morning.",2282.3,2286.7,neutral,0.9991567134857178,0.0
+"First, just wanted to clarify the 4q commentary time that you said is potentially up seven hundred basis points or I'm getting to about ninety five and a half percent mlr.",2287.5,2297.7,neutral,0.9972938895225525,0.0
+Does that include the 3D 3Q PDR and the potential Medicare Advantage PDR you mentioned.,2297.7,2304.6,neutral,0.9995309114456177,0.0
+"And then more importantly how should we think about framing 2024 run raid earnings into 2025 trying To understand in a, your, your mlr looks like it's obviously a lot higher in the third quarter and going to be a lot higher in the fourth quarter.",2304.6,2320.1,positive,0.9975652694702148,0.9975652694702148
+Do we need to run rate that in back into the first half?,2320.4,2323.8,neutral,0.9996324777603149,0.0
+"So let's just say 75 cents of earnings kind of decline just trying to understand the the Run rate versus, you know, you're going to report a number for 2024.",2323.8,2333.3,negative,0.9970510005950928,-0.9970510005950928
+But what's the real run rate that we jump off of into 2025?,2333.6,2337.4,neutral,0.9995799660682678,0.0
+Is there a framework that think about that?,2337.4,2339.1,neutral,0.9994457364082336,0.0
+Thanks.,2339.7,2340.0,neutral,0.9988258481025696,0.0
+"Yeah, Justin, let me let me touch on some of your other.",2340.4,2343.7,neutral,0.9993698000907898,0.0
+"First, but I think part of the question that we need to answer in that I think you need to ask yourself is how much of this benefit and we this trend that we're seeing is because of the benefits that we put out into the market.",2344.3,2357.3,neutral,0.9984304308891296,0.0
+"And what kind of utilization is being induced because of that, what kind of membership did we attract?",2357.6,2363.2,positive,0.9908838868141174,0.9908838868141174
+And how much will that profile change with the changing benefits next year?,2363.2,2366.6,neutral,0.9994220733642578,0.0
+And that's part of the open question to your the open question and answering your question.,2366.8,2371.6,neutral,0.999496340751648,0.0
+That I think we want to take a little bit more.,2371.8,2374.1,neutral,0.9958642721176147,0.0
+Time to understand but on your mlr specific comments that is inclusive of the release of the PDR that you can see.,2374.2,2382.6,neutral,0.9996166229248047,0.0
+"That's 700 basis, point increase, but not necessarily inclusive of a PDR and group which will depend on a variety of factors.",2382.6,2389.2,neutral,0.9917586445808411,0.0
+"But let me walk you through, give you a little bit more commentary and collar on what we outlined here.",2389.2,2395.6,neutral,0.9996082186698914,0.0
+"First, I think it's important to just continue to reiterate we Very good about our ability to achieve the guidance.",2395.8,2402.7,positive,0.9977287650108337,0.9977287650108337
+We gave last quarter on both the pcw and the health services side Prince.,2402.7,2406.3,neutral,0.9995074272155762,0.0
+So the open question here is Healthcare benefits for our larger lines of business.,2406.7,2411.1,neutral,0.9995875954627991,0.0
+Second quarter Trend appears to be the high point but the third quarter dates of service are still immature.,2411.5,2417.4,neutral,0.9994691014289856,0.0
+So there are three components to the scenario that we laid out first across all of our major business lines.,2417.8,2424.8,neutral,0.9995841383934021,0.0
+We assume that third quarter Trends would develop unfavorably moving them to the.,2425.0,2429.7,negative,0.9980742931365967,-0.9980742931365967
+Highest levels.,2430.0,2430.6,neutral,0.9974293112754822,0.0
+"We've seen over the last few months and then assuming that they persisted at those levels throughout the fourth quarter second, we assume we saw further deterioration in our risk adjustment accruals on our individual exchange business.",2430.6,2442.9,negative,0.9987547397613525,-0.9987547397613525
+"In the fourth quarter, call it an additional point on gross revenue.",2442.9,2446.2,positive,0.9851248264312744,0.9851248264312744
+"Third, we meet a provision that there could be some modest induced utilization, particularly in Medicare, as individuals looked at their changing benefits and 25 and seek to utilize benefits that will no longer be available next year, you know.",2447.2,2461.8,negative,0.8954417109489441,-0.8954417109489441
+"And then finally, we noted the group Medicare Trend levels that if they persisted at that level, I just reference that could cause us to take an additional PDR in the fourth quarter, but that will really depend on.",2461.8,2472.2,neutral,0.9989045858383179,0.0
+"You know what, we think the Baseline is 424 and how it is that that's going to System 225, so more to come on that.",2472.3,2479.5,neutral,0.9993909597396851,0.0
+"I would note finally or Reserve balances through October, they have been modestly positive but we've continued to see pressure in the more recent dates of service.",2481.1,2491.1,negative,0.9977688789367676,-0.9977688789367676
+"For example, the third quarter.",2491.3,2492.5,neutral,0.9993919134140015,0.0
+Thank you.,2496.5,2497.1,neutral,0.9991152882575989,0.0
+We now have Stephen Baxter with Wells Fargo.,2497.7,2500.5,neutral,0.9994155168533325,0.0
+Please go ahead when you're ready.,2500.6,2502.4,neutral,0.9995421171188354,0.0
+Yeah.,2504.7,2505.0,neutral,0.9958522319793701,0.0
+Hi thanks.,2505.0,2505.8,neutral,0.9985861778259277,0.0
+I'm just a couple of quick ones that you did mention that in response to that question.,2505.8,2509.5,neutral,0.9995038509368896,0.0
+It's important to differentiate the incremental Trend that's coming out of benefits that have already been restructured for 20-25 versus more potentially core areas of utilization.,2509.5,2518.4,neutral,0.99945467710495,0.0
+So maybe could you help us understand better?,2518.4,2520.7,neutral,0.9992094039916992,0.0
+What you saw in the third quarter and then just in the PDR commentary?,2520.7,2524.6,neutral,0.9994149208068848,0.0
+"425, you're citing.",2524.6,2526.2,neutral,0.9988497495651245,0.0
+"You potentially need one for group ma but you're not saying he's 14, individual ma or potentially the exchanges just wondering why are we What not?",2526.2,2533.8,neutral,0.9994044303894043,0.0
+That would be the case.,2533.8,2534.7,neutral,0.9989989399909973,0.0
+Thank you.,2534.7,2535.2,neutral,0.9991152882575989,0.0
+Let me answer the second part first.,2537.7,2539.7,neutral,0.9996151924133301,0.0
+So the way the PD ours are calculated is partially based on how those products are sold.,2539.7,2544.4,neutral,0.9995139837265015,0.0
+"And so, or individual Medicare products or differently group than how our group Medicare products are.",2544.4,2550.2,neutral,0.9995455145835876,0.0
+And as you can imagine the nature of the contracts in the group business tends to be multi-year.,2550.6,2555.7,neutral,0.9995474219322205,0.0
+And so there's less ability to make Improvement year over year and so that business has a different profile going into 25.,2555.7,2563.1,negative,0.9940246939659119,-0.9940246939659119
+Then the individual business in Medicare does or the individual exchange business.,2563.5,2567.8,neutral,0.9995177984237671,0.0
+"Does, you know, we haven't really talked a lot about the exchange business, but you know, that's a ten billion dollar block of Revenue in 2024, with over 1.9 million members, you know, as David noted, we unfortunately grew that business, too fast, we're suffering significant losses, in 24, mostly led by RSVP members.",2567.8,2590.3,negative,0.998713493347168,-0.998713493347168
+"This pressure was compounded by Favorable metal product mix, which skewed to certain geographies, you know.",2591.0,2597.8,negative,0.45084646344184875,-0.45084646344184875
+We have taken as I believe we previously discussed double-digit rate increases across this book for next year.,2597.8,2605.3,positive,0.9980418682098389,0.9980418682098389
+"And as a deliberate consequence of that raid action, we expect, we could shrink that book by as much as 20 to 25 percent next year.",2605.9,2613.4,negative,0.9960541725158691,-0.9960541725158691
+So those actions combined with some of the operational improvements that the teams are making on the ground.,2614.0,2618.8,positive,0.7769726514816284,0.7769726514816284
+"Should also help to improve performance next year, which is part of the reason that it Point we don't anticipate that we would need a PDR in that many individual business.",2619.0,2628.0,positive,0.9977850914001465,0.9977850914001465
+"As it relates to Trend, we have continued to see supplemental benefit, Trends be elevated throughout all of 2024 and that persisted into the third quarter where we've also seen a trend pressure as I noted in the prepared, remarks has been in all The Usual Suspects.",2629.1,2648.1,negative,0.9959478974342346,-0.9959478974342346
+This year.,2648.1,2648.5,neutral,0.997800886631012,0.0
+It's been in patient.,2648.5,2649.7,neutral,0.9994718432426453,0.0
+"It's been in outpatient, although the types of procedures that we've Seen have shifted somewhat, we've continues to pressure on things, like Medical Pharmacy.",2649.7,2658.8,negative,0.9980852603912354,-0.9980852603912354
+You can be particularly on some of the oncology drugs.,2658.8,2661.6,neutral,0.9961867928504944,0.0
+"And so it's a lot of the same things that we have been talking about throughout the whole year, the piece that I was mentioning in terms of the bridge, as there is a, you know, a large portion of that Trend increase, that is a function of some of the supplemental benefits that we have offered, and those have been fundamentally restructured next year for individual, you know, Medicare products and will give you better insight as to what that was worth when we have a better sense as to how the mix is come out.",2662.1,2689.7,neutral,0.9994246959686279,0.0
+And what the Baseline is for 24.,2689.7,2691.1,neutral,0.999457061290741,0.0
+"And Steven, this is David maybe just a quick follow on here.",2692.6,2695.4,neutral,0.9994495511054993,0.0
+This is the third question on the queue for jump off and I think it's important.,2695.4,2699.8,neutral,0.9995773434638977,0.0
+To recognize that we we know what the problems are the clearly we stated them in that prepared remarks.,2700.5,2707.6,neutral,0.9977243542671204,0.0
+We understand kind of the broader issues that is am challenging the 24 performance.,2707.7,2713.2,negative,0.9959612488746643,-0.9959612488746643
+"The good news is, we're proactively addressing those as we as you seen in terms of how we structured the product design and the benefits.",2713.3,2721.4,positive,0.998087465763092,0.998087465763092
+You've seen changes in how we structure.,2721.6,2723.5,neutral,0.9988417029380798,0.0
+Our leadership teams seem changes in terms of how we structured our risk management and pricing controls.,2723.5,2729.6,neutral,0.9993370175361633,0.0
+"So, So we believe that we're on the path of actually getting to to an improved performance and so quickly we can move past 24 and into 25.",2729.7,2737.9,positive,0.9982790946960449,0.9982790946960449
+I think the better will continue to be for the collective group.,2737.9,2742.6,positive,0.9953523874282837,0.9953523874282837
+Thank you.,2744.7,2746.0,neutral,0.9991152882575989,0.0
+We now have Michael Chaney with lyric Partners.,2746.0,2749.5,neutral,0.9924620985984802,0.0
+Please go ahead.,2749.5,2751.1,neutral,0.9968898892402649,0.0
+Ed.,2752.7,2754.1,neutral,0.9974271655082703,0.0
+Good morning and thanks.,2754.8,2755.9,neutral,0.9992604851722717,0.0
+have it as you sit here today thinking through where the jump off point for official 25 again for the health services segment can go Thanks my did you think about the health services segment?,2782.7,2798.9,neutral,0.9996079802513123,0.0
+"We got a little bit of a slow start in 2024 but that business, you know, that team has done an exceptional job of really driving momentum that we've seen that momentum accelerate into the second and into the third quarters, which has really given us a lot of confidence in the Outlook as we think about this year, as we think about next year, I'd say, given that slow start.",2799.0,2822.1,positive,0.9979909658432007,0.9979909658432007
+We don't want to get ahead of ourselves.,2822.1,2823.5,neutral,0.9990330934524536,0.0
+And so what we're not providing formal guidance.,2824.0,2826.7,neutral,0.9993095397949219,0.0
+"Today, we want to make sure that we appropriately set expectations given how that was a little bit choppy out of the gates last year.",2826.7,2833.7,positive,0.9628320932388306,0.9628320932388306
+And this is David obviously.,2835.2,2836.9,neutral,0.9994292855262756,0.0
+"Now a Division, I know much better in terms of other performance and I will say we were going to finish 24, strong, and if you look at the 25 year, we're actually heading into a really strong selling season, tremendous amount of momentum, as it relates to the success we've had on While some are launched, I'm changing disrupting the market, as it relates to pricing models, the client satisfaction and member NPS scores are as high as they've been.",2836.9,2863.6,positive,0.998239278793335,0.998239278793335
+"So I believe just collectively, this business is running really well and still feel very strong about his continued performance and 225.",2863.6,2871.4,positive,0.9984115362167358,0.9984115362167358
+Thank you.,2877.7,2878.8,neutral,0.9991152882575989,0.0
+You we now have Josh Raskin with neurofen research.,2880.4,2886.3,positive,0.7888720035552979,0.7888720035552979
+Your line is open.,2886.4,2887.4,neutral,0.997506320476532,0.0
+"Hi, thanks.",2889.0,2889.8,neutral,0.9984923601150513,0.0
+Good morning.,2889.8,2890.2,neutral,0.9989935755729675,0.0
+Just a clarification on the PDR times.,2890.2,2892.2,neutral,0.999064028263092,0.0
+"I want to make sure I understood what you said that no pdrs been contemplated for 20-25, so Ma and Hicks lost money in totality and 24 and will be positive in 2025.",2892.2,2905.0,negative,0.9955418705940247,-0.9955418705940247
+"I just want to make sure we got that, right?",2905.0,2906.7,neutral,0.8697619438171387,0.0
+And then we're probably.,2906.8,2907.7,neutral,0.9994004964828491,0.0
+Can you speak to your updated?,2907.7,2909.0,neutral,0.9991503953933716,0.0
+"Medicare both Ma PDP distribution strategy and I'm specifically interested in your commission strategy, with external Brokers and feedback.",2909.0,2917.7,neutral,0.9971388578414917,0.0
+You guys are getting on that.,2917.7,2920.9,neutral,0.999281108379364,0.0
+"Thanks, Josh on the PDR, the PDR is a pretty esoteric accounting Rule and so it looks at the business and looks at it on a variable cost basis.",2922.8,2937.6,neutral,0.9995558857917786,0.0
+"And as we look at and think about our projections for next year, we with the improvements that we are expecting in across those books.",2938.2,2947.2,positive,0.998318076133728,0.998318076133728
+The only one that we think might be close to the line as the group met.,2947.5,2950.9,neutral,0.9995056390762329,0.0
+Care business which is why we highlighted that for investors.,2951.0,2953.8,neutral,0.9989035129547119,0.0
+But I wouldn't take that to mean that.,2954.0,2955.8,neutral,0.9995311498641968,0.0
+"We are necessarily going to be profitable because you have to allocate out those fixed costs, which are fairly substantial.",2955.8,2961.3,neutral,0.9994609951972961,0.0
+"As you think about the fixed costs associated with those two large businesses, as you think about our strategy for both Ma and PDP, you know, we are going to shrink membership in PDP.",2961.3,2974.2,positive,0.9943212270736694,0.9943212270736694
+We do use a lot of broker channels only about 15 percent of what we do is actually from internal.,2974.9,2980.7,neutral,0.9994035959243774,0.0
+Channels.,2981.1,2981.6,neutral,0.9213078022003174,0.0
+"The rest of it is from external channels where we have large long and, you know, established relationships.",2981.6,2989.0,neutral,0.998766303062439,0.0
+"You know, we're generally very pleased with where it is.",2989.6,2992.6,positive,0.9977546334266663,0.9977546334266663
+That our early sales are coming out.,2992.6,2995.0,positive,0.9979887008666992,0.9979887008666992
+"We are obviously throughout this process of open enrollment, we make tweaks.",2995.3,2999.6,neutral,0.9826099276542664,0.0
+"To that, as we look at where geographies are coming in and think about where we want to grow, and where we might want night, might not want to grow as quickly, but overall, you know where AP is coming out, as of, you know, the end of last week is very consistent with where we had mapped.",3000.2,3016.4,neutral,0.9991577863693237,0.0
+"It may be a little bit of mix difference, but generally in line with, in the aggregate with where we had thought about it.",3016.4,3023.7,neutral,0.9995514750480652,0.0
+And so we were pretty pleased with the performance to date.,3023.7,3025.9,positive,0.9983031749725342,0.9983031749725342
+"We now have Elizabeth Anderson with ethical is I. Hi guys, thanks so much for the question this morning.",3032.7,3042.1,neutral,0.9995218515396118,0.0
+"Maybe just one question about the PDR, Beck's mechanics that you guys talked about in the third quarter, people the third quarter PDR, does those do that from an object's perspective?",3042.3,3052.4,neutral,0.9995608925819397,0.0
+Does that flip and become a positive to your numbers and the fourth quarter?,3052.4,3056.1,positive,0.9980056881904602,0.9980056881904602
+That'd be my first question and then secondarily.,3056.1,3058.2,neutral,0.9995625615119934,0.0
+"Can you just maybe dig in a little bit more on the PC W strength, how do we expect?",3058.2,3062.1,neutral,0.9697309136390686,0.0
+Sort of That Cadence to change.,3062.1,3064.2,neutral,0.9945029020309448,0.0
+"As we think about the pope or from covet and then any kind of seasonality, you guys are thinking about for the fourth quarter.",3064.2,3070.6,neutral,0.9995638728141785,0.0
+Thank you.,3070.6,3071.1,neutral,0.9991152882575989,0.0
+"Maybe, I'll take the PDR mechanic and then Prime, you can talk a little bit about the pcw strength, on the PDR mechanic.",3073.1,3081.0,neutral,0.9995958209037781,0.0
+The way that this works is that you look at what the potential losses might be on a variable basis.,3081.0,3087.5,neutral,0.9994858503341675,0.0
+"You record the PDR and really how you record it is that one of the first places you have to look, is you have to look at any deferred acquisition cost that you have hung up on the balance sheet.",3087.5,3098.4,neutral,0.99955815076828,0.0
+"And so you, you recruit for that, you take Those down first.",3098.4,3103.4,neutral,0.9995043277740479,0.0
+"That means that while you're not really reversing or Reserve, you don't have expense that you otherwise would have anticipated having in the fourth quarter.",3103.4,3110.7,neutral,0.9948323965072632,0.0
+So it is an expense benefit and in mlr benefit.,3110.8,3113.6,neutral,0.9906078577041626,0.0
+So the vast majority of that 1.1 billion dollars will come back in the 4th quarter.,3113.6,3118.6,neutral,0.9993975162506104,0.0
+Have a PC to PC W strength.,3120.9,3122.8,neutral,0.9993159770965576,0.0
+I'd say a few things.,3122.8,3124.1,neutral,0.9994142055511475,0.0
+"First and foremost, we had a really strong quarter.",3124.1,3126.6,positive,0.9983306527137756,0.9983306527137756
+Part of that was driven by immunization season coming for coming sooner than we expected started in mid.,3127.2,3133.0,positive,0.6898981332778931,0.6898981332778931
+"August versus, you know, later that month or early September.",3133.0,3135.8,neutral,0.9992454051971436,0.0
+And we had a First Market mover there.,3136.1,3138.0,positive,0.9980930685997009,0.9980930685997009
+We were ready for that.,3138.0,3138.9,positive,0.9963730573654175,0.9963730573654175
+Our teams are prepared.,3138.9,3140.0,positive,0.9979846477508545,0.9979846477508545
+We've been preparing for That season.,3140.2,3141.4,neutral,0.791288435459137,0.0
+"You know, for the most part of the year, the second piece I would say is around our core service levels continue to remain very strong.",3141.4,3148.8,positive,0.9982389211654663,0.9982389211654663
+"We've continued Our MPS levels are up, you know, hundreds of basis points here every year.",3148.8,3153.6,positive,0.9981603026390076,0.9981603026390076
+And that's turning into what I would say is strong script growth as it relates to our Pharmacy business.,3154.1,3159.0,positive,0.9983289837837219,0.9983289837837219
+"Now around 27.3% up, you know, 70 plus basis points year-over-year.",3159.0,3164.6,positive,0.998190701007843,0.998190701007843
+"So another great example of the strong service driving script growth, in our Pharmacy, segment of that business and on the front store as Tom alluded to there was you know some front store pressure but our front store business continues to improve you know, in a difficult and Market It's a difficult Market environment and we continue to do the right things around focusing on gaining customers and increasing foot traffic on that business.",3164.6,3187.5,positive,0.9978657364845276,0.9978657364845276
+Has to go into it and really kind of mitigating.,3187.8,3189.6,neutral,0.9994290471076965,0.0
+"Some of the challenges we had early in the year, so the pcw segment really proud of our results.",3189.6,3194.6,positive,0.9978930354118347,0.9978930354118347
+Really proud of the leadership team and all the results of you've driven in that area.,3194.6,3198.4,positive,0.9972237348556519,0.9972237348556519
+"And, you know, it's continue to be a strength of our business and this is David maybe just to reinforce prem's Point here obviously the retail sector is his pressured.",3198.4,3208.6,positive,0.9962676167488098,0.9962676167488098
+Lots of The headwinds in the Simon this market.,3209.2,3211.8,negative,0.9989295601844788,-0.9989295601844788
+"And if you look at what Prem and the team have been able to deliver and execute is really incredibly impressive, share growth while you're Contracting, a footprint service levels are or up and this is kind of all, despite obviously pressures around around this sector.",3211.8,3228.1,positive,0.9981873631477356,0.9981873631477356
+"So I'm incredibly excited about prem's, expansion of his role and responsibility to take that same focus on execution and operational excellence.",3228.1,3236.8,positive,0.998103141784668,0.998103141784668
+"And to the broader, our broader business.",3237.0,3238.7,neutral,0.9993252754211426,0.0
+"Thank you, we now have and remark with Barclays.",3242.6,3246.1,neutral,0.9995226860046387,0.0
+Please go ahead.,3246.8,3248.2,neutral,0.9968898892402649,0.0
+Ed.,3249.0,3249.4,neutral,0.9974271655082703,0.0
+Hi.,3249.4,3249.6,neutral,0.9964386224746704,0.0
+Good morning.,3249.6,3250.3,neutral,0.9989935755729675,0.0
+"One of the follow-up on Medicare Advantage, margins with the lower margin level that you're seeing today was hoping you can give us an update on how you're thinking around the pace of ma margin improvement over the next few years and in your prepared remarks, you know, to the journey back to Target, ma margins of three to five percent.",3250.3,3265.5,neutral,0.9983127117156982,0.0
+That's a slight change from your previous Target of four to five percent.,3265.5,3269.1,negative,0.8048528432846069,-0.8048528432846069
+"So, just curious what drove that change in y, 3 to 5%, is the appropriate margin level?",3269.1,3273.1,neutral,0.9993109703063965,0.0
+"Thanks, let me, let me answer the second part first.",3273.3,3278.7,neutral,0.9995924830436707,0.0
+First.,3279.0,3279.4,neutral,0.9992539286613464,0.0
+"Because the answer of that question is really primarily, mathematical, right?",3279.9,3283.9,neutral,0.9995079040527344,0.0
+"So as you think about the IRA changes to the part D program, significant dollars, that were previously recorded as reinsurance are now going to get recorded as premium, which increases the denominator of the calculation.",3283.9,3296.5,neutral,0.9987331032752991,0.0
+So at constant dollars of margin that change alone.,3296.7,3299.8,neutral,0.9995484948158264,0.0
+Significant to drive a 4% margin down into the threes as as you think about the longer term.,3300.1,3308.8,negative,0.9970541000366211,-0.9970541000366211
+It's a challenging question to answer.,3309.6,3312.2,negative,0.9901143312454224,-0.9901143312454224
+"We understand, you know?",3312.8,3314.2,neutral,0.9918604493141174,0.0
+And we made deliberate changes to benefits to be able to drive Improvement in margin next year.,3314.2,3322.1,positive,0.998172402381897,0.998172402381897
+"We anticipate that we'll be able to continue to do that into 2026 and our star scores will help their R-right, we had great Stars performance.",3322.5,3333.0,positive,0.9983785152435303,0.9983785152435303
+Two-thirds of our members will be in four and a half star plans that will provide a little bit of additional Tailwind as well.,3333.0,3339.3,positive,0.9977612495422363,0.9977612495422363
+But we really need to understand what the rate environment looks like to be able to answer that question.,3340.2,3345.9,neutral,0.9994823932647705,0.0
+"But our goal would be to increase margins again in 2026 and that business just as it relates to the focus, obviously my near-term focus on is is driving an accelerating.",3345.9,3359.9,positive,0.9982675313949585,0.9982675313949585
+Performance of that business.,3360.0,3361.5,neutral,0.9976676106452942,0.0
+"So as Tom mentioned, the Stars tell when will be very positive.",3361.5,3365.6,neutral,0.998703122138977,0.0
+"But for both 25 and into 26, there will be a very strong focus on total cost of care.",3366.1,3373.1,positive,0.9876556992530823,0.9876556992530823
+"So as we know what, the pricing and the benefits are for the, for the risk that were managing to make sure we have the, underlying clinical resources and total cost of care models to, to manage the the risk appropriately.",3373.1,3383.0,neutral,0.9994932413101196,0.0
+"And then, lastly, you'll see an acceleration of how we integrate the assets within this business to help us drive down the Stand improve the overall experience for the members that were serving.",3383.0,3392.7,positive,0.9980711340904236,0.9980711340904236
+So again just reinforcing the fact that this is a really important product for our for our business and one that we're going to have the collective Enterprise focused on on execution.,3393.0,3402.5,positive,0.6220964789390564,0.6220964789390564
+Thank you.,3405.8,3406.6,neutral,0.9991152882575989,0.0
+We now have Jon Ronson with rjf Laurent open.,3407.0,3412.4,neutral,0.9991531372070312,0.0
+"Hey, good morning.",3415.2,3415.9,neutral,0.999139666557312,0.0
+"Signifies that a great year, you know, as we noted the volume was up, I think 37 percent year-over-year inside the third quarter that business has continued to perform very well Oak.",3427.6,3440.6,positive,0.9983291029930115,0.9983291029930115
+Street overall has performed in line with the guidance that we gave at the earlier part of the year.,3440.6,3447.1,positive,0.9912523627281189,0.9912523627281189
+"You know, there there are Medicare focused business and so they're not immune to some of the pressures that others have seen in that Marketplace because The nature of that membership, but we've been very pleased with how they performed.",3447.6,3462.5,positive,0.8745695352554321,0.8745695352554321
+"They've maintained a risk adjustment headwind the plus or minus a little bit below, 3%, which we feel is a great first step.",3462.7,3471.8,positive,0.9967718720436096,0.9967718720436096
+"Given the first year of the implementation of the 28th and we think that there could be some nice Tailwinds in that business next year, as we think about, you know, some of the changes that competitors and ourselves have me heed as we continue to grow our share of Aetna.",3471.8,3487.1,positive,0.9982584118843079,0.9982584118843079
+"Person side those those clinics and just to reinforce the importance of both of those Acquisitions Oak Street obviously is, is managing the cost part better than than the rest of our book.",3487.3,3499.7,positive,0.9980881810188293,0.9980881810188293
+"So the fact is the model works and it works in an underserved Market, specifically, for a population that's important to to this business and the integration between Aetna and Oak.",3499.7,3509.2,neutral,0.9991371035575867,0.0
+Street are improving.,3509.2,3510.6,positive,0.9979572296142578,0.9979572296142578
+So we've had a 4X increase and the members since the acquisition.,3510.6,3514.1,positive,0.9982391595840454,0.9982391595840454
+"So I get proving out the fact that when we put The collective efforts of the business, we can actually see performance.",3514.1,3520.8,positive,0.7143620252609253,0.7143620252609253
+Same thing on signify.,3520.8,3522.0,neutral,0.9995005130767822,0.0
+We've seen a 2X increase in the member served within Aetna.,3522.0,3525.1,positive,0.9981843829154968,0.9981843829154968
+"The goal here is obviously to use signify as a platform, the sophistication and the technology that they've invested around the logistics.",3525.1,3533.8,neutral,0.8395051956176758,0.0
+"And I mean, reaching members in their homes, it is a platform which we can certainly build Beyond just the, the in home assessment.",3533.8,3539.6,positive,0.9978293776512146,0.9978293776512146
+So that will be the message in the focus of the business and continue to serve people both in the care delivery setting as well.,3539.6,3547.2,neutral,0.9976330995559692,0.0
+"Well, as in the home and we believe we have the appropriate access to be able to execute that.",3547.3,3551.1,positive,0.96226966381073,0.96226966381073
+Thank you.,3553.3,3553.6,neutral,0.9991152882575989,0.0
+"Our final question comes from Brian, tank with with Jeffrey, please go ahead.",3556.3,3562.0,neutral,0.9995946288108826,0.0
+"Hey, good morning and thanks for the update on the cost Advantage Program.",3563.2,3566.9,neutral,0.999390721321106,0.0
+"So, just curious what those discussions have been like and how do they did?",3566.9,3571.1,neutral,0.9994654059410095,0.0
+A contract shake out in terms of what you expected pricing structures to look like versus what the that 50% of the book looks like.,3571.1,3578.9,neutral,0.9995114803314209,0.0
+"And you know, how are you think about the opportunity or the ability to increase that number before we get to January 1st?",3578.9,3585.1,positive,0.9928902387619019,0.9928902387619019
+Thanks.,3585.2,3586.6,neutral,0.9988258481025696,0.0
+Yeah.,3588.4,3588.8,neutral,0.9958522319793701,0.0
+"So so, first and foremost, as you recall last year, we launched cost Advantage with the very intentional.",3589.2,3594.5,positive,0.9940043091773987,0.9940043091773987
+"Reason to solve one of the biggest industry challenges, we had around reimbursement, pressure and so We made really good.",3594.5,3601.0,positive,0.997901439666748,0.997901439666748
+"Progress is David and Tom alluded to in the prepared remarks we have over 50 percent of our clients in the program, the expect to have our commercial book 100% or commercial book signed, you know.",3601.0,3612.0,positive,0.9979416728019714,0.9979416728019714
+"But by the end of this year we're really excited about what it brings to the marketplace and how the end, some of the cross-subsidization that exist in Pharmacy as a relates to the.",3612.0,3621.4,positive,0.9981420040130615,0.9981420040130615
+"So, you know, be continued, make really good progress, as it relates to the financial Outlook.",3621.4,3626.5,positive,0.998267412185669,0.998267412185669
+"From Cops manage will come back to you early next year with What we're seeing but we continue to see really strong performance as I mentioned earlier, in our Retail, Pharmacy business.",3626.5,3635.1,positive,0.9969308972358704,0.9969308972358704
+"We're really excited about what cost management bring to the marketplace and how it's going to transform the way, the price of pharmaceuticals in this country.",3635.1,3643.0,positive,0.9980469942092896,0.9980469942092896
+"And lastly, the benefits that it brings to Consumers as well, so more to come.",3643.0,3647.5,positive,0.9552251696586609,0.9552251696586609
+"But at this point, I would say V, we can to make really great progress here, across the board of moving the industry.",3647.5,3654.1,positive,0.9982819557189941,0.9982819557189941
+So I just follow on to Prince comment about COs Vantage.,3655.8,3659.3,neutral,0.9993703961372375,0.0
+"And we, if you look at the complexity of pharmaceutical pricing in this country, this is obviously one of the paths in which to to address the confusion, the complexity of how drugs actually are priced at the consumer level.",3659.3,3672.9,neutral,0.9994920492172241,0.0
+"So prem's move and the in the retail setting combined with the true cost Drive within within the PBM, we believe is a, it's a concerted effort to address.",3672.9,3683.2,positive,0.9980770349502563,0.9980770349502563
+What we know is a is a headline.,3683.2,3685.2,neutral,0.9994301199913025,0.0
+Around the confusion the complexity of the pricing so this elimination of cross-subsidization the ability to get to a more stable and unless variable pricing strategy will help us solve.,3685.4,3697.3,positive,0.9730871915817261,0.9730871915817261
+"What we, what we know is that is a headline risk, and more importantly allows to serve our members and our clients more effectively So with that, we this ends the ends of the call.",3697.3,3710.3,neutral,0.9947317838668823,0.0
+"And I before closing here, I just want to thank for you for all joining the call.",3710.3,3715.6,neutral,0.9995019435882568,0.0
+"Today, I'm incredibly excited and humbled by the opportunity and the potential of this combined Enterprise.",3715.6,3721.4,positive,0.9982592463493347,0.9982592463493347
+We have clear line of sight into the issues and a plan is in place to address them.,3722.2,3726.0,positive,0.9979985356330872,0.9979985356330872
+We look forward to providing updates on our progress going forward.,3726.2,3729.2,neutral,0.9991115927696228,0.0
+"And I also just want to thank again, the 300,000 colleagues to help us serve our customers, and our Patients day in and day out.",3729.5,3736.6,neutral,0.9993758797645569,0.0
+So thank you for that support.,3736.6,3739.0,neutral,0.998143196105957,0.0
+"Thank you for joining today's conference, call with CVS health.",3742.6,3746.5,neutral,0.9995260238647461,0.0
+"I can't confirm today, school has now concluded.",3746.5,3748.6,neutral,0.9991687536239624,0.0
+"Please enjoy the rest of your day, and you may now disconnect from the call.",3749.5,3752.2,neutral,0.9994012117385864,0.0

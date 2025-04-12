@@ -1,0 +1,485 @@
+sentence,start_time,end_time,label,certainty_score,sentiment_score
+Good afternoon and welcome to the Apple q1 fiscal year 2025 earnings conference call.,1.7,8.3,neutral,0.999593198299408,0.0
+My name is Sue.,8.3,10.3,neutral,0.9992852807044983,0.0
+Hassan each under Molly director of investor relations.,10.3,13.1,neutral,0.999377429485321,0.0
+"Today's call is being recorded speaking first today are Apple CEO, Tim Cook and he'll be followed by CFO Kevin parekh.",13.1,23.7,neutral,0.9995878338813782,0.0
+"After that, we'll open the call to questions from analysts, please note that some of the information you'll hear during our discussion today will consist of forward-looking statements including without limitation those regarding Revenue.",23.9,39.8,neutral,0.999538779258728,0.0
+"Gross margin operating expenses, other income and expense taxes, Capital, allocation and future business Outlook, including the potential impact of macroeconomic conditions on the company's business and results of operations.",40.0,57.3,neutral,0.9996300935745239,0.0
+These statements involve risks and uncertainties that may cause actual results or Trends to differ materially from our forecast.,58.2,67.1,neutral,0.9994230270385742,0.0
+"For more information, please refer to the risk factors discussed in Apple's.",67.9,72.7,neutral,0.9995874762535095,0.0
+Most recently filed annual report on form 10-K and the form 8-k filed with the SEC today along with the associated press release.,72.7,83.2,neutral,0.9995731711387634,0.0
+"Apple assumes no obligation to update any forward-looking statements, which speak only as of the date.",83.5,91.3,neutral,0.9995712637901306,0.0
+They are made.,91.3,92.0,neutral,0.99943608045578,0.0
+I'd now like to turn the call over to Tim for introductory remarks.,92.2,96.8,neutral,0.9996212720870972,0.0
+Thank you.,96.8,99.0,neutral,0.9991152882575989,0.0
+"So fascinating, good afternoon, everyone.",99.0,101.4,neutral,0.9984523057937622,0.0
+And thanks for joining the call.,101.4,103.3,neutral,0.9993340373039246,0.0
+"Before I talk about our results, I'd like to take a moment to acknowledge the devastating wildfires that impacted the Los Angeles area this month from our retail teams to Apple TV, plus Apple music Fitness Plus beats.",104.6,119.8,negative,0.9857149720191956,-0.9857149720191956
+"And more La is home to many of our team members, our thoughts are with everyone who is beginning the road to recovery for our part.",119.8,128.9,neutral,0.9990517497062683,0.0
+We are contributing to the relief efforts and we will continue to support our teams and the local.,128.9,134.2,positive,0.9982168078422546,0.9982168078422546
+Unity.,134.6,135.0,neutral,0.7140862941741943,0.0
+"Now turning to the quarter today, apple is reporting revenue of the hundred and twenty four point.",136.4,143.1,neutral,0.9989035129547119,0.0
+"Three billion dollars for the December quarter up four percent from a year ago, and an all-time record EPS also set an all-time record of two dollars and forty cents ten percent higher year.",143.1,156.5,positive,0.9981385469436646,0.9981385469436646
+"Over year, we achieved all time Revenue records across the majority of the countries and regions we track including the Americas, Europe, Japan and the rest of Asia Pacific.",156.5,169.3,positive,0.9981788396835327,0.9981788396835327
+We also continue to see momentum in Emerging Markets.,169.9,173.0,positive,0.9982873797416687,0.9982873797416687
+"Setting all-time Revenue records in a number of markets including Latin America, the middle east, and south, Asia, among others.",173.0,181.5,positive,0.998153030872345,0.998153030872345
+"And services, we achieved an all-time Revenue record.",182.9,186.1,positive,0.9981212019920349,0.9981212019920349
+"And in the past year, we've seen nearly 100 billion dollars in revenue from our services business.",186.1,191.9,positive,0.9976683259010315,0.9976683259010315
+"I'm also pleased to announce that we reached a new record for our installed base, with over 2.3 5 billion active devices in October.",192.8,202.3,positive,0.9981957077980042,0.9981957077980042
+"We released the first set of Apple intelligence features in US, English for iPhone iPad and mac and we rolled out more features and expanded to more countries in Ember, now users can discover the benefits of these new features in the things they do every day.",202.3,219.5,positive,0.9980319142341614,0.9980319142341614
+"They can use writing tools to help, find just the right words, create fun and unique images with image playground engine, Mogi handle daily tasks can seek out information with a more natural and conversational.",220.2,233.7,neutral,0.9973045587539673,0.0
+Siri create movies of their memories with a simple prompt and touch up their photos with cleanup.,233.7,240.2,neutral,0.9982802867889404,0.0
+We introduced visual intelligence with camera control to help users instantly learn about their surroundings.,241.7,247.6,positive,0.997154951095581,0.997154951095581
+"Users can also seamlessly access chat GPT across iOS, iPad OS and Mac OS and we were excited to recently, begin our International expansion with apple intelligence.",248.2,260.7,positive,0.9975677132606506,0.9975677132606506
+"Now available in Australia, Canada, New Zealand, South Africa.",260.7,265.1,positive,0.9936338663101196,0.9936338663101196
+And the UK.,265.1,266.0,neutral,0.9986225366592407,0.0
+We're working hard to take apple intelligence even further.,266.6,270.4,positive,0.9982261061668396,0.9982261061668396
+"Either in April were bringing Apple intelligence to more languages including French German Italian Portuguese, Spanish Japanese Korean, and simplified Chinese as well as localized English to Singapore in India and will continue to roll out more features in the future including an even more capable.",270.5,290.9,positive,0.9981563687324524,0.9981563687324524
+Siri Apple intelligence bills on years of Innovations.,290.9,295.3,positive,0.8728004097938538,0.8728004097938538
+We've made across hardware and software to transform how users experience our It's Apple intelligence also empowers users by delivering personal context that's relevant to them.,295.3,307.7,positive,0.9974453449249268,0.9974453449249268
+"And importantly, Apple intelligence is a breakthrough for privacy and AI with Innovations like private Cloud compute, which extends the industry-leading security and privacy of Apple devices into the cloud.",307.7,321.0,positive,0.9981905817985535,0.9981905817985535
+Apple intelligence opens up an exciting New Frontier and is already elevating experiences across iPhone iPad and Mac we're going to keep investing in Innovation and in transformative tools that help users in their everyday lives.,322.3,337.2,positive,0.9982911944389343,0.9982911944389343
+Let me now turn to our results for the quarter.,338.9,341.2,neutral,0.9995676875114441,0.0
+"Starting with iPhone iPhone Revenue, came in at 69 point 1 billion dollars, reaching all-time iPhone Revenue records in dozens of markets and regions our iPhone.",341.4,354.1,positive,0.9980952143669128,0.9980952143669128
+16 lineup takes the smartphone experience to the next level in so many ways.,354.1,358.6,positive,0.9973440766334534,0.9973440766334534
+"And apple intelligence is one of many reasons why customers are excited with the a 18 powered, iPhone, 16 and iPhone 16, plus Others are getting a big boost in battery life and incredible camera experiences with camera control are amazingly powerful.",358.6,376.9,positive,0.9977509379386902,0.9977509379386902
+IPhone 16 Pro Models.,376.9,378.4,neutral,0.9875133633613586,0.0
+Go even further with larger than ever displays and a pro camera system.,378.4,383.8,positive,0.9973090887069702,0.9973090887069702
+So Advanced it can turn moments into masterpieces in Mac.,383.8,388.9,positive,0.9760076403617859,0.9760076403617859
+Revenue was nine billion dollars for the December quarter 16% higher year-over-year driven by significant excitement around.,388.9,398.0,positive,0.9982001781463623,0.9982001781463623
+The World for our latest Mac line up the Mac is more than just a powerful tool.,398.0,403.6,neutral,0.9988184571266174,0.0
+It's a launch pad to enable users to bring their best ideas and boldest Creations to life.,403.6,409.9,neutral,0.9991900324821472,0.0
+"And there are so many reasons to choose Mac from the breathtaking, performance of the M4, family of chips, to the groundbreaking, and growing capabilities of Apple intelligence every product in the Mac lineup offers something extraordinary.",409.9,425.8,neutral,0.7282560467720032,0.0
+"Whether that's the super portable Mac Book, Air the PowerHouse MacBook Pro, the world's best, all in one, I Mac or the small wonder, that is the Mac Mini which is not only stunningly capable, but as our first carbon-neutral Mac, all of this is enabled by the unparalleled power of Apple, silicon IPad Revenue was 8.1 billion dollars up 15 percent from a year ago driven by strong interest for our latest products.",426.5,458.2,positive,0.9982165694236755,0.9982165694236755
+We love hearing from customers who are discovering for the first time.,458.2,462.8,positive,0.9683946371078491,0.9683946371078491
+"The versatility of iPad from the ultraportable iPad Mini built from the ground up for Apple intelligence to the powerful M4, iPad Pro in a stunningly thin, and light design.",462.8,475.5,neutral,0.8924601078033447,0.0
+IPad is there for our users.,475.5,478.7,neutral,0.9991675615310669,0.0
+Were they need it?,479.1,479.9,neutral,0.9962039589881897,0.0
+"And wherever they go and we are pleased to see so much excitement and enthusiasm for our lineup, wearables home and accessories.",479.9,488.1,positive,0.9982783794403076,0.9982783794403076
+"Revenue came in at eleven point seven billion dollars with its most advanced display yet and a thinner more comfortable design, the all-new Apple Watch series 10 is the perfect companion to help users.",488.1,501.9,positive,0.9979799389839172,0.9979799389839172
+Pursue their health and fitness goals this year from the powerful vitals app to more.,501.9,508.5,positive,0.988330602645874,0.988330602645874
+"Double activity, Rings users have an ever-increasing set of innovative Health tools at their fingertips and watchos US.",509.1,517.0,positive,0.9964775443077087,0.9964775443077087
+11.,517.0,517.4,neutral,0.9937105178833008,0.0
+Health innovation has long been a focus for us and we're committed to continuing to advance this work because we know how much it matters to our users.,518.5,527.2,positive,0.9982209801673889,0.9982209801673889
+"We've introduced new hearing Health features on airpods, Pro 2 and new sleep apnea notifications on Apple.",527.5,535.3,positive,0.9979518055915833,0.9979518055915833
+Watch are also helping users learn of a potentially serious condition that's thought to affect up to a billion people worldwide during the quarter.,535.3,545.9,neutral,0.9730480313301086,0.0
+"We also brought Apple Vision Pro tvos To even more countries enabling more customers to discover, the magic of spatial.",545.9,553.5,positive,0.9981491565704346,0.9981491565704346
+"Computing users are enjoying incredible, immersive, entertainment experiences and Powerful new features and enhancements to Mac virtual display Vision.",553.5,565.9,positive,0.9982258677482605,0.9982258677482605
+"Pro is also super charging the creative process and the incredibly talented director Jon M Chu recently, shared how extraordinary capabilities helped him bring the movie.",565.9,578.1,positive,0.9978188276290894,0.9978188276290894
+Good to life.,578.5,579.4,positive,0.9977797865867615,0.9977797865867615
+"turning to Services we set an all-time Revenue record of 26 point three billion dollars for the December quarter growing 14 percent from a year ago we said all-time records in the Americas Europe and rest of Asia Pacific and a December quarter record in And five years since launch Apple TV plus continues to be home to incredible storytelling, that viewers love.",581.0,607.7,positive,0.9982650876045227,0.9982650876045227
+There's nothing quite like the anticipation that comes when a fan favorite returns and we were thrilled to debut the second season of severance earlier this month.,607.7,617.7,positive,0.9891179203987122,0.9891179203987122
+"We have so much in store for our subscribers this year with new shows, like the studio and your friends and neighbors.",619.0,625.9,positive,0.9975613355636597,0.9975613355636597
+And we can't wait for the premiere of Formula 1.,626.7,629.3,positive,0.9854087233543396,0.9854087233543396
+Starring Brad Pitt on June 27th which will take viewers inside the sport in a truly unprecedented way.,629.6,637.1,positive,0.9617978930473328,0.9617978930473328
+We're excited that Apple TV plus continues to draw attention and accolades today.,638.4,644.1,positive,0.9983709454536438,0.9983709454536438
+"Apple TV plus Productions, have earned more than 2,500 ins and 538 winds during the quarter.",644.1,653.7,positive,0.9957246780395508,0.9957246780395508
+We were all so excited to launch a new find my service that can help our users when they lose their luggage.,653.9,660.1,positive,0.9981189370155334,0.9981189370155334
+For the first time.,660.7,661.8,negative,0.9872057437896729,-0.9872057437896729
+"If you put an air tag in your suitcase, you'll be able to share its location information, with many major airlines so they can quickly track down your bags if they get lost.",662.0,672.3,positive,0.974514365196228,0.974514365196228
+"Turning to retail, our teams went above and beyond to help customers find the perfect gift throughout the holiday season.",673.3,680.8,positive,0.9981458187103271,0.9981458187103271
+"We also celebrated openings of new stores and China, Spain, and the us and we were excited to announce plans to connect with even more customers this year, by adding a fifth store in the UAE.",681.9,696.3,positive,0.998282790184021,0.998282790184021
+And bringing our online store to Saudi Arabia this summer.,696.5,700.3,positive,0.9978918433189392,0.9978918433189392
+We can't wait to welcome customers to the first of several flagship store locations in Saudi Arabia that were opening beginning in 2026.,700.8,710.1,positive,0.9970466494560242,0.9970466494560242
+I just had the chance to visit both countries last month and I had a great time meeting with customers and team members.,711.0,718.1,positive,0.9896354079246521,0.9896354079246521
+There's an incredible energy and passion for technology in these growing markets.,718.8,723.7,positive,0.997687578201294,0.997687578201294
+Every day.,724.4,725.3,neutral,0.9940745234489441,0.0
+I get deeply moving notes about the many ways.,725.6,728.5,neutral,0.9955216646194458,0.0
+"Our technology is enriching, our users lives.",728.5,731.5,positive,0.9981531500816345,0.9981531500816345
+"I recently got a note from a customer who put his watch on his father's wrist when he feared, something was wrong with him.",732.3,739.6,negative,0.811630129814148,-0.811630129814148
+The watchos loaded them.,739.9,741.6,neutral,0.9948111772537231,0.0
+That the father was an afib and they were able to get him to the hospital for potentially life-saving treatment.,741.6,748.1,positive,0.9805877804756165,0.9805877804756165
+Another user put his new watch on for the first time and within 15 minutes was notified of a low heart rate that led to a necessary Pacemaker.,749.4,759.0,negative,0.9781500697135925,-0.9781500697135925
+"And there are so many touching notes around the profound impact of our new hearing Health feature, like a recent user, who told me it had changed her life, allowing her to take part in conversations with their children and grandchildren.",759.7,774.7,positive,0.9882914423942566,0.9882914423942566
+"These are the kind of stories that remind us of how profoundly important our work is, and it drives us to innovate each and every day.",775.7,784.2,neutral,0.999333918094635,0.0
+At Apple.,786.0,786.4,neutral,0.9933213591575623,0.0
+The future is full of promise and potential.,786.4,789.5,positive,0.9980556964874268,0.9980556964874268
+We're always searching across a world of possibilities finding those places where we can do the most good and putting all of our energy and Ingenuity into making something special with that.,789.9,802.8,positive,0.9966610670089722,0.9966610670089722
+I'll turn it over to Kevin.,802.8,804.5,neutral,0.9995172023773193,0.0
+Thanks Tim and good afternoon everyone.,804.5,808.1,neutral,0.9994025230407715,0.0
+I'm going to cover the results for the first quarter of our fiscal year.,808.1,811.5,neutral,0.9996101260185242,0.0
+We are very pleased to report an all-time high for Revenue.,811.5,815.4,positive,0.9982325434684753,0.9982325434684753
+"But December quarter revenue of 120, 4.3 billion dollars up four percent year.",815.8,821.0,positive,0.9979546070098877,0.9979546070098877
+"Over year, we achieved all time Revenue, records in the Americas Europe, Japan, and rest of Asia Pacific and grew in the vast.",821.0,829.7,positive,0.9981227517127991,0.9981227517127991
+"Majority of markets, we track.",829.7,831.0,neutral,0.9988963603973389,0.0
+"Products Revenue was 98 billion dollars up to percent year over year driven by growth from iPad Mac, thanks to our incredible, customer satisfaction and strong loyalty are installed base of active devices, reached an all-time high across all products and Geographic segments, and is now over two point three five billion active devices.",832.0,852.5,positive,0.9982326030731201,0.9982326030731201
+"Services Revenue reached, an all-time record of twenty six point three billion dollars up, fourteen percent year over year, we grew in every Geographic segments and achieved all-time records in both developed and Emerging Markets.",853.9,868.5,positive,0.9981884360313416,0.9981884360313416
+Company gross margin was 46.9% at the high end of our guidance range and up 70 basis.,869.7,877.0,positive,0.9980534315109253,0.9980534315109253
+Point sequentially primarily driven by favorable mix Products gross margin was 39.3% up.,877.0,885.2,positive,0.9981392621994019,0.9981392621994019
+"300 basis, points sequentially, primarily driven by favorable, mix and leverage Services, gross margin would 75% up 100 basis points sequentially, primarily driven by mix Operating expenses of fifteen point four billion dollars landed at the midpoint of our guidance range and up 7% year-over-year.",885.2,908.8,positive,0.9979787468910217,0.9979787468910217
+This strong business performance resulted in all-time records for both net income at thirty.,910.0,914.8,positive,0.9982122182846069,0.9982122182846069
+Six point three billion dollars in diluted earnings per share of two dollars and forty cents up ten percent year-over-year.,914.8,921.6,positive,0.9980727434158325,0.9980727434158325
+Operating cash flow is also strong at twenty nine point nine billion dollars which included the impact of the eleven point.,922.4,929.0,positive,0.9982197880744934,0.9982197880744934
+Nine billion dollars.,929.0,929.8,neutral,0.998736560344696,0.0
+We paid during the quarter in connection with the state aid decision.,929.8,933.0,neutral,0.979741096496582,0.0
+"Now, I'm going to provide some more details for each of our Revenue categories.",934.1,937.7,neutral,0.9996398687362671,0.0
+"IPhone Revenue was 69 point, 1 billion dollars, roughly flat to the prior year.",937.7,943.3,negative,0.8640431761741638,-0.8640431761741638
+"We grew in the majority of markets, we track and reached all-time Revenue, records in several developed markets, including Canada, Western Europe and Japan.",943.3,952.3,positive,0.9980483055114746,0.9980483055114746
+"In an Emerging Markets, like Latin America, the middle east, and south Asia.",952.3,957.0,neutral,0.9991762042045593,0.0
+The iPhone active installed base.,958.2,959.5,neutral,0.9994683861732483,0.0
+Grew to an all-time high in total in an every Geographic segments.,959.5,963.6,positive,0.9981186985969543,0.9981186985969543
+We also set an all-time record for up graders.,963.6,966.8,positive,0.9981651902198792,0.9981651902198792
+"According to a recent survey from cantar during the December quarter, iPhone was a top selling model in the u.s. urban China.",968.2,975.3,positive,0.9972764849662781,0.9972764849662781
+"India the UK France, Australia and Japan.",975.3,979.8,neutral,0.9989508390426636,0.0
+We continue to see high levels of customer satisfaction in the u.s. at 96% as measured by 451 research.,979.8,987.6,positive,0.9982530474662781,0.9982530474662781
+Mac generated nine billion dollars in Revenue up 16 percent year over year.,988.8,994.0,positive,0.9981878399848938,0.9981878399848938
+We saw strength across our lineup from the new Mac Mini to the latest MacBook Air and MacBook Pro Models.,994.0,1000.3,positive,0.9982503056526184,0.9982503056526184
+"This incredible performance was broad-based with double-digit growth in every Geographic segments, With their latest advances in apple silicon and our fastest neural Legend, ever customers are able to take advantage of the full capabilities of AI and Mac.",1000.3,1015.9,positive,0.9982900023460388,0.9982900023460388
+The Mac installed base reached an all-time high and we saw double digit growth for both upgraders and customers new to the Mac.,1015.9,1024.4,positive,0.9982457160949707,0.9982457160949707
+"Additionally, customer satisfaction in the US was recently measured in 94% iPad revenue is 8.1 billion dollars up.",1026.1,1034.6,positive,0.9981497526168823,0.9981497526168823
+15% year-over-year driven by the new iPad mini and latest iPad Air.,1034.6,1039.4,positive,0.9975123405456543,0.9975123405456543
+"The iPad installed base reached, another all-time high and over half of the customers who purchased in iPad during the quarter, were new to the product.",1039.4,1047.8,positive,0.998065173625946,0.998065173625946
+"Customer satisfaction with a 96 percent in the US based on the latest reports from 451 research, wearables home and accessories Revenue was eleven point seven billion dollars down two percent.",1048.4,1059.6,negative,0.9988597631454468,-0.9988597631454468
+Year-over-year customers are excited about the new airpods for and the latest hearing Health features and airpods Pro 2.,1059.6,1066.8,positive,0.9982256293296814,0.9982256293296814
+And watch although we Face a difficult compared against a watchos to launch.,1066.8,1071.4,negative,0.998080849647522,-0.998080849647522
+Last year.,1071.4,1071.9,neutral,0.9926578402519226,0.0
+"The Apple watch installed base reached a new all-time high with over half of customers purchasing and Apple watch during In the quarter, being new to the product customer satisfaction for washing.",1071.9,1082.7,positive,0.9981386661529541,0.9981386661529541
+The US was reported at 94% our services Revenue reached an all-time high of 26 point three billion dollars up.,1082.7,1090.1,positive,0.9980716109275818,0.9980716109275818
+Fourteen percent year-over-year Services continues to see strong momentum and the growth of our installed base of active devices.,1090.1,1096.9,positive,0.9982753992080688,0.9982753992080688
+Gives us great opportunities for the future.,1096.9,1098.8,positive,0.9983550906181335,0.9983550906181335
+"We also see increased customer engagement with our services, offerings, both transacting and paid accounts reached new all-time highs with paid accounts growing double digits year-over-year.",1098.8,1109.8,positive,0.9982442855834961,0.9982442855834961
+"Paid subscriptions, also, grew double digits.",1110.8,1112.8,positive,0.9982157945632935,0.9982157945632935
+We have well over a billion paid subscriptions across the services on our platform.,1113.2,1117.5,positive,0.7923519611358643,0.7923519611358643
+"We remain focused on improving the breath and quality of our services offerings from new games and apple arcade to exciting, new programming on Fitness Plus and the continued expansion of features like tap to pay.",1118.5,1128.5,positive,0.998282790184021,0.998282790184021
+Now live in 20 markets.,1128.5,1130.7,neutral,0.6384884715080261,0.0
+"Turning to Enterprise, we have seen businesses continue to expand their deployments of our products and services, Deutsche Bank launched its Mac as Choice program.",1130.7,1139.8,positive,0.9982536435127258,0.9982536435127258
+"For the developers and also issued, the latest MacBook Air as a standard computer for their entire mortgage lending Division.",1140.0,1146.9,neutral,0.9990341663360596,0.0
+And we're excited to see leading under prizes such as sap.,1146.9,1150.3,positive,0.9982343912124634,0.9982343912124634
+Leverage Apple intelligence in the US with features like writing tools summarize and priority notifications to enhance both their employee and customer experiences.,1150.3,1159.3,positive,0.9975456595420837,0.9975456595420837
+We also see strong demand in our emerging markets.,1159.3,1162.8,positive,0.9983158111572266,0.9983158111572266
+"For example is a motto, a leading food, ordering and delivery company in.",1162.8,1166.6,neutral,0.9995492100715637,0.0
+India has deployed thousands of Max across their Workforce to Foster innovation in Vision Pro continue to see more use cases in Enterprise.,1166.6,1174.5,positive,0.9982434511184692,0.9982434511184692
+"Was Cisco's new spatial meetings, delivering a fully immersive video, conferencing experience for remote collaboration and learning.",1174.5,1181.8,positive,0.9948010444641113,0.9948010444641113
+Let me quickly summarize our cash position and capital return program.,1183.5,1186.9,neutral,0.9995617270469666,0.0
+We ended the quarter with 141 billion dollars in cash and marketable securities.,1186.9,1192.0,neutral,0.9992684721946716,0.0
+"We repaid, 1 billion dollars in maturing debt, and decrease commercial paper by eight billion dollars.",1192.0,1197.8,positive,0.9963326454162598,0.9963326454162598
+Resulting in 97 billion.,1197.8,1199.8,neutral,0.9994305968284607,0.0
+"Dollars in total debt, therefore net cash.",1200.0,1203.1,neutral,0.9993269443511963,0.0
+At the end of the quarter was forty five billion dollars.,1203.1,1206.0,neutral,0.9994848966598511,0.0
+"During the quarter, we returned over 30 billion dollars of shareholders.",1207.0,1210.7,positive,0.9982352256774902,0.9982352256774902
+This included 3.9 billion dollars in dividends and equivalents and twenty-three point three billion dollars through open market.,1211.9,1218.0,neutral,0.9995545744895935,0.0
+Repurchases of 100 million Apple.,1218.0,1220.1,neutral,0.9828638434410095,0.0
+"Shares as usual, we will provide an update to our Capital return program.",1220.1,1224.9,neutral,0.9990757703781128,0.0
+"When we report results for the March quarter, as we move ahead into the March quarter, I'd like to review our Outlook which includes a types of forward-looking information that you hasni referred to at the beginning of the call.",1224.9,1236.8,neutral,0.9996581077575684,0.0
+The color we're providing today assumes of the Mac.,1238.4,1240.6,neutral,0.9995494484901428,0.0
+You cannot make Outlook doesn't worsen from what we're projecting today for the current quarter.,1240.6,1244.4,negative,0.6396523714065552,-0.6396523714065552
+"As a dollar strengthened significantly, we expect foreign exchange to be a headwind and to have a negative impact on revenue of about two and a half percentage points on a year-over-year basis.",1245.6,1256.4,negative,0.9988051652908325,-0.9988051652908325
+"Despite that headwind, we expect our March quarter total company Revenue to grow low-to-mid single digits.",1256.6,1264.4,positive,0.9942489862442017,0.9942489862442017
+"Year over year, we expect Services Revenue to grow low, double digits year over year, when you remove the negative impact of the foreign exchange headwinds, I described earlier the year-over-year growth rate would be Comparable to that of the December quarter.",1264.4,1277.6,negative,0.9962190985679626,-0.9962190985679626
+We expect gross margin to be between 46.5% and 47.5%.,1278.6,1283.1,neutral,0.978435754776001,0.0
+"We expect operating expenses to be between 15 Point, 1 billion dollars and fifteen point three billion dollars.",1283.1,1289.8,neutral,0.9994271993637085,0.0
+"We expect, oh, I any to be around - 300 million dollars, excluding any potential impact from the mark-to-market of minority Investments and our tax rate to be around 16% finally.",1291.4,1304.2,neutral,0.9969140291213989,0.0
+"Today, our board of directors has declared a cash dividend of 25 cents per share of common stock payable on February 13th, 2025 to shareholders of record as a February 10th.",1304.4,1316.2,neutral,0.9991827607154846,0.0
+2025 with that.,1316.3,1318.8,neutral,0.998778760433197,0.0
+Let's open to call the questions.,1318.9,1320.2,neutral,0.9985009431838989,0.0
+Thank you.,1321.2,1321.5,neutral,0.9991152882575989,0.0
+Kevin.,1321.5,1322.1,neutral,0.9989572763442993,0.0
+We ask that you limit yourself to two questions.,1322.4,1325.3,neutral,0.9991768002510071,0.0
+"Operator, may we have the first question, please?",1325.6,1328.3,neutral,0.9994651675224304,0.0
+"Certainly, we will go ahead and take our first question from Eric would ring with Morgan Stanley.",1330.0,1335.0,neutral,0.9995624423027039,0.0
+Please go ahead and drink.,1335.1,1337.5,neutral,0.9976964592933655,0.0
+I stink so much for for taking my questions.,1337.5,1340.3,negative,0.9969620108604431,-0.9969620108604431
+"Tim in in your prepared remarks, you had noted that iPhone 6 in models are selling better in markets where Apple intelligence is available and I'm just wondering if you could double click on that comment a bit and share any other details you believe could, you know, better help us understand how Apple intelligence is really impacting.",1340.9,1359.5,positive,0.9943928718566895,0.9943928718566895
+I On demand and or what features you find.,1359.5,1363.2,neutral,0.999355137348175,0.0
+That users are using most often already and then I just have a quick follow-up.,1363.2,1367.3,neutral,0.9996039271354675,0.0
+Thank you.,1367.3,1367.8,neutral,0.9991152882575989,0.0
+Yeah.,1369.5,1369.8,neutral,0.9958522319793701,0.0
+Eric.,1369.8,1370.2,neutral,0.9982169270515442,0.0
+Hi.,1370.2,1370.4,neutral,0.9964386224746704,0.0
+It's Tim the we did see that the markets were we had rolled out.,1370.4,1376.4,neutral,0.9980477094650269,0.0
+Apple intelligence that the year-over-year performance on the iPhone.,1376.4,1380.4,neutral,0.8561009764671326,0.0
+16 family was stronger than those.,1380.4,1382.4,positive,0.9979562759399414,0.9979562759399414
+Where Apple intelligence was not available in terms of the features that people are using their.,1382.4,1390.0,negative,0.9076282382011414,-0.9076282382011414
+"Using all of the ones that I referenced, in my opening comments from writing tools to image playground engine Moji.",1390.0,1397.6,neutral,0.9995459914207458,0.0
+To visual intelligence and and more.,1399.2,1402.5,neutral,0.9991574287414551,0.0
+"And so we see all of those being used to clean up is another one that is, that is popular and people love seeing that when demoed in the stores as well we only had two two and a half weeks or so during the December quarter of the second release of 7:42.",1402.8,1428.5,positive,0.9957771301269531,0.9957771301269531
+And then only had the UK and the other English language countries for the further two and a half weeks.,1429.2,1439.0,neutral,0.9995217323303223,0.0
+"And so we've got, you know, just the early indications at the moment.",1439.0,1445.7,neutral,0.9992637038230896,0.0
+But we were forgotten that's really helpful.,1447.2,1448.7,negative,0.9920721650123596,-0.9920721650123596
+Yeah silence.,1448.9,1450.5,neutral,0.9967644214630127,0.0
+"Okay, thank you for that color.",1452.3,1454.1,neutral,0.9991843104362488,0.0
+"Tim, it's helpful.",1454.1,1454.8,neutral,0.9992489218711853,0.0
+"And then you know if we just touch on on China, obviously in the news fairly frequently, if we, if we set aside China Mac row, which I understand is still challenging can you maybe talk about the headwinds that that Apple faces?",1455.2,1469.1,negative,0.9983406066894531,-0.9983406066894531
+"Whether that's, you know, shifting preferences for Western technology brands in favor of domestic vendors or is this just a function of not necessarily having Apple intelligence available with the iPhone 16 which is you know not necessarily helping replacement Cycles just just maybe double-clicking on on what you think.",1469.1,1487.5,neutral,0.8907578587532043,0.0
+What you think.,1487.5,1488.6,neutral,0.9989226460456848,0.0
+And what you're hearing in China is a regard as it relates to the iPhone.,1488.6,1491.9,neutral,0.9995730519294739,0.0
+Thanks so much.,1491.9,1492.4,neutral,0.9984402060508728,0.0
+"Yeah, sure.",1492.8,1493.5,neutral,0.9972810745239258,0.0
+"If you look at our greater China revenue for the quarter, we were down 11% Year over year and over half of the decline that we experienced was driven by changing Channel, inventory from the beginning to the end of the corridor.",1493.5,1512.6,negative,0.9986609220504761,-0.9986609220504761
+"And of course, on the Apple intelligence side, we have not rolled out in China.",1512.6,1519.7,neutral,0.8511765599250793,0.0
+"And as we just talked about, we did see better results in the markets that we had rolled out in and markets.",1519.7,1528.0,positive,0.9982384443283081,0.9982384443283081
+We hadn't rolled out in and Of course it's the most competitive market in the world and so all of those things are true.,1528.0,1534.7,negative,0.9960221648216248,-0.9960221648216248
+"In terms of the macro situation, there was a fiscal stimulus or subsidy announced in very recently and in January that did not affect the December quarter, there were some provincial subsidies in the December quarter but the Program was announced.",1534.7,1563.0,neutral,0.9994264841079712,0.0
+I believe on January 20th and it does cover the categories that we have products in from smartphones to tablets and PCs and and smart watches up to a certain maximum price point.,1563.0,1582.1,neutral,0.9995805621147156,0.0
+And so we do see fiscal stimulus occurring and will be glad to talk about what that looks like.,1582.3,1590.0,positive,0.9977521300315857,0.9977521300315857
+On the next call.,1590.1,1591.3,neutral,0.9994571805000305,0.0
+Great.,1593.4,1593.7,positive,0.9974786639213562,0.9974786639213562
+"Thanks so much, Tim.",1593.7,1594.3,neutral,0.9993689656257629,0.0
+Good luck.,1594.3,1594.8,neutral,0.9974274039268494,0.0
+Thank you.,1595.1,1595.7,neutral,0.9991152882575989,0.0
+"Thank you, Eric operator.",1596.3,1597.8,neutral,0.999357283115387,0.0
+"Can we have the next question, please?",1597.8,1599.6,neutral,0.9995216131210327,0.0
+"Our next question is from Ben Wright sees with malleus, please go ahead.",1602.3,1606.3,neutral,0.9995242357254028,0.0
+"Hey guys, thanks a lot for the question and hey, Tim wanted to ask you who you knew this one was coming.",1607.3,1614.1,neutral,0.9990612864494324,0.0
+But there's there's a perception that you're a big beneficiary of lower cost of compute.,1614.1,1622.0,positive,0.8246155381202698,0.8246155381202698
+"And I was wondering if you could give your worldly perspective here on the Deep seek situation and if you are Going to, if you have any things happen to change your views in terms of a Tailwind to margins and your ability to execute even due to the potential for cost to come down due to that development and and probably what was going to happen.",1622.0,1645.5,positive,0.7960723638534546,0.7960723638534546
+Anyway.,1645.5,1646.0,neutral,0.9964983463287354,0.0
+But love your perspective on that and then I have a quick follow-up.,1646.3,1649.1,neutral,0.9989591836929321,0.0
+Thanks sure.,1649.1,1650.4,neutral,0.9979372024536133,0.0
+"In general, I think Innovation that drives efficiency is a good thing and in, you know, that's that's what you see.",1650.4,1660.4,neutral,0.9824694395065308,0.0
+And Model are tight integration of silicon and software.,1660.4,1664.8,neutral,0.9978581070899963,0.0
+"I think will continue to serve us very well, as you know, we do things on the device and we do things in the private cloud and which mimics from a architectural point of view, the what, what happens on device and for mac Apple X point of view, we've always taken a very prudent and deliberate approach to our to our expenditure.",1664.8,1689.9,positive,0.9972276091575623,0.9972276091575623
+"And we in you to leverage a hybrid model, which I think continues to serve as well.",1689.9,1696.1,positive,0.9982985854148865,0.9982985854148865
+Oh great.,1698.6,1699.4,positive,0.9817641377449036,0.9817641377449036
+"Alright, thanks Tim.",1699.4,1700.4,neutral,0.9991205334663391,0.0
+"And then you know, just with regard to, you know, the iPhone trajectory do you feel like?",1700.4,1710.3,neutral,0.9992693066596985,0.0
+"I guess what, you know, you obviously don't talk about new products and stuff like that.",1710.3,1716.7,neutral,0.9995657801628113,0.0
+But do you feel that there's a lot of room for form factor innovation in the future?,1716.7,1722.2,neutral,0.6569675207138062,0.0
+"Or do you feel that the, you know, that the The current lineup, kind of, you know, shows where you're going.",1722.2,1731.0,neutral,0.9994780421257019,0.0
+"I guess without pulling punches wondering, if you thought, you know, in terms of the phone Innovation, if there's a lot more to come and you could see the kind of current market changing a bit over the next two to three years.",1731.7,1745.2,neutral,0.9993031024932861,0.0
+"Thanks, I think Ben, I think there's a lot more to come and I could not feel more optimistic about our product pipeline.",1745.3,1753.4,positive,0.9983078241348267,0.9983078241348267
+"So, I think there's a lot, a lot of innovation left on the smartphone.",1754.3,1759.5,neutral,0.9802042841911316,0.0
+Thanks a lot Tim.,1762.0,1762.7,neutral,0.9989503026008606,0.0
+"Yeah, thank you.",1762.8,1763.9,neutral,0.9983348250389099,0.0
+Thank you.,1764.8,1765.2,neutral,0.9991152882575989,0.0
+Ben operator.,1765.2,1766.5,neutral,0.9959463477134705,0.0
+"Could we have the next question, please?",1766.5,1768.4,neutral,0.9995204210281372,0.0
+Our next question is from Michael Ames at Goldman Sachs.,1770.2,1773.6,neutral,0.9994221925735474,0.0
+Please go ahead.,1773.6,1775.8,neutral,0.9968898892402649,0.0
+"Good afternoon, thank you for the question.",1776.0,1778.1,neutral,0.999346911907196,0.0
+I have two as well.,1778.2,1780.2,neutral,0.9990181922912598,0.0
+"First it was encouraging to hear about the record for iPhone operators, which I think is something you haven't said for about a year.",1780.5,1788.2,positive,0.9976403713226318,0.9976403713226318
+"Now, I was wondering if you could talk a little bit about what you would attribute, this upgrade strength to has Apple intelligence played a role in helping upgrades in the markets that you Thanks.",1788.2,1801.7,neutral,0.7417004108428955,0.0
+"Yeah, thank you for the question.",1801.8,1803.5,neutral,0.999273955821991,0.0
+If you look at iPhone we did set an all-time record for upgraders.,1803.5,1808.4,positive,0.9980727434158325,0.9980727434158325
+So we've never seen a higher level of upgraders before.,1808.4,1812.0,positive,0.7066624760627747,0.7066624760627747
+"The installed base, hit a new all-time high as well.",1812.0,1817.1,positive,0.9981166124343872,0.9981166124343872
+"And if you look at the 16 compared to the fifth game from launch, which occurred as you know, in September.",1817.1,1825.8,neutral,0.9995334148406982,0.0
+"So this is a cross now to quarters from Were to the end of the December fiscal quarter, the 16 outperformed, the 15.",1825.8,1836.6,positive,0.9971911311149597,0.9971911311149597
+And so I think you can conclude from that that there are compelling reasons to upgrade.,1837.5,1843.1,positive,0.9883648157119751,0.9883648157119751
+"And and, and in the markets where we had launched Apple intelligence, they outperformed the markets that we did not So Library.",1843.3,1854.0,positive,0.9978734254837036,0.9978734254837036
+Thank you Timothy.,1854.0,1854.7,neutral,0.9993071556091309,0.0
+"Yeah, lots of good color there.",1854.7,1856.5,neutral,0.7780716419219971,0.0
+Great.,1857.6,1858.0,positive,0.9974786639213562,0.9974786639213562
+Thank you.,1858.0,1858.3,neutral,0.9991152882575989,0.0
+Tim.,1858.3,1858.6,neutral,0.9989803433418274,0.0
+That's very clear.,1858.6,1859.3,neutral,0.9972332119941711,0.0
+"And then, I had one about the iPad Pro em for the thinner version.",1859.7,1864.4,neutral,0.999427318572998,0.0
+"I was just wondering if you could talk about that, thin form factor for the iPad Pro, you know, how did it help iPad sales overall, and what did your kind of market and consumer research, tell you about how consumers valued that thin product form factor?",1865.0,1883.9,neutral,0.9938858151435852,0.0
+Thank you.,1884.0,1884.4,neutral,0.9991152882575989,0.0
+"It's a good question, iPad.",1885.0,1887.3,neutral,0.9980485439300537,0.0
+"Add overall grew 15 percent for the quarter and it was more driven by iPad Air and the entry-level iPad that it was the top level iPad but overall we could not be more pleased with iPad category, growing 15%.",1887.4,1912.1,positive,0.9981163740158081,0.9981163740158081
+It's a great achievement for the quarter and probably what it is.,1912.1,1916.9,positive,0.9980865716934204,0.9980865716934204
+Most important is that over half of the sales and the December quarter went to customers who were new to the iPad.,1917.4,1924.5,neutral,0.9980888962745667,0.0
+"So that, that tells us that, you know, there's a good amount of customers there to attract.",1924.5,1934.1,positive,0.998071014881134,0.998071014881134
+Thank you very much Tim.,1936.1,1937.1,neutral,0.9993096590042114,0.0
+Yep.,1937.1,1937.5,neutral,0.9972676038742065,0.0
+Thank you.,1937.5,1938.2,neutral,0.9991152882575989,0.0
+"Thanks, Mike, operator, can we have the next question, please?",1939.0,1942.6,neutral,0.9995217323303223,0.0
+Our next question is from Abit.,1944.7,1946.6,neutral,0.9994321465492249,0.0
+Darien on.,1946.6,1947.3,negative,0.9415375590324402,-0.9415375590324402
+He's from evercore.,1947.3,1948.5,neutral,0.9994530081748962,0.0
+Please go ahead.,1948.5,1949.3,neutral,0.9968898892402649,0.0
+"Good afternoon, everyone iPad as well.",1952.0,1953.4,neutral,0.9994006156921387,0.0
+"Maybe to start with you, folks are seeing some very robust growth Trends and Emerging Markets right now.",1953.4,1959.3,positive,0.9983354210853577,0.9983354210853577
+"Apple products at a high level, this top of the durability of growth that you see in emerging market.",1959.3,1964.7,positive,0.9979648590087891,0.9979648590087891
+"And then, do you think the summation of these Emerging Markets are starting to get big enough or perhaps on the grow fast enough?",1964.7,1970.6,positive,0.9975541234016418,0.9975541234016418
+That you can actually offset some of the China headbands you cooking through.,1970.6,1974.2,positive,0.9917594790458679,0.9917594790458679
+"We have great results in a number of emerging markets and As you know, from past calls.",1974.2,1982.9,positive,0.9982938170433044,0.9982938170433044
+I'm particularly keen on India.,1982.9,1986.3,positive,0.9887228012084961,0.9887228012084961
+"India set a December quarter record during the quarter and we're opening more stores there, we've announced that we're going to open for new stores.",1986.3,1998.1,positive,0.9982426166534424,0.9982426166534424
+There we also the iPhone was the top selling model in India for the quarter and it's the second largest smartphone.,1998.1,2010.3,neutral,0.6849096417427063,0.0
+It in the world and the third largest for PCs and tablets.,2010.9,2014.1,neutral,0.9199007153511047,0.0
+"And so there's a huge market and we are, we have very modest share in these markets and so I think there's lots of upside there and that's just one of the, of the Emerging Markets, tend to maybe I'll add I'm at than emerging markets were also seeing double-digit growth on the install base, both in total and for the iPhone as well.",2014.1,2037.1,positive,0.9980465173721313,0.9980465173721313
+So that's also encouraging encouraging sign.,2037.1,2039.6,positive,0.9982391595840454,0.9982391595840454
+Perfect.,2041.9,2042.4,positive,0.9968997240066528,0.9968997240066528
+Thank you.,2042.4,2042.7,neutral,0.9991152882575989,0.0
+And then you'll just a question gross margin for the March quarter.,2042.7,2046.1,neutral,0.9993756413459778,0.0
+If you folks are getting gross.,2046.1,2048.0,neutral,0.5488286018371582,0.0
+Margin is sliders and a sequential basis.,2048.0,2049.9,neutral,0.9995923638343811,0.0
+Typically I think it tends to be guided up a little bit 50 basis points will sequentially then we just tested like what are the offset to the put some dishes here in gross margin and Kevin will you just talk about is FX?,2049.9,2060.0,neutral,0.9151332974433899,0.0
+Having it outside impact in your margin profile as well in March.,2060.0,2063.1,negative,0.918043851852417,-0.918043851852417
+"Yeah, Summit.",2063.2,2064.5,neutral,0.9993201494216919,0.0
+Let me take that one.,2064.5,2065.5,neutral,0.9988490343093872,0.0
+"You know, you mentioned in my remarks we're guiding to 46.5 percent to forty seven point five.",2065.8,2071.7,neutral,0.9989818930625916,0.0
+Five percent.,2071.7,2072.3,neutral,0.9981100559234619,0.0
+"So we think it's, you know, very pleased with that level of guidance as you mention, there's always puts and takes, we do think there's going to be some FX headwinds, which we talked about that's going to affect, you know, our Revenue growth as well.",2072.3,2082.7,negative,0.9764458537101746,-0.9764458537101746
+"You know, to have an impact here on the margin, a sequential impact on margins, but we think that's going to be offset by favorable costs and the relative mix of services.",2082.7,2093.0,neutral,0.9888661503791809,0.0
+"We also, as you know, when we move from q1 to Q2, especially on the product side because q1 is such a large quarter.",2093.0,2099.8,neutral,0.9993847608566284,0.0
+"Products business, we do have, you know, a loss of Leverage.",2100.0,2103.5,negative,0.9989413619041443,-0.9989413619041443
+"So there are some puts and takes and I think, you know, we feel good about the range, we think it's a very, very strong, strong guide for gross margin.",2103.6,2109.6,positive,0.9982749223709106,0.9982749223709106
+Thanks Emmett.,2115.9,2116.6,neutral,0.9992510676383972,0.0
+"Operator, could we get the next question, please?",2116.8,2119.2,neutral,0.9995056390762329,0.0
+Our next question is from whomp Samoan with Bank of America.,2121.5,2125.3,neutral,0.999395489692688,0.0
+Please go ahead.,2125.4,2126.1,neutral,0.9968898892402649,0.0
+"Yes, thank you.",2127.6,2128.1,neutral,0.9969757795333862,0.0
+Thanks so much.,2128.1,2128.9,neutral,0.9984402060508728,0.0
+Tim.,2129.2,2129.7,neutral,0.9989803433418274,0.0
+"I want to follow up on your comment about Channel, inventory in China.",2129.9,2134.1,neutral,0.9995575547218323,0.0
+"I was wondering if you could maybe address more broadly, if Channel, inventory across your different product lines and regions, do you feel their elevated are out of range and any other regions and and given the clearing event that kind of happened in China?",2134.1,2148.4,negative,0.9070811867713928,-0.9070811867713928
+"I guess in the quarter, should we think of a more normal progression.",2148.4,2151.0,neutral,0.9995372295379639,0.0
+"Russian quarter, and quarter into the marked, water in China in particular, and I will follow yeah, I don't want to project sales for the current quarter by region, but if you, if you look at the channel inventory and look at iPhone in the aggregate, so on a worldwide basis, we're very comfortable with our Channel, inventory position in the in China, my point was that our Channel inventory reduced from the beginning of the quarter, to the end of the quarter and that was over half of the Auction and reported results.",2151.2,2190.8,neutral,0.9617906212806702,0.0
+And so if you look part of the reason for that is that our sales were a bit higher than we forecasted them to be toward the end of the quarter.,2191.1,2203.0,positive,0.9977483153343201,0.9977483153343201
+"And so, we ended a little leaner than we had expected to.",2203.9,2208.6,negative,0.9974613189697266,-0.9974613189697266
+"Okay, that's very clear.",2211.7,2212.7,neutral,0.996614396572113,0.0
+Thank you.,2212.7,2213.4,neutral,0.9991152882575989,0.0
+Yeah.,2213.4,2213.6,neutral,0.9958522319793701,0.0
+"Thank and then maybe as my follow-up, you Services growth has been very strong and I know you kind of been navigating some pretty challenging regulatory burdens on the business globally.",2213.8,2227.9,positive,0.9981315732002258,0.9981315732002258
+"So, how should investors think about maybe either a top line or margin headwind that?",2227.9,2234.4,negative,0.985770583152771,-0.985770583152771
+"Lets say you're currently absorbing in your words, in your results that could potentially, maybe reverse in a more balanced regular.",2234.4,2241.3,neutral,0.9995599389076233,0.0
+"Tory environment, thank you so much.",2241.4,2243.1,neutral,0.9992715716362,0.0
+"So I think what I just wanted to kind of reiterate the fact that you know, our services business at an all-time record for December quarter up 14% And that was a one strength that we saw across all Geographic segments and also was very broad-based across all of our services.",2245.3,2260.1,positive,0.9982789754867554,0.9982789754867554
+"So we have as you know, a very broad Services portfolio and so we do see, you know, a good momentum across across the board and as well, you know, we continue to see, you know, increasing engagement across Customer base across all of the service offerings, both transacting and paid accounts.",2260.1,2275.7,positive,0.998340368270874,0.998340368270874
+"We talked about, you know, reaching all-time highs.",2275.7,2278.0,positive,0.9978598952293396,0.9978598952293396
+And we have over now a billion paid subscriptions across the services platform.,2278.4,2282.5,positive,0.9694264531135559,0.9694264531135559
+All right.,2290.9,2291.5,neutral,0.9975664615631104,0.0
+"Thanks Mom, Z, operator, could we get the next question, please?",2292.9,2296.2,neutral,0.9994602799415588,0.0
+Our next question is from stomach Chatterjee with JP Morgan.,2298.7,2302.7,neutral,0.9990723133087158,0.0
+Please go ahead.,2302.7,2303.5,neutral,0.9968898892402649,0.0
+"I guess for the first one, if I mean, you had a great quarter on Mac sand, iPad booth.",2307.3,2312.0,positive,0.9981447458267212,0.9981447458267212
+"And I'm just curious, in terms of if you can help us think about the sustainability of this double digit growth that you saw in both the product lines and more interest were also.",2312.0,2321.0,positive,0.9973961114883423,0.9973961114883423
+Here we are talking about Apple intelligent sort of influencing volumes on iPhone.,2321.0,2325.8,neutral,0.9993993043899536,0.0
+But any thoughts on?,2325.8,2326.9,neutral,0.9977395534515381,0.0
+Sort of how what does that?,2326.9,2328.4,neutral,0.9990392923355103,0.0
+"That influence look like in terms of volumes for Mac, for example, where I think there's a lot of conversation already.",2328.5,2333.6,neutral,0.9994053840637207,0.0
+Ipc's how you thinking about the impact there and have a quick follow-up.,2333.6,2337.2,neutral,0.9991165995597839,0.0
+Thank you.,2337.2,2337.8,neutral,0.9991152882575989,0.0
+"If you look at Mac Mac was up 16% and on iPad, we were up 15 percent.",2339.2,2346.0,positive,0.9981266856193542,0.9981266856193542
+The Mac was driven by the a very strong uptake on our new products during the quarter and the continued success of the MacBook Air or and so as you know we launched an M4 based Mac Book Pro an eye Mac and a Mac Mini.,2346.0,2368.5,positive,0.9981552958488464,0.9981552958488464
+"The corridor, we believe we've got the best AI PC out there for running workloads.",2368.9,2377.7,positive,0.9982292056083679,0.9982292056083679
+The Silicon in the Mac is and it has been for for several years now designed by us and really designed for these workloads.,2377.7,2392.5,neutral,0.9958667755126953,0.0
+"And so, but I don't want to project at the, you know, at the cat Cory level for the Sure, but we're incredibly pleased with both the mac and the iPad for the quarter.",2392.5,2406.6,positive,0.9975131750106812,0.9975131750106812
+"And I'm going to use your earlier discussion about India as a strong Emerging Market, to sort of ask you about the supply chain planning there in terms of how much of the supply chain planning there.",2409.8,2422.4,neutral,0.9944402575492859,0.0
+That you're doing is more of a reflection of the growth expectations from that market rate of 2 in terms of more diversification of the supply chain and how should we sort of think about that strategy range of that particular country?,2422.4,2434.9,positive,0.9951540231704712,0.9951540231704712
+"Yeah, if you look at the manufacturing we do there, we do manufacturing boats for the domestic market and we export.",2436.7,2447.4,neutral,0.9995096921920776,0.0
+And so in our business needs a certain economies of scale for it to make sense to manufacturer in country.,2448.0,2459.2,neutral,0.9995538592338562,0.0
+"And so, that really means that we're going to be both.",2459.2,2463.8,neutral,0.9993942975997925,0.0
+And I Use for the domestic market and an export Market.,2463.8,2471.0,neutral,0.9995635151863098,0.0
+Thank you.,2473.8,2474.2,neutral,0.9991152882575989,0.0
+"Yeah, thanks.",2474.6,2475.6,neutral,0.9978302121162415,0.0
+Thank you so Mak operator.,2476.4,2478.4,neutral,0.9990554451942444,0.0
+"Could we get the next question, please?",2478.5,2480.4,neutral,0.999478280544281,0.0
+Our next question is from David vote with UPS.,2482.9,2485.9,neutral,0.9990227222442627,0.0
+"Please go ahead, great.",2485.9,2488.2,neutral,0.9887218475341797,0.0
+Thanks guys for taking my question.,2488.2,2489.8,neutral,0.9993457198143005,0.0
+So maybe 10 minutes for you.,2489.8,2491.4,neutral,0.9993910789489746,0.0
+I'm trying to think about your commentary around Apple Intelligence being sort of a momentum driver for the iPhone business.,2491.8,2497.4,positive,0.9968991279602051,0.9968991279602051
+"But when I think about your kind of framework for the March quarter of a kind of adjust for channel inventory, over the last couple of years, kind of feels like your iPhone revenue for the March quarter is going to be relatively similar to the quarter two years ago and even the quarter last year.",2497.4,2511.3,neutral,0.9995399713516235,0.0
+So how do we Square?,2511.6,2512.5,neutral,0.999497652053833,0.0
+"Are kind of the momentum versus kind of the iPhone business effectively, really kind of unchanged over the last couple of years and then second when I think about kind of gross margin profile of a business and obviously he's done a great job in taking gross.",2512.6,2525.7,neutral,0.9416508674621582,0.0
+"Margins up, where do you think we sit in terms of on the services side?",2525.7,2529.1,positive,0.9980359673500061,0.9980359673500061
+At least we're margins could go.,2529.1,2531.0,neutral,0.9923321008682251,0.0
+"It looks like, you know, the 75% more Yeah.",2531.0,2542.0,neutral,0.9994522929191589,0.0
+"If you, if you look at Apple intelligence, what my point earlier was that markets, where we had rolled out Apple intelligence during the Q.",2542.0,2553.0,neutral,0.9993895292282104,0.0
+1.,2553.0,2553.9,neutral,0.9987747073173523,0.0
+"Performed, better on a year-over-year basis than markets, where we had not.",2553.9,2559.8,positive,0.9978020787239075,0.9978020787239075
+"And and so that that gives us, it's a, you know, positive indicator that we were pleased with There are many compelling reasons to upgrade and do the other thing I would, I would say that I think I mentioned earlier is that if you look at it from a launch to the end of the December quarter and so that goes back to September, the 16 family is outperforming the 15 family and and so I think those are two good data points.",2559.8,2596.4,positive,0.9982824325561523,0.9982824325561523
+Our next round of Language rollouts will be in April.,2596.4,2602.7,neutral,0.9994578957557678,0.0
+"And so, it will be at the in our Q3 quarter.",2603.5,2609.1,neutral,0.999545156955719,0.0
+And I'll let Kevin take the gross margin question at Great.,2610.4,2613.6,neutral,0.999607264995575,0.0
+Hi.,2613.8,2614.2,neutral,0.9964386224746704,0.0
+David how are you?,2614.2,2614.9,neutral,0.9983593821525574,0.0
+So on the surface is gross margin I think maybe we s up in back a second you know.,2615.0,2620.6,neutral,0.9995829463005066,0.0
+"Services business in general is aggregate and aggregate is greeted by the overall company margin and one of the things is an important reminder, is we have a very broad Services portfolio and those businesses have very different margin profiles.",2620.6,2632.9,neutral,0.9996011853218079,0.0
+"And so I think one it's because of the nature of those businesses and in part also, because of the way we account for them, And so one of the big factors that drives a Services gross margins of relative performance of those different businesses within the portfolio.",2632.9,2646.5,neutral,0.9995563626289368,0.0
+"We also have the dynamic of some scale businesses like payment services iCloud that are actually growing and there when we add incremental users, those end up being, you know, accretive to margins as well.",2647.0,2657.6,positive,0.9981164932250977,0.9981164932250977
+And so in general what we saw on the December quarter was nice momentum across our entire Services business.,2657.6,2662.7,positive,0.9983569979667664,0.9983569979667664
+"That allows to deliver you know that 75 percent margin at the services level and I think our guidance This takes into consideration, you know what we think we're going to learn from a company standpoint of forty six point five to forty seven point five, which again, we think is a strong guide.",2662.7,2678.2,positive,0.9981245398521423,0.9981245398521423
+Great.,2680.3,2680.6,positive,0.9974786639213562,0.9974786639213562
+Thanks guys.,2680.6,2681.2,neutral,0.999190628528595,0.0
+"Alright, thank you.",2681.9,2682.8,neutral,0.9970239996910095,0.0
+"David operator, could we have the next question, please?",2682.8,2685.9,neutral,0.9995145797729492,0.0
+Our next question is from Chris anchor.,2687.8,2690.4,neutral,0.9994462132453918,0.0
+"With TD, Kalin, please go ahead.",2690.4,2692.4,neutral,0.9991011619567871,0.0
+You don't think that?,2693.4,2694.0,neutral,0.9215009808540344,0.0
+I'm a Christian.,2694.0,2694.6,neutral,0.9535393714904785,0.0
+"I also did two of them, one of the first ones within yet very strong Mac.",2694.6,2699.1,neutral,0.8841215372085571,0.0
+And your the way your last water.,2700.0,2701.5,neutral,0.9992620348930359,0.0
+"This one thing, how much of that is driven by some of the Mac Syndicate, Innovation versus replacement cycle, formats?",2701.9,2710.1,neutral,0.9994576573371887,0.0
+"I don't know the answer to your question precisely, but I think it is a combination of these products are so compelling.",2713.5,2727.2,positive,0.8195269107818604,0.8195269107818604
+"The, the M4 based products are so compelling that it's driving, both upgrades and at the double-digit level and it's driving switchers at a double-digit level.",2727.7,2740.4,positive,0.9982677698135376,0.9982677698135376
+"And so, we're seeing both, Both come out.",2740.9,2744.9,neutral,0.9966957569122314,0.0
+And I think it's just because of the compelling products.,2744.9,2747.9,positive,0.9077935814857483,0.9077935814857483
+"Got it, got it.",2750.3,2751.1,neutral,0.909284234046936,0.0
+Thanks to the diminutive follow for Kevin on the gross margin.,2751.1,2755.2,negative,0.8473086953163147,-0.8473086953163147
+"I'm gonna ask you one more on the product side, you know.",2755.2,2758.0,neutral,0.9994551539421082,0.0
+Last quarter you had 39.3% which is very strong similar to a year ago period going to kill his.,2758.0,2765.5,positive,0.9981537461280823,0.9981537461280823
+How much more levels do you have on the product side to include a gross margin or do you think some of the more new AI related devices?,2765.5,2774.3,neutral,0.9991872906684875,0.0
+There's more upside to gross margin come here on the product Hardware side.,2774.3,2778.3,positive,0.9978576302528381,0.9978576302528381
+Yeah.,2779.8,2779.9,neutral,0.9958522319793701,0.0
+Thanks Chris.,2779.9,2780.4,neutral,0.9990965127944946,0.0
+With the question is on the product side.,2780.4,2782.8,neutral,0.9994691014289856,0.0
+"As you mentioned, you know, we had a pretty strong, sequential Improvement 300 basis points, you know, for the December quarter, you know, that was really driven by we talked about favorable mix and leverage, as you know in q1 again it's a launch quarter for many products.",2782.8,2797.4,positive,0.9981691837310791,0.9981691837310791
+And so we tend to benefit from The Leverage that we get from that higher volume.,2797.4,2802.1,positive,0.9979687333106995,0.9979687333106995
+"I would say in general, you know, our gross margin products is driven by a number of factors.",2802.6,2807.3,neutral,0.9995213747024536,0.0
+"One of them is the You know, various product, launches that we had different products, you have different margin profiles and so that mix does make a difference.",2807.3,2815.6,neutral,0.9991694688796997,0.0
+"And in particular, what we're seeing is for example, many of our mixes across like phone for example we're seeing customers gravitate towards our pro products because of things like affordability that allows you know our customers to get, you know into our best products which have you know, favorable gross margins.",2815.6,2833.0,positive,0.9982298016548157,0.9982298016548157
+So we continue to see that Trend you know the impact it has in the December quarter as well.,2833.4,2838.4,positive,0.5668644309043884,0.5668644309043884
+"I think we're in a favorable the commodity environment from a cost standpoint and so you know, we're benefiting from that as well in the December quarter and then you know that's going to be as we talked about, we're going to have a foreign exchange headwind heading into the March quarter, but we figured, you know, that's contemplated in the guidance range that we gave for the 46.5 to 47.5% Thanksgiving intensive.",2838.4,2861.6,positive,0.9960740804672241,0.9960740804672241
+"Thank you, Chris operator, could we get the next question, please?",2863.6,2867.2,neutral,0.9993624091148376,0.0
+"Alright, next question is from Richard, Kramer with a reach research.",2871.6,2875.2,neutral,0.9994751811027527,0.0
+Please go ahead.,2875.2,2876.0,neutral,0.9968898892402649,0.0
+Thanks very much.,2877.2,2877.9,neutral,0.999267041683197,0.0
+"My first question is for Tim, I'd like to ask about what might accelerate the pace of Apple intelligence adoption.",2877.9,2883.7,positive,0.8896458745002747,0.8896458745002747
+I guess.,2883.8,2884.5,neutral,0.998906135559082,0.0
+Do you see this?,2884.5,2885.0,neutral,0.9973614811897278,0.0
+Simply as a question of time I to launch more markets and languages or increase the percentage of installed base devices that can support it or is it a question of money?,2885.0,2894.3,neutral,0.9967293739318848,0.0
+IE shifting Rd or marketing spend towards a eye and based on other prior Apple services?,2894.3,2900.7,neutral,0.9993295669555664,0.0
+Do you expect To sort of Tipping Point where adoption will go mainstream.,2900.7,2904.5,neutral,0.9989369511604309,0.0
+"Thanks, I do believe it will go mainstream.",2904.5,2910.0,positive,0.9980258941650391,0.9980258941650391
+"I'm getting feedback from people using different features today and this is keep in mind that on the iPhone side of our business, you either have to have an iPhone 15 Pro or iPhone 16 to use, apple intelligence.",2910.5,2929.3,neutral,0.9994612336158752,0.0
+"And, and The as that base grows, I think the usage will continue to grow.",2929.3,2938.5,positive,0.9982518553733826,0.9982518553733826
+And I think I know from my own personal experience.,2938.8,2942.2,neutral,0.9994440674781799,0.0
+Once you start using the features you you can't imagine not using them anymore.,2942.2,2949.2,neutral,0.9987241625785828,0.0
+I know I get hundreds of emails a day and the summarization function is is so important.,2950.3,2959.8,neutral,0.9995517134666443,0.0
+"So, so I think it's a combination of that.",2961.0,2963.8,neutral,0.9988110065460205,0.0
+"And of course, in April, we roll out a whole series of new languages that we had that we had mentioned and so the base grows further.",2963.8,2972.6,positive,0.9982826709747314,0.9982826709747314
+"Okay, thank you.",2975.3,2976.0,neutral,0.9973629117012024,0.0
+"And then Kevin one of Lucas legacies was really getting Apple to record margin levels and and also maintaining very consistent pricing across the product range, but taking the current high levels of profitability is fairly stable.",2976.0,2988.5,positive,0.9681143164634705,0.9681143164634705
+"What observations might, you share about price, sensitivity of users, and whether having a wider range of pricing across the products.",2988.5,2996.1,neutral,0.9995367527008057,0.0
+"Mike unlocks potentially further market, share gains, or Most overall product growth.",2996.1,3001.7,positive,0.9981327652931213,0.9981327652931213
+That's a good question.,3004.0,3004.9,neutral,0.9991235136985779,0.0
+"I think, you know what, I don't think we're in early depart from what served as pretty well to now.",3004.9,3008.9,neutral,0.9146662354469299,0.0
+"I mean that we always take into consideration, you know, looking at short-term Trader, you know, comparisons being short term in the long term.",3008.9,3017.0,neutral,0.9995624423027039,0.0
+I think we've had a pretty disciplined pricing strategy which would serve this pretty well.,3017.0,3021.2,positive,0.9970288872718811,0.9970288872718811
+"And I think we're going to, you know, continually kind of stick with that as far as I can tell.",3021.5,3025.5,neutral,0.9113447666168213,0.0
+"Okay, thanks.",3028.4,3029.3,neutral,0.9956173896789551,0.0
+"Thank you, Richard.",3030.5,3031.5,neutral,0.9993382096290588,0.0
+"Operator, could we get the next question, please?",3031.6,3034.1,neutral,0.9995056390762329,0.0
+Our next question is from Optus Malik with City.,3036.2,3039.0,neutral,0.9993523955345154,0.0
+Please go ahead.,3039.1,3039.8,neutral,0.9968898892402649,0.0
+Hi.,3041.7,3042.0,neutral,0.9964386224746704,0.0
+Thank you for taking my question.,3042.0,3043.6,neutral,0.9993622899055481,0.0
+"How do you guys see the potential Terrace impact to your products for Consumer demand, under Trump 2.0, you guys did find under Trump 1.0 We are monitoring the situation and don't have anything more to add than that.",3044.8,3063.4,neutral,0.9906685948371887,0.0
+Great.,3065.9,3066.2,positive,0.9974786639213562,0.9974786639213562
+And Tim as a follow-up at there is a lot of discussion on the agentic AI the use of agent.,3066.5,3071.6,neutral,0.9995760321617126,0.0
+Do you guys see the upgraded?,3072.2,3074.2,positive,0.9963269829750061,0.9963269829750061
+Siri and expected in April as something that will let's say be the killer application.,3074.2,3082.0,neutral,0.9634914994239807,0.0
+Among the suite of features that you have announced an apple intelligence I think the killer feature is different for different people and but I think for most they're going to find that they're going to use many of the features every day and certainly one of those is the is the is Siri and that will be coming over the next several months.,3082.0,3113.1,neutral,0.9994939565658569,0.0
+Thank you.,3116.5,3116.9,neutral,0.9991152882575989,0.0
+Thank you.,3119.5,3119.9,neutral,0.9991152882575989,0.0
+Ought.,3119.9,3120.1,neutral,0.9942889213562012,0.0
+If operator could we please get the last question.,3120.1,3122.9,neutral,0.9994971752166748,0.0
+All right.,3125.8,3126.1,neutral,0.9975664615631104,0.0
+Last question is from Ben Balan from Cleveland research Company.,3126.1,3129.8,neutral,0.9993354678153992,0.0
+Please go ahead.,3129.9,3130.7,neutral,0.9968898892402649,0.0
+"Good evening, everyone.",3132.8,3133.6,neutral,0.9992156028747559,0.0
+Thanks for taking the question.,3133.6,3135.0,neutral,0.9993865489959717,0.0
+"Tim, I'm interested in your thoughts and how you would have us.",3136.2,3139.4,neutral,0.9994526505470276,0.0
+"Think about the average useful, life of these devices in the wild and in particular curious, if if you look at, you know, the the strong, the strength you saw in fiscal 21 and how that might support, you know, accelerated refresh opportunity into the future.",3139.4,3158.0,positive,0.996650755405426,0.996650755405426
+"Yeah, Ben I think it's different for different types of users.",3159.7,3164.5,neutral,0.9992538094520569,0.0
+I mean you have very early adopter.,3164.5,3169.3,positive,0.9892936944961548,0.9892936944961548
+"Kind of users that are very quick to jump on the latest technology, the upgrade very frequently and then you have people that are on the entire opposite side of that barbell and and most people are between those two.",3169.3,3189.3,neutral,0.9990068078041077,0.0
+Two points.,3189.5,3190.3,neutral,0.9894410371780396,0.0
+And and so I do think there were lots of units that are sold during the Soviet period of time and it's a huge opportunity for us as a company to for more than one of the product categories.,3190.3,3208.9,positive,0.9981514811515808,0.9981514811515808
+That's it for me.,3212.6,3213.2,neutral,0.998976469039917,0.0
+Thank Tim.,3213.2,3213.7,neutral,0.9993082284927368,0.0
+Thank you.,3214.0,3214.7,neutral,0.9991152882575989,0.0
+All right.,3217.9,3218.4,neutral,0.9975664615631104,0.0
+Thanks Ben.,3219.2,3220.0,neutral,0.9992280006408691,0.0
+A replay of today's call will be available for two weeks on Apple podcast or as a webcast on apple.com investor and Via telephone the number for the telephone replay is 866-583-9701 or five.,3224.9,3240.8,neutral,0.9993934631347656,0.0
+"Please enter confirmation code, seven, three nine, eight, five, three, two followed, by the pound sign, these replays will be available by approximately 5 p.m. At Pacific time today members of the press with additional questions can contact Josh rosenstock at four?",3240.8,3258.2,neutral,0.9996161460876465,0.0
+"Zero eight, eight, six, two one, one, four, two and financial analysts can contact me.",3258.2,3264.7,neutral,0.999514102935791,0.0
+"Suhasini chandramouli with additional questions at four zero eight, nine, seven, four three, one, two, three.",3264.7,3272.0,neutral,0.9995754361152649,0.0
+Thanks again for joining us here today.,3272.4,3274.2,neutral,0.9993168115615845,0.0
+"Once again, this does conclude today's conference, we do appreciate your participation.",3277.3,3281.5,neutral,0.9995600581169128,0.0

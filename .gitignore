@@ -2,3 +2,5 @@ RAG/.env
 RAG/uploads/
 RAG/__pycache__/
 RAG/faiss_indices/
+chunks/
+input_audio/
