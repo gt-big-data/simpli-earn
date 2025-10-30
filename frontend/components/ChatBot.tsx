@@ -74,8 +74,10 @@ export default function ChatBot({
 
   useEffect(() => {
     if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop =
-        messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTo({
+        top: messageContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }, [messages]);
 
