@@ -4,3 +4,4 @@ RAG/__pycache__/
 RAG/faiss_indices/
 google-cloud-sdk
 venv
+RAG/models/
