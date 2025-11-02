@@ -15,7 +15,7 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     return new Promise<Response>((resolve) => {
-      const pythonProcess = spawn("python", [
+      const pythonProcess = spawn("python3", [
         path.join(process.cwd(), "app/stockchartgenerationV2.py"),
         ticker,
         date,

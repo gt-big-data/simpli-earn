@@ -47,10 +47,13 @@ const formatDateTime = (timestamp: string): string => {
   });
 };
 
+type ChartView = '48h-close' | 'price-movement';
+
 const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
   const [stockData, setStockData] = useState<StockData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [chartView, setChartView] = useState<ChartView>('48h-close');
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -92,26 +95,58 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
     return <div className="flex justify-center items-center h-64">No stock data available</div>;
   }
 
-  const chartData = {
-    labels: stockData.timestamps.map(formatDateTime),
-    datasets: [
-      {
-        label: 'Stock Price',
-        data: stockData.prices,
-        borderColor: 'rgba(128, 209, 141, 255)',
-        tension: 0.1,
-        pointRadius: 2,
-        pointHoverRadius: 6,
-        pointBackgroundColor: 'rgba(128, 209, 141, 0.2)',
-        pointBorderColor: 'rgba(128, 209, 141, 0.2)',
-        pointHoverBackgroundColor: 'rgba(128, 209, 141, 255)',
-        pointHoverBorderColor: 'rgba(128, 209, 141, 255)',
-        showLine: true,
-      },
-    ],
+  // Get chart data based on selected view
+  const getChartData = () => {
+    const labels = stockData.timestamps.map(formatDateTime);
+    
+    if (chartView === 'price-movement') {
+      // Show percentage change from start
+      return {
+        labels,
+        datasets: [
+          {
+            label: 'Price Movement (%)',
+            data: stockData.pct_changes,
+            borderColor: 'rgba(128, 209, 141, 255)',
+            backgroundColor: 'rgba(128, 209, 141, 0.1)',
+            tension: 0.1,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            pointBackgroundColor: 'rgba(128, 209, 141, 0.2)',
+            pointBorderColor: 'rgba(128, 209, 141, 0.2)',
+            pointHoverBackgroundColor: 'rgba(128, 209, 141, 255)',
+            pointHoverBorderColor: 'rgba(128, 209, 141, 255)',
+            fill: true,
+            showLine: true,
+          },
+        ],
+      };
+    } else {
+      // Show 48h close price
+      return {
+        labels,
+        datasets: [
+          {
+            label: 'Stock Price',
+            data: stockData.prices,
+            borderColor: 'rgba(128, 209, 141, 255)',
+            tension: 0.1,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            pointBackgroundColor: 'rgba(128, 209, 141, 0.2)',
+            pointBorderColor: 'rgba(128, 209, 141, 0.2)',
+            pointHoverBackgroundColor: 'rgba(128, 209, 141, 255)',
+            pointHoverBorderColor: 'rgba(128, 209, 141, 255)',
+            showLine: true,
+          },
+        ],
+      };
+    }
   };
 
-  const options = {
+  const chartData = getChartData();
+
+  const getOptions = () => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
@@ -130,7 +165,11 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
         displayColors: false,
         callbacks: {
           label: function(context: TooltipItem<'line'>) {
-            return `$${context.parsed.y.toFixed(2)}`;
+            if (chartView === 'price-movement') {
+              return `${context.parsed.y.toFixed(2)}%`;
+            } else {
+              return `$${context.parsed.y.toFixed(2)}`;
+            }
           }
         }
       },
@@ -161,12 +200,18 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
           },
           callback: function(tickValue: string | number) {
             const value = typeof tickValue === 'string' ? parseFloat(tickValue) : tickValue;
-            return `$${value.toFixed(2)}`;
+            if (chartView === 'price-movement') {
+              return `${value.toFixed(2)}%`;
+            } else {
+              return `$${value.toFixed(2)}`;
+            }
           }
         },
       },
     },
-  };
+  });
+
+  const options = getOptions();
 
   // Custom plugin for vertical line
   const verticalLinePlugin = {
@@ -202,26 +247,61 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
   ChartJS.register(verticalLinePlugin);
 
   return (
-    <div className="flex flex-col w-full h-full box-border p-6">
-      <div className="w-full h-full">
+    <div className="flex flex-col w-full h-full box-border p-6 overflow-hidden">
+      {/* Chart View Selector Dropdown */}
+      <div className="flex justify-end items-center mb-4">
+        <label className="text-sm font-medium text-white/70 mr-2">View:</label>
+        <select
+          value={chartView}
+          onChange={(e) => setChartView(e.target.value as ChartView)}
+          className="bg-white/10 border border-white/25 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-white/40"
+        >
+          <option value="48h-close">48h Close</option>
+          <option value="price-movement">Price Movement</option>
+        </select>
+      </div>
+      
+      <div className="w-full h-full overflow-hidden">
         <Line data={chartData} options={options} />
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
-        <div className="p-4 border border-white/25 rounded-lg">
-          <h3 className="font-bold mb-2">First Day</h3>
-          <p>Range: ${stockData.summary_stats.first_day.min.toFixed(2)} - ${stockData.summary_stats.first_day.max.toFixed(2)}</p>
-          <p>Change: ${stockData.summary_stats.first_day.change.toFixed(2)} ({stockData.summary_stats.first_day.pct_change.toFixed(2)}%)</p>
-        </div>
-        <div className="p-4 border border-white/25 rounded-lg">
-          <h3 className="font-bold mb-2">Second Day</h3>
-          <p>Range: ${stockData.summary_stats.second_day.min.toFixed(2)} - ${stockData.summary_stats.second_day.max.toFixed(2)}</p>
-          <p>Change: ${stockData.summary_stats.second_day.change.toFixed(2)} ({stockData.summary_stats.second_day.pct_change.toFixed(2)}%)</p>
-        </div>
-        <div className="p-4 border border-white/25 rounded-lg">
-          <h3 className="font-bold mb-2">Overall</h3>
-          <p>Total Change: ${stockData.summary_stats.overall.change.toFixed(2)}</p>
-          <p>Percentage: {stockData.summary_stats.overall.pct_change.toFixed(2)}%</p>
-        </div>
+      <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+        {chartView === '48h-close' ? (
+          <>
+            <div className="p-3 border border-white/25 rounded-lg min-w-0">
+              <h3 className="font-bold mb-1 text-xs">First Day</h3>
+              <p className="text-xs">Range: ${stockData.summary_stats.first_day.min.toFixed(2)} - ${stockData.summary_stats.first_day.max.toFixed(2)}</p>
+              <p className="text-xs">Change: ${stockData.summary_stats.first_day.change.toFixed(2)} ({stockData.summary_stats.first_day.pct_change.toFixed(2)}%)</p>
+            </div>
+            <div className="p-3 border border-white/25 rounded-lg min-w-0">
+              <h3 className="font-bold mb-1 text-xs">Second Day</h3>
+              <p className="text-xs">Range: ${stockData.summary_stats.second_day.min.toFixed(2)} - ${stockData.summary_stats.second_day.max.toFixed(2)}</p>
+              <p className="text-xs">Change: ${stockData.summary_stats.second_day.change.toFixed(2)} ({stockData.summary_stats.second_day.pct_change.toFixed(2)}%)</p>
+            </div>
+            <div className="p-3 border border-white/25 rounded-lg min-w-0">
+              <h3 className="font-bold mb-1 text-xs">Overall</h3>
+              <p className="text-xs">Total Change: ${stockData.summary_stats.overall.change.toFixed(2)}</p>
+              <p className="text-xs">Percentage: {stockData.summary_stats.overall.pct_change.toFixed(2)}%</p>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="p-3 border border-white/25 rounded-lg min-w-0">
+              <h3 className="font-bold mb-1 text-xs">First Day</h3>
+              <p className="text-xs">Range: {Math.min(...stockData.pct_changes.slice(0, 24)).toFixed(2)}% - {Math.max(...stockData.pct_changes.slice(0, 24)).toFixed(2)}%</p>
+              <p className="text-xs">Change: {stockData.summary_stats.first_day.pct_change.toFixed(2)}%</p>
+            </div>
+            <div className="p-3 border border-white/25 rounded-lg min-w-0">
+              <h3 className="font-bold mb-1 text-xs">Second Day</h3>
+              <p className="text-xs">Range: {Math.min(...stockData.pct_changes.slice(24)).toFixed(2)}% - {Math.max(...stockData.pct_changes.slice(24)).toFixed(2)}%</p>
+              <p className="text-xs">Change: {stockData.summary_stats.second_day.pct_change.toFixed(2)}%</p>
+            </div>
+            <div className="p-3 border border-white/25 rounded-lg min-w-0">
+              <h3 className="font-bold mb-1 text-xs">Overall</h3>
+              <p className="text-xs">Total Change: {stockData.summary_stats.overall.pct_change.toFixed(2)}%</p>
+              <p className="text-xs">Range: {Math.min(...stockData.pct_changes).toFixed(2)}% - {Math.max(...stockData.pct_changes).toFixed(2)}%</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
