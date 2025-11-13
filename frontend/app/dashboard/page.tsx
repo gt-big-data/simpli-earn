@@ -19,15 +19,16 @@ function DashboardContent() {
       const videoUrl = searchParams.get("video_url");
 
       try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
         let res;
         if (videoUrl) {
-          res = await fetch("http://localhost:8000/summary", {
+          res = await fetch(`${apiUrl}/summary`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ video_url: videoUrl }),
           });
         } else {
-          res = await fetch(`http://localhost:8000/summary?id=${id || "1"}`);
+          res = await fetch(`${apiUrl}/summary?id=${id || "1"}`);
         }
 
         const data = await res.json();

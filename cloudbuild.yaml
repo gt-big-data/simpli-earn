@@ -1,0 +1,122 @@
+steps:
+  # Build Next.js Frontend
+  - name: 'node:20'
+    id: 'install-frontend-deps'
+    dir: 'frontend'
+    entrypoint: 'npm'
+    args: ['ci']
+
+  - name: 'node:20'
+    id: 'build-frontend'
+    dir: 'frontend'
+    entrypoint: 'npm'
+    args: ['run', 'build']
+    env:
+      - 'NODE_ENV=production'
+
+  # Install Python dependencies for Backend
+  - name: 'python:3.11'
+    id: 'install-backend-deps'
+    dir: 'RAG'
+    entrypoint: 'pip'
+    args: ['install', '-r', 'requirements.txt', 'fastapi', 'uvicorn']
+
+  # Optional: Run tests if you have them
+  # - name: 'python:3.11'
+  #   id: 'test-backend'
+  #   dir: 'RAG'
+  #   entrypoint: 'pytest'
+  #   args: ['-v']
+
+  # Optional: Lint frontend
+  # - name: 'node:20'
+  #   id: 'lint-frontend'
+  #   dir: 'frontend'
+  #   entrypoint: 'npm'
+  #   args: ['run', 'lint']
+
+  # Deploy Backend (FastAPI) to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-backend'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME_BACKEND}'
+      - '--source'
+      - 'RAG'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - '${_REGION}'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8000'
+      - '--set-secrets'
+      - 'OPENAI_API_KEY=openai-api-key:latest'
+      - '--memory'
+      - '512Mi'
+      - '--cpu'
+      - '1'
+      - '--timeout'
+      - '300'
+      - '--max-instances'
+      - '10'
+    env:
+      - 'CLOUDSDK_RUN_PLATFORM=managed'
+
+  # Get Backend URL for frontend configuration
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'get-backend-url'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
+        echo "Backend URL: $BACKEND_URL"
+        echo "BACKEND_URL=$BACKEND_URL" >> /workspace/backend-url.env
+    env:
+      - 'CLOUDSDK_RUN_PLATFORM=managed'
+
+  # Deploy Frontend (Next.js) to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'deploy-frontend'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
+        gcloud run deploy ${_SERVICE_NAME_FRONTEND} \
+          --source=frontend \
+          --platform=managed \
+          --region=${_REGION} \
+          --allow-unauthenticated \
+          --port=3000 \
+          --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_API_URL=$BACKEND_URL" \
+          --memory=512Mi \
+          --cpu=1 \
+          --timeout=300 \
+          --max-instances=10
+    env:
+      - 'CLOUDSDK_RUN_PLATFORM=managed'
+
+# Substitutions for environment variables
+substitutions:
+  _PROJECT_ID: 'your-project-id'
+  _REGION: 'us-central1'
+  _SERVICE_NAME_FRONTEND: 'simpli-earn-frontend'
+  _SERVICE_NAME_BACKEND: 'simpli-earn-backend'
+
+# Timeout for the entire build
+timeout: '1800s'
+
+# Build options
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+# Available images (for reference if using Docker builds)
+# images:
+#   - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA}'
+#   - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_BACKEND}:${SHORT_SHA}'
+

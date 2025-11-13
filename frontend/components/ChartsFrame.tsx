@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import SentimentGraph from "./SentimentGraph";
 import StockChart from "./StockChart";
+import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import { useSearchParams } from "next/navigation";
 
 // Dashboard configurations - now only for ticker and date
@@ -31,6 +32,7 @@ interface SentimentDataPoint {
 
 export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
   const [activeTab, setActiveTab] = useState("stock");
+  const [indicatorView, setIndicatorView] = useState<"stock" | "VIX" | "TNX" | "DXY">("stock");
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
   const config = dashboardId ? dashboardConfigs[dashboardId] : null;
@@ -138,17 +140,45 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
 
   return (
     <div className="flex flex-col text-white w-full h-full max-h-120">
-      <div className="bg-white/4 text-white rounded-[30px] w-full h-full border border-white/25 overflow-hidden">
+      <div className="bg-white/4 text-white rounded-[30px] w-full h-full border border-white/25 overflow-hidden relative">
         {renderTabs()}
+        
+        {/* View Selector for Indicators Tab - positioned below tabs */}
+        {activeTab === "stock" && config && (
+          <div className="flex justify-end items-center px-6 pt-2 pb-2">
+            <label className="text-sm font-medium text-white/70 mr-2">View:</label>
+            <select
+              value={indicatorView}
+              onChange={(e) => setIndicatorView(e.target.value as "stock" | "VIX" | "TNX" | "DXY")}
+              className="bg-white/10 border border-white/25 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-white/40"
+            >
+              <option value="stock">Stock</option>
+              <option value="VIX">VIX (Volatility Index)</option>
+              <option value="TNX">TNX (10-Year Treasury)</option>
+              <option value="DXY">DXY (US Dollar Index)</option>
+            </select>
+          </div>
+        )}
         
         <div className="flex justify-center items-center w-full h-full overflow-hidden">
           {activeTab === "stock" && (
             <>
               {config ? (
-                <StockChart ticker={config.ticker} date={config.date} />
+                <>
+                  {indicatorView === "stock" ? (
+                    <StockChart ticker={config.ticker} date={config.date} />
+                  ) : (
+                    <EconomicIndicatorsChart 
+                      startLocal={`${config.date} 09:30`}
+                      hours={48} 
+                      interval="5m"
+                      initialIndicator={indicatorView}
+                    />
+                  )}
+                </>
               ) : (
                 <div className="text-center text-white/70">
-                  <p className="text-lg font-medium">Unable to display stock chart</p>
+                  <p className="text-lg font-medium">Unable to display chart</p>
                   <p className="text-sm mt-2">Please select a valid dashboard</p>
                 </div>
               )}
