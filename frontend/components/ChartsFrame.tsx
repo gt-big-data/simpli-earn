@@ -92,37 +92,58 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
     fetchSentimentData();
   }, [dashboardId, searchParams]);
 
+  const renderTabs = () => {
+    const isStock = activeTab === "stock";
+    const isSentiment = activeTab === "sentiment";
+
+    return (
+      <div className="flex flex-row relative w-full">
+        {/* Stock/Indicators Tab */}
+        <button
+          className={`flex justify-center items-center rounded-tl-[30px] ${
+            isStock ? "rounded-tr-[23px]" : "rounded-br-[23px]"
+          } w-1/2 h-[40px] ${
+            isStock ? "border-t-[1px]" : "border-b-[1px]"
+          } border-white/25 cursor-pointer relative`}
+          onClick={() => setActiveTab("stock")}
+        >
+          <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
+            isStock ? "" : "opacity-50"
+          }`}>
+            Indicators
+          </h1>
+        </button>
+
+        {/* Sentiment Tab */}
+        <button
+          className={`flex justify-center items-center rounded-tr-[30px] ${
+            isSentiment ? "rounded-tl-[23px]" : "rounded-tl-[23px]"
+          } ${
+            isSentiment ? "border-t-[1px]" : "border-b-[1px]"
+          } border-white/25 cursor-pointer relative w-1/2 h-[40px]`}
+          onClick={() => setActiveTab("sentiment")}
+        >
+          <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
+            isSentiment ? "" : "opacity-50"
+          }`}>
+            Sentiment
+          </h1>
+        </button>
+
+        {/* Divider */}
+        <div className="absolute top-1/2 left-1/2 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20"></div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col text-white w-full h-full max-h-120">
-      <div className="bg-white/4 text-white rounded-[30px] w-full h-full border border-white/25">
-        {activeTab === "stock" ? (
-          <div className="flex flex-col w-full h-full relative">
-            <div className="flex flex-row relative">
-              {/* Stock Button */}
-              <button
-                className="flex justify-start items-start rounded-tl-[30px] rounded-tr-[23px] w-1/2 h-[40px] border-t-[1px] border-white/25 cursor-pointer relative"
-                onClick={() => setActiveTab("stock")}
-              >
-                <h1 className="flex justify-center items-center font-bold text-sm font-montserrat w-full h-full">
-                  48-Hour Stock Movement
-                </h1>
-              </button>
-
-              {/* Sentiment Button */}
-              <button
-                className="flex justify-end items-end rounded-bl-[23px] rounded-tr-[30px] w-1/2 h-[40px] border-b-[1px] border-white/25 cursor-pointer relative"
-                onClick={() => setActiveTab("sentiment")}
-              >
-                <h1 className="flex justify-center items-center font-bold text-sm font-montserrat w-full h-full text-white opacity-50">
-                  Time-Series Sentiment
-                </h1>
-              </button>
-
-              {/* Pseudo-Element Overlay to Seamlessly Blend the Borders */}
-              <div className="absolute top-1/2 left-1/2 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform -rotate-20"></div>
-            </div>
-
-            <div className="flex justify-center items-center w-full h-full">
+      <div className="bg-white/4 text-white rounded-[30px] w-full h-full border border-white/25 overflow-hidden">
+        {renderTabs()}
+        
+        <div className="flex justify-center items-center w-full h-full overflow-hidden">
+          {activeTab === "stock" && (
+            <>
               {config ? (
                 <StockChart ticker={config.ticker} date={config.date} />
               ) : (
@@ -131,36 +152,11 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   <p className="text-sm mt-2">Please select a valid dashboard</p>
                 </div>
               )}
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col w-full h-full relative">
-            <div className="flex flex-row relative">
-              {/* Stock Button */}
-              <button
-                className="flex justify-start items-start rounded-tl-[30px] rounded-br-[23px] w-1/2 h-[40px] border-b-[1px] border-white/25 cursor-pointer relative"
-                onClick={() => setActiveTab("stock")}
-              >
-                <h1 className="flex justify-center items-center font-bold text-sm font-montserrat w-full h-full opacity-50">
-                  48-Hour Stock Movement
-                </h1>
-              </button>
-
-              {/* Sentiment Button */}
-              <button
-                className="flex justify-end items-end rounded-tl-[23px] rounded-tr-[30px] w-1/2 h-[40px] border-t-[1px] border-white/25 cursor-pointer relative"
-                onClick={() => setActiveTab("sentiment")}
-              >
-                <h1 className="flex justify-center items-center font-bold text-sm font-montserrat w-full h-full">
-                  Time-Series Sentiment
-                </h1>
-              </button>
-
-              {/* Pseudo-Element Overlay to Seamlessly Blend the Borders */}
-              <div className="absolute top-1/2 left-1/2 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20"></div>
-            </div>
-
-            <div className="flex justify-center items-center w-full h-full">
+            </>
+          )}
+          
+          {activeTab === "sentiment" && (
+            <>
               {loading ? (
                 <div className="text-center text-white/70">
                   <p className="text-lg font-medium">Loading sentiment data...</p>
@@ -182,9 +178,9 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   <p className="text-sm mt-2">Please select a valid dashboard</p>
                 </div>
               )}
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

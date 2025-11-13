@@ -101,3 +101,101 @@ def get_chat_response(user_input, retriever, memory):
 
     response = qa_chain.invoke({"question": user_input})
     return response["answer"]
+
+def generate_follow_up_questions(user_question: str, bot_answer: str, chat_history: list, retriever=None):
+    """
+    Generates 3 contextual follow-up questions based on the conversation.
+
+    Args:
+        user_question: The question the user just asked
+        bot_answer: The answer the bot just provided
+        chat_history: List of previous Q&A pairs
+        retriever: Optional retriever for context (not used currently, but kept for future)
+
+    Returns:
+        List of 3 follow-up question strings, or empty list on error
+    """
+
+    # Fallback suggestions if LLM fails
+    FALLBACK_SUGGESTIONS = [
+        "What were the key financial highlights?",
+        "What risks or challenges were mentioned?",
+        "What is the outlook for next quarter?"
+    ]
+
+    try:
+        # Build chat history string for context
+        history_str = ""
+        if chat_history:
+            # Only use last 5 exchanges to keep context manageable
+            recent_history = chat_history[-5:]
+            history_str = "\n".join([f"Q: {item['question']}\nA: {item['answer'][:100]}..." for item in recent_history])
+
+        # Create prompt for generating follow-up questions
+        suggestion_prompt = PromptTemplate(
+            input_variables=["user_question", "bot_answer", "chat_history"],
+            template="""You are a helpful assistant for analyzing earnings calls. Based on the conversation below, suggest 3 specific follow-up questions that would help the user gain deeper insights into the earnings call.
+
+Previous conversation (recent):
+{chat_history}
+
+Latest exchange:
+User asked: {user_question}
+You answered: {bot_answer}
+
+Generate exactly 3 follow-up questions that are:
+1. Directly related to the earnings call content
+2. Specific and actionable (not generic)
+3. Help explore different aspects (financial metrics, strategy, risks, guidance, etc.)
+4. Under 12 words each
+5. Not repeating questions already asked
+
+Format your response as a simple numbered list:
+1. [question 1]
+2. [question 2]
+3. [question 3]
+
+Do not include any other text, just the numbered questions."""
+        )
+
+        # Initialize LLM
+        llm = ChatOpenAI(
+            model_name="gpt-4o",
+            openai_api_key=OPENAI_API_KEY,
+            temperature=0.7  # Slightly creative but still focused
+        )
+
+        # Create chain
+        chain = LLMChain(llm=llm, prompt=suggestion_prompt)
+
+        # Generate suggestions
+        result = chain.run(
+            user_question=user_question,
+            bot_answer=bot_answer[:500],  # Limit to avoid token overflow
+            chat_history=history_str if history_str else "No previous conversation"
+        )
+
+        # Parse the response
+        suggestions = []
+        for line in result.strip().split('\n'):
+            line = line.strip()
+            # Remove numbering (1., 2., 3., etc.)
+            if line and (line[0].isdigit() or line.startswith('-')):
+                # Extract question after number and punctuation
+                question = line.split('.', 1)[-1].strip() if '.' in line else line.strip('- ')
+                if question:
+                    suggestions.append(question)
+
+        # Ensure we have exactly 3 suggestions
+        if len(suggestions) >= 3:
+            return suggestions[:3]
+        elif len(suggestions) > 0:
+            # If we got some but not 3, pad with fallbacks
+            return suggestions + FALLBACK_SUGGESTIONS[:3-len(suggestions)]
+        else:
+            # If parsing failed, return fallbacks
+            return FALLBACK_SUGGESTIONS
+
+    except Exception as e:
+        print(f"Error generating follow-up questions: {e}")
+        return FALLBACK_SUGGESTIONS

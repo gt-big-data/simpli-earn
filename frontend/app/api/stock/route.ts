@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { spawn } from "child_process";
 import path from "path";
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
   try {
     const { ticker, date } = await request.json();
 
@@ -14,8 +14,8 @@ export async function POST(request: Request) {
       );
     }
 
-    return new Promise((resolve) => {
-      const pythonProcess = spawn("python", [
+    return new Promise<Response>((resolve) => {
+      const pythonProcess = spawn("python3", [
         path.join(process.cwd(), "app/stockchartgenerationV2.py"),
         ticker,
         date,

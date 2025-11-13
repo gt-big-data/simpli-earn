@@ -2,7 +2,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from transcript_retrieval import get_video_transcript, save_transcript_as_txt
-from langchain_testing import initialize_retrieval, get_chat_response
+from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
 from langchain.memory import ConversationBufferMemory
 import os
 from datetime import datetime
@@ -136,7 +136,16 @@ def chat_endpoint(req: ChatRequest):
 
     response = qa_chain.invoke({"question": req.message})
     chat_history.append({"question": req.message, "answer": response["answer"]})
-    return {"response": response["answer"]}
+
+    # Generate follow-up question suggestions
+    suggestions = generate_follow_up_questions(
+        user_question=req.message,
+        bot_answer=response["answer"],
+        chat_history=chat_history,
+        retriever=retriever
+    )
+
+    return {"response": response["answer"], "suggestions": suggestions}
 
 
 

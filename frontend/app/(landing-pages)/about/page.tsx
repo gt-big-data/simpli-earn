@@ -143,7 +143,7 @@ export default function AboutUs() {
               As individuals interested in finance, stock trading, and business, we want to develop a financial education platform that focuses on teaching technical terminology and business acumen through live analysis of quarterly earnings calls.
             </p>
             <p className={styles.heroText}>
-              We hope that by using this frequent, real, and low-stakes situation, we can create a safe and productive environment to develop people's business intuition and financial knowledge.
+              We hope that by using this frequent, real, and low-stakes situation, we can create a safe and productive environment to develop people&apos;s business intuition and financial knowledge.
             </p>
             <p className={styles.heroText}>
               We are under <a href="https://gtbigdatabigimpact.com/" className={styles.orgLink}>Big Data Big Impact</a>, a Georgia Tech Student Organization.

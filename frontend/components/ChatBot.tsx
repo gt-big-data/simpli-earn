@@ -9,6 +9,7 @@ export type Message = {
   id: number;
   sender: string;
   text: string;
+  suggestions?: string[]; // Optional array of follow-up question suggestions
 };
 
 export default function ChatBot({
@@ -56,6 +57,7 @@ export default function ChatBot({
           id: messages.length + 2,
           sender: "bot", // Explicitly set to "bot"
           text: data.response || "⚠️ No response from server.",
+          suggestions: data.suggestions || [], // Include suggestions from API
         };
         setMessages((prev) => [...prev, botMessage]);
       } catch (error) {
@@ -72,10 +74,62 @@ export default function ChatBot({
 
   useEffect(() => {
     if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTop =
-        messageContainerRef.current.scrollHeight;
+      messageContainerRef.current.scrollTo({
+        top: messageContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }, [messages]);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    // Set the suggestion as input and automatically send it
+    setUserInput(suggestion);
+
+    // Create a user message with the suggestion
+    const newMessage: Message = {
+      id: messages.length + 1,
+      sender: "user",
+      text: suggestion,
+    };
+    setMessages((prev) => [...prev, newMessage]);
+
+    // Send the suggestion to the backend
+    (async () => {
+      try {
+        const res = await fetch("http://localhost:8000/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: suggestion,
+            id: dashboardId,
+            video_url: videoUrl,
+          }),
+        });
+
+        const data = await res.json();
+        const botMessage: Message = {
+          id: messages.length + 2,
+          sender: "bot",
+          text: data.response || "⚠️ No response from server.",
+          suggestions: data.suggestions || [],
+        };
+        setMessages((prev) => [...prev, botMessage]);
+      } catch (error) {
+        const errorMessage: Message = {
+          id: messages.length + 2,
+          sender: "bot",
+          text: "⚠️ Failed to connect to server. Check API is running.",
+        };
+        setMessages((prev) => [...prev, errorMessage]);
+        console.error("Error sending message:", error);
+      }
+    })();
+
+    // Clear the input
+    setUserInput("");
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -105,6 +159,8 @@ export default function ChatBot({
                 key={message.id}
                 text={message.text}
                 sender={message.sender}
+                suggestions={message.suggestions}
+                onSuggestionClick={handleSuggestionClick}
               />
             ))}
           </div>

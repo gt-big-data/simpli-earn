@@ -1,16 +1,15 @@
 "use client";
 
+import { Suspense, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import VideoFrame from "@/components/VideoFrame";
 import SummaryFrame from "@/components/SummaryFrame";
 import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
-import { useState, useEffect } from "react";
 import FullChat from "@/components/FullChat";
-import { useSearchParams } from "next/navigation";
 
-export default function Dashboard() {
-  // Summary functionality
+function DashboardContent() {
   const searchParams = useSearchParams();
   const [summary, setSummary] = useState("Loading summary...");
 
@@ -46,33 +45,24 @@ export default function Dashboard() {
     fetchSummary();
   }, [searchParams]);
 
-  // Bot screen size
   const [activeDisplay, setActiveDisplay] = useState("full");
   const [chatMinimized, setChatMinimized] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
-
-  //Video timestamp
   const [timestamp, setTimestamp] = useState<number>(0);
 
-  //Chatbot functionality
   const messageArray = [
     {
       id: 1,
       sender: "bot",
       text: "Hi, I'm SimpliBot! Feel free to ask me any questions about the given earnings call!",
-    }
+    },
   ];
   const [messages, setMessages] = useState(messageArray);
 
-  // Function to handle chat minimization
-  interface ChatMinimizedHandler {
-    (isMinimized: boolean): void;
-  }
-
-  const handleChatMinimized: ChatMinimizedHandler = (isMinimized) => {
+  const handleChatMinimized = (isMinimized: boolean) => {
     setChatMinimized(isMinimized);
     if (isMinimized) {
-      setActiveDisplay("full"); // Return to full view when chat is minimized
+      setActiveDisplay("full");
     }
   };
 
@@ -93,9 +83,7 @@ export default function Dashboard() {
             <div className="flex flex-col gap-[40px]">
               <VideoFrame timestamp={timestamp} />
               <div className="w-full grow min-h-[450px]">
-                <ChartsFrame
-                  onTimestampClick={setTimestamp}
-                />
+                <ChartsFrame onTimestampClick={setTimestamp} />
               </div>
             </div>
             <div className="flex flex-col gap-[40px] -mt-[40px] sm:max-h-[1100px]">
@@ -139,5 +127,13 @@ export default function Dashboard() {
         />
       )}
     </div>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <Suspense fallback={<div>Loading dashboard...</div>}>
+      <DashboardContent />
+    </Suspense>
   );
 }

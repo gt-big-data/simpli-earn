@@ -7,7 +7,7 @@ interface VideoFrameProps {
 // Predefined video URLs and Titles for dashboard IDs 1-6
 const PRELOADED_VIDEOS: Record<string, { url: string; title: string }> = {
   "1": {
-    url: "https://www.youtube.com/watch?v=dC9yOuhiNrk",
+    url: "https://www.youtube.com/watch?v=5EVhGtYa1B0",
     title: "Apple Inc. (AAPL) Q1 2025 Earnings Call",
   },
   "2": {

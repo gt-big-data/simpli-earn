@@ -23,11 +23,10 @@ export default function ChatFrame({ onMinimizedChange, minimized, setFullscreen,
     if (minimized) {
       setFullscreen(false);
     }
-  }, [minimized]);
+  }, [minimized, setFullscreen]);
 
   const handleMinimize = () => {
-    onMinimizedChange(true); // Notify parent
-    onMinimizedChange(false); // Notify parent
+    onMinimizedChange(true); // Notify parent to minimize
   };
 
   const handleExpand = () => {

@@ -83,16 +83,45 @@ def get_stock_chart(ticker, event_date_str):
         start_time = day_start - timedelta(days=1)  # Add buffer before
         end_time = next_day_end + timedelta(days=1)  # Add buffer after
 
-        # Download stock data at highest resolution possible
-        stock_data = yf.download(
-            ticker,
-            start=start_time,
-            end=end_time,
-            interval="1h"
-        )
+        # Download stock data - try multiple intervals if needed
+        intervals = ["1h", "5m", "15m", "30m", "1d"]
+        stock_data = None
         
-        if stock_data.empty:
-            return {"error": f"No stock data found for {ticker} in the specified time range."}
+        for interval in intervals:
+            try:
+                stock_data = yf.download(
+                    ticker,
+                    start=start_time,
+                    end=end_time,
+                    interval=interval,
+                    prepost=True,
+                    progress=False,
+                    threads=True
+                )
+                if stock_data is not None and not stock_data.empty:
+                    break
+            except Exception as e:
+                continue
+        
+        if stock_data is None or stock_data.empty:
+            # Try one more time with daily data and wider range
+            try:
+                wider_start = start_time - timedelta(days=7)
+                wider_end = end_time + timedelta(days=7)
+                stock_data = yf.download(
+                    ticker,
+                    start=wider_start,
+                    end=wider_end,
+                    interval="1d",
+                    prepost=True,
+                    progress=False,
+                    threads=True
+                )
+            except Exception as e:
+                return {"error": f"Failed to fetch stock data for {ticker}. Error: {str(e)}"}
+        
+        if stock_data is None or stock_data.empty:
+            return {"error": f"No stock data found for {ticker} in the specified time range. The date might be too far in the future or the market was closed."}
 
         # Ensure timezone information is present
         eastern_tz = pytz.timezone('US/Eastern')

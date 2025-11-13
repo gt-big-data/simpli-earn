@@ -1,9 +1,13 @@
+import SuggestionChips from "./SuggestionChips";
+
 interface MessageProps {
     sender: string;
     text: string;
+    suggestions?: string[];
+    onSuggestionClick?: (suggestion: string) => void;
 }
 
-export default function Message({ sender, text }: MessageProps) {
+export default function Message({ sender, text, suggestions, onSuggestionClick }: MessageProps) {
     if (sender === 'user') {
         return (
             <div className="w-full flex justify-end mt-5">
@@ -12,8 +16,14 @@ export default function Message({ sender, text }: MessageProps) {
         );
     }
     return (
-        <div className="whitespace-pre-line mt-5">
-            <p>{text}</p>
+        <div className="mt-5">
+            <p className="whitespace-pre-line">{text}</p>
+            {suggestions && suggestions.length > 0 && onSuggestionClick && (
+                <SuggestionChips
+                    suggestions={suggestions}
+                    onSuggestionClick={onSuggestionClick}
+                />
+            )}
         </div>
     );
 

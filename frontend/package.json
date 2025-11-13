@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "chart": "^0.1.2",
     "chart.js": "^4.4.8",
     "chartjs-adapter-date-fns": "^3.0.0",
