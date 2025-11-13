@@ -9,7 +9,7 @@ Endpoints:
   - GET /transcripts - List all transcripts in transcripts bucket
 """
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -97,8 +97,53 @@ class FileInfo(BaseModel):
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
 
+class VideoSentimentRequest(BaseModel):
+    dashboard_id: Optional[str] = None
+    video_url: Optional[str] = None
+
+class VideoSentimentResponse(BaseModel):
+    relevance_data: dict
+    specificity_data: dict
+    video_identifier: str
+
 
 # Helper functions
+def extract_youtube_video_id(url: str) -> Optional[str]:
+    """Extract YouTube video ID from various URL formats."""
+    import re
+    patterns = [
+        r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    return None
+
+def normalize_video_identifier(dashboard_id: Optional[str], video_url: Optional[str]) -> Optional[str]:
+    """Normalize to YouTube video ID format."""
+    # First try video_url
+    if video_url:
+        video_id = extract_youtube_video_id(video_url)
+        if video_id:
+            return f"video_{video_id}"
+    
+    # Fall back to dashboard ID mapping
+    if dashboard_id:
+        VIDEO_ID_MAPPINGS = {
+            "1": "dC9yOuhiNrk",  # Apple
+            "2": "8K4aHLrekqQ",  # CVS
+            "3": "URIsVKPmhGg",  # Google/Alphabet
+            "4": "fouFNKTDPmk",  # Shell
+            "5": "Gub5qCTutZo",  # Tesla
+            "6": "AeznZIbgXhk",  # Walmart
+        }
+        video_id = VIDEO_ID_MAPPINGS.get(dashboard_id)
+        if video_id:
+            return f"video_{video_id}"
+    
+    return None
+
 def generate_job_id() -> str:
     """Generate unique job ID"""
     return f"job_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
@@ -395,7 +440,103 @@ async def delete_sentiment_file(filename: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete file: {str(e)}")
 
+@app.post("/sentiment/get-by-video", response_model=VideoSentimentResponse)
+async def get_sentiment_by_video(request: VideoSentimentRequest):
+    """
+    Get sentiment data (relevance and specificity) for a video by looking it up in the database.
+    Uses dashboard_id or video_url to find the corresponding analysis files.
+    """
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase not configured")
+    
+    # Normalize to video identifier
+    video_identifier = normalize_video_identifier(request.dashboard_id, request.video_url)
+    
+    return await _get_sentiment_data_by_identifier(video_identifier)
+
+async def _get_sentiment_data_by_identifier(video_identifier: Optional[str]) -> VideoSentimentResponse:
+    """Internal function to get sentiment data by video identifier."""
+    if not video_identifier:
+        raise HTTPException(status_code=400, detail="Must provide either dashboard_id or video_url")
+    
+    try:
+        # Look up in database
+        result = supabase.table("video_analyses").select("*").eq("video_identifier", video_identifier).execute()
+        
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=404, detail=f"Video analysis not found for identifier: {video_identifier}")
+        
+        record = result.data[0]
+        relevance_filename = record.get("relevance_filename")
+        specificity_filename = record.get("specificity_filename")
+        
+        if not relevance_filename or not specificity_filename:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Analysis incomplete for {video_identifier}. Missing relevance or specificity files."
+            )
+        
+        # Fetch both data files using existing endpoint logic
+        try:
+            # Relevance data
+            relevance_data_raw = supabase.storage.from_("sentiment").download(relevance_filename)
+            relevance_csv = relevance_data_raw.decode('utf-8')
+            relevance_reader = csv.DictReader(io.StringIO(relevance_csv))
+            relevance_rows = []
+            for row in relevance_reader:
+                processed_row = {}
+                for key, value in row.items():
+                    if value == '' or value == 'None':
+                        processed_row[key] = None
+                    elif key in ['sentence_index', 'label_id']:
+                        processed_row[key] = int(value) if value else None
+                    elif key in ['score', 'relevance_0_1', 'relevance_-1_1', 'ma_relevance_0_1']:
+                        processed_row[key] = float(value) if value else None
+                    else:
+                        processed_row[key] = value
+                relevance_rows.append(processed_row)
+            
+            # Specificity data
+            specificity_data_raw = supabase.storage.from_("sentiment").download(specificity_filename)
+            specificity_csv = specificity_data_raw.decode('utf-8')
+            specificity_reader = csv.DictReader(io.StringIO(specificity_csv))
+            specificity_rows = []
+            for row in specificity_reader:
+                processed_row = {}
+                for key, value in row.items():
+                    if value == '' or value == 'None':
+                        processed_row[key] = None
+                    elif key in ['sentence_index', 'label_id']:
+                        processed_row[key] = int(value) if value else None
+                    elif key in ['score', 'specificity_0_1', 'specificity_-1_1', 'ma_specificity_0_1']:
+                        processed_row[key] = float(value) if value else None
+                    else:
+                        processed_row[key] = value
+                specificity_rows.append(processed_row)
+            
+            return VideoSentimentResponse(
+                relevance_data={
+                    "filename": relevance_filename,
+                    "total_sentences": len(relevance_rows),
+                    "data": relevance_rows
+                },
+                specificity_data={
+                    "filename": specificity_filename,
+                    "total_sentences": len(specificity_rows),
+                    "data": specificity_rows
+                },
+                video_identifier=video_identifier
+            )
+        
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Failed to read analysis files: {str(e)}")
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get sentiment data: {str(e)}")
+
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
