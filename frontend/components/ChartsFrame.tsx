@@ -1,28 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SentimentGraph from "./SentimentGraph";
 import StockChart from "./StockChart";
 import { useSearchParams } from "next/navigation";
-import { teslaData } from "../app/sentiment-data/tesla";
-import { appleData } from "../app/sentiment-data/apple";
-import { googleData } from "../app/sentiment-data/google";
-import { shellData } from "../app/sentiment-data/shell";
-import { cvsData } from "../app/sentiment-data/cvs";
-import { walmartData } from "../app/sentiment-data/walmart";
 
-// Dashboard configurations
-const dashboardConfigs: Record<string, { ticker: string; date: string; sentimentData: Record<string, number> }> = {
-  "1": { ticker: "AAPL", date: "2/2/25", sentimentData: appleData },
-  "2": { ticker: "CVS", date: "11/6/24", sentimentData: cvsData },
-  "3": { ticker: "GOOGL", date: "2/4/25", sentimentData: googleData },
-  "4": { ticker: "SHEL", date: "1/30/25", sentimentData: shellData },
-  "5": { ticker: "TSLA", date: "1/29/25", sentimentData: teslaData },
-  "6": { ticker: "WMT", date: "2/20/25", sentimentData: walmartData }
+// Dashboard configurations - now only for ticker and date
+const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
+  "1": { ticker: "AAPL", date: "2/2/25" },
+  "2": { ticker: "CVS", date: "11/6/24" },
+  "3": { ticker: "GOOGL", date: "2/4/25" },
+  "4": { ticker: "SHEL", date: "1/30/25" },
+  "5": { ticker: "TSLA", date: "1/29/25" },
+  "6": { ticker: "WMT", date: "2/20/25" }
 };
 
 interface ChartsFrameSentimentGraphProps {
   onTimestampClick: (timestamp: number) => void; // Callback to update video timestamp
+}
+
+interface SentimentDataPoint {
+  sentence_index: number;
+  relevance_0_1: number | null;
+  'relevance_-1_1': number | null;
+  ma_relevance_0_1: number | null;
+  specificity_0_1: number | null;
+  'specificity_-1_1': number | null;
+  ma_specificity_0_1: number | null;
 }
 
 export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
@@ -30,6 +34,63 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
   const config = dashboardId ? dashboardConfigs[dashboardId] : null;
+  
+  const [sentimentData, setSentimentData] = useState<{
+    relevance: SentimentDataPoint[];
+    specificity: SentimentDataPoint[];
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSentimentData = async () => {
+      // Need either dashboardId or videoUrl
+      if (!dashboardId && !searchParams.get("video_url")) {
+        setSentimentData(null);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const baseUrl = "http://localhost:8001";
+        const videoUrl = searchParams.get("video_url");
+
+        // Use the new endpoint that looks up data from the database
+        const response = await fetch(`${baseUrl}/sentiment/get-by-video`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            dashboard_id: dashboardId || null,
+            video_url: videoUrl || null,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ detail: response.statusText }));
+          throw new Error(errorData.detail || `Failed to fetch sentiment data: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        setSentimentData({
+          relevance: data.relevance_data.data as SentimentDataPoint[],
+          specificity: data.specificity_data.data as SentimentDataPoint[],
+        });
+      } catch (err) {
+        console.error("Error fetching sentiment data:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch sentiment data");
+        setSentimentData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSentimentData();
+  }, [dashboardId, searchParams]);
 
   const renderTabs = () => {
     const isStock = activeTab === "stock";
@@ -96,8 +157,21 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
           
           {activeTab === "sentiment" && (
             <>
-              {config ? (
-                <SentimentGraph sentimentData={config.sentimentData} onTimestampClick={onTimestampClick} />
+              {loading ? (
+                <div className="text-center text-white/70">
+                  <p className="text-lg font-medium">Loading sentiment data...</p>
+                </div>
+              ) : error ? (
+                <div className="text-center text-white/70">
+                  <p className="text-lg font-medium">Error loading sentiment data</p>
+                  <p className="text-sm mt-2">{error}</p>
+                </div>
+              ) : sentimentData ? (
+                <SentimentGraph 
+                  relevanceData={sentimentData.relevance}
+                  specificityData={sentimentData.specificity}
+                  onTimestampClick={onTimestampClick} 
+                />
               ) : (
                 <div className="text-center text-white/70">
                   <p className="text-lg font-medium">Unable to display sentiment data</p>
