@@ -35,6 +35,24 @@ steps:
   #   entrypoint: 'npm'
   #   args: ['run', 'lint']
 
+  # Build Backend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-backend-image'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_BACKEND}:${SHORT_SHA}'
+      - '-f'
+      - 'RAG/Dockerfile'
+      - 'RAG'
+
+  # Push Backend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-backend-image'
+    args:
+      - 'push'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_BACKEND}:${SHORT_SHA}'
+
   # Deploy Backend (FastAPI) to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-backend'
@@ -43,8 +61,8 @@ steps:
       - 'run'
       - 'deploy'
       - '${_SERVICE_NAME_BACKEND}'
-      - '--source'
-      - 'RAG'
+      - '--image'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_BACKEND}:${SHORT_SHA}'
       - '--platform'
       - 'managed'
       - '--region'
@@ -78,6 +96,24 @@ steps:
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
+  # Build Frontend Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-frontend-image'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA}'
+      - '-f'
+      - 'frontend/Dockerfile'
+      - 'frontend'
+
+  # Push Frontend Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-frontend-image'
+    args:
+      - 'push'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA}'
+
   # Deploy Frontend (Next.js) to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'deploy-frontend'
@@ -87,7 +123,7 @@ steps:
       - |
         BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
         gcloud run deploy ${_SERVICE_NAME_FRONTEND} \
-          --source=frontend \
+          --image=gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA} \
           --platform=managed \
           --region=${_REGION} \
           --allow-unauthenticated \
