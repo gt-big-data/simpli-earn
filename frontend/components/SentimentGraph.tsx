@@ -119,7 +119,7 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
         position: 'top' as const,
         labels: {
           color: 'rgba(255, 255, 255, 0.8)',
-          filter: (item: any) => {
+          filter: (item: { text: string }) => {
             // Only show moving average in legend
             return item.text.includes('Moving Average');
           },
