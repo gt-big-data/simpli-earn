@@ -13,7 +13,8 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from fastapi import Query, Body
 from typing import Optional
-
+import subprocess
+import json
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -224,3 +225,29 @@ Summary:
 
     summary = summary_chain.run(transcript=transcript_text)
     return {"summary": summary}
+
+
+@app.post("/generate-stock")
+def generate_stock(payload: dict):
+    ticker = payload.get("ticker")
+    date = payload.get("date")
+
+    if not ticker or not date:
+        return {"error": "ticker and date required"}
+
+    process = subprocess.Popen(
+        ["python3", "stockchartgenerationV2.py", ticker, date],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        env=os.environ
+    )
+    out, err = process.communicate(timeout=30)
+
+    if process.returncode != 0:
+        return {"error": err}
+
+    try:
+        return json.loads(out)
+    except Exception as e:
+        return {"error": "Failed to parse JSON", "details": str(e), "raw": out}

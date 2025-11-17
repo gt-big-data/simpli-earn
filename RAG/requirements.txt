@@ -5,3 +5,11 @@ faiss-cpu==1.9.0.post1
 langchain-openai==0.3.0
 pytube==15.0.0
 youtube_transcript_api==1.0.2
+yfinance
+langchain-community
+matplotlib
+seaborn
+yfinance
+python-dotenv
+pytz
+requests

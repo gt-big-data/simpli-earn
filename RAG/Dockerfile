@@ -2,16 +2,14 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt fastapi uvicorn
 
-# Copy application code
 COPY . .
 
-# Expose port
-EXPOSE 8000
+# Cloud Run will send traffic to $PORT
+EXPOSE 8080
 
-# Run the application
-CMD ["uvicorn", "api_chatbot:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV PORT=8080
 
+CMD ["sh", "-c", "uvicorn api_chatbot:app --host 0.0.0.0 --port $PORT"]
