@@ -305,16 +305,16 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
   ChartJS.register(verticalLinePlugin);
 
   return (
-    <div className="flex flex-col w-full h-full box-border p-6 overflow-hidden">
+    <div className="flex flex-col w-full h-full box-border p-6 overflow-auto">
 
       {/* Chart */}
-      <div className="w-full flex-1 min-h-0">
+      <div className="w-full flex-shrink-0" style={{ height: '400px' }}>
         <Line data={chartData} options={options} />
       </div>
 
       {/* Summary Stats */}
       {currentData.values && currentData.values.length > 0 && (
-        <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
+        <div className="mt-4 mb-12 pb-8 grid grid-cols-3 gap-4 text-sm flex-shrink-0">
           {/* Range Panel */}
           <div className="p-4 border border-white/25 rounded-lg">
             <h3 className="font-bold mb-2">Range</h3>

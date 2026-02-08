@@ -121,12 +121,12 @@ def extract_youtube_video_id(url: str) -> Optional[str]:
     return None
 
 def normalize_video_identifier(dashboard_id: Optional[str], video_url: Optional[str]) -> Optional[str]:
-    """Normalize to YouTube video ID format."""
+    """Normalize to YouTube video ID format (without video_ prefix to match database)."""
     # First try video_url
     if video_url:
         video_id = extract_youtube_video_id(video_url)
         if video_id:
-            return f"video_{video_id}"
+            return video_id  # Return raw ID without prefix
     
     # Fall back to dashboard ID mapping
     if dashboard_id:
@@ -140,7 +140,7 @@ def normalize_video_identifier(dashboard_id: Optional[str], video_url: Optional[
         }
         video_id = VIDEO_ID_MAPPINGS.get(dashboard_id)
         if video_id:
-            return f"video_{video_id}"
+            return video_id  # Return raw ID without prefix
     
     return None
 
@@ -362,6 +362,29 @@ async def list_sentiment_files():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to list sentiment files: {str(e)}")
 
+# Specific routes must come BEFORE catch-all /{filename} routes
+@app.get("/sentiment/get-by-video", response_model=VideoSentimentResponse)
+async def get_sentiment_by_video_get(
+    video_url: Optional[str] = None,
+    video_id: Optional[str] = None,
+    dashboard_id: Optional[str] = None
+):
+    """
+    GET endpoint: Get sentiment data for a video by video_url, video_id, or dashboard_id.
+    """
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase not configured")
+    
+    # If video_id is provided directly (e.g., "L2pr_J40754"), use it as-is
+    if video_id:
+        video_identifier = video_id
+    else:
+        # Otherwise normalize from dashboard_id or video_url
+        video_identifier = normalize_video_identifier(dashboard_id, video_url)
+    
+    # Call the internal helper - defined later in the file
+    return await _get_sentiment_data_by_identifier(video_identifier)
+
 @app.get("/sentiment/{filename}")
 async def get_sentiment_file(filename: str):
     """
@@ -443,7 +466,7 @@ async def delete_sentiment_file(filename: str):
 @app.post("/sentiment/get-by-video", response_model=VideoSentimentResponse)
 async def get_sentiment_by_video(request: VideoSentimentRequest):
     """
-    Get sentiment data (relevance and specificity) for a video by looking it up in the database.
+    POST endpoint: Get sentiment data (relevance and specificity) for a video by looking it up in the database.
     Uses dashboard_id or video_url to find the corresponding analysis files.
     """
     if not supabase:
@@ -536,6 +559,83 @@ async def _get_sentiment_data_by_identifier(video_identifier: Optional[str]) -> 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get sentiment data: {str(e)}")
 
+
+@app.get("/library")
+async def get_library():
+    """Get all video analyses for library display (excludes preloaded dashboards)"""
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase not configured")
+    
+    # Preloaded dashboard video IDs that should be hidden from library
+    PRELOADED_VIDEO_IDS = {
+        "dC9yOuhiNrk",  # Apple (Dashboard 1)
+        "8K4aHLrekqQ",  # CVS (Dashboard 2)
+        "URIsVKPmhGg",  # Google/Alphabet (Dashboard 3)
+        "fouFNKTDPmk",  # Shell (Dashboard 4)
+        "Gub5qCTutZo",  # Tesla (Dashboard 5)
+        "AeznZIbgXhk",  # Walmart (Dashboard 6)
+    }
+    
+    try:
+        result = supabase.table("video_analyses").select("*").execute()
+        
+        # Filter out preloaded calls and add metadata
+        filtered_videos = []
+        for video in result.data:
+            # Skip preloaded dashboards
+            if video.get('video_identifier') in PRELOADED_VIDEO_IDS:
+                continue
+            
+            if 'metadata' not in video or not video['metadata']:
+                # Extract ticker from filename if possible (e.g., "nvda_...")
+                filename = video.get('transcript_filename', '')
+                ticker = filename.split('_')[0].upper() if '_' in filename else 'N/A'
+                
+                video['metadata'] = {
+                    'title': f"{ticker} Earnings Call",
+                    'ticker': ticker
+                }
+            
+            filtered_videos.append(video)
+        
+        return {"videos": filtered_videos}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch library: {str(e)}")
+
+@app.delete("/library/{video_identifier}")
+async def delete_from_library(video_identifier: str):
+    """Delete a video analysis from the library"""
+    if not supabase:
+        raise HTTPException(status_code=500, detail="Supabase not configured")
+    
+    try:
+        # Get the record first to find file names
+        result = supabase.table("video_analyses").select("*").eq("video_identifier", video_identifier).execute()
+        
+        if not result.data or len(result.data) == 0:
+            raise HTTPException(status_code=404, detail="Video not found")
+        
+        record = result.data[0]
+        
+        # Delete associated files from storage
+        try:
+            if record.get("transcript_filename"):
+                supabase.storage.from_("transcripts").remove([record["transcript_filename"]])
+            if record.get("relevance_filename"):
+                supabase.storage.from_("sentiment").remove([record["relevance_filename"]])
+            if record.get("specificity_filename"):
+                supabase.storage.from_("sentiment").remove([record["specificity_filename"]])
+        except Exception as e:
+            print(f"Warning: Could not delete some files: {e}")
+        
+        # Delete the database record
+        supabase.table("video_analyses").delete().eq("video_identifier", video_identifier).execute()
+        
+        return {"message": f"Deleted {video_identifier}", "success": True}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn

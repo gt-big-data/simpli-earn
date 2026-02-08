@@ -247,24 +247,11 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
   ChartJS.register(verticalLinePlugin);
 
   return (
-    <div className="flex flex-col w-full h-full box-border p-6 overflow-hidden">
-      {/* Chart View Selector Dropdown */}
-      <div className="flex justify-end items-center mb-4">
-        <label className="text-sm font-medium text-white/70 mr-2">View:</label>
-        <select
-          value={chartView}
-          onChange={(e) => setChartView(e.target.value as ChartView)}
-          className="bg-white/10 border border-white/25 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-white/40"
-        >
-          <option value="48h-close">48h Close</option>
-          <option value="price-movement">Price Movement</option>
-        </select>
-      </div>
-      
-      <div className="w-full h-full overflow-hidden">
+    <div className="flex flex-col w-full h-full box-border p-6 overflow-auto">
+      <div className="w-full flex-shrink-0" style={{ height: '400px' }}>
         <Line data={chartData} options={options} />
       </div>
-      <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
+      <div className="mt-4 mb-12 pb-8 grid grid-cols-3 gap-3 text-sm flex-shrink-0">
         {chartView === '48h-close' ? (
           <>
             <div className="p-3 border border-white/25 rounded-lg min-w-0">

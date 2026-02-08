@@ -35,7 +35,19 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
   const [indicatorView, setIndicatorView] = useState<"stock" | "VIX" | "TNX" | "DXY">("stock");
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
-  const config = dashboardId ? dashboardConfigs[dashboardId] : null;
+  const ticker = searchParams.get("ticker"); // Get ticker from URL params
+  const videoUrl = searchParams.get("video_url");
+  
+  // Use config from dashboardConfigs for preloaded dashboards, or create dynamic config for new videos
+  let config = dashboardId ? dashboardConfigs[dashboardId] : null;
+  
+  // For new videos, create a dynamic config if ticker is provided
+  if (!config && ticker) {
+    config = {
+      ticker: ticker.toUpperCase(),
+      date: new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit' })
+    };
+  }
   
   const [sentimentData, setSentimentData] = useState<{
     relevance: SentimentDataPoint[];

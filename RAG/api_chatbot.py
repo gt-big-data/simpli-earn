@@ -15,13 +15,37 @@ from fastapi import Query, Body
 from typing import Optional
 import subprocess
 import json
+import re
+from dotenv import load_dotenv
+from supabase import create_client
 
 from fastapi.middleware.cors import CORSMiddleware
+
+# Load environment variables and initialize Supabase
+load_dotenv()
+supabase = None
+try:
+    supabase_url = os.getenv("SUPABASE_URL")
+    supabase_key = os.getenv("SUPABASE_KEY")
+    if supabase_url and supabase_key:
+        supabase = create_client(supabase_url, supabase_key)
+        print("✅ Supabase connected")
+    else:
+        print("⚠️  Supabase not configured")
+except Exception as e:
+    print(f"⚠️  Failed to initialize Supabase: {e}")
 
 last_used_id = None  # NEW: track last dashboard id
 
 
 app = FastAPI()
+
+# Import and include the dashboard creation endpoint
+try:
+    from create_dashboard_endpoint import router as dashboard_router
+    app.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
+except ImportError as e:
+    print(f"Warning: Could not import dashboard creation endpoint: {e}")
 
 # Add this block to enable CORS
 app.add_middleware(
@@ -93,10 +117,43 @@ def chat_endpoint(req: ChatRequest):
 
     # Load transcript depending on source
     if req.video_url and not retriever:
-        transcript = get_video_transcript(req.video_url)
-        if "Error:" in transcript:
-            return {"response": transcript}
-        transcript_path = save_transcript_in_uploads(req.video_url, transcript)
+        # Extract video ID from URL
+        video_id = None
+        if "v=" in req.video_url:
+            video_id = req.video_url.split("v=")[1].split("&")[0]
+        
+        # Try to get transcript from Supabase first
+        transcript_path = None
+        if video_id and supabase:
+            try:
+                result = supabase.table("video_analyses").select("transcript_filename").eq("video_identifier", video_id).execute()
+                
+                if result.data and len(result.data) > 0:
+                    transcript_filename = result.data[0].get("transcript_filename")
+                    if transcript_filename:
+                        # Download and save transcript locally
+                        print(f"📥 Downloading transcript from Supabase: {transcript_filename}")
+                        transcript_data = supabase.storage.from_("transcripts").download(transcript_filename)
+                        transcript_text = transcript_data.decode('utf-8')
+                        
+                        # Save to local file for retrieval
+                        upload_dir = os.path.join(os.getcwd(), "uploads")
+                        os.makedirs(upload_dir, exist_ok=True)
+                        transcript_path = os.path.join(upload_dir, f"transcript_{video_id}.txt")
+                        with open(transcript_path, "w", encoding="utf-8") as f:
+                            f.write(transcript_text)
+                        print(f"✅ Transcript saved locally: {transcript_path}")
+            except Exception as e:
+                print(f"⚠️  Failed to load transcript from Supabase: {e}")
+        
+        # Fallback to YouTube if not in Supabase
+        if not transcript_path:
+            print("📥 Fetching transcript from YouTube...")
+            transcript = get_video_transcript(req.video_url)
+            if "Error:" in transcript:
+                return {"response": transcript}
+            transcript_path = save_transcript_in_uploads(req.video_url, transcript)
+        
         retriever, _ = initialize_retrieval(transcript_path)
 
     elif req.id and not retriever:
@@ -191,17 +248,43 @@ def generate_summary_from_youtube(data: dict = Body(...)):
     if not video_url:
         return {"summary": "❌ No video URL provided."}
 
-    transcript = get_video_transcript(video_url)
-    if "Error:" in transcript:
-        return {"summary": transcript}
+    # Extract video ID from URL
+    video_id = None
+    if "v=" in video_url:
+        video_id = video_url.split("v=")[1].split("&")[0]
+    
+    # Try to get transcript from Supabase first
+    transcript_text = None
+    if video_id and supabase:
+        try:
+            # Check database for this video
+            result = supabase.table("video_analyses").select("transcript_filename").eq("video_identifier", video_id).execute()
+            
+            if result.data and len(result.data) > 0:
+                transcript_filename = result.data[0].get("transcript_filename")
+                if transcript_filename:
+                    # Download transcript from Supabase
+                    print(f"📥 Downloading transcript from Supabase: {transcript_filename}")
+                    transcript_data = supabase.storage.from_("transcripts").download(transcript_filename)
+                    transcript_text = transcript_data.decode('utf-8')
+                    print(f"✅ Transcript loaded from Supabase ({len(transcript_text)} chars)")
+        except Exception as e:
+            print(f"⚠️  Failed to load transcript from Supabase: {e}")
+    
+    # Fallback to YouTube if not in Supabase
+    if not transcript_text:
+        print("📥 Fetching transcript from YouTube...")
+        transcript = get_video_transcript(video_url)
+        if "Error:" in transcript:
+            return {"summary": transcript}
 
-    transcript_path = save_transcript_in_uploads(video_url, transcript)
+        transcript_path = save_transcript_in_uploads(video_url, transcript)
 
-    try:
-        with open(transcript_path, "r", encoding="utf-8") as f:
-            transcript_text = f.read()
-    except Exception as e:
-        return {"summary": f"❌ Failed to read transcript: {str(e)}"}
+        try:
+            with open(transcript_path, "r", encoding="utf-8") as f:
+                transcript_text = f.read()
+        except Exception as e:
+            return {"summary": f"❌ Failed to read transcript: {str(e)}"}
 
     global summary_chain
     if summary_chain is None:
