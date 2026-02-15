@@ -14,10 +14,17 @@ steps:
     env:
       - 'NODE_ENV=production'
 
-  # Install Python dependencies for Backend
+  # Install Python dependencies for RAG Backend
   - name: 'python:3.11'
     id: 'install-backend-deps'
     dir: 'RAG'
+    entrypoint: 'pip'
+    args: ['install', '-r', 'requirements.txt', 'fastapi', 'uvicorn']
+
+  # Install Python dependencies for Sentiment Backend
+  - name: 'python:3.11'
+    id: 'install-sentiment-deps'
+    dir: 'sentiment'
     entrypoint: 'pip'
     args: ['install', '-r', 'requirements.txt', 'fastapi', 'uvicorn']
 
@@ -69,13 +76,13 @@ steps:
       - '${_REGION}'
       - '--allow-unauthenticated'
       - '--port'
-      - '8000'
+      - '8080'
       - '--set-secrets'
-      - 'OPENAI_API_KEY=openai-api-key:latest'
+      - 'OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest'
       - '--memory'
-      - '512Mi'
+      - '1Gi'
       - '--cpu'
-      - '1'
+      - '2'
       - '--timeout'
       - '300'
       - '--max-instances'
@@ -83,16 +90,67 @@ steps:
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
-  # Get Backend URL for frontend configuration
+  # Build Sentiment Docker Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-sentiment-image'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_SENTIMENT}:${SHORT_SHA}'
+      - '-f'
+      - 'sentiment/Dockerfile'
+      - 'sentiment'
+
+  # Push Sentiment Image
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-sentiment-image'
+    args:
+      - 'push'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_SENTIMENT}:${SHORT_SHA}'
+
+  # Deploy Sentiment API to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'get-backend-url'
+    id: 'deploy-sentiment'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME_SENTIMENT}'
+      - '--image'
+      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_SENTIMENT}:${SHORT_SHA}'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - '${_REGION}'
+      - '--allow-unauthenticated'
+      - '--port'
+      - '8080'
+      - '--set-secrets'
+      - 'SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest'
+      - '--memory'
+      - '1Gi'
+      - '--cpu'
+      - '2'
+      - '--timeout'
+      - '300'
+      - '--max-instances'
+      - '10'
+    env:
+      - 'CLOUDSDK_RUN_PLATFORM=managed'
+
+  # Get Backend URLs for frontend configuration
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'get-backend-urls'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
+        SENTIMENT_URL=$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
         echo "Backend URL: $BACKEND_URL"
+        echo "Sentiment URL: $SENTIMENT_URL"
         echo "BACKEND_URL=$BACKEND_URL" >> /workspace/backend-url.env
+        echo "SENTIMENT_URL=$SENTIMENT_URL" >> /workspace/backend-url.env
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
@@ -122,15 +180,16 @@ steps:
       - '-c'
       - |
         BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
+        SENTIMENT_URL=$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
         gcloud run deploy ${_SERVICE_NAME_FRONTEND} \
           --image=gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA} \
           --platform=managed \
           --region=${_REGION} \
           --allow-unauthenticated \
           --port=3000 \
-          --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_API_URL=$BACKEND_URL" \
-          --memory=512Mi \
-          --cpu=1 \
+          --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_API_URL=$BACKEND_URL,NEXT_PUBLIC_SENTIMENT_API_URL=$SENTIMENT_URL" \
+          --memory=1Gi \
+          --cpu=2 \
           --timeout=300 \
           --max-instances=10
     env:
@@ -138,10 +197,11 @@ steps:
 
 # Substitutions for environment variables
 substitutions:
-  _PROJECT_ID: 'your-project-id'
+  _PROJECT_ID: 'simpliearn-452813'
   _REGION: 'us-central1'
   _SERVICE_NAME_FRONTEND: 'simpli-earn-frontend'
   _SERVICE_NAME_BACKEND: 'simpli-earn-backend'
+  _SERVICE_NAME_SENTIMENT: 'simpli-earn-sentiment'
 
 # Timeout for the entire build
 timeout: '1800s'
