@@ -16,10 +16,11 @@ We demoed this project on April 15, 2025, at the BDBI Demo Day. It was a success
 
 Improvements and future plans will be announced soon -- stay tuned!
 
-To run the frontend, you need to have `npm` (installing this should be easy through a quick Google search) and should run `npm install -i` in the `frontend` folder.
+**Local setup (frontend + backend + YouTube pipeline):** See [LOCAL_SETUP.md](LOCAL_SETUP.md) for complete instructions.
 
-To run the API, instructions are located in the `RAG_README.md` file in the `RAG` folder.
-
-(This can be changed as per further instructions)
+Quick start:
+- Run `npm install` in the `frontend` folder
+- Install Python deps: `pip install -r RAG/requirements.txt` and `pip install -r sentiment/requirements.txt`
+- Run RAG API (port 8000), Sentiment API (port 8001), and `npm run dev` in frontend
 
 ## This file was last updated on April 16, 2025
