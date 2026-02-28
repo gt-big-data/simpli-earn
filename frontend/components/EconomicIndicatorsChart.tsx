@@ -8,6 +8,7 @@ interface EconomicIndicatorsChartProps {
   startLocal: string; // Format: "MM/DD/YY HH:MM" or "YYYY-MM-DD HH:MM"
   hours?: number;
   interval?: string;
+  initialIndicator?: string; // VIX, TNX, or DXY
 }
 
 interface IndicatorData {
@@ -65,12 +66,13 @@ const formatDateTime = (timestamp: string): string => {
 const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({ 
   startLocal, 
   hours = 48,
-  interval = "5m"
+  interval = "5m",
+  initialIndicator = "VIX"
 }) => {
   const [indicatorsData, setIndicatorsData] = useState<IndicatorsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeIndicator, setActiveIndicator] = useState<string>("VIX");
+  const [activeIndicator, setActiveIndicator] = useState<string>(initialIndicator);
 
   useEffect(() => {
     const fetchIndicatorsData = async () => {
@@ -96,13 +98,18 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
           setError(data.error || 'Failed to fetch indicator data');
         } else {
           setIndicatorsData(data);
-          // Set default active indicator to first available
+          // Set default active indicator to initialIndicator if available, otherwise first available
           if (data.data) {
             const availableIndicators = Object.keys(data.data).filter(key => 
               data.data[key] && !data.data[key].error && data.data[key].values.length > 0
             );
             if (availableIndicators.length > 0) {
-              setActiveIndicator(availableIndicators[0]);
+              // Prefer initialIndicator if it's available, otherwise use first available
+              if (initialIndicator && availableIndicators.includes(initialIndicator)) {
+                setActiveIndicator(initialIndicator);
+              } else {
+                setActiveIndicator(availableIndicators[0]);
+              }
             }
           }
         }
@@ -115,7 +122,14 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
     };
 
     fetchIndicatorsData();
-  }, [startLocal, hours, interval]);
+  }, [startLocal, hours, interval, initialIndicator]);
+
+  // Update activeIndicator when initialIndicator prop changes
+  useEffect(() => {
+    if (initialIndicator) {
+      setActiveIndicator(initialIndicator);
+    }
+  }, [initialIndicator]);
 
   if (loading) {
     return (
@@ -291,55 +305,65 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
   ChartJS.register(verticalLinePlugin);
 
   return (
-    <div className="flex flex-col w-full h-full box-border p-6">
-      {/* Indicator Selector Buttons */}
-      <div className="flex gap-2 mb-4">
-        {availableIndicators.map((indicator) => (
-          <button
-            key={indicator}
-            onClick={() => setActiveIndicator(indicator)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-              activeIndicator === indicator
-                ? 'bg-white/20 text-white border border-white/40'
-                : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10'
-            }`}
-          >
-            {INDICATOR_NAMES[indicator] || indicator}
-          </button>
-        ))}
-      </div>
+    <div className="flex flex-col w-full h-full box-border p-6 overflow-auto">
 
       {/* Chart */}
-      <div className="w-full flex-1 min-h-0">
+      <div className="w-full flex-shrink-0" style={{ height: '400px' }}>
         <Line data={chartData} options={options} />
       </div>
 
       {/* Summary Stats */}
-      {currentData.min !== undefined && currentData.max !== undefined && (
-        <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
+      {currentData.values && currentData.values.length > 0 && (
+        <div className="mt-4 mb-12 pb-8 grid grid-cols-3 gap-4 text-sm flex-shrink-0">
+          {/* Range Panel */}
           <div className="p-4 border border-white/25 rounded-lg">
             <h3 className="font-bold mb-2">Range</h3>
-            <p>Min: {formatYAxisLabel(currentData.min)}</p>
-            <p>Max: {formatYAxisLabel(currentData.max)}</p>
-          </div>
-          <div className="p-4 border border-white/25 rounded-lg">
-            <h3 className="font-bold mb-2">Change</h3>
-            <p>
-              {formatYAxisLabel(currentData.values[currentData.values.length - 1])} - 
-              {" "}{formatYAxisLabel(currentData.values[0])}
-            </p>
-            {currentData.values.length > 1 && (
-              <p>
-                {((currentData.values[currentData.values.length - 1] - currentData.values[0]) / currentData.values[0] * 100).toFixed(2)}%
-              </p>
+            {currentData.min !== undefined && currentData.max !== undefined ? (
+              <>
+                <p className="text-xs">Min: {formatYAxisLabel(currentData.min)}</p>
+                <p className="text-xs">Max: {formatYAxisLabel(currentData.max)}</p>
+              </>
+            ) : (
+              <>
+                <p className="text-xs">Min: {formatYAxisLabel(Math.min(...currentData.values))}</p>
+                <p className="text-xs">Max: {formatYAxisLabel(Math.max(...currentData.values))}</p>
+              </>
             )}
           </div>
-          {currentData.mean !== undefined && (
-            <div className="p-4 border border-white/25 rounded-lg">
-              <h3 className="font-bold mb-2">Average</h3>
-              <p>{formatYAxisLabel(currentData.mean)}</p>
-            </div>
-          )}
+          
+          {/* Change Panel */}
+          <div className="p-4 border border-white/25 rounded-lg">
+            <h3 className="font-bold mb-2">Change</h3>
+            {currentData.values.length > 0 && (
+              <>
+                <p className="text-xs">
+                  {formatYAxisLabel(currentData.values[currentData.values.length - 1])} - 
+                  {" "}{formatYAxisLabel(currentData.values[0])}
+                </p>
+                {currentData.values.length > 1 && (
+                  <p className="text-xs">
+                    {((currentData.values[currentData.values.length - 1] - currentData.values[0]) / currentData.values[0] * 100).toFixed(2)}%
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+          
+          {/* Average Panel */}
+          <div className="p-4 border border-white/25 rounded-lg">
+            <h3 className="font-bold mb-2">Average</h3>
+            {currentData.mean !== undefined ? (
+              <p className="text-xs">{formatYAxisLabel(currentData.mean)}</p>
+            ) : currentData.values.length > 0 ? (
+              <p className="text-xs">
+                {formatYAxisLabel(
+                  currentData.values.reduce((sum, val) => sum + val, 0) / currentData.values.length
+                )}
+              </p>
+            ) : (
+              <p className="text-xs text-white/50">N/A</p>
+            )}
+          </div>
         </div>
       )}
     </div>

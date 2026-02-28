@@ -1,0 +1,436 @@
+sentence_index,sentence_text,raw_label,label_id,label_name,score,specificity_0_1,specificity_-1_1,ma_specificity_0_1
+0,Welcome everyone.,LABEL_1,1,LABEL_1,0.478538,0.497918,-0.014165,
+1,Thank you for standing by for the Alphabet third quarter 2025 earnings conference call.,LABEL_1,1,LABEL_1,0.523621,0.512795,0.01559,
+2,At this time all participants are in a listen only mode.,LABEL_1,1,LABEL_1,0.58931,0.534472,0.058944,
+3,After the speaker presentation there will be a question and answer session.,LABEL_1,1,LABEL_1,0.464644,0.493332,-0.023335,
+4,To ask a question during the session you will need to press Star one on your telephone.,LABEL_0,0,LABEL_0,0.529487,0.174731,-0.650538,
+5,"I would now like to hand the conference over to your speaker today, Jim Friedland, Head of Investor Relations.",LABEL_1,1,LABEL_1,0.534384,0.516347,0.022694,
+6,Please go ahead.,LABEL_0,0,LABEL_0,0.437869,0.144497,-0.711007,
+7,Thank you.,LABEL_0,0,LABEL_0,0.475686,0.156976,-0.686047,
+8,Good afternoon everyone and welcome to Alphabet's third quarter 2025 earnings conference call.,LABEL_1,1,LABEL_1,0.509232,0.508047,0.006093,
+9,"With us today are Sundar Pichai, Philip Schindler and Anat Ashkenazi.",LABEL_1,1,LABEL_1,0.43642,0.484018,-0.041963,
+10,Now I'll quickly cover the safe harbor.,LABEL_0,0,LABEL_0,0.544083,0.179547,-0.640905,
+11,Some of the statements that we make today regarding our business operations and financial performance may be considered forward looking.,LABEL_0,0,LABEL_0,0.542018,0.178866,-0.642268,
+12,Such statements are based on current expectations and assumptions that are subject to a number of risks and uncertainties.,LABEL_1,1,LABEL_1,0.438668,0.484761,-0.040479,
+13,Actual results could differ materially.,LABEL_0,0,LABEL_0,0.41757,0.137798,-0.724404,
+14,Please refer to our forms 10K and 10Q.,LABEL_0,0,LABEL_0,0.378434,0.124883,-0.750234,
+15,"Including the risk factors, we undertake no obligation to update any forward looking statement.",LABEL_0,0,LABEL_0,0.42187,0.139217,-0.721566,
+16,During this call we will present both GAAP and non GAAP financial measures.,LABEL_0,0,LABEL_0,0.475713,0.156985,-0.686029,
+17,A reconciliation of non GAAP to GAAP measures is included in today's earnings press release which is distributed and available to the public through our investor relations website located at abc.,LABEL_1,1,LABEL_1,0.408527,0.474814,-0.060373,
+18,Our comments will be on year over year comparisons unless we state otherwise.,LABEL_0,0,LABEL_0,0.596663,0.196899,-0.606203,
+19,And now I'll turn the call over to Sundar.,LABEL_0,0,LABEL_0,0.514863,0.169905,-0.66019,0.31334
+20,Thank you Jim Good afternoon everyone and thanks for joining us.,LABEL_0,0,LABEL_0,0.47654,0.157258,-0.685483,0.296307
+21,This was a terrific quarter for Alphabet driven by double digit growth across every major part of our business.,LABEL_1,1,LABEL_1,0.518594,0.511136,0.012272,0.296224
+22,We are seeing AI now driving real business results across the company.,LABEL_1,1,LABEL_1,0.49244,0.502505,-0.00499,0.294626
+23,We delivered our first ever $100 billion quarter five years ago.,LABEL_2,2,LABEL_2,0.417691,0.807838,0.615676,0.310351
+24,Our quarterly revenue was at 50 billion.,LABEL_2,2,LABEL_2,0.485626,0.830257,0.660513,0.343128
+25,Our revenue number has doubled since then and we are firmly in the generative AI era.,LABEL_1,1,LABEL_1,0.458436,0.491284,-0.027432,0.341875
+26,"In parallel, we've built for the long term and diversified with successful businesses in cloud, YouTube and subscriptions.",LABEL_2,2,LABEL_2,0.440816,0.815469,0.630939,0.375423
+27,Our momentum is strong and we are shipping at speed.,LABEL_1,1,LABEL_1,0.751736,0.588073,0.166145,0.396978
+28,"As just a few examples, our first party models like Gemini now process 7 billion tokens per minute via direct API use by our customers.",LABEL_2,2,LABEL_2,0.374633,0.793629,0.587258,0.411257
+29,The Gemini app now has over 650 million monthly active users and queries increased by 3x from Q2.,LABEL_2,2,LABEL_2,0.426052,0.810597,0.621194,0.427586
+30,Cloud had another great quarter of accelerating growth with AI revenue as a key driver.,LABEL_2,2,LABEL_2,0.37224,0.792839,0.585679,0.458251
+31,Cloud backlog grew 46% quarter over quarter to $155 billion and we crossed 300 million paid subscriptions led by growth in Google One and YouTube Premium.,LABEL_2,2,LABEL_2,0.553561,0.852675,0.705351,0.491941
+32,"Today I'll discuss progress in our full Stack approach to AI and then share highlights from Search, Cloud, YouTube and Waymo.",LABEL_0,0,LABEL_0,0.544368,0.179641,-0.640717,0.476685
+33,"As a reminder, our full Stack approach spans AI infrastructure world class research including models and tooling and our products and platforms that bring AI to people everywhere.",LABEL_1,1,LABEL_1,0.362087,0.459489,-0.091022,0.49277
+34,"First up, AI Infrastructure Our extensive and reliable infrastructure which powers all of Google's products is the foundation of our stack and a key differentiator.",LABEL_1,1,LABEL_1,0.366849,0.46106,-0.08788,0.509579
+35,We are scaling the most advanced chips in our data centers including GPUs from our partner Nvidia as well as our own purpose built TPUs and we are the only company providing a wide range of both.,LABEL_1,1,LABEL_1,0.512925,0.509265,0.00853,0.528081
+36,"As we announced Yesterday at Nvidia GTC, we are now shipping the new A4X Max instances powered by Nvidia GB300 to our cloud customers.",LABEL_1,1,LABEL_1,0.509931,0.508277,0.006554,0.545646
+37,Our highly sought after TPU portfolio is led by our seventh generation TPU Ironwood which will be generally available soon.,LABEL_1,1,LABEL_1,0.539774,0.518126,0.026251,0.547811
+38,We are investing in TPU capacity to meet the tremendous demand we are seeing from customers and partners and we are excited that Anthropic recently shared plans to Access up to 1 million TPUs next world class AI research including models and tooling.,LABEL_2,2,LABEL_2,0.426888,0.810873,0.621746,0.57851
+39,Our models are world leading.,LABEL_1,1,LABEL_1,0.576931,0.530387,0.050774,0.596534
+40,"Gemini 2.5 Pro, VO Genie 3 and our viral sensation Nanobanana are among the very best in class.",LABEL_1,1,LABEL_1,0.513221,0.509363,0.008726,0.614139
+41,Over 230 million videos have been generated with VO3 and more than 13 million developers have built with our generative models.,LABEL_2,2,LABEL_2,0.456776,0.820736,0.641472,0.629619
+42,We are looking forward to the release of Gemini 3 later this year.,LABEL_1,1,LABEL_1,0.547335,0.520621,0.031241,0.630525
+43,Our research leadership is advancing Next Frontier technologies.,LABEL_1,1,LABEL_1,0.461782,0.492388,-0.025224,0.614752
+44,"Last week we announced that our Willow Quantum chip achieved a major breakthrough running an algorithm 13,000 times faster than one of the world's best supercomputers.",LABEL_1,1,LABEL_1,0.516685,0.510506,0.011012,0.598765
+45,"And the result is verifiable, paving the way to future practical applications.",LABEL_1,1,LABEL_1,0.569112,0.527807,0.045614,0.600591
+46,"Speaking of quantum, let me congratulate Michel Devray, our chief scientist for quantum hardware.",LABEL_0,0,LABEL_0,0.475668,0.15697,-0.686059,0.567666
+47,He received a Nobel in Physics for early research he did in the 1980s.,LABEL_1,1,LABEL_1,0.503013,0.505994,0.001989,0.563562
+48,Three Nobels awarded to current Googlers in two years.,LABEL_0,0,LABEL_0,0.414998,0.136949,-0.726101,0.530728
+49,Incredible.,LABEL_1,1,LABEL_1,0.578969,0.53106,0.052119,0.516751
+50,"And third, our products and platforms.",LABEL_0,0,LABEL_0,0.57007,0.188123,-0.623754,0.486516
+51,We are bringing AI to more people and developers than anyone else.,LABEL_1,1,LABEL_1,0.446056,0.487199,-0.035603,0.468242
+52,In July we announced that we processed 980 trillion monthly tokens across all our surfaces.,LABEL_1,1,LABEL_1,0.370562,0.462285,-0.085429,0.482374
+53,"We are now processing over 1.3 quadrillion monthly tokens, more than 20x growth in a year.",LABEL_1,1,LABEL_1,0.381121,0.46577,-0.07846,0.482688
+54,Phenomenal.,LABEL_1,1,LABEL_1,0.615197,0.543015,0.07603,0.486786
+55,This quarter we took big steps to reimagine Chrome as a browser powered by AI through deep integrations with Gemini and AI mode in search with more agentic capabilities coming soon.,LABEL_1,1,LABEL_1,0.423347,0.479704,-0.050591,0.485308
+56,"In August at Made by Google, we unveiled our Pixel 10 series of devices.",LABEL_1,1,LABEL_1,0.436063,0.483901,-0.042198,0.484089
+57,They are the first with our most powerful chip designed to run on Gemini Tensor G5.,LABEL_1,1,LABEL_1,0.482974,0.499381,-0.011237,0.483152
+58,They are our best reviewed devices ever.,LABEL_1,1,LABEL_1,0.536396,0.517011,0.024021,0.468459
+59,"And last week we launched Android xr, our new operating system at Samsung's Galaxy XR device.",LABEL_1,1,LABEL_1,0.455842,0.490428,-0.029144,0.466461
+60,It brings new ways to use headsets and glasses.,LABEL_1,1,LABEL_1,0.522049,0.512276,0.014552,0.466606
+61,"With Gemini at the core now turning to highlights from search, AI is driving an expansionary moment for search.",LABEL_1,1,LABEL_1,0.434378,0.483345,-0.043311,0.449737
+62,"As people learn what they can do with our new AI experiences, they're increasingly coming back to search more.",LABEL_0,0,LABEL_0,0.471537,0.155607,-0.688786,0.431486
+63,"Search and its AI experiences are built to highlight the web, sending billions of clicks to sites every day.",LABEL_0,0,LABEL_0,0.369136,0.121815,-0.756371,0.412957
+64,"During the Q2 call, we shared that overall queries and commercial queries continued to grow year over year.",LABEL_0,0,LABEL_0,0.436754,0.144129,-0.711742,0.394638
+65,"This growth rate increased in Q3, largely driven by our AI investments in search, most notably AI Overviews and AI mode let me dive into the momentum we are seeing.",LABEL_1,1,LABEL_1,0.402736,0.472903,-0.064194,0.391893
+66,"As we have shared before, AI overviews drive meaningful query growth.",LABEL_2,2,LABEL_2,0.415321,0.807056,0.614112,0.424398
+67,"This effect was even stronger in Q3 as users continue to learn that Google can answer and more of their questions, and it's particularly encouraging to see the effect was more pronounced with younger people.",LABEL_1,1,LABEL_1,0.47731,0.497512,-0.014975,0.423973
+68,We're also seeing that AI mode is resonating well with users.,LABEL_1,1,LABEL_1,0.584006,0.532722,0.055444,0.443762
+69,In the US we have seen strong and consistent week over week growth in usage since launch and queries doubled over the quarter.,LABEL_1,1,LABEL_1,0.481737,0.498973,-0.012053,0.442158
+70,"Over the last quarter, we rolled out AI Mode globally across 40 languages in record time.",LABEL_1,1,LABEL_1,0.403937,0.473299,-0.063402,0.456417
+71,"It now has over 75 million daily active users and we shipped over 100 improvements to the product in Q3, an incredibly fast pace.",LABEL_1,1,LABEL_1,0.473281,0.496183,-0.017635,0.456866
+72,"Most importantly, AI mode is already driving incremental total query growth for search.",LABEL_1,1,LABEL_1,0.41108,0.475656,-0.058687,0.457534
+73,"Philip will talk more about monetization and share how AI is helping people connect with businesses and shop on search next Google Cloud, our complete enterprise AI product portfolio is accelerating growth in revenue, operating margins and backlog.",LABEL_2,2,LABEL_2,0.39126,0.799116,0.598231,0.474202
+74,"In Q3, customer demand strengthened in three ways.",LABEL_1,1,LABEL_1,0.443706,0.486423,-0.037154,0.471372
+75,One we are signing new customers faster.,LABEL_0,0,LABEL_0,0.440336,0.145311,-0.709378,0.454652
+76,The number of new GCP customers increased by nearly 34% year over year.,LABEL_2,2,LABEL_2,0.495212,0.83342,0.66684,0.472128
+77,2.,LABEL_1,1,LABEL_1,0.544598,0.519717,0.029435,0.473145
+78,We are signing larger deals.,LABEL_1,1,LABEL_1,0.553354,0.522607,0.035214,0.473425
+79,We have signed more deals over $1 billion through Q3 this year than we did in the previous two years combined.,LABEL_1,1,LABEL_1,0.491289,0.502125,-0.005749,0.47401
+80,"Third, we are deepening our relationships.",LABEL_0,0,LABEL_0,0.494151,0.16307,-0.673861,0.456549
+81,"Over 70% of existing Google Cloud customers use our AI products, including Banco bb, Best Buy and Fair Price Group.",LABEL_2,2,LABEL_2,0.368804,0.791705,0.583411,0.471967
+82,"As we scale, we are diversifying revenue.",LABEL_0,0,LABEL_0,0.417226,0.137685,-0.724631,0.471071
+83,"Today, 13 product lines are each at an annual run rate over $1 billion and we are improving operating margin with highly differentiated products built with our own technology.",LABEL_1,1,LABEL_1,0.508276,0.507731,0.005462,0.490367
+84,The this deep product differentiation starts with our AI infrastructure.,LABEL_1,1,LABEL_1,0.525334,0.51336,0.01672,0.508829
+85,We have a decade of experience building AI accelerators and today offer the widest array of chips.,LABEL_1,1,LABEL_1,0.431603,0.482429,-0.045142,0.509305
+86,"This leadership is winning customers like HCA Healthcare, LG, AI Research and Macquarie bank and it's why nine of the top 10 AI labs choose Google Cloud.",LABEL_2,2,LABEL_2,0.393457,0.799841,0.599682,0.508944
+87,"We are also the only cloud provider offering our own leading generative AI models including Gemini, Imagen, Veo, Chirp and Lyria.",LABEL_1,1,LABEL_1,0.385479,0.467208,-0.075584,0.507429
+88,"Adoption is rapidly accelerating in Q3, revenue from products built on our generative AI models grew more than 200% year over year.",LABEL_2,2,LABEL_2,0.490638,0.83191,0.663821,0.522389
+89,"Over the past 12 months, nearly 150 Google Cloud customers each processed approximately 1 trillion tokens with our models for a wide range of applications.",LABEL_2,2,LABEL_2,0.424564,0.810106,0.620212,0.537945
+90,"For example, WPP is creating campaigns with up to 70% efficiency gains.",LABEL_1,1,LABEL_1,0.364133,0.460164,-0.089672,0.537288
+91,Swarovski has increased email open rates by 17% and accelerated campaign localization by 10 times.,LABEL_2,2,LABEL_2,0.449031,0.81818,0.63636,0.553388
+92,"Earlier this month we launched Gemini Enterprise, the new front door for AI in the workplace and we are seeing strong adoption for agents built on this platform.",LABEL_1,1,LABEL_1,0.44834,0.487952,-0.034095,0.554003
+93,"Our packaged Enterprise agents in Gemini Enterprise are optimized for a variety of domains, are highly differentiated and offer significant out of box value to customers.",LABEL_1,1,LABEL_1,0.482275,0.499151,-0.011699,0.539005
+94,We have already crossed 2 million subscribers across 700 companies.,LABEL_0,0,LABEL_0,0.435068,0.143572,-0.712855,0.521862
+95,"Next YouTube in the living room YouTube has remained number one in streaming watch time in the US for more than two years, according to Nielsen.",LABEL_1,1,LABEL_1,0.380238,0.465478,-0.079043,0.537871
+96,Last month marked YouTube's first time as a live NFL broadcaster.,LABEL_1,1,LABEL_1,0.486682,0.500605,-0.00879,0.52123
+97,This exclusive global broadcast live from Brazil drew more than 19 million fans and set a new record for most concurrent viewers of a live stream on YouTube.,LABEL_1,1,LABEL_1,0.434868,0.483506,-0.042987,0.519419
+98,YouTube Shorts also continues to perform well in the US.,LABEL_1,1,LABEL_1,0.610934,0.541608,0.073217,0.520369
+99,Shorts now earn more revenue per watch hour than traditional in stream on YouTube.,LABEL_1,1,LABEL_1,0.43847,0.484695,-0.04061,0.519498
+100,"At our Made on YouTube event, we rolled out a number of AI powered features that are helping creators supercharge creation and build their businesses.",LABEL_0,0,LABEL_0,0.390864,0.128985,-0.74203,0.517794
+101,AI is now streamlining the entire content creation workflow from generative video tools and more efficient editing to AI powered insights that help creators optimize their channels.,LABEL_0,0,LABEL_0,0.336164,0.110934,-0.778131,0.483755
+102,"We are also using AI to expand monetization, automatically identifying products to make their videos more shoppable.",LABEL_0,0,LABEL_0,0.400391,0.132129,-0.735742,0.483477
+103,Philip will discuss in more detail.,LABEL_0,0,LABEL_0,0.458901,0.151437,-0.697125,0.465663
+104,And finally Waymo Next year Waymo aims to open service in London and they are working to bring service to Tokyo.,LABEL_1,1,LABEL_1,0.441009,0.485533,-0.038934,0.464271
+105,"They've also announced expansions to Dallas, Nashville, Denver and Seattle and secured permission to operate fully autonomously at San Jose and San Francisco airports.",LABEL_1,1,LABEL_1,0.376576,0.46427,-0.08146,0.463363
+106,Autonomous testing continues to scale in New York City.,LABEL_1,1,LABEL_1,0.604991,0.539647,0.069294,0.450354
+107,The new Waymo for Business allows enterprises to offer Waymo as a work travel option and we launched Waymo Teens Accounts in Phoenix this summer.,LABEL_1,1,LABEL_1,0.393229,0.469766,-0.070469,0.450482
+108,We are pleased to see usage steadily increase with positive feedback from teens and their parents alike.,LABEL_1,1,LABEL_1,0.602544,0.538839,0.067679,0.435828
+109,"Waymo's growth and momentum are strong and 2026 is shaping up to be an exciting year overall, a milestone quarter.",LABEL_1,1,LABEL_1,0.536869,0.517167,0.024334,0.421181
+110,The incredible work of our teams is driving momentum across the board and our leadership in AI positions us so well for the opportunity ahead I want to thank all of our partners and our employees for their hard work and an excellent Q3.,LABEL_1,1,LABEL_1,0.514443,0.509766,0.009533,0.423661
+111,"With that, I'll turn it over to Philip.",LABEL_0,0,LABEL_0,0.589153,0.19442,-0.611159,0.392473
+112,Thanks Ondar and hello everyone.,LABEL_0,0,LABEL_0,0.476085,0.157108,-0.685784,0.375931
+113,"I'll quickly cover performance for Google services for the quarter, then structure the rest of my remarks around the great progress we're delivering across search ads, YouTube and partnerships.",LABEL_0,0,LABEL_0,0.589947,0.194683,-0.610635,0.360708
+114,"Google services revenues were $87 billion for the quarter, up 14% year on year, driven by accelerated growth in search and YouTube, partially offset by year on year decline in network revenues.",LABEL_1,1,LABEL_1,0.425191,0.480313,-0.049374,0.377545
+115,"Adding some further color to our results, the 15% increase in search and other was led by growth across all major verticals, with the largest contributions from retail and financial services.",LABEL_2,2,LABEL_2,0.451099,0.818863,0.637726,0.395214
+116,YouTube saw similar performance across verticals.,LABEL_1,1,LABEL_1,0.598233,0.537417,0.064834,0.397054
+117,"Its 15% growth in advertising revenues was driven by direct response features, followed by brand starting with search and other revenues, which delivered over 56 billion in revenue for the quarter.",LABEL_2,2,LABEL_2,0.414446,0.806767,0.613534,0.413217
+118,"As Sundar mentioned, AI is driving an expansionary moment and transforming how people use Google Search.",LABEL_1,1,LABEL_1,0.370429,0.462241,-0.085517,0.409249
+119,"Our investments in new AI experiences such as AI Overviews and AI Mode continue to drive growth in overall queries, including commercial queries, creating more opportunities for monetization.",LABEL_1,1,LABEL_1,0.386922,0.467684,-0.074632,0.408399
+120,These AI experiences are enhancing how people connect with businesses and shop on search.,LABEL_0,0,LABEL_0,0.410006,0.135302,-0.729396,0.408714
+121,"We recently added Shopping capabilities and in AI Mode, which now help people shop conversationally in search.",LABEL_0,0,LABEL_0,0.484271,0.159809,-0.680381,0.411158
+122,And we expanded try on capabilities to more clothing items now available to anyone in the U.S.,LABEL_1,1,LABEL_1,0.435037,0.483562,-0.042875,0.42873
+123,"lastly, we're making it easier for consumers to benefit from deals through new loyalty offerings like personalized annotations on organic results and ads.",LABEL_0,0,LABEL_0,0.493087,0.162719,-0.674563,0.429294
+124,"Looking at monetization, businesses can now tap into our most powerful AI search experiences.",LABEL_0,0,LABEL_0,0.495847,0.163629,-0.672741,0.413199
+125,"Using our most advanced AI models, we can understand and predict intent like never before, unlocking entirely new commercial pathways to provide valuable new consumer connections and helping us monetize even more efficiently.",LABEL_0,0,LABEL_0,0.481305,0.158831,-0.682339,0.397927
+126,"Rolled out globally in September, AI Max and Search is already used by hundreds of thousands of advertisers, currently making it the fastest growing AI powered search ads product.",LABEL_2,2,LABEL_2,0.414954,0.806935,0.61387,0.411291
+127,"In Q3 alone, Aimax unlocked billions of net new queries by delivering the most relevant ad across surfaces and matching advertisers against additional queries they weren't reaching before.",LABEL_0,0,LABEL_0,0.357956,0.118126,-0.763749,0.393709
+128,Aimax helps advertisers discover new customers at the exact moment they need their product or service.,LABEL_1,1,LABEL_1,0.411189,0.475692,-0.058615,0.390552
+129,"Kayak, for example, looked to grow conversions while staying within their ROAS goals.",LABEL_0,0,LABEL_0,0.506665,0.167199,-0.665601,0.373053
+130,"After turning on Aimax and Search, they grew the conversion value by 12% in early tests.",LABEL_0,0,LABEL_0,0.354498,0.116984,-0.766031,0.353414
+131,We continue to infuse generative AI capabilities at every step of the marketing process.,LABEL_1,1,LABEL_1,0.511681,0.508855,0.007709,0.369136
+132,"We rolled out Imagen 4 in asset studio and Product Studio, helping businesses produce more and better creatives.",LABEL_1,1,LABEL_1,0.430857,0.482183,-0.045634,0.38539
+133,"On the measurement front, we enriched the model supporting Meridian, our marketing mix model with additional variables and more granular reporting in PMAX is making bidding more effective Financial services company SOFI has been using pmax to meet its ambitious growth targets and help drive a 39% improvement in its conversion volume year over year.",LABEL_1,1,LABEL_1,0.405178,0.473709,-0.062583,0.399341
+134,"Moving to YouTube where we saw accelerated revenue growth, our recommendation systems are driving robust watch time growth in our key monetization areas like Shorts and Living Room.",LABEL_0,0,LABEL_0,0.403691,0.133218,-0.733564,0.381986
+135,"As we leverage Gemini models, we're seeing further discovery improvement on direct response.",LABEL_1,1,LABEL_1,0.552032,0.52217,0.034341,0.367152
+136,We're excited about the growth in revenue we're seeing especially from small and medium advertisers adopting Demand Gen we also improved performance on Demand gen with over 100 launches helping to increase conversion value by more than 40% for advertisers using target based bidding on YouTube.,LABEL_2,2,LABEL_2,0.446315,0.817284,0.634568,0.381145
+137,The retail vertical continues to lead our growth on YouTube with demand gen helping us further monetize shopping related categories.,LABEL_1,1,LABEL_1,0.486566,0.500567,-0.008866,0.365835
+138,"Looking at the Living room, our long term bet more advertisers are adopting interactive direct response ads leading to an annual revenue run rate exceeding 1 billion globally for this format for our viewers, we continue to give fans greater access across sports while tapping into the best of YouTube's product innovation and creator led content.",LABEL_1,1,LABEL_1,0.470499,0.495265,-0.01947,0.367486
+139,Sundar mentioned that we expanded our NFL partnership with our first ever exclusive global broadcast of an NFL game.,LABEL_1,1,LABEL_1,0.553089,0.522519,0.035039,0.370228
+140,Brands love the opportunity and we sold all our ad inventory within a couple of weeks.,LABEL_1,1,LABEL_1,0.678408,0.563875,0.117749,0.391657
+141,Looking at Creators A significant force behind the thriving YouTube creator economy is the collaboration between creators and brands.,LABEL_1,1,LABEL_1,0.455592,0.490345,-0.029309,0.408183
+142,"Tools like direct linking to deals, websites and shorts and swappable brand segments in long form will soon help creators show how they deliver great value for brands.",LABEL_0,0,LABEL_0,0.487889,0.161003,-0.677993,0.392055
+143,"Thanks to a collaboration with Dude Perfect Comcast, xfinity drove an 8% search lift, beating other Xfinity ads recall lift on shorts by 34%.",LABEL_2,2,LABEL_2,0.546718,0.850417,0.700834,0.42644
+144,At the same time it decreased the cost per lifted user by 50% when compared to the next most efficient ad.,LABEL_2,2,LABEL_2,0.42358,0.809781,0.619563,0.458748
+145,We continue to invest in AI powered features that are helping creators supercharge creation and build their businesses.,LABEL_1,1,LABEL_1,0.429958,0.481886,-0.046227,0.474901
+146,"With VO3 integration and speech to song, creators go from idea to iteration quicker and new channel insights help them better understand performance performance ending on YouTube with our subscriptions products.",LABEL_0,0,LABEL_0,0.417765,0.137862,-0.724275,0.441447
+147,We're also seeing momentum with strong growth in offerings such as YouTube Music and Premium and YouTube TV.,LABEL_1,1,LABEL_1,0.535628,0.516757,0.023514,0.461379
+148,"We're also applying Gemini internally to help us serve customers with increased speed, intelligence and efficiency.",LABEL_1,1,LABEL_1,0.397832,0.471284,-0.067431,0.461158
+149,Our sales teams use Gemini enriched with ads knowledge to streamline customer interactions.,LABEL_0,0,LABEL_0,0.405746,0.133896,-0.732208,0.459493
+150,"This increased productivity by over 10% led to hundreds of millions in incremental revenue and frees up sellers to engage with more customers at a deeper, more strategic level.",LABEL_2,2,LABEL_2,0.458125,0.821181,0.642362,0.494703
+151,"In our Customer Support division, Gemini Powered Solutions have managed over 40 million customer sessions so far this year and resolved hundreds of thousands of customer inquiries.",LABEL_1,1,LABEL_1,0.443177,0.486249,-0.037503,0.493573
+152,And we're just getting started.,LABEL_1,1,LABEL_1,0.468252,0.494523,-0.020954,0.49419
+153,"As always, I'll wrap with the progress we're seeing across partnerships where customers tap into the strength and breadth of Google's products to accelerate their transformation.",LABEL_0,0,LABEL_0,0.518601,0.171138,-0.657724,0.479061
+154,"Revolut, the global financial services company, leverages Google Cloud's Vertex AI platform and Gemini models to help power its advanced customer service chatbot, develop new hyper personalized financial products and offer predictive insights.",LABEL_2,2,LABEL_2,0.394544,0.8002,0.600399,0.51241
+155,"Revolut is also increasing its presence on YouTube, adopting VO3 for personalized creatives, making Google a key ads partner for delivering growth and launching new markets.",LABEL_1,1,LABEL_1,0.424079,0.479946,-0.050108,0.510299
+156,"In closing, I'd like to thank Googlers everywhere for their contributions to our success and as always, to our customers and partners for their continued trust.",LABEL_0,0,LABEL_0,0.527414,0.174046,-0.651907,0.478137
+157,"And of course, a huge thanks to all of you as we celebrate 25 years of Google Ads.",LABEL_0,0,LABEL_0,0.481675,0.158953,-0.682095,0.461056
+158,Anat over to you.,LABEL_0,0,LABEL_0,0.538188,0.177602,-0.644796,0.445173
+159,Thank you Philip.,LABEL_0,0,LABEL_0,0.495495,0.163513,-0.672973,0.427223
+160,My comments will focus on year over year comparisons for the third quarter.,LABEL_0,0,LABEL_0,0.57305,0.189107,-0.621787,0.408485
+161,"Unless I state otherwise, I will start with results at the Alphabet level and we'll then cover our segment results.",LABEL_0,0,LABEL_0,0.572152,0.18881,-0.62238,0.393408
+162,I'll end with some commentary on our outlook for the fourth quarter of 2025.,LABEL_0,0,LABEL_0,0.480208,0.158469,-0.683063,0.393281
+163,"We had an outstanding quarter in Q3, continuing the strong momentum we've had throughout the year, delivering double digit revenue growth across search and YouTube advertising, subscriptions platforms and devices and Google Cloud.",LABEL_2,2,LABEL_2,0.490342,0.831813,0.663625,0.392351
+164,"Consolidated revenue reached $102.3 billion, a 16% year over year increase or 15% in constant currency.",LABEL_2,2,LABEL_2,0.577284,0.860504,0.721007,0.394887
+165,"Total cost of revenue was $41.4 billion, up 13%.",LABEL_2,2,LABEL_2,0.390084,0.798728,0.597455,0.410729
+166,"Tech was $14.9 billion, up 8%.",LABEL_2,2,LABEL_2,0.430534,0.812076,0.624153,0.44444
+167,"Other cost of revenues was $26.5 billion, up 16%, with the increase primarily driven by content acquisition cost, largely for YouTube, followed by depreciation and other technical infrastructure operations cost.",LABEL_2,2,LABEL_2,0.450427,0.818641,0.637282,0.459534
+168,Total operating expenses increased 28% to $29.7 billion.,LABEL_1,1,LABEL_1,0.372696,0.46299,-0.084021,0.459119
+169,"R&D expenses increased by 22%, driven by compensation and depreciation expenses related to our AI efforts.",LABEL_2,2,LABEL_2,0.435733,0.813792,0.627584,0.493114
+170,"Sales and marketing expenses were flat and G and A expenses increased meaningfully, primarily due to the $3.5 billion charge related to the European Commission fine mentioned in the earnings press release.",LABEL_1,1,LABEL_1,0.467438,0.494254,-0.021491,0.476768
+171,Operating income increased 9% this quarter to $31.2 billion and operating margin was 30.5%.,LABEL_2,2,LABEL_2,0.508323,0.837747,0.675493,0.494343
+172,"Excluding the EC fine, operating income increased 22% and operating margin was 33.9%.",LABEL_2,2,LABEL_2,0.392816,0.799629,0.599259,0.509598
+173,Operating margin benefited from strong revenue growth and continued efficiencies in our expense base offset by the legal charge and a significant increase in depreciation expense.,LABEL_2,2,LABEL_2,0.443579,0.816381,0.632762,0.54186
+174,Other income and expenses was $12.8 billion primarily due to unrealized gains in our non marketable equity securities portfolio.,LABEL_2,2,LABEL_2,0.353697,0.78672,0.57344,0.541186
+175,Net income increased 33% to $35 billion and earnings per share increased 35% to $2.87.,LABEL_2,2,LABEL_2,0.453936,0.819799,0.639598,0.558179
+176,We generate free cash flow of $24.5 billion in the third quarter and $73.6 billion for the trailing 12 months.,LABEL_2,2,LABEL_2,0.438905,0.814839,0.629677,0.590218
+177,Free cash flow in Q3 benefited from strong operating cash flow and recent tax changes regarding the timing of when research and development costs are expensed and assets are depreciated.,LABEL_1,1,LABEL_1,0.388427,0.468181,-0.073638,0.60568
+178,This was partially offset by higher CapEx.,LABEL_2,2,LABEL_2,0.343887,0.783483,0.566966,0.635974
+179,We ended the quarter with $98.5 billion in cash and marketable securities.,LABEL_1,1,LABEL_1,0.436713,0.484115,-0.04177,0.652004
+180,"Turning to segment results, Google services revenues increased 14% to $87.1 billion reflecting strength in Google search, YouTube advertising and subscriptions.",LABEL_2,2,LABEL_2,0.34235,0.782976,0.565951,0.681697
+181,Google Search and other advertising revenues increased by 15% to $56.6 billion representing another robust quarter with continued growth across all major verticals with the largest contributions from retail and and financial services.,LABEL_1,1,LABEL_1,0.416215,0.477351,-0.055298,0.696124
+182,YouTube advertising revenues increased 15% to $10.3 billion driven by direct response advertising followed by brand network advertising.,LABEL_1,1,LABEL_1,0.414709,0.476854,-0.056292,0.712044
+183,Revenues of $7.4 billion were down 3%.,LABEL_1,1,LABEL_1,0.357839,0.458087,-0.093826,0.693357
+184,Subscriptions Platforms and devices revenues increased 21% this quarter to $12.9 billion driven by very strong growth in both YouTube and and Google WAN subscriptions.,LABEL_2,2,LABEL_2,0.411616,0.805833,0.611667,0.690624
+185,Google Services operating income increased 9% to $33.5 billion.,LABEL_1,1,LABEL_1,0.400954,0.472315,-0.06537,0.674303
+186,Operating margin declined year over year to 38.5% as healthy revenue growth and continued efficiencies in our expense base were offset by the impact of the EC fine which was fully reflected in the Google Services segment.,LABEL_2,2,LABEL_2,0.459049,0.821486,0.642972,0.674774
+187,Turning to the Google Cloud segment which again delivered very strong results this quarter as Cloud continued to benefit from our enterprise AI optimized stack including our own custom TPUs and our industry leading AI models.,LABEL_0,0,LABEL_0,0.386186,0.127441,-0.745118,0.640214
+188,Cloud revenue increased by 34% to $15.2 billion in the third quarter driven by strong performance in GCP which continued to grow at a rate that was much higher than Cloud's overall revenue growth rate.,LABEL_2,2,LABEL_2,0.624607,0.87612,0.752241,0.66087
+189,GCP's growth was driven by enterprise AI products which are generating billions in quarterly revenue.,LABEL_2,2,LABEL_2,0.385582,0.797242,0.594484,0.660043
+190,We had strong growth in enterprise AI infrastructure and enterprise AI solutions which benefited from demand for our industry leading models including Gemini 2.5 Core.,LABEL_2,2,LABEL_2,0.491821,0.832301,0.664602,0.676945
+191,GCP was also a meaningful contributor to growth and we had double digit growth in workspace which was driven by an increase in average revenues per seat and the number of seats.,LABEL_2,2,LABEL_2,0.633761,0.879141,0.758282,0.679015
+192,Cloud operating income increased by 85% to $3.6 billion and operating margin increased from 17.1% in the third quarter last year to 23.7% this quarter.,LABEL_2,2,LABEL_2,0.565678,0.856674,0.713348,0.681867
+193,"The expansion in cloud operating margin was driven by strong revenue performance and continued efficiencies in our expense base, partially offset by higher technical infrastructure usage cost, which includes depreciation expense and other operations costs such as Energy.",LABEL_2,2,LABEL_2,0.475231,0.826826,0.653652,0.682389
+194,"Google Cloud's backlog increased 46% sequentially and 82% year over year, reaching $155 billion at the end of the third quarter.",LABEL_1,1,LABEL_1,0.424442,0.480066,-0.049868,0.667056
+195,The increase was driven primarily by strong demand for enterprise AI.,LABEL_2,2,LABEL_2,0.441046,0.815545,0.631091,0.666844
+196,"As Sundar mentioned earlier, Cloud has signed more billion dollar deals in the first nine months of 2025 than in the past two years combined.",LABEL_1,1,LABEL_1,0.421797,0.479193,-0.051614,0.650062
+197,"In other bets, revenues were $344 million and operating loss was $1.4 billion in the third quarter.",LABEL_1,1,LABEL_1,0.394779,0.470277,-0.069446,0.650166
+198,"Within other bets, we continue to allocate more resources to businesses like Waymo where we see opportunities to create substantial value.",LABEL_1,1,LABEL_1,0.452701,0.489391,-0.031218,0.635462
+199,"With respect to CapEx, in the third quarter our CapEx was $24 billion.",LABEL_2,2,LABEL_2,0.516049,0.840296,0.680592,0.653271
+200,"The vast majority of our CapEx was invested in technical infrastructure, with approximately 60% of that investment in servers and 40% in data centers and networking equipment.",LABEL_2,2,LABEL_2,0.431698,0.81246,0.624921,0.654745
+201,"In Q3, we returned capital to shareholders through repurchases of stock of $11.5 billion and dividend payments of $2.5 billion.",LABEL_2,2,LABEL_2,0.345405,0.783984,0.567967,0.670077
+202,"Turning to our outlook, I would like to provide some commentary on factors that will impact our business performance in the fourth quarter of 2025, as well as an updated outlook for CapEx for the year.",LABEL_0,0,LABEL_0,0.48021,0.158469,-0.683062,0.654157
+203,"First, in terms of revenues, we're pleased with the overall momentum of our business.",LABEL_0,0,LABEL_0,0.584221,0.192793,-0.614414,0.640893
+204,"At the current spot rates, we could see an FX tailwind to our revenues in Q4.",LABEL_1,1,LABEL_1,0.482975,0.499382,-0.011236,0.62557
+205,"However, the volatility in exchange rates could affect the impact ofFX on Q4 revenues.",LABEL_0,0,LABEL_0,0.436974,0.144201,-0.711597,0.609164
+206,"As for our segments in Google services, year over year comparisons in advertising will be negatively impacted by the strong spend on US elections in the fourth quarter of 2024, particularly on YouTube.",LABEL_1,1,LABEL_1,0.447095,0.487541,-0.034917,0.592467
+207,"In cloud, demand for our products remains high as evidenced by the accelerating revenue growth and the $49 billion sequential increase in cloud backlog in Q3.",LABEL_1,1,LABEL_1,0.432886,0.482852,-0.044295,0.610238
+208,"In GCP, we see strong demand for enterprise AI infrastructure including TPUs and GPUs, enterprise AI solutions driven by demand for Gemini 2.5 and our other AI models and core GCP infrastructure and other services such as cybersecurity and data analytics.",LABEL_2,2,LABEL_2,0.578035,0.860751,0.721503,0.609469
+209,"As I've mentioned on previous earnings calls, while we have been working hard to increase capacity and have improved the pace of server deployments and data center construction, we still expect to remain in a tight demand supply environment in Q4 and 2026.",LABEL_1,1,LABEL_1,0.755135,0.589194,0.168389,0.599067
+210,Moving to investments we're continuing to invest aggressively due to the demand we're experiencing from cloud customers as well as the growth opportunities we see across the company.,LABEL_1,1,LABEL_1,0.382246,0.466141,-0.077718,0.580759
+211,"We now expect CapEx to be in the range of $91 billion to $93 billion in 2025, up from our previous estimate of $85 billion.",LABEL_2,2,LABEL_2,0.474988,0.826746,0.653492,0.578139
+212,Keeping in mind that the timing of cash payments can cause variability in the reported CapEx number.,LABEL_0,0,LABEL_0,0.434326,0.143328,-0.713345,0.542472
+213,"Looking out to 2026, we expect a significant increase in CapEx and will provide more detail on our fourth quarter earnings call in terms of expenses.",LABEL_0,0,LABEL_0,0.435609,0.143751,-0.712498,0.508318
+214,"First, as I've mentioned on previous earnings calls, the significant increase in our investments in technical infrastructure will continue to put pressure on the P and L in the form of higher depreciation expenses and and related data center operations costs such as energy.",LABEL_0,0,LABEL_0,0.434118,0.143259,-0.713482,0.491478
+215,"In the third quarter, depreciation increased 1.6 billion year over year to $5.6 billion, reflecting a growth rate of 41%.",LABEL_2,2,LABEL_2,0.430331,0.812009,0.624019,0.491301
+216,"Given the overall increase in CapEx investments, we expect the growth rate and depreciation to accelerate slightly in Q4.",LABEL_2,2,LABEL_2,0.545357,0.849968,0.699936,0.50984
+217,"Second, we expect sales and marketing expenses to be more heavily weighted to the end of the year, in part to support product launches and the holiday season.",LABEL_0,0,LABEL_0,0.42172,0.139168,-0.721665,0.493284
+218,"Q3 was a strong quarter and we're excited with the adoption of our AI products, helped by a rapid pace of innovation and great execution by our teams.",LABEL_1,1,LABEL_1,0.486697,0.50061,-0.00878,0.493845
+219,"This translated into strong Momentum in search, YouTube ads, subscription platforms and devices and cloud, resulting in our first hundred billion dollar plus quarter.",LABEL_2,2,LABEL_2,0.486592,0.830575,0.661151,0.493359
+220,"Now Sundar, Philip and I will now take your questions.",LABEL_0,0,LABEL_0,0.503681,0.166215,-0.66757,0.461047
+221,Thank you.,LABEL_0,0,LABEL_0,0.475686,0.156976,-0.686047,0.429697
+222,"As a reminder to ask a question, you will need to press star1 on your telephone to prevent any background noise.",LABEL_0,0,LABEL_0,0.514125,0.169661,-0.660677,0.430256
+223,We ask that you please mute your line once your question has been stated.,LABEL_0,0,LABEL_0,0.570839,0.188377,-0.623246,0.430035
+224,Our first question comes from Brian Nowak with Morgan Stanley.,LABEL_1,1,LABEL_1,0.495309,0.503452,-0.003096,0.430239
+225,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.448844
+226,Great.,LABEL_1,1,LABEL_1,0.611736,0.541873,0.073746,0.451561
+227,Thanks for taking my questions everyone.,LABEL_0,0,LABEL_0,0.593189,0.195752,-0.608495,0.437206
+228,"The first one maybe for for Philip or Sundar, it's on agentic e commerce and agentic travel.",LABEL_0,0,LABEL_0,0.694408,0.229155,-0.541691,0.405626
+229,There's a lot of external Wall street discussion about agentic e commerce potentially monetizing at a lower rate than search.,LABEL_1,1,LABEL_1,0.513926,0.509596,0.009191,0.401646
+230,So the question is what factors are you most focused on to sort of ensure a smooth transition for your search business and for your advertisers as you move over to a more agentic world?,LABEL_0,0,LABEL_0,0.717401,0.236742,-0.526515,0.390176
+231,"And the second one, Sundar, is on Waymo.",LABEL_0,0,LABEL_0,0.508443,0.167786,-0.664428,0.357228
+232,"How far are we from an integration of Waymo into more of the core Gemini capabilities and the users in the platform, taking your user data of where I'm going, what hotel I'm staying at, what airport I'm staying at and have me integrate that into Waymo.",LABEL_0,0,LABEL_0,0.64837,0.213962,-0.572076,0.36076
+233,You can actually have users use their profiles to pre schedule Waymos.,LABEL_0,0,LABEL_0,0.475934,0.157058,-0.685883,0.361425
+234,How far off is that?,LABEL_1,1,LABEL_1,0.605738,0.539894,0.069787,0.381257
+235,What do we have to do?,LABEL_0,0,LABEL_0,0.525383,0.173377,-0.653247,0.349325
+236,"Hello Brian, great question.",LABEL_1,1,LABEL_1,0.551531,0.522005,0.034011,0.332927
+237,This is all early but we see agentic experiences really as additive to the way people seek information.,LABEL_1,1,LABEL_1,0.458488,0.491301,-0.027398,0.350534
+238,"It helps us answer people's tough questions, it helps people get stuff done and it helps businesses in the process.",LABEL_0,0,LABEL_0,0.491589,0.162224,-0.675552,0.333615
+239,"And we're working on multiple agentic experiences across key verticals such as travel, commerce, shopping and so on.",LABEL_1,1,LABEL_1,0.482793,0.499322,-0.011356,0.317052
+240,"And we're paying a lot of attention to creating a seamless user experience, but also to the fact that we need to integrate different partner ecosystems in a way that creates value for them.",LABEL_0,0,LABEL_0,0.569076,0.187795,-0.62441,0.318131
+241,"And by the way, we're also working closely with a lot of our partners on the other side throughout cloud services to improve their own agentic experiences.",LABEL_1,1,LABEL_1,0.505998,0.506979,0.003958,0.335631
+242,And so maybe we go a little deeper on the shopping side where we actually use AI already very actively to improve the shopping experience.,LABEL_0,0,LABEL_0,0.686739,0.226624,-0.546752,0.338479
+243,"As you know, we launched a more visual experience on AI mode that gives people a much more intuitive conversational way to shop.",LABEL_0,0,LABEL_0,0.421005,0.138932,-0.722136,0.336007
+244,You can simply describe what you're looking for now like the way you would talk to a friend and we'll show you the visual shopping results.,LABEL_0,0,LABEL_0,0.65864,0.217351,-0.565297,0.321702
+245,And then we think about building an agentix shopping future and it has to be one again that benefits both users and merchants here.,LABEL_0,0,LABEL_0,0.684209,0.225789,-0.548422,0.307176
+246,And you know that AIO we also introduced new agentic checkout which will let shoppers use like agentic AI to buy products from merchant sites and so on.,LABEL_1,1,LABEL_1,0.399771,0.471924,-0.066151,0.303678
+247,We have a partnership with PayPal to help merchants build agentic commerce experiences.,LABEL_0,0,LABEL_0,0.438206,0.144608,-0.710784,0.301121
+248,We have a new open protocols for agent to agent transactions and so on and so on.,LABEL_1,1,LABEL_1,0.510068,0.508323,0.006645,0.31508
+249,"And Brian, on Waymo, great question was reflecting I think on the exact same topic.",LABEL_0,0,LABEL_0,0.705406,0.232784,-0.534432,0.301239
+250,I'm scheduled to meet with the team to do a review on it in a few weeks out.,LABEL_0,0,LABEL_0,0.474568,0.156607,-0.686785,0.297232
+251,"Look, it is an exciting time, way more clearly scaling up, particularly in 2026.",LABEL_0,0,LABEL_0,0.475762,0.157002,-0.685997,0.296693
+252,"I think the possibility as you said of Gemini, particularly with the multimodal experience as well as services like YouTube, I think there's a real opportunity to make the in car experience dramatically better.",LABEL_0,0,LABEL_0,0.481245,0.158811,-0.682378,0.293935
+253,Definitely something we are excited about.,LABEL_1,1,LABEL_1,0.610137,0.541345,0.07269,0.31315
+254,And you'll see Newer experiences in 2026 for sure.,LABEL_0,0,LABEL_0,0.528219,0.174312,-0.651375,0.294871
+255,"Great, thank you both.",LABEL_0,0,LABEL_0,0.482507,0.159227,-0.681545,0.294163
+256,Our next question comes from Doug Anuth with JP Morgan.,LABEL_1,1,LABEL_1,0.548156,0.520891,0.031783,0.294108
+257,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.295358
+258,Thanks for taking the questions Philip.,LABEL_0,0,LABEL_0,0.638865,0.210826,-0.578349,0.297788
+259,"Maybe you can just talk more about some of the drivers of the Core search strength and I guess in particular when you think about AI overviews and AI mode, we know that query growth is accelerating but can you help us understand from there kind of what happens in terms of clicks per query and conversion rates and pricing in these AI driven search formats?",LABEL_1,1,LABEL_1,0.509516,0.50814,0.00628,0.298229
+260,And then anat can you talk about where you see opportunities in the core cost space as you look to make room to absorb the rapid growth in infrastructure and depreciation going forward.,LABEL_0,0,LABEL_0,0.70825,0.233722,-0.532555,0.300525
+261,Thanks.,LABEL_0,0,LABEL_0,0.492672,0.162582,-0.674836,0.283306
+262,So let me give you a bit of vertical color first in Q3 search and other revenues again delivered growth across all major vertical as we said it was from retail and financial services.,LABEL_1,1,LABEL_1,0.367833,0.461385,-0.087231,0.295044
+263,Healthcare was also a contributor to the growth here.,LABEL_1,1,LABEL_1,0.48136,0.498849,-0.012302,0.313039
+264,"Our new AI experiences you mentioned them overviews AI mode continued to drive growth in overall queries, including commercial queries, really creating more opportunities for monetization.",LABEL_2,2,LABEL_2,0.367823,0.791382,0.582763,0.341741
+265,AI overviews are scaling up and are working for our entire user base.,LABEL_1,1,LABEL_1,0.471229,0.495505,-0.018989,0.355227
+266,"We're now scaled to over 2 billion users here and we're continuing to expand ads in AI overviews in English to more countries across desktop, mobile and so on.",LABEL_2,2,LABEL_2,0.418498,0.808104,0.616209,0.372036
+267,"And as I've shared before for AI overviews, even at our current baseline of ads below and within the AI's response overall we see the monetization at approximately the same rate.",LABEL_2,2,LABEL_2,0.505906,0.836949,0.673898,0.406653
+268,So over time we're excited about the opportunity of richer experiences in AI mode and AI overviews to basically open up then the opportunity for also much richer placements.,LABEL_1,1,LABEL_1,0.440319,0.485305,-0.039389,0.405502
+269,"And I think as I've said on a prior call, we managed a business to drive great outcomes for our users and an attractive ROI for advertisers.",LABEL_0,0,LABEL_0,0.471311,0.155533,-0.688935,0.401639
+270,"We don't really manage to paid clicks and CPC targets, but as you will see in the 10Q, paid clicks were up 7% year on year and CPCs were up 7% year on year.",LABEL_2,2,LABEL_2,0.749608,0.91737,0.834741,0.439678
+271,Doug and to your question around where else can we see more opportunity for efficiency and productivity?,LABEL_1,1,LABEL_1,0.530133,0.514944,0.019888,0.457575
+272,"And I think you heard me say before, this is not a one time type of effort but rather an ongoing way in which we manage the business.",LABEL_0,0,LABEL_0,0.522145,0.172308,-0.655385,0.45825
+273,"And the key here is that the more we drive productivity across our business, the more we can invest in the business for growth and obviously continue to drive improvement in the P and L.",LABEL_0,0,LABEL_0,0.479901,0.158367,-0.683265,0.439101
+274,"Some of the areas are things that you've heard us talk about in the past such as moderating the pace of headcount growth, optimizing real estate footprint, but also as we invest more and more in our technical infrastructure, ensuring that we are optimizing that build out and the overall technical infrastructure we have.",LABEL_1,1,LABEL_1,0.489707,0.501603,-0.006794,0.455465
+275,You know that a lot of the data centers for Example that we build ourselves so they're optimized and we make sure we do them in the most efficient way.,LABEL_0,0,LABEL_0,0.502304,0.16576,-0.668479,0.455792
+276,"Sundar mentioned on one of the previous calls the productivity associated with leveraging AI for Google as the example, the percent of code now nearly half of all code generated by AI.",LABEL_2,2,LABEL_2,0.581477,0.861887,0.723775,0.472842
+277,That's a way for us to leverage AI to drive further productivity across the business.,LABEL_0,0,LABEL_0,0.457302,0.15091,-0.698181,0.454572
+278,Obviously we always look at making sure that when we provide services or products that we get the right economics and the right value for what we provide.,LABEL_1,1,LABEL_1,0.475797,0.497013,-0.015974,0.468881
+279,So one good example is Shorts which has a lower revenue share than in stream that helps to improve some of our gross margins.,LABEL_1,1,LABEL_1,0.56356,0.525975,0.04195,0.469773
+280,So this is an effort we have ongoing I've mentioned in the past that we have a headwind with depreciation obviously increasing alongside our capex increase.,LABEL_1,1,LABEL_1,0.460229,0.491875,-0.026249,0.48268
+281,So we have efforts across the organization to ensure we run the business in the most disciplined and productive way while continue to invest for future growth.,LABEL_1,1,LABEL_1,0.501214,0.505401,0.000801,0.499821
+282,Thank you both.,LABEL_0,0,LABEL_0,0.499479,0.164828,-0.670344,0.484993
+283,Our next question comes from Eric Sheridan with Goldman Sachs.,LABEL_1,1,LABEL_1,0.563181,0.52585,0.041699,0.486343
+284,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.47259
+285,Thank you so much for taking the questions.,LABEL_0,0,LABEL_0,0.616455,0.20343,-0.59314,0.457986
+286,"Maybe two if I could Sumner, when you think about your custom silicon efforts across the organization, can you reflect a little bit about the opportunity set you see with each passing generation of custom silicon, both in terms of driving operations, operating efficiencies inside the organization and potentially increased monetization efforts around those outside of the organization?",LABEL_0,0,LABEL_0,0.538169,0.177596,-0.644808,0.426461
+287,Second question would be for Philip.,LABEL_0,0,LABEL_0,0.566556,0.186963,-0.626073,0.393961
+288,Obviously we can see the YouTube advertising revenue number and the reported results.,LABEL_0,0,LABEL_0,0.54941,0.181305,-0.637389,0.378761
+289,Can you reflect a little bit about the scaling of the subscription side of YouTube offerings and how the two parts together maybe represent an interesting framework and thinking about the monetization side of YouTube increasingly being a mix of both ads and subscription.,LABEL_0,0,LABEL_0,0.693977,0.229012,-0.541975,0.382435
+290,Thank you Eric.,LABEL_0,0,LABEL_0,0.520857,0.171883,-0.656235,0.345161
+291,Overall I would say we are seeing substantial demand for our AI infrastructure products including TPU based and GPU based solutions.,LABEL_1,1,LABEL_1,0.659025,0.557478,0.104957,0.347288
+292,It is one of the key drivers of our growth over the past year and I think on a going forward basis I think we continue to see very strong demand and we are investing to meet that.,LABEL_1,1,LABEL_1,0.66148,0.558289,0.106577,0.366587
+293,I do think a big part of what differentiates Google Cloud effectively.,LABEL_0,0,LABEL_0,0.478991,0.158067,-0.683866,0.366572
+294,"We've taken a full, deep, full stack approach to AI and that really plays out.",LABEL_0,0,LABEL_0,0.447093,0.147541,-0.704918,0.348869
+295,We are the only hyperscaler who's really building offerings on our own models and we are also highly differentiated on our own technology.,LABEL_1,1,LABEL_1,0.615712,0.543185,0.07637,0.36774
+296,"So to your question, I think that does give us the opportunity to continue driving growth in operating margins in cloud as we have done in the past and also I think from a revenue sets the infrastructure portion of our business to be a growth driver looking ahead as well.",LABEL_0,0,LABEL_0,0.495648,0.163564,-0.672872,0.332824
+297,"And to the second part of your question, look, just taking a quick step back.",LABEL_0,0,LABEL_0,0.68231,0.225162,-0.549675,0.336536
+298,"You know, we often describe YouTube's business as a flywheel.",LABEL_0,0,LABEL_0,0.58092,0.191704,-0.616593,0.321271
+299,Obviously it first all starts with the creators and we have significantly invested here to be the place that YouTube creators really call their home.,LABEL_0,0,LABEL_0,0.538064,0.177561,-0.644877,0.30385
+300,"That's a big piece of it, the number one piece, viewers.",LABEL_1,1,LABEL_1,0.495277,0.503441,-0.003117,0.304429
+301,"Of course, YouTube has billions of monthly logged in users and everyday people watch billions of hours of video.",LABEL_0,0,LABEL_0,0.363853,0.120071,-0.759857,0.285162
+302,And we talked about how our recommendation systems are driving robust watch time growth and so on and so on.,LABEL_0,0,LABEL_0,0.484256,0.159805,-0.680391,0.284911
+303,"So on the monetization side, YouTube's business is really powered, I would say on a, let's call it a twin engine monetization strategy.",LABEL_0,0,LABEL_0,0.522928,0.172566,-0.654867,0.267247
+304,Combining its advertising business and its growing subscription services.,LABEL_0,0,LABEL_0,0.426823,0.140852,-0.718297,0.248474
+305,Both YouTube ads and subscriptions saw strong growth this quarter.,LABEL_1,1,LABEL_1,0.491856,0.502312,-0.005375,0.263418
+306,"And so looking at YouTube Music and Premium users are on average delivering more value to creators, to music Media partners and YouTube itself than even ad supported users do.",LABEL_0,0,LABEL_0,0.524152,0.17297,-0.65406,0.263187
+307,"So in other words, on average a YouTube music and premium subscriber generates a meaningful high gross profit than they were simply an ad supported users and fans come from all over the world.",LABEL_0,0,LABEL_0,0.441327,0.145638,-0.708724,0.26112
+308,You know this and this engagement through ads and subscription generates YouTube's revenues and funds what I started with these creators here.,LABEL_0,0,LABEL_0,0.57183,0.188704,-0.622592,0.26149
+309,And this then drives more viewership and engagement and so on.,LABEL_0,0,LABEL_0,0.466044,0.153795,-0.692411,0.257729
+310,And that's the flywheel.,LABEL_0,0,LABEL_0,0.498061,0.16436,-0.67128,0.257353
+311,And so our priority continues like this growth cycle.,LABEL_1,1,LABEL_1,0.522306,0.512361,0.014722,0.255097
+312,We're happy with this twin engine monetization strategy.,LABEL_1,1,LABEL_1,0.495827,0.503623,-0.002754,0.252364
+313,Our next question comes from Mark Shmalik with Bernstein.,LABEL_1,1,LABEL_1,0.536753,0.517129,0.024257,0.270317
+314,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.288756
+315,"Yes, thanks for taking the questions, Sundar.",LABEL_0,0,LABEL_0,0.543443,0.179336,-0.641328,0.270563
+316,"With the strong adoption of Gemini AI mode and overviews across the user base, are there any meaningful differences to call out kind of around the behavior and depth of engagement for those users across the entire Google ecosystem?",LABEL_1,1,LABEL_1,0.514029,0.50963,0.009259,0.287867
+317,"And then Philip, I know we kind of asked this most quarters, but I'm curious, kind of with some of the adoption you've seen around AI overviews and mode, you know, how you see the economics of search evolving with the higher commercial and total query volume and how it kind of compares against the incremental cost to deliver these results.",LABEL_0,0,LABEL_0,0.587683,0.193935,-0.612129,0.286305
+318,"Thank you, Mark.",LABEL_0,0,LABEL_0,0.519905,0.171569,-0.656863,0.285298
+319,"Look, I think obviously aioviews are a natural part of the Google experience.",LABEL_1,1,LABEL_1,0.496189,0.503742,-0.002515,0.301607
+320,"And so, you know, engagement is very, very high.",LABEL_0,0,LABEL_0,0.535973,0.176871,-0.646258,0.285279
+321,"I would say AI mode, you have a varied cohorts that are people who are casual users who are checking it out.",LABEL_0,0,LABEL_0,0.523412,0.172726,-0.654548,0.287912
+322,But there's a core group which really likes AI more and is passionate about it.,LABEL_0,0,LABEL_0,0.602798,0.198923,-0.602153,0.289868
+323,"You see the early adopters, the product is resonating very strongly and they are seeking it out.",LABEL_1,1,LABEL_1,0.719941,0.57758,0.145161,0.310118
+324,I think that's how I would highlight the difference with Gemini.,LABEL_0,0,LABEL_0,0.591151,0.19508,-0.60984,0.31283
+325,"Again, engaged user base who are seeking out the product and so on.",LABEL_1,1,LABEL_1,0.506837,0.507256,0.004512,0.313077
+326,"But across the board, I think, you know, the trajectory has been we are definitely seeing in each of those use cases a set of early adopters and then more people coming in and the people who are using it continue to use it more over time and report high user satisfaction.",LABEL_1,1,LABEL_1,0.416976,0.477602,-0.054796,0.328309
+327,So I would say the underlying product metrics now are pretty encouraging to see as well.,LABEL_1,1,LABEL_1,0.482531,0.499235,-0.011529,0.345988
+328,Look into the second part of your question.,LABEL_0,0,LABEL_0,0.554501,0.182985,-0.63403,0.345702
+329,"I think we covered before Sundar covered the query development and as I've just said before for the overviews, even at our current baseline of ads.",LABEL_0,0,LABEL_0,0.466394,0.15391,-0.69218,0.345708
+330,Right.,LABEL_1,1,LABEL_1,0.608096,0.540672,0.071343,0.364524
+331,"Whether above, below and within the AI response overall we see the monetization at approximately the same rate and this is a great baseline for further innovation.",LABEL_1,1,LABEL_1,0.404082,0.473347,-0.063306,0.362573
+332,"We talked about this, we're excited about where this can go.",LABEL_1,1,LABEL_1,0.55533,0.523259,0.036518,0.363555
+333,"And on the AI mode side, we're testing ads in AI mode and we'll continue to test and learn before we expand this any further.",LABEL_1,1,LABEL_1,0.489607,0.50157,-0.006859,0.362777
+334,"So this in combination with what we mentioned about the commercial query overall development, I think we're in a good place here.",LABEL_1,1,LABEL_1,0.713982,0.575614,0.141228,0.365742
+335,"You could also argue that on queries that historically have not been well monetized, we think there's a potential opportunity here where you can obviously imagine that we can build this out with smart AI integration.",LABEL_0,0,LABEL_0,0.521262,0.172017,-0.655967,0.365376
+336,Our next question comes from Michael Nathanson with Muffet Nathanson.,LABEL_1,1,LABEL_1,0.597152,0.53706,0.06412,0.366748
+337,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.382866
+338,Thanks.,LABEL_0,0,LABEL_0,0.492672,0.162582,-0.674836,0.382417
+339,"I have two one for not Philip, it's clear that when people use AI mode, the query length is much longer.",LABEL_0,0,LABEL_0,0.495161,0.163403,-0.673194,0.3654
+340,Can you talk about how that longer length may be impacting your ability to drive roas and what you're seeing in terms of some of the early benefits of maybe a longer query length and then or not.,LABEL_0,0,LABEL_0,0.584976,0.193042,-0.613916,0.366209
+341,You came to Alphabet from a pharmaceutical company.,LABEL_0,0,LABEL_0,0.48085,0.15868,-0.682639,0.365506
+342,You've been there more than a year.,LABEL_0,0,LABEL_0,0.540722,0.178438,-0.643124,0.364482
+343,You talk a bit about how you're working to look at ROIC internally and what early signs are you seeing that gives you confidence that this spending is really driving better returns longer term?,LABEL_0,0,LABEL_0,0.597471,0.197165,-0.605669,0.345461
+344,Thanks.,LABEL_0,0,LABEL_0,0.492672,0.162582,-0.674836,0.343837
+345,"Look, as Sundar shared, AI mode now has over like 75 million daily active users in the US and we see strong and consistent week over growth in usage since launch and the queries doubled over the quarter.",LABEL_2,2,LABEL_2,0.471528,0.825604,0.651209,0.359754
+346,"And as I also mentioned, we're testing ads in AI mode.",LABEL_1,1,LABEL_1,0.59293,0.535667,0.061334,0.362657
+347,We'll continue to test before we expand any further.,LABEL_1,1,LABEL_1,0.533093,0.515921,0.021841,0.363491
+348,It's really too early to tell and go into any of the details of that testing.,LABEL_0,0,LABEL_0,0.494001,0.16302,-0.673959,0.362493
+349,Okay.,LABEL_1,1,LABEL_1,0.602363,0.53878,0.067559,0.381737
+350,Yes.,LABEL_1,1,LABEL_1,0.680422,0.564539,0.119079,0.38293
+351,And the question related to ROIC and how we look at just overall our business and where do we see early signs that are encouraging?,LABEL_0,0,LABEL_0,0.565623,0.186656,-0.626689,0.368596
+352,So first I would say it's not just early signs because we're seeing returns obviously in the cloud business.,LABEL_0,0,LABEL_0,0.661898,0.218426,-0.563147,0.353354
+353,You've heard us talk about the fact that we already are generating billions of dollars from AI in the quarter and.,LABEL_0,0,LABEL_0,0.544767,0.179773,-0.640453,0.337264
+354,But then across the board we have a rigorous framework and approach by which we evaluate these long term investments that are meant to do two things.,LABEL_0,0,LABEL_0,0.54161,0.178731,-0.642538,0.31742
+355,"One is to ensure we have, we build a resilient growth profile for the company, but also that we meet the demand of the customers that we have here in the, in the more near and midterm.",LABEL_0,0,LABEL_0,0.540965,0.178518,-0.642963,0.317745
+356,So we look at it across the business.,LABEL_0,0,LABEL_0,0.470254,0.155184,-0.689633,0.298651
+357,"We evaluate the potential return for each one of them, whether it's in cloud.",LABEL_1,1,LABEL_1,0.521919,0.512233,0.014467,0.298447
+358,"And I think that's more visible obviously externally, given that you see the revenue generated and the fact that we're unable to meet at this point customer demand, we have more demand than we have supplied in our ads business.",LABEL_1,1,LABEL_1,0.609879,0.54126,0.07252,0.317381
+359,"You see the fact that we're investing to transform search, as you heard from Philip and Sunda with AIO and AI Mode.",LABEL_0,0,LABEL_0,0.532032,0.175571,-0.648859,0.31799
+360,So we're excited to see what our investments are.,LABEL_1,1,LABEL_1,0.546343,0.520293,0.030587,0.334352
+361,Investors are helping Advertisers as well.,LABEL_0,0,LABEL_0,0.499662,0.164888,-0.670223,0.334663
+362,YouTube where it's helping power recommendations.,LABEL_0,0,LABEL_0,0.430177,0.141958,-0.716083,0.332839
+363,"So when we make a decision on investment in the long term, we go through a very rigorous process of assessing what the return could be and over what time frame we will see that return to give us the high level of confidence to then invest and make those investments for the long term.",LABEL_1,1,LABEL_1,0.394371,0.470143,-0.069715,0.346487
+364,So it's a very rigorous approach.,LABEL_0,0,LABEL_0,0.516705,0.170513,-0.658974,0.346884
+365,Thanks.,LABEL_0,0,LABEL_0,0.492672,0.162582,-0.674836,0.313733
+366,Our next question comes from Ross Sandler with Barclays.,LABEL_1,1,LABEL_1,0.522532,0.512436,0.014871,0.312571
+367,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.312591
+368,Great.,LABEL_1,1,LABEL_1,0.611736,0.541873,0.073746,0.331533
+369,About 20% of Google's search queries are commercial historically and you've talked a bunch on this call about how AI overviews are kind of expanding the breadth of queries.,LABEL_0,0,LABEL_0,0.546757,0.18043,-0.63914,0.313616
+370,Could you talk about how new products on the monetization side like AI Max are potentially increasing the percent of commercial queries?,LABEL_0,0,LABEL_0,0.561411,0.185265,-0.629469,0.294652
+371,"So look, AI Max and I mentioned this in my call before, improves the ability for advertisers to target a wider range of queries.",LABEL_0,0,LABEL_0,0.493775,0.162946,-0.674108,0.293467
+372,"Separately, there is the question of whether queries actually increase with AI Mode.",LABEL_0,0,LABEL_0,0.519112,0.171307,-0.657386,0.291111
+373,And Sundar actually talked about it and mentioned the opportunity that he sees here.,LABEL_0,0,LABEL_0,0.61298,0.202283,-0.595433,0.292236
+374,So I think it's important to separate those two things.,LABEL_0,0,LABEL_0,0.794952,0.262334,-0.475331,0.296416
+375,"And I personally also see, this is what I just said in my last remark that I think over time there's an opportunity to actually take, let's say, queries that are not fully commercial but could have an adjacent commercial relationship to basically expand this into more attractive ads offerings while really creating a really interesting user experience at the same time.",LABEL_0,0,LABEL_0,0.38197,0.12605,-0.7479,0.293793
+376,"Yeah, and the only thing I would add is just stepping back broadly.",LABEL_0,0,LABEL_0,0.782071,0.258084,-0.483833,0.298938
+377,I think AI overviews in AI mode are dramatically improving search.,LABEL_1,1,LABEL_1,0.450718,0.488737,-0.032526,0.297763
+378,"We can see it in user satisfaction, user quality, all our metrics, and they're universal in the nature they apply across the universality of human needs.",LABEL_0,0,LABEL_0,0.359388,0.118598,-0.762804,0.27663
+379,So I think we are seeing it in breadth and so naturally over time that will apply to commercial categories as well.,LABEL_1,1,LABEL_1,0.610625,0.541506,0.073013,0.294927
+380,Our next question comes from Ken Gurelski with Wells Fargo.,LABEL_1,1,LABEL_1,0.567451,0.527259,0.044517,0.295275
+381,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.312846
+382,Thank you very much.,LABEL_0,0,LABEL_0,0.471924,0.155735,-0.68853,0.313535
+383,"Two questions, please.",LABEL_0,0,LABEL_0,0.611767,0.201883,-0.596234,0.300122
+384,"First, it appears more and more clear that all the new modes at Google With Gemini, AI overviews, AI mode, even ChatGPT, is growing the addressable market for engagement in search like behavior.",LABEL_0,0,LABEL_0,0.536827,0.177153,-0.645694,0.300454
+385,Could you talk about what gives you confidence that it will also grow the addressable market for marketing activity and overall revenue associated with that behavior?,LABEL_0,0,LABEL_0,0.672742,0.222005,-0.55599,0.303425
+386,"That's question one and question two is just more about, as you think about AI mode, AI overviews and traditional Google search, how do you think, do you see a world in 12 to 24 months?",LABEL_0,0,LABEL_0,0.567679,0.187334,-0.625332,0.28717
+387,"Those all coexist and does the user, does the user eventually pick what mode they want?",LABEL_0,0,LABEL_0,0.529553,0.174752,-0.650495,0.270092
+388,Does the algorithm pick the mode?,LABEL_1,1,LABEL_1,0.609998,0.541299,0.072599,0.270064
+389,Can you talk a little bit about how you think that will progress over the next 12 to 24 months?,LABEL_0,0,LABEL_0,0.649613,0.214372,-0.571255,0.271761
+390,"Thank you very much, Ken.",LABEL_0,0,LABEL_0,0.513718,0.169527,-0.660946,0.270974
+391,Thanks.,LABEL_0,0,LABEL_0,0.492672,0.162582,-0.674836,0.270956
+392,"Look, I think it's a dynamic moment and I think we are meeting people in the moment with what they are trying to do.",LABEL_0,0,LABEL_0,0.511518,0.168801,-0.662398,0.27083
+393,"Obviously, search is evolving and between AI overviews and AI mode, I think we are able to give that range of experience for people in this moment.",LABEL_0,0,LABEL_0,0.620696,0.20483,-0.590341,0.270958
+394,"Over time, you can expect us to make the experiences simpler in a way that just like we did universal search many, many years ago, we may have done text search, image search, video search, et cetera, and then we kind of brought it together as universal search.",LABEL_0,0,LABEL_0,0.442932,0.146168,-0.707665,0.265149
+395,So you will see evolutions like that.,LABEL_1,1,LABEL_1,0.452647,0.489374,-0.031253,0.283315
+396,But I think we want to be sensitive to making sure we are meeting the users in terms of what they are looking for.,LABEL_0,0,LABEL_0,0.690688,0.227927,-0.544146,0.281808
+397,"I think Gemini allows us to build a more personal, proactive, powerful AI assistant for that moment.",LABEL_1,1,LABEL_1,0.401943,0.472641,-0.064718,0.281003
+398,"I think having the two surfaces, search and Gemini allows us to really serve users across the breadth of their needs and but over time we will thoughtfully look for opportunities to make the experience better for users.",LABEL_0,0,LABEL_0,0.565119,0.186489,-0.627021,0.284397
+399,"To the first part, I would broadly say, I do think we've been consistently saying for a while now this is an expansionary moment and we are seeing people engage more.",LABEL_0,0,LABEL_0,0.732256,0.241645,-0.516711,0.269404
+400,"And I think when they do that, naturally a portion of that information for users, those journeys are commercial in nature, so I would expect that to play out over time as well.",LABEL_0,0,LABEL_0,0.605989,0.199977,-0.600047,0.25304
+401,Our last question comes from Justin Post with baml.,LABEL_1,1,LABEL_1,0.535566,0.516737,0.023474,0.253062
+402,Your line is now open.,LABEL_1,1,LABEL_1,0.534275,0.516311,0.022621,0.27109
+403,Great.,LABEL_1,1,LABEL_1,0.611736,0.541873,0.073746,0.28809
+404,"Just a couple Sundar, I think you mentioned Gemini 3 is coming.",LABEL_0,0,LABEL_0,0.651476,0.214987,-0.570026,0.289982
+405,Maybe comment on the pace of innovation in frontier models.,LABEL_0,0,LABEL_0,0.728354,0.240357,-0.519286,0.290899
+406,Is there still just a tremendous amount of innovation or is it slowing at all?,LABEL_1,1,LABEL_1,0.536762,0.517131,0.024263,0.307389
+407,"And then you mentioned a number of large deals signed in the last nine months for cloud, which is great.",LABEL_0,0,LABEL_0,0.687466,0.226864,-0.546272,0.309995
+408,Any changes in the economics of these deals as far as long term profitability?,LABEL_0,0,LABEL_0,0.594531,0.196195,-0.607609,0.292739
+409,Anything we should be aware of?,LABEL_0,0,LABEL_0,0.531674,0.175452,-0.649095,0.290793
+410,Thank you.,LABEL_0,0,LABEL_0,0.475686,0.156976,-0.686047,0.290166
+411,Thanks Justin.,LABEL_0,0,LABEL_0,0.473883,0.156381,-0.687237,0.289856
+412,The first on the pace of frontier model research and development.,LABEL_0,0,LABEL_0,0.488957,0.161356,-0.677288,0.289484
+413,"Look, I think two things are both simultaneously true.",LABEL_0,0,LABEL_0,0.589879,0.19466,-0.61068,0.288975
+414,I'm incredibly impressed by the pace at which the teams are executing and the pace at which we are improving these models.,LABEL_1,1,LABEL_1,0.521287,0.512025,0.014049,0.307268
+415,But it also is true at the same time that each of the prior model you're trying to get better over is now getting more and more capable.,LABEL_0,0,LABEL_0,0.583463,0.192543,-0.614914,0.292426
+416,"So I think both the pace is increasing, but sometimes we are taking the time to put out a notably improved model.",LABEL_1,1,LABEL_1,0.480672,0.498622,-0.012757,0.305961
+417,So I think that may take slightly longer.,LABEL_0,0,LABEL_0,0.509682,0.168195,-0.66361,0.290739
+418,But I do think the underlying pace is phenomenal to see.,LABEL_1,1,LABEL_1,0.56001,0.524803,0.039607,0.307654
+419,And I'm excited about our Gemini 3.0 release later this year.,LABEL_1,1,LABEL_1,0.495998,0.503679,-0.002641,0.320756
+420,"On cloud, I would point out as a sign of the momentum, I think the number of deals greater than $1 billion that we signed in the first three quarters of this year are greater than the two years prior.",LABEL_1,1,LABEL_1,0.39066,0.468918,-0.072164,0.334203
+421,So we are definitely seeing strong momentum and we are executing at pace.,LABEL_1,1,LABEL_1,0.761389,0.591258,0.172517,0.337929
+422,"And in terms of long term economics, I would say that again, us being a full stack AI player and the fact that we are developing highly differentiated products on our own technology I think will help us drive a good trajectory here as you have seen over the past few years.",LABEL_1,1,LABEL_1,0.51079,0.508561,0.007121,0.337542
+423,Great.,LABEL_1,1,LABEL_1,0.611736,0.541873,0.073746,0.337542
+424,Thank you.,LABEL_0,0,LABEL_0,0.475686,0.156976,-0.686047,0.334641
+425,Thank you.,LABEL_0,0,LABEL_0,0.475686,0.156976,-0.686047,0.330472
+426,And that concludes our question and answer session for today.,LABEL_1,1,LABEL_1,0.608629,0.540847,0.071695,0.331658
+427,I'd like to turn the conference back over to Jim Friedland for any further remarks.,LABEL_1,1,LABEL_1,0.527132,0.513954,0.017907,0.346013
+428,Thanks everyone for joining us today.,LABEL_1,1,LABEL_1,0.409775,0.475226,-0.059549,0.359964
+429,We look forward to speaking with you again on our fourth quarter 2025 call.,LABEL_1,1,LABEL_1,0.499824,0.504942,-0.000116,0.376439
+430,Thank you and have a good evening.,LABEL_0,0,LABEL_0,0.455922,0.150454,-0.699091,0.376112
+431,Thank you everyone.,LABEL_0,0,LABEL_0,0.474157,0.156472,-0.687056,0.376117
+432,This concludes today's conference call.,LABEL_1,1,LABEL_1,0.56101,0.525133,0.040267,0.394306
+433,Thank you for participating.,LABEL_1,1,LABEL_1,0.456049,0.490496,-0.029008,0.409098
+434,You may now disconnect.,LABEL_1,1,LABEL_1,0.42805,0.481256,-0.047487,0.407559

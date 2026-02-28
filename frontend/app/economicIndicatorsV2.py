@@ -93,23 +93,58 @@ def get_economic_indicators_json(
         start_utc = start_local.tz_convert("UTC")
         end_utc = end_local.tz_convert("UTC")
 
-        # 2) Download all tickers at once
-        df = yf.download(
-            tickers,
-            start=start_utc.to_pydatetime(),
-            end=end_utc.to_pydatetime(),
-            interval=interval,
-            prepost=True,
-            progress=False,
-            group_by="ticker",
-            auto_adjust=False,
-            threads=True,
-        )
+        # 2) Download all tickers - try multiple intervals if needed
+        intervals_to_try = [interval, "1h", "15m", "30m", "1d"] if interval != "1h" else [interval, "15m", "30m", "1d"]
+        df = None
+        
+        for interval_to_use in intervals_to_try:
+            try:
+                df = yf.download(
+                    tickers,
+                    start=start_utc.to_pydatetime(),
+                    end=end_utc.to_pydatetime(),
+                    interval=interval_to_use,
+                    prepost=True,
+                    progress=False,
+                    group_by="ticker",
+                    auto_adjust=False,
+                    threads=True,
+                )
+                
+                if df is not None and not df.empty:
+                    interval = interval_to_use  # Update to the interval that worked
+                    break
+            except Exception as e:
+                continue
+        
+        # If still no data, try with a wider date range using daily data
+        if df is None or df.empty:
+            try:
+                wider_start = start_local - pd.Timedelta(days=7)
+                wider_end = end_local + pd.Timedelta(days=7)
+                wider_start_utc = wider_start.tz_convert("UTC")
+                wider_end_utc = wider_end.tz_convert("UTC")
+                
+                df = yf.download(
+                    tickers,
+                    start=wider_start_utc.to_pydatetime(),
+                    end=wider_end_utc.to_pydatetime(),
+                    interval="1d",
+                    prepost=True,
+                    progress=False,
+                    group_by="ticker",
+                    auto_adjust=False,
+                    threads=True,
+                )
+                if df is not None and not df.empty:
+                    interval = "1d"
+            except Exception:
+                pass
 
         if df is None or df.empty:
             return {
                 "ok": False,
-                "error": "No data returned from yfinance",
+                "error": "No data returned from yfinance. The date might be too far in the future or the market was closed.",
                 "meta": {
                     "start_local": start_local_str,
                     "hours": hours,
@@ -131,16 +166,53 @@ def get_economic_indicators_json(
             }
         }
 
+        # Track if we have any successful data
+        has_any_data = False
+        
         for ind_key, tkr in zip(valid_indicators, tickers):
             s = _extract_close_series(df, tkr, start_local, end_local)
             
             if s.empty:
-                out["data"][ind_key] = {
-                    "timestamps": [],
-                    "values": [],
-                    "error": f"No data available for {ind_key}"
-                }
+                # Try to download this ticker individually with different intervals
+                s = pd.Series(dtype=float)
+                for interval_to_use in ["1h", "15m", "30m", "1d"]:
+                    try:
+                        single_df = yf.download(
+                            tkr,
+                            start=start_utc.to_pydatetime(),
+                            end=end_utc.to_pydatetime(),
+                            interval=interval_to_use,
+                            prepost=True,
+                            progress=False,
+                            group_by="ticker",
+                            auto_adjust=False,
+                            threads=True,
+                        )
+                        if single_df is not None and not single_df.empty:
+                            s = _extract_close_series(single_df, tkr, start_local, end_local)
+                            if not s.empty:
+                                break
+                    except Exception:
+                        continue
+                
+                if s.empty:
+                    out["data"][ind_key] = {
+                        "timestamps": [],
+                        "values": [],
+                        "error": f"No data available for {ind_key}. Date might be too far in future/past or market was closed."
+                    }
+                else:
+                    has_any_data = True
+                    # Chart.js wants parallel arrays
+                    out["data"][ind_key] = {
+                        "timestamps": [ts.isoformat() for ts in s.index],
+                        "values": [float(v) for v in s.values],
+                        "min": float(s.min()),
+                        "max": float(s.max()),
+                        "mean": float(s.mean())
+                    }
             else:
+                has_any_data = True
                 # Chart.js wants parallel arrays
                 out["data"][ind_key] = {
                     "timestamps": [ts.isoformat() for ts in s.index],
@@ -149,6 +221,21 @@ def get_economic_indicators_json(
                     "max": float(s.max()),
                     "mean": float(s.mean())
                 }
+
+        # If we got no data at all, return error
+        if not has_any_data:
+            return {
+                "ok": False,
+                "error": "No data available for any indicators. The date might be too far in the future or past, or the market was closed.",
+                "meta": {
+                    "start_local": start_local_str,
+                    "hours": hours,
+                    "interval": interval,
+                    "tz": NY_TZ,
+                    "indicators": valid_indicators
+                },
+                "data": out["data"]  # Include partial data with errors
+            }
 
         return out
 

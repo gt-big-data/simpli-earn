@@ -10,8 +10,28 @@ export const metadata: Metadata = {
 
 const teamMembers = [
   {
-    name: "Parth Parikh",
+    name: "Gauri Sharma",
     role: "Project Lead",
+    description: "I'm a Computer Science student at Georgia Tech exploring how AI and language technologies can help us understand human and financial systems. My work combines NLP, social dynamics, finance, and AI safety to study how people communicate, make decisions, and build trust!",
+    image: "/images/team_imgs/Gauri_Sharma.png",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/gs-softwaredev/",
+      github: "https://github.com/gauri-sharmaa/gauri-sharmaa",
+    },
+  },
+  {
+    name: "Ritwij Ghosh",
+    role: "Project Lead",
+    description: "I study Computer Science at Georgia Tech, concentrating on Machine Learning, Aritifical Intelligence, and Embedded Systems. I specialize in buiding AI solutions across industries such as manufacturing, consulting, and financial technology. I'm passionate about improving and facilitating people's lives through creative applications of cutting-edge technologies.",
+    image: "/images/team_imgs/Ritwij_Ghosh.jpeg",
+    socials: {
+      linkedin: "http://www.linkedin.com/in/ritwij-ghosh",
+      github: "https://github.com/ritwij-ghosh",
+    },
+  },
+  {
+    name: "Parth Parikh",
+    role: "Sentiment Analysis",
     description: "I'm a first-year student studying Computer Science with concentrations in intelligence and theory. I'm passionate about real-world AI/ML applications and I'm interested in delving deeper into academic research. In my free time, I enjoy pursuing photography in parks and nature.",
     image: "/images/team_imgs/Parth_Parikh.jpg",
     socials: {
@@ -21,22 +41,12 @@ const teamMembers = [
   },
   {
     name: "Vidyut Rajagopal",
-    role: "Project Lead",
+    role: "Data Visualization",
     description: "I'm a freshman at Georgia Tech and the co-founder of SimpliEarn. I have a strong interest in cybersecurity, cloud computing, and software development. I'm passionate about applying technology to real-world challenges—especially in finance, leadership, and client-facing domains. Outside of SimpliEarn, I enjoy producing music, publishing articles, and playing cricket.",
     image: "/images/team_imgs/Vidyut_Raj_1.png",
     socials: {
       linkedin: "https://www.linkedin.com/in/vidyut-rajagopal",
       github: "https://github.com/vidyutraj",
-    },
-  },
-  {
-    name: "Ritwij Ghosh",
-    role: "Project Lead",
-    description: "I'm a CS major from São Paulo, Brazil with a keen interest in applying machine learning and AI to finance and business use cases.",
-    image: "/images/team_imgs/Ritwij_Ghosh.jpeg",
-    socials: {
-      linkedin: "http://www.linkedin.com/in/ritwij-ghosh",
-      github: "https://github.com/ritwij-ghosh",
     },
   },
   {
@@ -71,7 +81,7 @@ const teamMembers = [
   },
   {
     name: "Apramey Akkiraju",
-    role: "Frontend",
+    role: "Data Visualization",
     description: "I'm a computer science student passionate about fintech and the financial services industry. I joined SimpliEarn because its mission of making investing more accessible through earnings call analysis really resonated with me.",
     image: "/images/team_imgs/Apramey_Akkiraju.jpeg",
     socials: {
@@ -81,7 +91,7 @@ const teamMembers = [
   },
   {
     name: "Soham Pati",
-    role: "RAG",
+    role: "Full Stack",
     description: "I'm a second-year Computer Science student at Georgia Tech. In my free time, I enjoy golfing and playing the violin.",
     image: "/images/team_imgs/Soham_Pati.jpeg",
     socials: {
@@ -110,16 +120,6 @@ const teamMembers = [
     },
   },
   {
-    name: "Gauri Sharma",
-    role: "Sentiment Analysis",
-    description: "I'm a Computer Science student at Georgia Tech with a strong interest in Natural Language Processing and finance.",
-    image: "/images/team_imgs/Gauri_Sharma.png",
-    socials: {
-      linkedin: "https://www.linkedin.com/in/gs-softwaredev/",
-      github: "https://github.com/gauri-sharmaa",
-    },
-  },
-  {
     name: "Zechariah Frierson",
     role: "Frontend",
     description: "I'm a freshman at Georgia Tech and part of the data visualization team for SimpliEarn. I love frontend web development, web design, and coding in general. Outside of programming, I enjoy playing soccer and volleyball and spending time with friends.",
@@ -127,6 +127,76 @@ const teamMembers = [
     socials: {
       linkedin: "https://www.linkedin.com/in/zechariah-frierson/",
       github: "https://github.com/techo10n",
+    },
+  },
+  {
+    name: "Elvis Li",
+    role: "Sentiment Analysis",
+    description: "I'm a junior at Georgia Tech studying Computer Science. I enjoy exploring how NLP and machine learning can uncover insights from financial data.",
+    image: "/images/team_imgs/Elvis_Li.png",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/elvis-li03",
+      github: "https://github.com/Elmobile-Code/",
+    },
+  },
+  {
+    name: "Rithwik Sharma",
+    role: "Sentiment Analysis",
+    description: "I'm a Computer Engineering student at Georgia Tech, whose passionate about Machine Learning, NLP, Embedded Systems, and Monopoly.",
+    image: "/images/team_imgs/Rithwik_Sharma.jpg",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/rithwiksharma/",
+      github: "https://github.com/RithwikSharma",
+    },
+  },
+  {
+    name: "Aadi Dash",
+    role: "Sentiment Analysis",
+    description: "I'm a first-year Computer Science major interested in ML, LLM fine-tuning, and statistics. Outside of school I like to play music, watch sports, and eat Chipotle.",
+    image: "/images/team_imgs/Aadi_Dash.jpg",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/aadidash/",
+      github: "",
+    },
+  },
+  {
+    name: "Ashwin Vijayakumar",
+    role: "RAG",
+    description: "Freshman CS major interested in developing end-to-end full stack solutions using AI/ML technologies",
+    image: "/images/team_imgs/Ashwin_Vijayakumar.png",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/24ashwinv",
+      github: "https://github.com/ashwinvijayakumar24",
+    },
+  },
+  {
+    name: "Guilherme Luvielmo",
+    role: "Full Stack",
+    description: "Computer Science student focused on AI, machine learning, and EdTech. I'm passionate about building education tools that can empower learning for underrepresented groups.",
+    image: "/images/team_imgs/Guilherme_Luvielmo.jpg",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/g-luvielmo/",
+      github: "https://github.com/gluvielmo",
+    },
+  },
+  {
+    name: "Andrew Pang",
+    role: "RAG",
+    description: "I'm a first year CS major, and I have strong interests in Machine Learning, LLMs, and entrepreneurship. Outside of academics, I enjoy writing, playing tennis, and traveling.",
+    image: "/images/team_imgs/Andrew_Pang.png",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/andrew-pang87",
+      github: "https://github.com/apbuilds",
+    },
+  },
+  {
+    name: "Sanjana Devarajan",
+    role: "Full Stack",
+    description: "I'm an Industrial and Systems Engineering major with a FinTech minor at Georgia Tech, interested in the intersection of mathematics, computer science, and financial markets. In my free time, I enjoy playing tennis.",
+    image: "/images/team_imgs/Sanjana_Devarajan.jpg",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/sanjana-devarajan-a86618267/",
+      github: "",
     },
   },
 ];

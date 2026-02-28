@@ -40,7 +40,8 @@ export default function ChatBot({
       setUserInput("");
 
       try {
-        const res = await fetch("http://localhost:8000/chat", {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const res = await fetch(`${apiUrl}/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -96,7 +97,8 @@ export default function ChatBot({
     // Send the suggestion to the backend
     (async () => {
       try {
-        const res = await fetch("http://localhost:8000/chat", {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const res = await fetch(`${apiUrl}/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
