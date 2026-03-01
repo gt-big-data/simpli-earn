@@ -57,7 +57,7 @@ app.add_middleware(
 )
 
 # Persistent objects
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
 retriever = None
 qa_chain = None  # ✅ NEW
 summary_chain = None  # ✅ For generating one-off summaries
@@ -111,7 +111,7 @@ def chat_endpoint(req: ChatRequest):
             last_used_id = req.id
 
     if source_changed:
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
         retriever = None
         qa_chain = None
 
@@ -189,11 +189,30 @@ def chat_endpoint(req: ChatRequest):
             llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
             retriever=retriever,
             memory=memory,
-            combine_docs_chain_kwargs={"prompt": prompt_template}
+            combine_docs_chain_kwargs={"prompt": prompt_template},
+            return_source_documents=True,
+            output_key="answer"
         )
 
     response = qa_chain.invoke({"question": req.message})
     chat_history.append({"question": req.message, "answer": response["answer"]})
+
+
+    # Extract and sort source documents
+    source_docs = response.get("source_documents", [])
+    sources = []
+    seen_chunks = set()
+    for doc in source_docs:
+        chunk_text = doc.page_content.strip()
+        if chunk_text in seen_chunks:
+            continue
+        seen_chunks.add(chunk_text)
+        sources.append({
+            "chunk": doc.metadata.get("chunk", 0),
+            "source": doc.metadata.get("source", "transcript"),
+            "text": chunk_text,
+        })
+    sources.sort(key=lambda x: x["chunk"])
 
     # Generate follow-up question suggestions
     suggestions = generate_follow_up_questions(
@@ -203,7 +222,7 @@ def chat_endpoint(req: ChatRequest):
         retriever=retriever
     )
 
-    return {"response": response["answer"], "suggestions": suggestions}
+    return {"response": response["answer"], "suggestions": suggestions, "sources": sources}
 
 
 

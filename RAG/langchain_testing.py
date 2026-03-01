@@ -45,7 +45,8 @@ def initialize_retrieval(file_path):
         print(f"Creating new FAISS index for content hash {content_hash}...")
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
         chunks = text_splitter.split_text(transcript_text)
-        documents = [Document(page_content=chunk) for chunk in chunks]
+        documents = [Document(page_content=chunk, metadata={"source": os.path.basename(file_path), "chunk": i})
+        for i, chunk in enumerate(chunks)]
         vectorstore = FAISS.from_documents(documents, embeddings)
         vectorstore.save_local(faiss_index_path)
 

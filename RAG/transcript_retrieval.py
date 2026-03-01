@@ -4,8 +4,8 @@ def get_video_transcript(video_url):
     """Fetch transcript from a YouTube video URL."""
     video_id = video_url.split("v=")[-1]  # Extract video ID from URL
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        return "\n".join([entry['text'] for entry in transcript])
+        transcript = YouTubeTranscriptApi().fetch(video_id)
+        return "\n".join([entry.text for entry in transcript])
     except Exception as e:
         return f"Error: {str(e)}"
 
