@@ -4,6 +4,13 @@ import { TbSend2 } from "react-icons/tb";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useSearchParams } from "next/navigation";
+import OnboardingProfileModal from "./OnboardingProfileModal";
+import {
+  formatOnboardingProfileForPrompt,
+  loadOnboardingProfile,
+  OnboardingProfile,
+} from "../lib/onboardingProfile";
+import { RAG_API_URL } from "../lib/api-config";
 
 export type Message = {
   id: number;
@@ -26,8 +33,23 @@ export default function ChatBot({
   const videoUrl = searchParams.get("video_url") || null;
 
   const [userInput, setUserInput] = useState("");
+  const [profile, setProfile] = useState<OnboardingProfile | null>(null);
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setProfile(loadOnboardingProfile());
+  }, []);
+
+  const buildInjectedMessage = (rawMessage: string) => {
+    const context = profile ? formatOnboardingProfileForPrompt(profile) : null;
+    if (!context) return { message: rawMessage, context: null as string | null };
+    return {
+      message: `${context}\n\nUser message: ${rawMessage}`,
+      context,
+    };
+  };
 
   const sendMessage = async () => {
     if (userInput.trim()) {
@@ -40,14 +62,16 @@ export default function ChatBot({
       setUserInput("");
 
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/chat`, {
+        const injected = buildInjectedMessage(userInput);
+        const res = await fetch(`${RAG_API_URL}/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: userInput,
+            message: injected.message,
+            raw_message: userInput,
+            user_context: injected.context,
             id: dashboardId, // Tesla dashboard for now (can be made dynamic)
             video_url: videoUrl,
           }),
@@ -97,14 +121,16 @@ export default function ChatBot({
     // Send the suggestion to the backend
     (async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/chat`, {
+        const injected = buildInjectedMessage(suggestion);
+        const res = await fetch(`${RAG_API_URL}/chat`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            message: suggestion,
+            message: injected.message,
+            raw_message: suggestion,
+            user_context: injected.context,
             id: dashboardId,
             video_url: videoUrl,
           }),
@@ -145,6 +171,21 @@ export default function ChatBot({
   };
   return (
     <div className="relative h-full w-full">
+      <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
+        <button
+          className="px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs text-white hover:bg-white/15"
+          onClick={() => setProfileModalOpen(true)}
+          title={profile ? "Onboarding profile is set" : "Set onboarding profile"}
+        >
+          {profile ? "Profile: set" : "Profile"}
+        </button>
+      </div>
+
+      <OnboardingProfileModal
+        open={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        onSaved={(p) => setProfile(p)}
+      />
       <div
         className={`absolute grid grid-cols-1 grid-rows-2 gap-0 w-full ${
           fullscreen ? "h-[calc(100%-140px)]" : "h-[calc(100%-170px)]"
@@ -155,7 +196,7 @@ export default function ChatBot({
           ref={messageContainerRef}
           style={{ scrollbarColor: "#ffffff9f #ffffff00" }}
         >
-          <div className="">
+          <div className="pt-10">
             {messages.map((message) => (
               <Message
                 key={message.id}

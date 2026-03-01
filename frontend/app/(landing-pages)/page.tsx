@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaSearch, FaChevronDown, FaTrash } from "react-icons/fa";
 import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
+import { RAG_API_URL, SENTIMENT_API_URL } from "@/lib/api-config";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -33,7 +34,7 @@ export default function Home() {
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
-        const response = await fetch("http://localhost:8001/library");
+        const response = await fetch(`${SENTIMENT_API_URL}/library`);
         const data = await response.json();
         setLibraryVideos(data.videos || []);
       } catch (error) {
@@ -53,7 +54,7 @@ export default function Home() {
     
     try {
       // Trigger dashboard creation
-      const response = await fetch("http://localhost:8000/dashboard/create-dashboard", {
+      const response = await fetch(`${RAG_API_URL}/dashboard/create-dashboard`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -70,7 +71,7 @@ export default function Home() {
       // Poll for status
       const pollInterval = setInterval(async () => {
         try {
-          const statusResponse = await fetch(`http://localhost:8000/dashboard/job-status/${jobId}`);
+          const statusResponse = await fetch(`${RAG_API_URL}/dashboard/job-status/${jobId}`);
           const statusData = await statusResponse.json();
           
           if (statusData.status === "completed") {
@@ -79,7 +80,9 @@ export default function Home() {
             
             // Redirect to dashboard with video URL and ticker
             setTimeout(() => {
-              const tickerParam = ticker ? `&ticker=${encodeURIComponent(ticker)}` : '';
+              const tickerParam = tickerSymbol.trim()
+                ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}`
+                : '';
               router.push(`/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}`);
             }, 1000);
           } else if (statusData.status === "failed") {
@@ -108,7 +111,7 @@ export default function Home() {
     if (!confirm("Are you sure you want to delete this earnings call?")) return;
     
     try {
-      await fetch(`http://localhost:8001/library/${videoId}`, {
+      await fetch(`${SENTIMENT_API_URL}/library/${videoId}`, {
         method: "DELETE",
       });
       

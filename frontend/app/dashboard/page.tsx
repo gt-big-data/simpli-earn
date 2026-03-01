@@ -8,6 +8,7 @@ import SummaryFrame from "@/components/SummaryFrame";
 import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
 import FullChat from "@/components/FullChat";
+import { RAG_API_URL } from "@/lib/api-config";
 
 function DashboardContent() {
   const searchParams = useSearchParams();
@@ -19,16 +20,15 @@ function DashboardContent() {
       const videoUrl = searchParams.get("video_url");
 
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
         let res;
         if (videoUrl) {
-          res = await fetch(`${apiUrl}/summary`, {
+          res = await fetch(`${RAG_API_URL}/summary`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ video_url: videoUrl }),
           });
         } else {
-          res = await fetch(`${apiUrl}/summary?id=${id || "1"}`);
+          res = await fetch(`${RAG_API_URL}/summary?id=${id || "1"}`);
         }
 
         const data = await res.json();

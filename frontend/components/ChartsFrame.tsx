@@ -5,6 +5,7 @@ import SentimentGraph from "./SentimentGraph";
 import StockChart from "./StockChart";
 import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import { useSearchParams } from "next/navigation";
+import { SENTIMENT_API_URL } from "../lib/api-config";
 
 // Dashboard configurations - now only for ticker and date
 const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
@@ -36,7 +37,6 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
   const ticker = searchParams.get("ticker"); // Get ticker from URL params
-  const videoUrl = searchParams.get("video_url");
   
   // Use config from dashboardConfigs for preloaded dashboards, or create dynamic config for new videos
   let config = dashboardId ? dashboardConfigs[dashboardId] : null;
@@ -68,11 +68,10 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
       setError(null);
 
       try {
-        const baseUrl = "http://localhost:8001";
         const videoUrl = searchParams.get("video_url");
 
         // Use the new endpoint that looks up data from the database
-        const response = await fetch(`${baseUrl}/sentiment/get-by-video`, {
+        const response = await fetch(`${SENTIMENT_API_URL}/sentiment/get-by-video`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
