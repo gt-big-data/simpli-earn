@@ -79,7 +79,7 @@ export default function Home() {
             
             // Redirect to dashboard with video URL and ticker
             setTimeout(() => {
-              const tickerParam = ticker ? `&ticker=${encodeURIComponent(ticker)}` : '';
+              const tickerParam = tickerSymbol ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}` : '';
               router.push(`/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}`);
             }, 1000);
           } else if (statusData.status === "failed") {

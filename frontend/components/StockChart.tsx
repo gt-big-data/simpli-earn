@@ -53,7 +53,7 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
   const [stockData, setStockData] = useState<StockData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [chartView, setChartView] = useState<ChartView>('48h-close');
+  const [chartView] = useState<ChartView>('48h-close');
 
   useEffect(() => {
     const fetchStockData = async () => {
