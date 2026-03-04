@@ -1,24 +1,32 @@
-langchain==0.3.21
-python-dotenv==1.0.1
-streamlit==1.41.1
-faiss-cpu==1.9.0.post1
-langchain-openai==0.3.0
-pytube==15.0.0
-youtube_transcript_api==1.0.2
-yfinance
-langchain-community
-matplotlib
-seaborn
-python-dotenv
-pytz
-requests
-
-# API server
+# Core API server
 fastapi>=0.104.0
 uvicorn[standard]>=0.24.0
 pydantic>=2.0.0
+python-dotenv>=1.0.0
 
-# Supabase & dashboard pipeline
+# LLM + retrieval
+langchain==0.3.21
+langchain-openai==0.3.0
+langchain-community>=0.3.0
+faiss-cpu==1.9.0.post1
+youtube_transcript_api==1.0.2
+pytube==15.0.0
 supabase>=2.0.0
+
+# Dashboard generation + analytics scripts
 assemblyai>=0.30.0
 yt-dlp>=2024.1.0
+yfinance>=0.2.0
+requests>=2.31.0
+pandas>=2.0.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+pytz>=2024.1
+
+# Optional local UI / NLP utilities
+streamlit==1.41.1
+spacy>=3.5.0
+transformers>=4.30.0
+torch>=2.0.0
+huggingface-hub>=0.16.0

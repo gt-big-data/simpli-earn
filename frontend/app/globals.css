@@ -23,38 +23,7 @@ body {
   font-family: var(--font-montserrat), sans-serif;
 }
 
-/* Hide nav links and show hamburger menu on small screens */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none !important;
-  }
-
-  .hamburger {
-    display: block !important;
-    margin-left: auto;
-  }
-
-  /* Center-align navbar content on small screens */
-  nav {
-    justify-content: space-between;
-    gap: 10px; 
-    padding: 10px 20px;
-  }
-
-  /* Center-align hamburger and Open Dashboard button */
-  nav > div:last-child {
-    margin-left: auto; 
-  }
-
-  /* Center-align text with each word on a new line */
-
-  .mobile-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
+/* Legacy nav classes - kept for any external references */
 .nav-link {
   text-decoration: none;
   color: white;
@@ -62,29 +31,6 @@ body {
   white-space: nowrap;
 }
 
-/* Hover effects for navigation links */
 .nav-link:hover {
   color: #81D18D !important;
-}
-
-/* Hover effect for the Open Dashboard button */
-.dashboard-button:hover {
-  background-color: #609D6A !important; 
-}
-
-/* Hover effect for the hamburger menu bars */
-.hamburger:hover .hamburger-line {
-  background-color: #81D18D !important; 
-}
-
-/* Show mobile menu when hamburger is clicked */
-.mobile-menu {
-  display: none;
-}
-
-/* Open Dashboard button stays on right on large screens */
-@media (min-width: 769px) {
-  .dashboard-button {
-    order: 1;
-  }
 }

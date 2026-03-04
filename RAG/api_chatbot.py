@@ -11,7 +11,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from fastapi import Query, Body
+from fastapi import Query, Body, HTTPException
 from typing import Optional
 import subprocess
 import json
@@ -238,8 +238,17 @@ Summary:
             prompt=prompt
         )
 
-    summary = summary_chain.run(transcript=transcript_text)
-    return {"summary": summary}
+    try:
+        summary = summary_chain.run(transcript=transcript_text)
+        return {"summary": summary}
+    except Exception as e:
+        err_msg = str(e)
+        if "quota" in err_msg.lower() or "429" in err_msg or "insufficient_quota" in err_msg:
+            raise HTTPException(
+                status_code=503,
+                detail="OpenAI API quota exceeded. Check your plan and billing at platform.openai.com."
+            )
+        raise HTTPException(status_code=503, detail=f"AI service error: {err_msg}")
 
 
 @app.post("/summary")
@@ -306,8 +315,17 @@ Summary:
             prompt=prompt
         )
 
-    summary = summary_chain.run(transcript=transcript_text)
-    return {"summary": summary}
+    try:
+        summary = summary_chain.run(transcript=transcript_text)
+        return {"summary": summary}
+    except Exception as e:
+        err_msg = str(e)
+        if "quota" in err_msg.lower() or "429" in err_msg or "insufficient_quota" in err_msg:
+            raise HTTPException(
+                status_code=503,
+                detail="OpenAI API quota exceeded. Check your plan and billing at platform.openai.com."
+            )
+        raise HTTPException(status_code=503, detail=f"AI service error: {err_msg}")
 
 
 @app.post("/generate-stock")

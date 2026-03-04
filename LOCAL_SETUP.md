@@ -32,6 +32,19 @@ ASSEMBLYAI_KEY=your-assemblyai-key  # For YouTube transcription (https://assembl
 
 Get Supabase credentials: Project → Settings → API. Use the **service_role** key (not anon).
 
+### Frontend (`frontend/.env.local`)
+
+Copy from `frontend/.env.example` if needed. For **user auth**:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key   # Use anon key (not service_role) for frontend
+```
+
+For auth + settings setup details, see:
+- [docs/AUTH_IMPLEMENTATION_STEPS.md](docs/AUTH_IMPLEMENTATION_STEPS.md)
+- [docs/SUPABASE_SETTINGS_SETUP.md](docs/SUPABASE_SETTINGS_SETUP.md)
+
 ## 2. Python Dependencies (one-time)
 
 From the project root:
