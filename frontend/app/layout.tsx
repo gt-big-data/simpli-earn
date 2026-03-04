@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
+import { AuthProvider } from "@/lib/auth/AuthContext";
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.variable} antialiased`}>
-        {children}
-        <Analytics />
-        <Footer />
-        <ScrollToTop />
+        <AuthProvider>
+          {children}
+          <Analytics />
+          <Footer />
+          <ScrollToTop />
+        </AuthProvider>
       </body>
     </html>
   );

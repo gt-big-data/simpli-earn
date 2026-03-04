@@ -31,7 +31,20 @@ function DashboardContent() {
           res = await fetch(`${apiUrl}/summary?id=${id || "1"}`);
         }
 
-        const data = await res.json();
+        let data: { summary?: string; detail?: string };
+        try {
+          data = await res.json();
+        } catch {
+          setSummary("❌ Could not parse server response. Ensure the RAG API is running on port 8000.");
+          return;
+        }
+
+        if (!res.ok) {
+          const msg = data?.detail ?? `Server error (${res.status})`;
+          setSummary(`❌ Summary unavailable: ${msg}. If you use OpenAI, check your API quota at platform.openai.com.`);
+          return;
+        }
+
         if (data.summary) {
           setSummary(data.summary.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"));
         } else {
@@ -39,7 +52,7 @@ function DashboardContent() {
         }
       } catch (err) {
         console.error("Error fetching summary:", err);
-        setSummary("❌ Failed to load summary.");
+        setSummary("❌ Failed to connect to the summary API. Ensure the RAG API is running (port 8000) and try again.");
       }
     };
 

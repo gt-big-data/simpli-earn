@@ -1,0 +1,65 @@
+
+> simpli-earn@0.1.0 dev
+> next dev --turbopack --hostname 127.0.0.1
+
+   ▲ Next.js 15.2.4 (Turbopack)
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+
+ ✓ Starting...
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+ ✓ Ready in 712ms
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+Watchpack Error (watcher): Error: EMFILE: too many open files, watch
+ ○ Compiling /_not-found/page ...
+ ✓ Compiled /_not-found/page in 1340ms
+ HEAD / 404 in 1465ms
+ GET / 404 in 49ms
+ GET / 404 in 49ms
+node:internal/child_process:512
+      this.emit('error', new ErrnoException(err, 'kill'));
+                         ^
+
+Error: kill EPERM
+    at ChildProcess.kill (node:internal/child_process:512:26)
+    at handleSessionStop (/Users/ritwij/Desktop/stuff/simpliearn/simpli-earn/frontend/node_modules/next/dist/cli/next-dev.js:91:71)
+    at process.<anonymous> (/Users/ritwij/Desktop/stuff/simpliearn/simpli-earn/frontend/node_modules/next/dist/cli/next-dev.js:146:27)
+    at process.emit (node:events:507:28)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess.kill (node:internal/child_process:512:12)
+    at handleSessionStop (/Users/ritwij/Desktop/stuff/simpliearn/simpli-earn/frontend/node_modules/next/dist/cli/next-dev.js:91:71)
+    at process.<anonymous> (/Users/ritwij/Desktop/stuff/simpliearn/simpli-earn/frontend/node_modules/next/dist/cli/next-dev.js:146:27)
+    at process.emit (node:events:507:28) {
+  errno: -1,
+  code: 'EPERM',
+  syscall: 'kill'
+}
+
+Node.js v24.5.0
+npm notice
+npm notice New minor version of npm available! 11.5.1 -> 11.6.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+npm notice To update run: npm install -g npm@11.6.2
+npm notice
+ GET /chat 404 in 134ms
+ GET / 404 in 40ms
+ GET / 404 in 33ms
+ GET /api/learn?type=stories 404 in 113ms
