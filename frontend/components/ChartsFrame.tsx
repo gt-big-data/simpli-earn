@@ -36,7 +36,6 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
   const ticker = searchParams.get("ticker"); // Get ticker from URL params
-  const videoUrl = searchParams.get("video_url");
   
   // Use config from dashboardConfigs for preloaded dashboards, or create dynamic config for new videos
   let config = dashboardId ? dashboardConfigs[dashboardId] : null;
