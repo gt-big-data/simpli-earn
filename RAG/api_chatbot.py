@@ -1,5 +1,5 @@
 # api_chatbot.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
 from transcript_retrieval import get_video_transcript, save_transcript_as_txt
 from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
@@ -7,19 +7,18 @@ from langchain.memory import ConversationBufferMemory
 import os
 from datetime import datetime
 from langchain.chains import ConversationalRetrievalChain
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from fastapi import Query, Body, HTTPException
 from typing import Optional
 import subprocess
 import json
 import re
 from dotenv import load_dotenv
 from supabase import create_client
-
 from fastapi.middleware.cors import CORSMiddleware
+
+from llm_provider import get_llm, run_with_fallback, is_quota_error, mark_openai_unavailable, get_active_provider
 
 # Load environment variables and initialize Supabase
 load_dotenv()
@@ -166,36 +165,46 @@ def chat_endpoint(req: ChatRequest):
     if not retriever:
         return {"response": "❌ No transcript loaded. Provide video_url or valid id."}
 
-    if qa_chain is None:
-        prompt_template = ChatPromptTemplate.from_template(
-            """
-            You are a financial assistant providing insights from this transcript of an earnings call you currently have.
-            You are to give objective answers at all times.
-            This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
-            Use the provided context and chat history to answer the user's questions.
-            If the question is irrelevant to the document, politely state so.
-            Assume the user is not a financial expert.
-            If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
-            Do not start your response by citing the transcript of the call.
-            
+    chat_prompt = ChatPromptTemplate.from_template(
+        """
+        You are a financial assistant providing insights from this transcript of an earnings call you currently have.
+        You are to give objective answers at all times.
+        This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
+        Use the provided context and chat history to answer the user's questions.
+        If the question is irrelevant to the document, politely state so.
+        Assume the user is not a financial expert.
+        If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
+        Do not start your response by citing the transcript of the call.
 
-            Context: {context}
-            Chat History: {chat_history}
-            User: {question}
-            Assistant:
-            """
-        )
+        Context: {context}
+        Chat History: {chat_history}
+        User: {question}
+        Assistant:
+        """
+    )
+
+    def _build_qa_chain():
+        global qa_chain
         qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
+            llm=get_llm(),
             retriever=retriever,
             memory=memory,
-            combine_docs_chain_kwargs={"prompt": prompt_template}
+            combine_docs_chain_kwargs={"prompt": chat_prompt}
         )
 
-    response = qa_chain.invoke({"question": req.message})
+    if qa_chain is None:
+        _build_qa_chain()
+
+    def _invoke():
+        return qa_chain.invoke({"question": req.message})
+
+    try:
+        response = run_with_fallback(_invoke, rebuild_fn=_build_qa_chain)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
     chat_history.append({"question": req.message, "answer": response["answer"]})
 
-    # Generate follow-up question suggestions
     suggestions = generate_follow_up_questions(
         user_question=req.message,
         bot_answer=response["answer"],
@@ -203,7 +212,7 @@ def chat_endpoint(req: ChatRequest):
         retriever=retriever
     )
 
-    return {"response": response["answer"], "suggestions": suggestions}
+    return {"response": response["answer"], "suggestions": suggestions, "provider": get_active_provider()}
 
 
 
@@ -221,10 +230,9 @@ def generate_summary(id: str = Query("1")):
     except Exception as e:
         return {"summary": f"❌ Failed to load transcript: {str(e)}"}
 
-    if summary_chain is None:
-        prompt = PromptTemplate(
-            input_variables=["transcript"],
-            template="""
+    get_summary_prompt = PromptTemplate(
+        input_variables=["transcript"],
+        template="""
 You are a financial analyst assistant. Read the following earnings call transcript and generate a detailed yet concise summary highlighting the key financial results, executive commentary, and any forward-looking statements. Bold any key terms in the summary. Start the summary with a very brief (max one paragraph) overall summary of the call, then go into a mode detailed summary.
 
 Transcript:
@@ -232,23 +240,23 @@ Transcript:
 
 Summary:
 """
-        )
-        summary_chain = LLMChain(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
-            prompt=prompt
-        )
+    )
+
+    def _build_summary():
+        global summary_chain
+        summary_chain = LLMChain(llm=get_llm(), prompt=get_summary_prompt)
+
+    if summary_chain is None:
+        _build_summary()
 
     try:
-        summary = summary_chain.run(transcript=transcript_text)
-        return {"summary": summary}
+        result = run_with_fallback(
+            lambda: summary_chain.run(transcript=transcript_text),
+            rebuild_fn=_build_summary,
+        )
+        return {"summary": result, "provider": get_active_provider()}
     except Exception as e:
-        err_msg = str(e)
-        if "quota" in err_msg.lower() or "429" in err_msg or "insufficient_quota" in err_msg:
-            raise HTTPException(
-                status_code=503,
-                detail="OpenAI API quota exceeded. Check your plan and billing at platform.openai.com."
-            )
-        raise HTTPException(status_code=503, detail=f"AI service error: {err_msg}")
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
 
 
 @app.post("/summary")
@@ -295,11 +303,9 @@ def generate_summary_from_youtube(data: dict = Body(...)):
         except Exception as e:
             return {"summary": f"❌ Failed to read transcript: {str(e)}"}
 
-    global summary_chain
-    if summary_chain is None:
-        prompt = PromptTemplate(
-            input_variables=["transcript"],
-            template="""
+    post_summary_prompt = PromptTemplate(
+        input_variables=["transcript"],
+        template="""
 You are a financial analyst assistant. Read the following earnings call transcript and generate a summary highlighting the key financial results, executive commentary, and any forward-looking statements.
 Don't make it too long and do not use complicated financial terminology, assume the user has little knowledge of finance. 
 If you do want to use complicated terminology/jargon please do define it as well/explain it so it is clear for the user.
@@ -309,23 +315,24 @@ Transcript:
 
 Summary:
 """
-        )
-        summary_chain = LLMChain(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
-            prompt=prompt
-        )
+    )
+
+    global summary_chain
+    def _build_yt_summary():
+        global summary_chain
+        summary_chain = LLMChain(llm=get_llm(), prompt=post_summary_prompt)
+
+    if summary_chain is None:
+        _build_yt_summary()
 
     try:
-        summary = summary_chain.run(transcript=transcript_text)
-        return {"summary": summary}
+        result = run_with_fallback(
+            lambda: summary_chain.run(transcript=transcript_text),
+            rebuild_fn=_build_yt_summary,
+        )
+        return {"summary": result, "provider": get_active_provider()}
     except Exception as e:
-        err_msg = str(e)
-        if "quota" in err_msg.lower() or "429" in err_msg or "insufficient_quota" in err_msg:
-            raise HTTPException(
-                status_code=503,
-                detail="OpenAI API quota exceeded. Check your plan and billing at platform.openai.com."
-            )
-        raise HTTPException(status_code=503, detail=f"AI service error: {err_msg}")
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
 
 
 @app.post("/generate-stock")

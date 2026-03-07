@@ -9,3 +9,4 @@ sentiment/.env
 RAG/.env
 **/__pycache__/
 temp_processing/
+api_keys.txt
