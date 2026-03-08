@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import SentimentGraph from "./SentimentGraph";
 import StockChart from "./StockChart";
 import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
+import QoQComparison from "./QoQComparison";
 import { useSearchParams } from "next/navigation";
 
 // Dashboard configurations - now only for ticker and date
@@ -31,7 +32,8 @@ interface SentimentDataPoint {
 }
 
 export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
-  const [activeTab, setActiveTab] = useState("stock");
+  const [activeTab, setActiveTab] = useState<"stock" | "sentiment" | "compare">("stock");
+  const [compareId, setCompareId] = useState<string>("aapl_2024Q4");
   const [indicatorView, setIndicatorView] = useState<"stock" | "VIX" | "TNX" | "DXY">("stock");
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
@@ -108,6 +110,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
   const renderTabs = () => {
     const isStock = activeTab === "stock";
     const isSentiment = activeTab === "sentiment";
+    const isCompare = activeTab === "compare";
 
     return (
       <div className="flex flex-row relative w-full">
@@ -115,7 +118,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
         <button
           className={`flex justify-center items-center rounded-tl-[30px] ${
             isStock ? "rounded-tr-[23px]" : "rounded-br-[23px]"
-          } w-1/2 h-[40px] ${
+          } w-1/3 h-[40px] ${
             isStock ? "border-t-[1px]" : "border-b-[1px]"
           } border-white/25 cursor-pointer relative`}
           onClick={() => setActiveTab("stock")}
@@ -129,11 +132,9 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
 
         {/* Sentiment Tab */}
         <button
-          className={`flex justify-center items-center rounded-tr-[30px] ${
-            isSentiment ? "rounded-tl-[23px]" : "rounded-tl-[23px]"
-          } ${
-            isSentiment ? "border-t-[1px]" : "border-b-[1px]"
-          } border-white/25 cursor-pointer relative w-1/2 h-[40px]`}
+          className={`flex justify-center items-center ${
+            isSentiment ? "rounded-tl-[23px] rounded-tr-[23px] border-t-[1px]" : "border-b-[1px]"
+          } border-white/25 cursor-pointer relative w-1/3 h-[40px]`}
           onClick={() => setActiveTab("sentiment")}
         >
           <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
@@ -143,8 +144,25 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
           </h1>
         </button>
 
-        {/* Divider */}
-        <div className="absolute top-1/2 left-1/2 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20"></div>
+        {/* Compare Tab */}
+        <button
+          className={`flex justify-center items-center rounded-tr-[30px] ${
+            isCompare ? "rounded-tl-[23px]" : "rounded-bl-[23px]"
+          } w-1/3 h-[40px] ${
+            isCompare ? "border-t-[1px]" : "border-b-[1px]"
+          } border-white/25 cursor-pointer relative`}
+          onClick={() => setActiveTab("compare")}
+        >
+          <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
+            isCompare ? "" : "opacity-50"
+          }`}>
+            Compare
+          </h1>
+        </button>
+
+        {/* Dividers */}
+        <div className="absolute top-1/2 left-1/3 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20"></div>
+        <div className="absolute top-1/2 left-2/3 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20"></div>
       </div>
     );
   };
@@ -208,10 +226,10 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   <p className="text-sm mt-2">{error}</p>
                 </div>
               ) : sentimentData ? (
-                <SentimentGraph 
+                <SentimentGraph
                   relevanceData={sentimentData.relevance}
                   specificityData={sentimentData.specificity}
-                  onTimestampClick={onTimestampClick} 
+                  onTimestampClick={onTimestampClick}
                 />
               ) : (
                 <div className="text-center text-white/70">
@@ -220,6 +238,14 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                 </div>
               )}
             </>
+          )}
+
+          {activeTab === "compare" && (
+            <QoQComparison
+              currentId={dashboardId}
+              compareId={compareId}
+              setCompareId={setCompareId}
+            />
           )}
         </div>
       </div>
