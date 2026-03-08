@@ -6,7 +6,7 @@ interface WatchlistWidgetProps {
   userId?: string | null
 }
 
-export default function WatchlistWidget({ userId }: WatchlistWidgetProps) {
+export default function WatchlistWidget({  }: WatchlistWidgetProps) {
   return (
     <DashboardWidget title="Watchlist" widgetId="watchlist">
       <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">

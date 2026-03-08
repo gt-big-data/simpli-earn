@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { signInWithGoogle } from '@/lib/auth/providers'
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -125,5 +125,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="rounded-xl border border-[rgba(129,209,141,0.26)] bg-[rgba(0,0,0,0.4)] p-8 animate-pulse h-64" />}>
+      <LoginForm />
+    </Suspense>
   )
 }
