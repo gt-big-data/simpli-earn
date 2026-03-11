@@ -59,7 +59,8 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
     const fetchStockData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/stock', {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/generate-stock`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
