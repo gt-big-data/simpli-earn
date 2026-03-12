@@ -88,5 +88,6 @@ Run these SQL/setup docs in Supabase before testing auth/settings:
 
 - Full local setup guide: `LOCAL_SETUP.md`
 - Integration notes: `INTEGRATION_GUIDE.md`
+- **Backend deployment (Cloud Run):** `docs/BACKEND_DEPLOYMENT_GUIDE.md` – How to add new backend functions and deploy to Cloud Run
 
 singular driver script coming soon
