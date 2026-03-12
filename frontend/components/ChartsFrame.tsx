@@ -67,7 +67,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
       setError(null);
 
       try {
-        const baseUrl = "http://localhost:8001";
+        const baseUrl = process.env.NEXT_PUBLIC_SENTIMENT_API_URL || 'http://localhost:8001';
         const videoUrl = searchParams.get("video_url");
 
         // Use the new endpoint that looks up data from the database

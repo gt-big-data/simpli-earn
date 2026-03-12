@@ -359,3 +359,28 @@ def generate_stock(payload: dict):
         return json.loads(out)
     except Exception as e:
         return {"error": "Failed to parse JSON", "details": str(e), "raw": out}
+
+
+@app.post("/generate-indicators")
+def generate_indicators(payload: dict = Body(...)):
+    """Generate economic indicators (VIX, TNX, DXY) data for the given time window."""
+    start_local = payload.get("startLocal")
+    hours = payload.get("hours", 48)
+    interval = payload.get("interval", "5m")
+    indicators = payload.get("indicators", ["VIX", "TNX", "DXY"])
+
+    if not start_local:
+        return {"ok": False, "error": "startLocal required"}
+
+    # Date format conversion: MM/DD/YY HH:MM -> YYYY-MM-DD HH:MM
+    formatted_date = start_local
+    if "/" in start_local:
+        parts = start_local.strip().split(" ")
+        date_part = parts[0]
+        time_part = parts[1] if len(parts) > 1 else "09:30"
+        m, d, y = date_part.split("/")
+        full_year = f"20{y}" if int(y) < 50 else f"19{y}"
+        formatted_date = f"{full_year}-{m.zfill(2)}-{d.zfill(2)} {time_part}"
+
+    from economicIndicatorsV2 import get_economic_indicators_json
+    return get_economic_indicators_json(formatted_date, hours, interval, indicators)

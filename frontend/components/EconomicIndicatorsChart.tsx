@@ -79,8 +79,9 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
       try {
         setLoading(true);
         setError(null);
-        
-        const response = await fetch('/api/indicators', {
+
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/generate-indicators`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
