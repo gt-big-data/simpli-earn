@@ -49,7 +49,7 @@ except ImportError as e:
 # Add this block to enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for dev; tighten in prod
+    allow_origins=["https://simpli-earn-2-simpli-earns-projects.vercel.app", "https://simpli-earn-2.vercel.app", "http://localhost:3000", "http://127.0.0.1:3000"],  # Allow all origins for dev; tighten in prod
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -218,45 +218,21 @@ def chat_endpoint(req: ChatRequest):
 
 @app.get("/summary")
 def generate_summary(id: str = Query("1")):
-    global summary_chain
+    """For preloaded dashboards (1-6): return static summary from codebase. No DB or OpenAI."""
+    from static_summaries import STATIC_SUMMARIES
 
     if id not in STATIC_TRANSCRIPTS:
         return {"summary": "❌ Unknown dashboard ID or missing transcript."}
 
-    transcript_path = STATIC_TRANSCRIPTS[id]
-    try:
-        with open(transcript_path, "r", encoding="utf-8") as f:
-            transcript_text = f.read()
-    except Exception as e:
-        return {"summary": f"❌ Failed to load transcript: {str(e)}"}
+    # IDs 1-6: serve static summaries directly (fast, no DB/API)
+    if id in STATIC_SUMMARIES and STATIC_SUMMARIES[id]:
+        return {"summary": STATIC_SUMMARIES[id], "provider": "static"}
 
-    get_summary_prompt = PromptTemplate(
-        input_variables=["transcript"],
-        template="""
-You are a financial analyst assistant. Read the following earnings call transcript and generate a detailed yet concise summary highlighting the key financial results, executive commentary, and any forward-looking statements. Bold any key terms in the summary. Start the summary with a very brief (max one paragraph) overall summary of the call, then go into a mode detailed summary.
-
-Transcript:
-{transcript}
-
-Summary:
-"""
-    )
-
-    def _build_summary():
-        global summary_chain
-        summary_chain = LLMChain(llm=get_llm(), prompt=get_summary_prompt)
-
-    if summary_chain is None:
-        _build_summary()
-
-    try:
-        result = run_with_fallback(
-            lambda: summary_chain.run(transcript=transcript_text),
-            rebuild_fn=_build_summary,
-        )
-        return {"summary": result, "provider": get_active_provider()}
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+    # Static summary not yet populated
+    return {
+        "summary": "❌ Static summary not yet generated. Run from project root: python scripts/populate_preloaded_summaries.py",
+        "provider": None,
+    }
 
 
 @app.post("/summary")
