@@ -86,7 +86,7 @@ function DashboardContent() {
         background:
           "radial-gradient(50% 50% at 50% 50%, rgba(129, 209, 141, 0.1) 0%, rgba(217, 217, 217, 0) 100%)",
       }}
-      className="font-[family-name:var(--font-geist-sans)] w-full min-h-[calc(100vh-57px)] relative"
+      className="w-full min-h-[calc(100vh-57px)] relative"
     >
       <div className="w-full h-full">
         <div className="flex justify-center">
