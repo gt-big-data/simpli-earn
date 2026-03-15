@@ -14,10 +14,19 @@ interface SentimentDataPoint {
   ma_specificity_0_1: number | null;
 }
 
+export interface RedFlag {
+  sentence_index: number;
+  quote: string;
+  category: string;
+  severity: "high" | "medium" | "low";
+  description: string;
+}
+
 interface SentimentGraphProps {
   relevanceData: SentimentDataPoint[];
   specificityData: SentimentDataPoint[];
-  onTimestampClick: (timestamp: number) => void; // Callback to update video timestamp
+  redFlags?: RedFlag[];
+  onTimestampClick: (timestamp: number) => void;
 }
 
 // Utility function to calculate moving average
@@ -41,7 +50,26 @@ const estimateTimestamp = (sentenceIndex: number): number => {
   return sentenceIndex * 2;
 };
 
-const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specificityData, onTimestampClick }) => {
+// Wrap long text into lines that fit in the tooltip (~48 chars per line, break at spaces)
+const wrapForTooltip = (text: string, maxCharsPerLine = 48): string[] => {
+  if (!text || text.length <= maxCharsPerLine) return text ? [text] : [];
+  const lines: string[] = [];
+  let remaining = text.trim();
+  while (remaining.length > 0) {
+    if (remaining.length <= maxCharsPerLine) {
+      lines.push(remaining);
+      break;
+    }
+    const chunk = remaining.slice(0, maxCharsPerLine);
+    const lastSpace = chunk.lastIndexOf(' ');
+    const breakAt = lastSpace > maxCharsPerLine * 0.5 ? lastSpace : maxCharsPerLine;
+    lines.push(remaining.slice(0, breakAt).trim());
+    remaining = remaining.slice(breakAt).trim();
+  }
+  return lines;
+};
+
+const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specificityData, redFlags = [], onTimestampClick }) => {
   // Extract data, using -1_1 scale for both relevance and specificity
   const relevanceValues = relevanceData.map(row => row['relevance_-1_1']);
   const specificityValues = specificityData.map(row => row['specificity_-1_1']);
@@ -62,6 +90,15 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
 
   // Use sentence_index as x-axis labels
   const sentenceIndices = relevanceData.map(row => row.sentence_index);
+  const redFlagBySentence = new Map(redFlags.map(f => [f.sentence_index, f]));
+
+  // Red flag points: only show at sentence indices that have flags
+  const redFlagData = sentenceIndices.map((si, idx) => {
+    const flag = redFlagBySentence.get(si);
+    if (!flag) return null;
+    const y = relevanceValues[idx] ?? specificityValues[idx] ?? 0;
+    return typeof y === "number" ? y : null;
+  });
 
   const chartData = {
     labels: sentenceIndices.map(String), // Use sentence_index as labels
@@ -108,6 +145,21 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
         tension: 0.4,
         pointRadius: 1,
       },
+      ...(redFlags.length > 0
+        ? [
+            {
+              label: 'Red Flags',
+              data: redFlagData,
+              borderColor: 'rgba(239, 68, 68, 255)',
+              backgroundColor: 'rgba(239, 68, 68, 0.9)',
+              pointRadius: 8,
+              pointHoverRadius: 12,
+              pointStyle: 'triangle' as const,
+              showLine: false,
+              order: 0,
+            },
+          ]
+        : []),
     ],
   };
 
@@ -120,13 +172,34 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
         labels: {
           color: 'rgba(255, 255, 255, 0.8)',
           filter: (item: { text: string }) => {
-            // Only show moving average in legend
-            return item.text.includes('Moving Average');
+            return item.text.includes('Moving Average') || item.text === 'Red Flags';
           },
         },
       },
       tooltip: {
         enabled: true,
+        padding: 12,
+        titleFont: { size: 13 },
+        bodyFont: { size: 12 },
+        callbacks: {
+          label: (ctx: { dataIndex: number; datasetIndex: number; dataset: { label?: string } }) => {
+            if (ctx.dataset.label === "Red Flags") {
+              const si = sentenceIndices[ctx.dataIndex];
+              const flag = redFlagBySentence.get(si);
+              if (flag) {
+                const header = `⚠️ ${flag.category.replace(/_/g, " ")} (${flag.severity})`;
+                const quoteLines = wrapForTooltip(flag.quote);
+                if (quoteLines.length > 0) {
+                  quoteLines[0] = `"${quoteLines[0]}`;
+                  quoteLines[quoteLines.length - 1] = `${quoteLines[quoteLines.length - 1]}"`;
+                }
+                const descLines = wrapForTooltip(flag.description);
+                return [header, ...quoteLines, ...descLines];
+              }
+            }
+            return undefined;
+          },
+        },
       },
     },
     scales: {
