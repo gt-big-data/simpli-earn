@@ -68,7 +68,13 @@ STATIC_TRANSCRIPTS = {
     "3": "transcripts/alphabet_seeking_alpha.txt",
     "4": "transcripts/shell_seeking_alpha.txt",
     "5": "transcripts/tesla_seeking_alpha.txt",
-    "6": "transcripts/walmart_seeking_alpha.txt"
+    "6": "transcripts/walmart_seeking_alpha.txt",
+    # Apple historical quarters (from Alpha Vantage)
+    "aapl_2024Q4": "transcripts/apple_2024Q4_seeking_alpha.txt",
+    "aapl_2024Q3": "transcripts/apple_2024Q3_seeking_alpha.txt",
+    "aapl_2024Q2": "transcripts/apple_2024Q2_seeking_alpha.txt",
+    "aapl_2024Q1": "transcripts/apple_2024Q1_seeking_alpha.txt",
+    "aapl_2023Q4": "transcripts/apple_2023Q4_seeking_alpha.txt",
 }
 
 UPLOADS_DIR = "uploads"
@@ -309,6 +315,91 @@ Summary:
         return {"summary": result, "provider": get_active_provider()}
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
+
+HIGH_SIGNAL_WORDS = [
+    "AI", "headwinds", "margins", "recession", "growth",
+    "guidance", "uncertainty", "challenges", "record", "supply chain"
+]
+
+class CompareRequest(BaseModel):
+    current_id: str
+    previous_id: str
+
+@app.post("/compare")
+def compare_transcripts(req: CompareRequest):
+    if req.current_id not in STATIC_TRANSCRIPTS:
+        return {"error": f"Unknown current_id: {req.current_id}"}
+    if req.previous_id not in STATIC_TRANSCRIPTS:
+        return {"error": f"Unknown previous_id: {req.previous_id}"}
+
+    try:
+        with open(STATIC_TRANSCRIPTS[req.current_id], "r", encoding="utf-8") as f:
+            current_text = f.read()
+        with open(STATIC_TRANSCRIPTS[req.previous_id], "r", encoding="utf-8") as f:
+            previous_text = f.read()
+    except Exception as e:
+        return {"error": f"Failed to read transcripts: {str(e)}"}
+
+    # Count high-signal word occurrences (case-insensitive)
+    def count_words(text):
+        text_lower = text.lower()
+        return {word: text_lower.count(word.lower()) for word in HIGH_SIGNAL_WORDS}
+
+    word_counts = {
+        "current": count_words(current_text),
+        "previous": count_words(previous_text),
+    }
+
+    # Single GPT-4o call with structured difference prompt
+    from openai import OpenAI
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    prompt = f"""You are a financial analyst. You are given two earnings call transcripts.
+
+TRANSCRIPT A (current): {current_text[:6000]}
+TRANSCRIPT B (previous): {previous_text[:6000]}
+
+Return a JSON object with exactly these fields:
+- "sentiment_current": integer 1-10 (overall confidence/positivity of transcript A)
+- "sentiment_previous": integer 1-10 (overall confidence/positivity of transcript B)
+- "narrative_shifts": list of exactly 3 strings, each describing a specific contradiction or strategic pivot between the two calls. Be concrete.
+- "current_label": short label for transcript A (e.g. "Apple Q1 FY2025")
+- "previous_label": short label for transcript B (e.g. "Tesla Q4 2024")
+
+Return only the JSON object, no other text."""
+
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+        )
+        raw = completion.choices[0].message.content.strip()
+        # Strip markdown code fences if present
+        if raw.startswith("```"):
+            raw = re.sub(r"^```[a-z]*\n?", "", raw)
+            raw = re.sub(r"\n?```$", "", raw)
+        gpt_data = json.loads(raw)
+    except Exception as e:
+        return {"error": f"GPT parse failure: {str(e)}"}
+
+    sentiment_current = int(gpt_data.get("sentiment_current", 5))
+    sentiment_previous = int(gpt_data.get("sentiment_previous", 5))
+    delta = sentiment_current - sentiment_previous
+
+    return {
+        "current_label": gpt_data.get("current_label", "Current"),
+        "previous_label": gpt_data.get("previous_label", "Previous"),
+        "sentiment": {
+            "current": sentiment_current,
+            "previous": sentiment_previous,
+            "delta": delta,
+            "direction": "up" if delta > 0 else ("down" if delta < 0 else "flat"),
+        },
+        "word_counts": word_counts,
+        "narrative_shifts": gpt_data.get("narrative_shifts", []),
+    }
 
 
 @app.post("/generate-stock")

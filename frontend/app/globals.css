@@ -9,8 +9,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* Next/font sets --font-montserrat; use it as our sans stack */
   --font-sans: var(--font-montserrat);
-  --font-montserrat: var(--font-montserrat), sans-serif;
   --color-green: #81D18D;
   --linear-green: linear-gradient(#81D18D, #426B48);
 
@@ -20,7 +20,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-montserrat), sans-serif;
+  font-family: var(--font-montserrat), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* Legacy nav classes - kept for any external references */
