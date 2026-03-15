@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { spawn } from "child_process";
 import path from "path";
+import { existsSync } from "fs";
+
+// Use project venv Python (has yfinance, matplotlib, etc.)
+const venvPython = path.join(process.cwd(), "..", "venv", "bin", "python3");
+const pythonPath = existsSync(venvPython) ? venvPython : "python3";
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -15,7 +20,7 @@ export async function POST(request: Request): Promise<Response> {
     }
 
     return new Promise<Response>((resolve) => {
-      const pythonProcess = spawn("python3", [
+      const pythonProcess = spawn(pythonPath, [
         path.join(process.cwd(), "app/stockchartgenerationV2.py"),
         ticker,
         date,

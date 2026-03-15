@@ -5,6 +5,8 @@ import SentimentGraph from "./SentimentGraph";
 import StockChart from "./StockChart";
 import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import { useSearchParams } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api-config";
+import type { RedFlag } from "./SentimentGraph";
 
 // Dashboard configurations - now only for ticker and date
 const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
@@ -52,6 +54,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
     relevance: SentimentDataPoint[];
     specificity: SentimentDataPoint[];
   } | null>(null);
+  const [redFlags, setRedFlags] = useState<RedFlag[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -93,6 +96,22 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
           relevance: data.relevance_data.data as SentimentDataPoint[],
           specificity: data.specificity_data.data as SentimentDataPoint[],
         });
+
+        // Fetch red flags from RAG API
+        try {
+          const rfRes = await fetch(`${API_BASE_URL}/red-flags`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              dashboard_id: dashboardId || null,
+              video_url: videoUrl || null,
+            }),
+          });
+          const rfData = await rfRes.json();
+          setRedFlags(rfData.red_flags || []);
+        } catch {
+          setRedFlags([]);
+        }
       } catch (err) {
         console.error("Error fetching sentiment data:", err);
         setError(err instanceof Error ? err.message : "Failed to fetch sentiment data");
@@ -211,6 +230,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                 <SentimentGraph 
                   relevanceData={sentimentData.relevance}
                   specificityData={sentimentData.specificity}
+                  redFlags={redFlags}
                   onTimestampClick={onTimestampClick} 
                 />
               ) : (

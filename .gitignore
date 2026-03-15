@@ -1,11 +1,15 @@
+# Environment files (never commit secrets)
+.env
+.env.local
 RAG/.env
+sentiment/.env
+frontend/.env.local
+
 RAG/uploads/
 RAG/__pycache__/
 RAG/faiss_indices/
 google-cloud-sdk
 venv
 RAG/models/
-sentiment/.env
-RAG/.env
 **/__pycache__/
 temp_processing/
