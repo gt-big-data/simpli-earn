@@ -1,5 +1,5 @@
 # api_chatbot.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
 from transcript_retrieval import get_video_transcript, save_transcript_as_txt
 from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
@@ -7,19 +7,18 @@ from langchain.memory import ConversationBufferMemory
 import os
 from datetime import datetime
 from langchain.chains import ConversationalRetrievalChain
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from fastapi import Query, Body, HTTPException
 from typing import Optional
 import subprocess
 import json
 import re
 from dotenv import load_dotenv
 from supabase import create_client
-
 from fastapi.middleware.cors import CORSMiddleware
+
+from llm_provider import get_llm, run_with_fallback, is_quota_error, mark_openai_unavailable, get_active_provider
 
 # Load environment variables and initialize Supabase
 load_dotenv()
@@ -50,7 +49,7 @@ except ImportError as e:
 # Add this block to enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for dev; tighten in prod
+    allow_origins=["https://simpli-earn-2-simpli-earns-projects.vercel.app", "https://simpli-earn-2.vercel.app", "http://localhost:3000", "http://127.0.0.1:3000"],  # Allow all origins for dev; tighten in prod
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
@@ -69,7 +68,13 @@ STATIC_TRANSCRIPTS = {
     "3": "transcripts/alphabet_seeking_alpha.txt",
     "4": "transcripts/shell_seeking_alpha.txt",
     "5": "transcripts/tesla_seeking_alpha.txt",
-    "6": "transcripts/walmart_seeking_alpha.txt"
+    "6": "transcripts/walmart_seeking_alpha.txt",
+    # Apple historical quarters (from Alpha Vantage)
+    "aapl_2024Q4": "transcripts/apple_2024Q4_seeking_alpha.txt",
+    "aapl_2024Q3": "transcripts/apple_2024Q3_seeking_alpha.txt",
+    "aapl_2024Q2": "transcripts/apple_2024Q2_seeking_alpha.txt",
+    "aapl_2024Q1": "transcripts/apple_2024Q1_seeking_alpha.txt",
+    "aapl_2023Q4": "transcripts/apple_2023Q4_seeking_alpha.txt",
 }
 
 UPLOADS_DIR = "uploads"
@@ -166,36 +171,46 @@ def chat_endpoint(req: ChatRequest):
     if not retriever:
         return {"response": "❌ No transcript loaded. Provide video_url or valid id."}
 
-    if qa_chain is None:
-        prompt_template = ChatPromptTemplate.from_template(
-            """
-            You are a financial assistant providing insights from this transcript of an earnings call you currently have.
-            You are to give objective answers at all times.
-            This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
-            Use the provided context and chat history to answer the user's questions.
-            If the question is irrelevant to the document, politely state so.
-            Assume the user is not a financial expert.
-            If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
-            Do not start your response by citing the transcript of the call.
-            
+    chat_prompt = ChatPromptTemplate.from_template(
+        """
+        You are a financial assistant providing insights from this transcript of an earnings call you currently have.
+        You are to give objective answers at all times.
+        This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
+        Use the provided context and chat history to answer the user's questions.
+        If the question is irrelevant to the document, politely state so.
+        Assume the user is not a financial expert.
+        If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
+        Do not start your response by citing the transcript of the call.
 
-            Context: {context}
-            Chat History: {chat_history}
-            User: {question}
-            Assistant:
-            """
-        )
+        Context: {context}
+        Chat History: {chat_history}
+        User: {question}
+        Assistant:
+        """
+    )
+
+    def _build_qa_chain():
+        global qa_chain
         qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
+            llm=get_llm(),
             retriever=retriever,
             memory=memory,
-            combine_docs_chain_kwargs={"prompt": prompt_template}
+            combine_docs_chain_kwargs={"prompt": chat_prompt}
         )
 
-    response = qa_chain.invoke({"question": req.message})
+    if qa_chain is None:
+        _build_qa_chain()
+
+    def _invoke():
+        return qa_chain.invoke({"question": req.message})
+
+    try:
+        response = run_with_fallback(_invoke, rebuild_fn=_build_qa_chain)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
     chat_history.append({"question": req.message, "answer": response["answer"]})
 
-    # Generate follow-up question suggestions
     suggestions = generate_follow_up_questions(
         user_question=req.message,
         bot_answer=response["answer"],
@@ -203,52 +218,27 @@ def chat_endpoint(req: ChatRequest):
         retriever=retriever
     )
 
-    return {"response": response["answer"], "suggestions": suggestions}
+    return {"response": response["answer"], "suggestions": suggestions, "provider": get_active_provider()}
 
 
 
 @app.get("/summary")
 def generate_summary(id: str = Query("1")):
-    global summary_chain
+    """For preloaded dashboards (1-6): return static summary from codebase. No DB or OpenAI."""
+    from static_summaries import STATIC_SUMMARIES
 
     if id not in STATIC_TRANSCRIPTS:
         return {"summary": "❌ Unknown dashboard ID or missing transcript."}
 
-    transcript_path = STATIC_TRANSCRIPTS[id]
-    try:
-        with open(transcript_path, "r", encoding="utf-8") as f:
-            transcript_text = f.read()
-    except Exception as e:
-        return {"summary": f"❌ Failed to load transcript: {str(e)}"}
+    # IDs 1-6: serve static summaries directly (fast, no DB/API)
+    if id in STATIC_SUMMARIES and STATIC_SUMMARIES[id]:
+        return {"summary": STATIC_SUMMARIES[id], "provider": "static"}
 
-    if summary_chain is None:
-        prompt = PromptTemplate(
-            input_variables=["transcript"],
-            template="""
-You are a financial analyst assistant. Read the following earnings call transcript and generate a detailed yet concise summary highlighting the key financial results, executive commentary, and any forward-looking statements. Bold any key terms in the summary. Start the summary with a very brief (max one paragraph) overall summary of the call, then go into a mode detailed summary.
-
-Transcript:
-{transcript}
-
-Summary:
-"""
-        )
-        summary_chain = LLMChain(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
-            prompt=prompt
-        )
-
-    try:
-        summary = summary_chain.run(transcript=transcript_text)
-        return {"summary": summary}
-    except Exception as e:
-        err_msg = str(e)
-        if "quota" in err_msg.lower() or "429" in err_msg or "insufficient_quota" in err_msg:
-            raise HTTPException(
-                status_code=503,
-                detail="OpenAI API quota exceeded. Check your plan and billing at platform.openai.com."
-            )
-        raise HTTPException(status_code=503, detail=f"AI service error: {err_msg}")
+    # Static summary not yet populated
+    return {
+        "summary": "❌ Static summary not yet generated. Run from project root: python scripts/populate_preloaded_summaries.py",
+        "provider": None,
+    }
 
 
 @app.post("/summary")
@@ -295,11 +285,9 @@ def generate_summary_from_youtube(data: dict = Body(...)):
         except Exception as e:
             return {"summary": f"❌ Failed to read transcript: {str(e)}"}
 
-    global summary_chain
-    if summary_chain is None:
-        prompt = PromptTemplate(
-            input_variables=["transcript"],
-            template="""
+    post_summary_prompt = PromptTemplate(
+        input_variables=["transcript"],
+        template="""
 You are a financial analyst assistant. Read the following earnings call transcript and generate a summary highlighting the key financial results, executive commentary, and any forward-looking statements.
 Don't make it too long and do not use complicated financial terminology, assume the user has little knowledge of finance. 
 If you do want to use complicated terminology/jargon please do define it as well/explain it so it is clear for the user.
@@ -309,23 +297,109 @@ Transcript:
 
 Summary:
 """
-        )
-        summary_chain = LLMChain(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
-            prompt=prompt
-        )
+    )
+
+    global summary_chain
+    def _build_yt_summary():
+        global summary_chain
+        summary_chain = LLMChain(llm=get_llm(), prompt=post_summary_prompt)
+
+    if summary_chain is None:
+        _build_yt_summary()
 
     try:
-        summary = summary_chain.run(transcript=transcript_text)
-        return {"summary": summary}
+        result = run_with_fallback(
+            lambda: summary_chain.run(transcript=transcript_text),
+            rebuild_fn=_build_yt_summary,
+        )
+        return {"summary": result, "provider": get_active_provider()}
     except Exception as e:
-        err_msg = str(e)
-        if "quota" in err_msg.lower() or "429" in err_msg or "insufficient_quota" in err_msg:
-            raise HTTPException(
-                status_code=503,
-                detail="OpenAI API quota exceeded. Check your plan and billing at platform.openai.com."
-            )
-        raise HTTPException(status_code=503, detail=f"AI service error: {err_msg}")
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
+
+HIGH_SIGNAL_WORDS = [
+    "AI", "headwinds", "margins", "recession", "growth",
+    "guidance", "uncertainty", "challenges", "record", "supply chain"
+]
+
+class CompareRequest(BaseModel):
+    current_id: str
+    previous_id: str
+
+@app.post("/compare")
+def compare_transcripts(req: CompareRequest):
+    if req.current_id not in STATIC_TRANSCRIPTS:
+        return {"error": f"Unknown current_id: {req.current_id}"}
+    if req.previous_id not in STATIC_TRANSCRIPTS:
+        return {"error": f"Unknown previous_id: {req.previous_id}"}
+
+    try:
+        with open(STATIC_TRANSCRIPTS[req.current_id], "r", encoding="utf-8") as f:
+            current_text = f.read()
+        with open(STATIC_TRANSCRIPTS[req.previous_id], "r", encoding="utf-8") as f:
+            previous_text = f.read()
+    except Exception as e:
+        return {"error": f"Failed to read transcripts: {str(e)}"}
+
+    # Count high-signal word occurrences (case-insensitive)
+    def count_words(text):
+        text_lower = text.lower()
+        return {word: text_lower.count(word.lower()) for word in HIGH_SIGNAL_WORDS}
+
+    word_counts = {
+        "current": count_words(current_text),
+        "previous": count_words(previous_text),
+    }
+
+    # Single GPT-4o call with structured difference prompt
+    from openai import OpenAI
+    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+    prompt = f"""You are a financial analyst. You are given two earnings call transcripts.
+
+TRANSCRIPT A (current): {current_text[:6000]}
+TRANSCRIPT B (previous): {previous_text[:6000]}
+
+Return a JSON object with exactly these fields:
+- "sentiment_current": integer 1-10 (overall confidence/positivity of transcript A)
+- "sentiment_previous": integer 1-10 (overall confidence/positivity of transcript B)
+- "narrative_shifts": list of exactly 3 strings, each describing a specific contradiction or strategic pivot between the two calls. Be concrete.
+- "current_label": short label for transcript A (e.g. "Apple Q1 FY2025")
+- "previous_label": short label for transcript B (e.g. "Tesla Q4 2024")
+
+Return only the JSON object, no other text."""
+
+    try:
+        completion = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+        )
+        raw = completion.choices[0].message.content.strip()
+        # Strip markdown code fences if present
+        if raw.startswith("```"):
+            raw = re.sub(r"^```[a-z]*\n?", "", raw)
+            raw = re.sub(r"\n?```$", "", raw)
+        gpt_data = json.loads(raw)
+    except Exception as e:
+        return {"error": f"GPT parse failure: {str(e)}"}
+
+    sentiment_current = int(gpt_data.get("sentiment_current", 5))
+    sentiment_previous = int(gpt_data.get("sentiment_previous", 5))
+    delta = sentiment_current - sentiment_previous
+
+    return {
+        "current_label": gpt_data.get("current_label", "Current"),
+        "previous_label": gpt_data.get("previous_label", "Previous"),
+        "sentiment": {
+            "current": sentiment_current,
+            "previous": sentiment_previous,
+            "delta": delta,
+            "direction": "up" if delta > 0 else ("down" if delta < 0 else "flat"),
+        },
+        "word_counts": word_counts,
+        "narrative_shifts": gpt_data.get("narrative_shifts", []),
+    }
 
 
 # --- Red Flag Detection ---
@@ -427,3 +501,28 @@ def generate_stock(payload: dict):
         return json.loads(out)
     except Exception as e:
         return {"error": "Failed to parse JSON", "details": str(e), "raw": out}
+
+
+@app.post("/generate-indicators")
+def generate_indicators(payload: dict = Body(...)):
+    """Generate economic indicators (VIX, TNX, DXY) data for the given time window."""
+    start_local = payload.get("startLocal")
+    hours = payload.get("hours", 48)
+    interval = payload.get("interval", "5m")
+    indicators = payload.get("indicators", ["VIX", "TNX", "DXY"])
+
+    if not start_local:
+        return {"ok": False, "error": "startLocal required"}
+
+    # Date format conversion: MM/DD/YY HH:MM -> YYYY-MM-DD HH:MM
+    formatted_date = start_local
+    if "/" in start_local:
+        parts = start_local.strip().split(" ")
+        date_part = parts[0]
+        time_part = parts[1] if len(parts) > 1 else "09:30"
+        m, d, y = date_part.split("/")
+        full_year = f"20{y}" if int(y) < 50 else f"19{y}"
+        formatted_date = f"{full_year}-{m.zfill(2)}-{d.zfill(2)} {time_part}"
+
+    from economicIndicatorsV2 import get_economic_indicators_json
+    return get_economic_indicators_json(formatted_date, hours, interval, indicators)

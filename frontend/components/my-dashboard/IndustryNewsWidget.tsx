@@ -6,7 +6,7 @@ interface IndustryNewsWidgetProps {
   userId?: string | null
 }
 
-export default function IndustryNewsWidget({ userId }: IndustryNewsWidgetProps) {
+export default function IndustryNewsWidget({  }: IndustryNewsWidgetProps) {
   return (
     <DashboardWidget title="Industry News" widgetId="industry-news">
       <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">

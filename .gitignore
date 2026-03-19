@@ -13,3 +13,4 @@ venv
 RAG/models/
 **/__pycache__/
 temp_processing/
+api_keys.txt

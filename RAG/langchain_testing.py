@@ -5,7 +5,6 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.schema import Document
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.chains import ConversationalRetrievalChain
@@ -13,15 +12,15 @@ from langchain.memory import ConversationBufferMemory
 from langchain.prompts import ChatPromptTemplate
 import time
 
-# Load environment variables
+from llm_provider import get_llm, run_with_fallback, is_quota_error, mark_openai_unavailable
+
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 if not OPENAI_API_KEY:
-    raise ValueError("OPENAI_API_KEY not found in .env file")
+    print("⚠️  OPENAI_API_KEY not found – embeddings/retrieval will fail until set")
 
-# Initialize OpenAI embeddings
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=OPENAI_API_KEY)
+embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
 
 def generate_content_hash(file_content: str) -> str:
     """Generates a unique SHA-256 hash from the file content."""
@@ -29,15 +28,15 @@ def generate_content_hash(file_content: str) -> str:
 
 def initialize_retrieval(file_path):
     """Creates a unique FAISS index based on file content hash."""
-    
+    if embeddings is None:
+        raise RuntimeError("OpenAI embeddings not available – set OPENAI_API_KEY in RAG/.env")
+
     with open(file_path, "r", encoding="utf-8") as f:
         transcript_text = f.read()
 
-    # Generate hash from content
     content_hash = generate_content_hash(transcript_text)
     faiss_index_path = f"faiss_indices/faiss_index_{content_hash}"
 
-    # Check if FAISS index already exists
     if os.path.exists(faiss_index_path):
         print(f"Loading FAISS index for content hash {content_hash} from disk...")
         vectorstore = FAISS.load_local(faiss_index_path, embeddings, allow_dangerous_deserialization=True)
@@ -50,33 +49,28 @@ def initialize_retrieval(file_path):
         vectorstore.save_local(faiss_index_path)
 
     retriever = vectorstore.as_retriever()
-    return retriever, content_hash  # Return hash for display/reference
+    return retriever, content_hash
 
 def summarize_document(file_path):
-    """Streams a summary of the document using ChatOpenAI."""
+    """Streams a summary of the document."""
     with open(file_path, "r", encoding="utf-8") as f:
         transcript_text = f.read()
 
-    # Prompt template for summarization
     summary_prompt = PromptTemplate(
         input_variables=["document"],
         template="Summarize the following document in a concise and informative manner:\n\n{document}"
     )
 
-    # Initialize the LLM for streaming
-    llm = ChatOpenAI(model_name="gpt-4o", openai_api_key=OPENAI_API_KEY, streaming=True)
-
-    # Create a chain for summarization
+    llm = get_llm(streaming=True)
     chain = LLMChain(llm=llm, prompt=summary_prompt)
 
-    # Stream the summary output
-    for chunk in chain.stream({"document": transcript_text[:3000]}):  # Limit text for summarization
+    for chunk in chain.stream({"document": transcript_text[:3000]}):
         time.sleep(0.05)
         yield chunk["text"]
 
 def get_chat_response(user_input, retriever, memory):
     """Generates responses using conversational retrieval with memory."""
-    
+
     prompt_template = ChatPromptTemplate.from_template(
             """
             You are a financial assistant providing insights from this document you currently have.
@@ -93,7 +87,7 @@ def get_chat_response(user_input, retriever, memory):
         )
 
     qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=OPENAI_API_KEY),
+        llm=get_llm(),
         retriever=retriever,
         memory=memory,
         combine_docs_chain_kwargs={"prompt": prompt_template}
@@ -158,20 +152,12 @@ Format your response as a simple numbered list:
 Do not include any other text, just the numbered questions."""
         )
 
-        # Initialize LLM
-        llm = ChatOpenAI(
-            model_name="gpt-4o",
-            openai_api_key=OPENAI_API_KEY,
-            temperature=0.7  # Slightly creative but still focused
-        )
-
-        # Create chain
+        llm = get_llm(temperature=0.7)
         chain = LLMChain(llm=llm, prompt=suggestion_prompt)
 
-        # Generate suggestions
         result = chain.run(
             user_question=user_question,
-            bot_answer=bot_answer[:500],  # Limit to avoid token overflow
+            bot_answer=bot_answer[:500],
             chat_history=history_str if history_str else "No previous conversation"
         )
 

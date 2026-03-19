@@ -8,6 +8,7 @@ python-dotenv>=1.0.0
 langchain==0.3.21
 langchain-openai==0.3.0
 langchain-community>=0.3.0
+langchain-google-genai>=2.0.0,<3.0.0
 faiss-cpu==1.9.0.post1
 youtube_transcript_api==1.0.2
 pytube==15.0.0

@@ -131,7 +131,7 @@ export default function OnboardingPage() {
             <h2 className="text-xl font-semibold text-white">
               What are you investing for?
             </h2>
-            <p className="text-gray-400 text-sm">We'll tailor insights to your goals.</p>
+            <p className="text-gray-400 text-sm">We&apos;ll tailor insights to your goals.</p>
             <div className="space-y-2">
               {INVESTING_GOALS.map(({ slug, label }) => (
                 <label
