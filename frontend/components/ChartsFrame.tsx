@@ -33,7 +33,7 @@ interface SentimentDataPoint {
 }
 
 export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
-  const [activeTab, setActiveTab] = useState("stock");
+  const [activeTab, setActiveTab] = useState<"stock" | "sentiment">("stock");
   const [indicatorView, setIndicatorView] = useState<"stock" | "VIX" | "TNX" | "DXY">("stock");
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
@@ -227,11 +227,11 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   <p className="text-sm mt-2">{error}</p>
                 </div>
               ) : sentimentData ? (
-                <SentimentGraph 
+                <SentimentGraph
                   relevanceData={sentimentData.relevance}
                   specificityData={sentimentData.specificity}
                   redFlags={redFlags}
-                  onTimestampClick={onTimestampClick} 
+                  onTimestampClick={onTimestampClick}
                 />
               ) : (
                 <div className="text-center text-white/70">
