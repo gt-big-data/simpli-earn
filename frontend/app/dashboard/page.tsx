@@ -9,9 +9,17 @@ import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
 import FullChat from "@/components/FullChat";
 
+type SummarySection = {
+  heading?: string | null;
+  text: string;
+  bullet?: boolean;
+  timestamp: number | null;
+};
+
 function DashboardContent() {
   const searchParams = useSearchParams();
   const [summary, setSummary] = useState("Loading summary...");
+  const [summarySections, setSummarySections] = useState<SummarySection[]>([]);
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -19,7 +27,7 @@ function DashboardContent() {
       const videoUrl = searchParams.get("video_url");
 
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         let res;
         if (videoUrl) {
           res = await fetch(`${apiUrl}/summary`, {
@@ -31,15 +39,40 @@ function DashboardContent() {
           res = await fetch(`${apiUrl}/summary?id=${id || "1"}`);
         }
 
-        const data = await res.json();
+        let data: { summary?: string; detail?: string; sections?: SummarySection[] };
+        try {
+          data = await res.json();
+        } catch {
+          setSummary("Could not parse server response. Ensure the RAG API is running on port 8000.");
+          setSummarySections([]);
+          return;
+        }
+
+        if (!res.ok) {
+          const msg = data?.detail ?? `Server error (${res.status})`;
+          setSummary(`Summary unavailable: ${msg}. If you use OpenAI, check your API quota at platform.openai.com.`);
+          setSummarySections([]);
+          return;
+        }
+
         if (data.summary) {
           setSummary(data.summary.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"));
+          setSummarySections(
+            (data.sections || []).map((section) => ({
+              heading: section.heading ?? null,
+              text: section.text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+              bullet: section.bullet ?? false,
+              timestamp: section.timestamp,
+            }))
+          );
         } else {
-          setSummary("⚠️ No summary found.");
+          setSummary("No summary found.");
+          setSummarySections([]);
         }
       } catch (err) {
         console.error("Error fetching summary:", err);
-        setSummary("❌ Failed to load summary.");
+        setSummary("Failed to connect to the summary API. Ensure the RAG API is running (port 8000) and try again.");
+        setSummarySections([]);
       }
     };
 
@@ -50,6 +83,7 @@ function DashboardContent() {
   const [chatMinimized, setChatMinimized] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [timestamp, setTimestamp] = useState<number>(0);
+  const [seekNonce, setSeekNonce] = useState(0);
 
   const messageArray = [
     {
@@ -67,6 +101,11 @@ function DashboardContent() {
     }
   };
 
+  const handleTimestampSeek = (nextTimestamp: number) => {
+    setTimestamp(nextTimestamp);
+    setSeekNonce((current) => current + 1);
+  };
+
   return (
     <div
       style={{
@@ -82,9 +121,9 @@ function DashboardContent() {
         {!fullscreen && (
           <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] xl:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
             <div className="flex flex-col gap-[40px]">
-              <VideoFrame timestamp={timestamp} />
+              <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
               <div className="w-full grow min-h-[450px]">
-                <ChartsFrame onTimestampClick={setTimestamp} />
+                <ChartsFrame onTimestampClick={handleTimestampSeek} />
               </div>
             </div>
             <div className="flex flex-col gap-[40px] -mt-[40px] sm:max-h-[1100px]">
@@ -99,6 +138,8 @@ function DashboardContent() {
                   setActiveDisplay={setActiveDisplay}
                   halfHeight={activeDisplay !== "full"}
                   summary={summary}
+                  summarySections={summarySections}
+                  onTimestampClick={handleTimestampSeek}
                 />
               </div>
               {!fullscreen && !(activeDisplay == "full") && (

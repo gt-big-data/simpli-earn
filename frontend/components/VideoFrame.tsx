@@ -1,38 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
+import preloadedVideos from "@/lib/preloaded_videos.json";
 
 interface VideoFrameProps {
-  timestamp: number; // Timestamp in seconds
+  timestamp: number;
+  seekNonce: number;
 }
 
-// Predefined video URLs and Titles for dashboard IDs 1-6
-const PRELOADED_VIDEOS: Record<string, { url: string; title: string }> = {
-  "1": {
-    url: "https://www.youtube.com/watch?v=5EVhGtYa1B0",
-    title: "Apple Inc. (AAPL) Q1 2025 Earnings Call",
-  },
-  "2": {
-    url: "https://www.youtube.com/watch?v=8K4aHLrekqQ",
-    title: "$CVS CVS Health Q3 2024 Earnings Conference Call",
-  },
-  "3": {
-    url: "https://www.youtube.com/watch?v=URIsVKPmhGg",
-    title: "Alphabet 2024 Q4 Earnings Call",
-  },
-  "4": {
-    url: "https://www.youtube.com/watch?v=fouFNKTDPmk",
-    title: "Shell’s fourth quarter and full year 2024 results presentation | Investor Relations",
-  },
-  "5": {
-    url: "https://www.youtube.com/watch?v=Gub5qCTutZo",
-    title: "Tesla Q4 and full year 2024 Financial Results and Q&A Webcast",
-  },
-  "6": {
-    url: "https://www.youtube.com/watch?v=AeznZIbgXhk",
-    title: "Walmart FYE2025 Q4 Earnings Release",
-  },
-};
+const PRELOADED_VIDEOS = preloadedVideos as Record<string, { url: string; title: string }>;
 
-export default function VideoFrame({ timestamp }: VideoFrameProps) {
+export default function VideoFrame({ timestamp, seekNonce }: VideoFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [videoId, setVideoId] = useState<string | null>(null);
   const [videoTitle, setVideoTitle] = useState<string>("Loading...");
@@ -53,11 +29,10 @@ export default function VideoFrame({ timestamp }: VideoFrameProps) {
         title = PRELOADED_VIDEOS[dashboardId].title;
       }
 
-      // Extract video ID from the YouTube URL
-      const videoIdMatch = finalVideoUrl.match(/[?&]v=([^&]+)/);
+      const videoIdMatch = finalVideoUrl.match(/(?:[?&]v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
       if (videoIdMatch) {
         setVideoId(videoIdMatch[1]);
-        setVideoTitle(title || ""); // Fallback to an empty string if title is null
+        setVideoTitle(title || "");
       }
     }
   }, []);
@@ -74,7 +49,7 @@ export default function VideoFrame({ timestamp }: VideoFrameProps) {
         "*"
       );
     }
-  }, [timestamp, videoId]);
+  }, [timestamp, videoId, seekNonce]);
 
   return (
     <div className="flex text-white w-full relative mt-[20px] lg:mt-0">
@@ -84,9 +59,7 @@ export default function VideoFrame({ timestamp }: VideoFrameProps) {
             {videoTitle}
           </h1>
         </button>
-        <div className="flex justify-end rounded-bl-[23px] w-1/10 h-[40px] border-b-[1px] border-[#505050] relative">
-        </div>
-        {/* Pseudo-Element Overlay to Seamlessly Blend the Borders */}
+        <div className="flex justify-end rounded-bl-[23px] w-1/10 h-[40px] border-b-[1px] border-[#505050] relative"></div>
         <div className="absolute top-1/2 left-[53%] w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform -rotate-20"></div>
       </div>
       <div className="justify-center items-center bg-white/4 text-white mt-[39px] rounded-b-[30px] rounded-tr-[30px] overflow-hidden aspect-16/9 w-full border border-white/25">
