@@ -37,6 +37,7 @@ const HIGH_SIGNAL_WORDS = [
   "AI", "headwinds", "margins", "recession", "growth",
   "guidance", "uncertainty", "challenges", "record", "supply chain",
 ];
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface CompareData {
   current_label: string;
@@ -77,7 +78,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
       setData(null);
 
       try {
-        const res = await fetch("http://localhost:8000/compare", {
+        const res = await fetch(`http://'${apiUrl}/compare`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

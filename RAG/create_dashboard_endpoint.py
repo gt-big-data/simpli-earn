@@ -43,12 +43,14 @@ def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] 
         if ticker:
             cmd.extend(["--ticker", ticker])
         
-        # Run the script
+        # Run the script from project root so paths resolve correctly
+        project_root = Path(__file__).parent.parent
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            timeout=1800  # 30 minute timeout
+            timeout=1800,  # 30 minute timeout
+            cwd=str(project_root)
         )
         
         if result.returncode == 0:
@@ -67,8 +69,10 @@ def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] 
             jobs[job_id]["video_id"] = video_id
         else:
             jobs[job_id]["status"] = "failed"
-            jobs[job_id]["error"] = result.stderr
+            err_msg = (result.stderr or result.stdout or "Unknown error")[:500]
+            jobs[job_id]["error"] = err_msg
             jobs[job_id]["completed_at"] = datetime.now().isoformat()
+            print(f"[dashboard] Job {job_id} FAILED (exit {result.returncode}):\n{result.stderr or result.stdout}")
             
     except subprocess.TimeoutExpired:
         jobs[job_id]["status"] = "failed"

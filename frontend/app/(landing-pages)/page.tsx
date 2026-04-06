@@ -6,8 +6,7 @@ import { FaSearch, FaChevronDown, FaTrash } from "react-icons/fa";
 import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 
 interface LibraryVideo {
   id: string;
@@ -27,7 +26,17 @@ export default function Home() {
   const [processingStatus, setProcessingStatus] = useState("");
   const [libraryVideos, setLibraryVideos] = useState<LibraryVideo[]>([]);
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
-  const router = useRouter();
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Cleanup poll interval on unmount
+  useEffect(() => {
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+    };
+  }, []);
 
   // Load library videos from database
   useEffect(() => {
@@ -53,7 +62,8 @@ export default function Home() {
     
     try {
       // Trigger dashboard creation
-      const response = await fetch("http://localhost:8000/dashboard/create-dashboard", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/dashboard/create-dashboard`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -67,23 +77,29 @@ export default function Home() {
       
       setProcessingStatus("Processing video (this may take several minutes)...");
       
-      // Poll for status
-      const pollInterval = setInterval(async () => {
+      const tickerParam = tickerSymbol?.trim() ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}` : "";
+      const dashboardUrl = `/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}`;
+
+      const pollStatus = async () => {
         try {
-          const statusResponse = await fetch(`http://localhost:8000/dashboard/job-status/${jobId}`);
+          const statusResponse = await fetch(`${apiUrl}/dashboard/job-status/${jobId}`);
           const statusData = await statusResponse.json();
           
           if (statusData.status === "completed") {
-            clearInterval(pollInterval);
+            if (pollIntervalRef.current) {
+              clearInterval(pollIntervalRef.current);
+              pollIntervalRef.current = null;
+            }
             setProcessingStatus("Complete! Redirecting...");
-            
-            // Redirect to dashboard with video URL and ticker
+            // Use window.location for reliable redirect (router.push can fail in some edge cases)
             setTimeout(() => {
-              const tickerParam = tickerSymbol?.trim() ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}` : '';
-              router.push(`/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}`);
-            }, 1000);
+              window.location.href = dashboardUrl;
+            }, 800);
           } else if (statusData.status === "failed") {
-            clearInterval(pollInterval);
+            if (pollIntervalRef.current) {
+              clearInterval(pollIntervalRef.current);
+              pollIntervalRef.current = null;
+            }
             setProcessingStatus(`Failed: ${statusData.error || "Unknown error"}`);
             setIsProcessing(false);
           } else {
@@ -92,7 +108,11 @@ export default function Home() {
         } catch (error) {
           console.error("Status check failed:", error);
         }
-      }, 3000); // Check every 3 seconds
+      };
+
+      // Poll immediately, then every 3 seconds
+      pollStatus();
+      pollIntervalRef.current = setInterval(pollStatus, 3000);
       
     } catch (error) {
       console.error("Failed to create dashboard:", error);
