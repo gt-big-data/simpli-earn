@@ -382,6 +382,7 @@ curl -X POST "https://YOUR-SENTIMENT-URL/sentiment/get-by-video" \
 | Chat | RAG | `POST /chat` |
 | Stock chart | RAG | `POST /generate-stock` |
 | Economic indicators | RAG | `POST /generate-indicators` |
+| QoQ Compare tab | RAG | `POST /compare` (see [QOQ_DEPLOYMENT.md](./QOQ_DEPLOYMENT.md)) |
 | Dashboard creation | RAG | `POST /dashboard/create-dashboard` |
 | Sentiment chart | Sentiment | `POST /sentiment/get-by-video` |
 | Library | Sentiment | `GET /library` |
@@ -390,6 +391,7 @@ curl -X POST "https://YOUR-SENTIMENT-URL/sentiment/get-by-video" \
 
 ## Related Docs
 
+- [QOQ_DEPLOYMENT.md](./QOQ_DEPLOYMENT.md) – Quarter-over-quarter Compare tab and `/compare` deploy notes
 - [SECRET_SETUP.md](../SECRET_SETUP.md) – Secret Manager setup
 - [LOCAL_SETUP.md](../LOCAL_SETUP.md) – Local development
 - [INTEGRATION_GUIDE.md](../INTEGRATION_GUIDE.md) – Overall integration
