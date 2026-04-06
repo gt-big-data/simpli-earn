@@ -78,7 +78,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
       setData(null);
 
       try {
-        const res = await fetch(`http://'${apiUrl}/compare`, {
+        const res = await fetch(`${apiUrl}/compare`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
