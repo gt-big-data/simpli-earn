@@ -21,11 +21,13 @@ This guide documents how to add new backend functionality to SimpliEarn and depl
 
 ## Architecture Overview
 
-| Service | Cloud Run Name | Purpose | Port (local) |
-|---------|----------------|---------|--------------|
-| **RAG API** | `simpli-earn-backend` | Summary, chat, stock charts, economic indicators, dashboard creation | 8000 |
-| **Sentiment API** | `simpli-earn-sentiment` | Sentiment analysis, library, transcript storage | 8001 |
-| **Frontend** | Vercel or `simpli-earn-frontend` | Next.js app | 3000 |
+
+| Service           | Cloud Run Name                   | Purpose                                                              | Port (local) |
+| ----------------- | -------------------------------- | -------------------------------------------------------------------- | ------------ |
+| **RAG API**       | `simpli-earn-backend`            | Summary, chat, stock charts, economic indicators, dashboard creation | 8000         |
+| **Sentiment API** | `simpli-earn-sentiment`          | Sentiment analysis, library, transcript storage                      | 8001         |
+| **Frontend**      | Vercel or `simpli-earn-frontend` | Next.js app                                                          | 3000         |
+
 
 **Important:** Vercel serverless functions **cannot** run Python subprocesses. Any logic that spawns Python (e.g., `/api/stock`, `/api/indicators`) must run on Cloud Run, not in Next.js API routes.
 
@@ -33,11 +35,13 @@ This guide documents how to add new backend functionality to SimpliEarn and depl
 
 ## Decision: Add to Existing Service vs. New Service
 
-| Scenario | Recommendation |
-|----------|----------------|
-| New endpoint uses same dependencies as RAG (yfinance, pandas, OpenAI, etc.) | **Add to RAG API** |
-| New endpoint uses sentiment/Supabase/AssemblyAI | **Add to Sentiment API** |
-| New endpoint has completely different stack or scaling needs | **New Cloud Run service** |
+
+| Scenario                                                                    | Recommendation            |
+| --------------------------------------------------------------------------- | ------------------------- |
+| New endpoint uses same dependencies as RAG (yfinance, pandas, OpenAI, etc.) | **Add to RAG API**        |
+| New endpoint uses sentiment/Supabase/AssemblyAI                             | **Add to Sentiment API**  |
+| New endpoint has completely different stack or scaling needs                | **New Cloud Run service** |
+
 
 ---
 
@@ -146,7 +150,7 @@ my-new-service/
 └── your_script.py   # Your logic
 ```
 
-2. **Dockerfile:**
+1. **Dockerfile:**
 
 ```dockerfile
 FROM python:3.11-slim
@@ -158,7 +162,7 @@ EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 ```
 
-3. **main.py:**
+1. **main.py:**
 
 ```python
 from fastapi import FastAPI, Body
@@ -178,9 +182,8 @@ def my_endpoint(payload: dict = Body(...)):
     return {"result": "ok"}
 ```
 
-4. **Add to `cloudbuild.yaml`** – duplicate the sentiment build/deploy steps and adjust names/context.
-
-5. **Add env var** – e.g. `NEXT_PUBLIC_MY_SERVICE_URL` in Vercel.
+1. **Add to `cloudbuild.yaml`** – duplicate the sentiment build/deploy steps and adjust names/context.
+2. **Add env var** – e.g. `NEXT_PUBLIC_MY_SERVICE_URL` in Vercel.
 
 ---
 
@@ -204,16 +207,18 @@ const response = await fetch(`${apiUrl}/summary`);
 
 ### Env vars by service
 
-| Service | Env Var | Purpose |
-|---------|---------|---------|
-| RAG API | `NEXT_PUBLIC_API_URL` | Summary, chat, stock, economic indicators |
-| Sentiment API | `NEXT_PUBLIC_SENTIMENT_API_URL` | Sentiment data, library |
+
+| Service       | Env Var                         | Purpose                                   |
+| ------------- | ------------------------------- | ----------------------------------------- |
+| RAG API       | `NEXT_PUBLIC_API_URL`           | Summary, chat, stock, economic indicators |
+| Sentiment API | `NEXT_PUBLIC_SENTIMENT_API_URL` | Sentiment data, library                   |
+
 
 ### `NEXT_PUBLIC_*` behavior
 
 - These are baked in at **build time**.
 - After changing them in Vercel, you must **redeploy** the frontend.
-- Never put secrets in `NEXT_PUBLIC_*` variables.
+- Never put secrets in `NEXT_PUBLIC_`* variables.
 
 ---
 
@@ -242,13 +247,13 @@ docker push gcr.io/simpliearn-452813/simpli-earn-backend:latest
 # Or use Cloud Build with the same context as cloudbuild.yaml (submit from repo root).
 # Deploy to Cloud Run
 gcloud run deploy simpli-earn-backend \
-  --image gcr.io/simpliearn-452813/simpli-earn-backend:latest \
+  --image gcr.io/simpliearn-452813/simpli-earn-backend:1ccbc92 \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
   --port 8080 \
   --timeout 300 \
-  --set-secrets "OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest,GEMINI_API_KEY=gemini-api-key:latest"
+  --set-secrets "OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest,GEMINI_API_KEY=gemini-api-key:latest,YOUTUBE_API_KEY=youtube-api-key:latest"
 ```
 
 ### Deploy only Sentiment backend
@@ -304,7 +309,7 @@ Example: `OPENAI_API_KEY=openai-api-key:latest` means:
 echo -n "your-actual-value" | gcloud secrets create my-secret-name --data-file=- --project=simpliearn-452813
 ```
 
-2. Grant access:
+1. Grant access:
 
 ```bash
 gcloud projects add-iam-policy-binding simpliearn-452813 \
@@ -312,7 +317,7 @@ gcloud projects add-iam-policy-binding simpliearn-452813 \
   --role="roles/secretmanager.secretAccessor"
 ```
 
-3. Add to deploy:
+1. Add to deploy:
 
 ```bash
 --set-secrets "...,MY_VAR=my-secret-name:latest"
@@ -332,8 +337,8 @@ For Vercel-hosted frontends:
 
 1. **Project → Settings → Environment Variables**
 2. Add or update:
-   - `NEXT_PUBLIC_API_URL` = RAG API Cloud Run URL
-   - `NEXT_PUBLIC_SENTIMENT_API_URL` = Sentiment API Cloud Run URL
+  - `NEXT_PUBLIC_API_URL` = RAG API Cloud Run URL
+  - `NEXT_PUBLIC_SENTIMENT_API_URL` = Sentiment API Cloud Run URL
 3. Redeploy after changing env vars.
 
 ---
@@ -360,7 +365,7 @@ For Vercel-hosted frontends:
 
 ### Frontend still uses old endpoint
 
-- Ensure `NEXT_PUBLIC_*` env vars are set in Vercel.
+- Ensure `NEXT_PUBLIC_`* env vars are set in Vercel.
 - Redeploy the frontend after changes.
 - Commit and push frontend changes so Vercel deploys the latest code.
 
@@ -380,16 +385,18 @@ curl -X POST "https://YOUR-SENTIMENT-URL/sentiment/get-by-video" \
 
 ## Quick Reference: Service → Endpoint Mapping
 
-| Frontend Feature | Backend Service | Endpoint |
-|------------------|-----------------|----------|
-| Summary | RAG | `GET /summary?id=1` |
-| Chat | RAG | `POST /chat` |
-| Stock chart | RAG | `POST /generate-stock` |
-| Economic indicators | RAG | `POST /generate-indicators` |
-| QoQ Compare tab | RAG | `POST /compare` (see [QOQ_DEPLOYMENT.md](./QOQ_DEPLOYMENT.md)) |
-| Dashboard creation | RAG | `POST /dashboard/create-dashboard` |
-| Sentiment chart | Sentiment | `POST /sentiment/get-by-video` |
-| Library | Sentiment | `GET /library` |
+
+| Frontend Feature    | Backend Service | Endpoint                                                       |
+| ------------------- | --------------- | -------------------------------------------------------------- |
+| Summary             | RAG             | `GET /summary?id=1`                                            |
+| Chat                | RAG             | `POST /chat`                                                   |
+| Stock chart         | RAG             | `POST /generate-stock`                                         |
+| Economic indicators | RAG             | `POST /generate-indicators`                                    |
+| QoQ Compare tab     | RAG             | `POST /compare` (see [QOQ_DEPLOYMENT.md](./QOQ_DEPLOYMENT.md)) |
+| Dashboard creation  | RAG             | `POST /dashboard/create-dashboard`                             |
+| Sentiment chart     | Sentiment       | `POST /sentiment/get-by-video`                                 |
+| Library             | Sentiment       | `GET /library`                                                 |
+
 
 ---
 
@@ -399,3 +406,4 @@ curl -X POST "https://YOUR-SENTIMENT-URL/sentiment/get-by-video" \
 - [SECRET_SETUP.md](../SECRET_SETUP.md) – Secret Manager setup
 - [LOCAL_SETUP.md](../LOCAL_SETUP.md) – Local development
 - [INTEGRATION_GUIDE.md](../INTEGRATION_GUIDE.md) – Overall integration
+
