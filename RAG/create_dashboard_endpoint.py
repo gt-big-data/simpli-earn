@@ -30,27 +30,35 @@ class JobStatus(BaseModel):
     created_at: str
     completed_at: Optional[str] = None
 
+def _dashboard_project_root() -> Path:
+    """Parent of RAG/: repo root locally, /app in Cloud Run image."""
+    return Path(__file__).resolve().parent.parent
+
+
 def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] = None):
     """Run the dashboard creation script in background"""
     jobs[job_id]["status"] = "running"
     
     try:
-        # Get path to the script
-        script_path = Path(__file__).parent.parent / "scripts" / "create_dashboard_from_youtube.py"
+        project_root = _dashboard_project_root()
+        script_path = project_root / "scripts" / "create_dashboard_from_youtube.py"
         
-        # Build command with optional ticker
+        if not script_path.is_file():
+            jobs[job_id]["status"] = "failed"
+            jobs[job_id]["error"] = f"Dashboard script missing: {script_path}"
+            jobs[job_id]["completed_at"] = datetime.now().isoformat()
+            return
+        
         cmd = [sys.executable, str(script_path), youtube_url]
         if ticker:
             cmd.extend(["--ticker", ticker])
         
-        # Run the script from project root so paths resolve correctly
-        project_root = Path(__file__).parent.parent
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             timeout=1800,  # 30 minute timeout
-            cwd=str(project_root)
+            cwd=str(project_root),
         )
         
         if result.returncode == 0:

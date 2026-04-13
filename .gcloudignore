@@ -1,0 +1,11 @@
+# Speed up `gcloud builds submit .` when the build context is the repository root
+.git
+**/.git
+frontend/node_modules
+**/node_modules
+**/__pycache__
+**/*.pyc
+**/.venv
+**/venv
+.env
+**/.env.local

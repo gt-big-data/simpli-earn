@@ -47,7 +47,7 @@ class DashboardCreator:
             os.getenv("SUPABASE_KEY")
         )
         
-        aai.settings.api_key = os.getenv("ASSEMBLYAI_KEY")
+        aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
         
         # Set up directories
         self.base_dir = Path(__file__).parent.parent

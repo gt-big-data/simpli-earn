@@ -42,7 +42,7 @@ steps:
   #   entrypoint: 'npm'
   #   args: ['run', 'lint']
 
-  # Build Backend Docker Image
+  # Build Backend Docker Image (context = repo root: RAG app in /app/RAG, dashboard script in /app/scripts, sentiment in /app/sentiment)
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-backend-image'
     args:
@@ -51,7 +51,7 @@ steps:
       - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_BACKEND}:${SHORT_SHA}'
       - '-f'
       - 'RAG/Dockerfile'
-      - 'RAG'
+      - '.'
 
   # Push Backend Image
   - name: 'gcr.io/cloud-builders/docker'
@@ -139,18 +139,19 @@ steps:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
   # Get Backend URLs for frontend configuration
+  # In bash -c scripts: use $$ for shell vars and $$(...) for command substitution; ${_VAR} and ${SHORT_SHA} are Cloud Build only.
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'get-backend-urls'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
-        SENTIMENT_URL=$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
-        echo "Backend URL: $BACKEND_URL"
-        echo "Sentiment URL: $SENTIMENT_URL"
-        echo "BACKEND_URL=$BACKEND_URL" >> /workspace/backend-url.env
-        echo "SENTIMENT_URL=$SENTIMENT_URL" >> /workspace/backend-url.env
+        BACKEND_URL=$$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
+        SENTIMENT_URL=$$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
+        echo "Backend URL: $$BACKEND_URL"
+        echo "Sentiment URL: $$SENTIMENT_URL"
+        echo "BACKEND_URL=$$BACKEND_URL" >> /workspace/backend-url.env
+        echo "SENTIMENT_URL=$$SENTIMENT_URL" >> /workspace/backend-url.env
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
@@ -179,15 +180,15 @@ steps:
     args:
       - '-c'
       - |
-        BACKEND_URL=$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
-        SENTIMENT_URL=$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
+        BACKEND_URL=$$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
+        SENTIMENT_URL=$$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
         gcloud run deploy ${_SERVICE_NAME_FRONTEND} \
           --image=gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA} \
           --platform=managed \
           --region=${_REGION} \
           --allow-unauthenticated \
           --port=3000 \
-          --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_API_URL=$BACKEND_URL,NEXT_PUBLIC_SENTIMENT_API_URL=$SENTIMENT_URL" \
+          --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_API_URL=$$BACKEND_URL,NEXT_PUBLIC_SENTIMENT_API_URL=$$SENTIMENT_URL" \
           --memory=1Gi \
           --cpu=2 \
           --timeout=300 \

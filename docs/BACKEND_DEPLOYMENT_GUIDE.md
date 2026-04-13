@@ -232,10 +232,14 @@ gcloud builds submit --config=cloudbuild.yaml .
 
 ### Deploy only RAG backend
 
-```bash
-# Build
-gcloud builds submit --tag gcr.io/simpliearn-452813/simpli-earn-backend:latest RAG
+Build **from the repository root** (not `RAG/`). The image includes `RAG/`, `scripts/create_dashboard_from_youtube.py`, and `sentiment/` so custom YouTube dashboards work on Cloud Run.
 
+```bash
+# Build (Docker)
+docker build -f RAG/Dockerfile -t gcr.io/simpliearn-452813/simpli-earn-backend:latest .
+docker push gcr.io/simpliearn-452813/simpli-earn-backend:latest
+
+# Or use Cloud Build with the same context as cloudbuild.yaml (submit from repo root).
 # Deploy to Cloud Run
 gcloud run deploy simpli-earn-backend \
   --image gcr.io/simpliearn-452813/simpli-earn-backend:latest \
