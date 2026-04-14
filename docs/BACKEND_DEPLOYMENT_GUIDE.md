@@ -256,6 +256,8 @@ gcloud run deploy simpli-earn-backend \
   --set-secrets "OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest,GEMINI_API_KEY=gemini-api-key:latest,YOUTUBE_API_KEY=youtube-api-key:latest"
 ```
 
+To avoid YouTube **429** on Cloud Run, enqueue jobs for a home worker instead of running `yt-dlp` in this service: add **`YOUTUBE_HOME_WORKER=1`** (plain env var or Secret Manager). Run the SQL in `docs/migrations/001_youtube_jobs.sql`, then run `scripts/home_youtube_worker.py` on a residential machine. Details: **[HOME_YOUTUBE_WORKER.md](./HOME_YOUTUBE_WORKER.md)**.
+
 ### Deploy only Sentiment backend
 
 ```bash

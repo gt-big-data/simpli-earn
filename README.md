@@ -75,6 +75,10 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+## Deployment and recent changes
+
+For a concise list of what changed (home YouTube worker, AssemblyAI options, frontend library fixes) and a **step-by-step deploy checklist** (Supabase, Cloud Run, Vercel, home worker), see **[docs/CHANGES_AND_DEPLOYMENT.md](docs/CHANGES_AND_DEPLOYMENT.md)**.
+
 ## Auth and Supabase SQL Setup
 
 Run these SQL/setup docs in Supabase before testing auth/settings:
