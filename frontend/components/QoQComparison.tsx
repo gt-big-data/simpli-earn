@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "@/lib/api-config";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,7 +38,6 @@ const HIGH_SIGNAL_WORDS = [
   "AI", "headwinds", "margins", "recession", "growth",
   "guidance", "uncertainty", "challenges", "record", "supply chain",
 ];
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 interface CompareData {
   current_label: string;
@@ -69,8 +69,37 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
 
   const effectiveCurrentId = currentId || "1";
 
+  // Apple main (id=1) or any Apple historical quarter → compare against other Apple quarters only
+  const isAppleFamily =
+    effectiveCurrentId === "1" || effectiveCurrentId.startsWith("aapl_");
+
+  const dropdownOptions: [string, string][] = isAppleFamily
+    ? APPLE_QUARTER_IDS.filter((id) => id !== effectiveCurrentId).map(
+        (id) => [id, TRANSCRIPT_LABELS[id]] as [string, string]
+      )
+    : Object.entries(TRANSCRIPT_LABELS).filter(
+        ([id]) => id !== effectiveCurrentId && !APPLE_QUARTER_IDS.includes(id)
+      );
+
+  const validIds = dropdownOptions.map(([id]) => id);
+  const safeCompareId = validIds.includes(compareId)
+    ? compareId
+    : (validIds[0] ?? "");
+
+  // Keep parent compareId aligned when dashboard switches and old selection is invalid
   useEffect(() => {
-    if (!compareId) return;
+    if (safeCompareId && safeCompareId !== compareId) {
+      setCompareId(safeCompareId);
+    }
+  }, [safeCompareId, compareId, setCompareId]);
+
+  useEffect(() => {
+    if (!safeCompareId) {
+      setLoading(false);
+      setError("No comparison transcripts are available for this dashboard.");
+      setData(null);
+      return;
+    }
 
     const fetchComparison = async () => {
       setLoading(true);
@@ -78,17 +107,30 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
       setData(null);
 
       try {
-        const res = await fetch(`${apiUrl}/compare`, {
+        const res = await fetch(`${API_BASE_URL}/compare`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             current_id: effectiveCurrentId,
-            previous_id: compareId,
+            previous_id: safeCompareId,
           }),
         });
 
         if (!res.ok) {
-          throw new Error(`Request failed: ${res.statusText}`);
+          const errBody = (await res.json().catch(() => null)) as {
+            detail?: string | { msg?: string }[];
+            error?: string;
+          } | null;
+          let detail: string | undefined;
+          if (typeof errBody?.detail === "string") {
+            detail = errBody.detail;
+          } else if (Array.isArray(errBody?.detail) && errBody.detail[0]) {
+            const first = errBody.detail[0] as { msg?: string };
+            detail = typeof first?.msg === "string" ? first.msg : undefined;
+          } else if (typeof errBody?.error === "string") {
+            detail = errBody.error;
+          }
+          throw new Error(detail || `Request failed: ${res.status}`);
         }
 
         const json: CompareData = await res.json();
@@ -104,19 +146,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     };
 
     fetchComparison();
-  }, [effectiveCurrentId, compareId]);
-
-  // If on Apple dashboard, show Apple historical quarters; otherwise show other companies
-  const isAppleDashboard = effectiveCurrentId === "1";
-  const dropdownOptions = isAppleDashboard
-    ? APPLE_QUARTER_IDS.map((id) => [id, TRANSCRIPT_LABELS[id]] as [string, string])
-    : Object.entries(TRANSCRIPT_LABELS).filter(
-        ([id]) => id !== effectiveCurrentId && !APPLE_QUARTER_IDS.includes(id)
-      );
-
-  // Ensure compareId is valid for the current dropdown
-  const validIds = dropdownOptions.map(([id]) => id);
-  const safeCompareId = validIds.includes(compareId) ? compareId : (validIds[0] ?? "aapl_2024Q4");
+  }, [effectiveCurrentId, safeCompareId]);
 
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCompareId(e.target.value);
@@ -238,7 +268,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
           Narrative Shifts Detected
         </h2>
         <div className="flex flex-col gap-2">
-          {data.narrative_shifts.map((shift, i) => (
+          {(data.narrative_shifts ?? []).map((shift, i) => (
             <div
               key={i}
               className="flex items-start gap-3 bg-white/4 border border-white/10 rounded-[15px] px-4 py-3"

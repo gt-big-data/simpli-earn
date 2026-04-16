@@ -3,6 +3,10 @@ import { spawn } from "child_process";
 import path from "path";
 import { existsSync } from "fs";
 
+/** These routes use Node `spawn`; keep them out of edge/static preflight. */
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // Use project venv Python (has yfinance, matplotlib, etc.)
 const venvPython = path.join(process.cwd(), "..", "venv", "bin", "python3");
 const pythonPath = existsSync(venvPython) ? venvPython : "python3";

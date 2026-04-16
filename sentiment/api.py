@@ -105,6 +105,9 @@ class VideoSentimentResponse(BaseModel):
     relevance_data: dict
     specificity_data: dict
     video_identifier: str
+    # False when the video row exists but relevance/specificity files are not in storage yet (e.g. user upload still processing).
+    sentiment_ready: bool = True
+    status_message: Optional[str] = None
 
 
 # Helper functions
@@ -492,11 +495,19 @@ async def _get_sentiment_data_by_identifier(video_identifier: Optional[str]) -> 
         record = result.data[0]
         relevance_filename = record.get("relevance_filename")
         specificity_filename = record.get("specificity_filename")
-        
+
         if not relevance_filename or not specificity_filename:
-            raise HTTPException(
-                status_code=404, 
-                detail=f"Analysis incomplete for {video_identifier}. Missing relevance or specificity files."
+            empty_block = {"filename": "", "total_sentences": 0, "data": []}
+            return VideoSentimentResponse(
+                relevance_data=empty_block,
+                specificity_data=empty_block,
+                video_identifier=video_identifier,
+                sentiment_ready=False,
+                status_message=(
+                    "Sentiment analysis is not ready yet for this video (relevance or specificity "
+                    "results are still processing or were not generated). The transcript and chat "
+                    "still work; refresh this page after the dashboard pipeline finishes."
+                ),
             )
         
         # Fetch both data files using existing endpoint logic
@@ -548,7 +559,9 @@ async def _get_sentiment_data_by_identifier(video_identifier: Optional[str]) -> 
                     "total_sentences": len(specificity_rows),
                     "data": specificity_rows
                 },
-                video_identifier=video_identifier
+                video_identifier=video_identifier,
+                sentiment_ready=True,
+                status_message=None,
             )
         
         except Exception as e:
