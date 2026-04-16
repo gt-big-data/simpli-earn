@@ -58,6 +58,19 @@
   font-weight: 600;
 }
 
+.teamSubheading {
+  text-align: center;
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 1.25rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.teamSubheading:first-of-type {
+  margin-top: 0.5rem;
+}
+
 .teamGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
