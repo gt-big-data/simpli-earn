@@ -402,6 +402,81 @@ Return only the JSON object, no other text."""
     }
 
 
+# --- Red Flag Detection ---
+VIDEO_ID_MAPPINGS = {
+    "1": "dC9yOuhiNrk", "2": "8K4aHLrekqQ", "3": "URIsVKPmhGg",
+    "4": "fouFNKTDPmk", "5": "Gub5qCTutZo", "6": "AeznZIbgXhk",
+}
+
+def _normalize_video_id(dashboard_id: Optional[str], video_url: Optional[str]) -> Optional[str]:
+    if video_url and "v=" in video_url:
+        return video_url.split("v=")[1].split("&")[0]
+    if video_url and "youtu.be/" in video_url:
+        return video_url.split("youtu.be/")[1].split("?")[0]
+    return VIDEO_ID_MAPPINGS.get(str(dashboard_id or "")) if dashboard_id else None
+
+@app.post("/red-flags")
+def get_red_flags(data: dict = Body(...)):
+    """Detect red flags in earnings call transcript. Returns list of {sentence_index, quote, category, severity, description}."""
+    dashboard_id = data.get("dashboard_id")
+    video_url = data.get("video_url")
+    video_id = _normalize_video_id(dashboard_id, video_url)
+    if not video_id or not supabase:
+        return {"red_flags": [], "error": "Missing video identifier or Supabase"}
+
+    try:
+        result = supabase.table("video_analyses").select("relevance_filename").eq("video_identifier", video_id).execute()
+        if not result.data or len(result.data) == 0:
+            return {"red_flags": [], "error": "Video analysis not found"}
+
+        rel_file = result.data[0].get("relevance_filename")
+        if not rel_file:
+            return {"red_flags": []}
+
+        raw = supabase.storage.from_("sentiment").download(rel_file)
+        import io
+        import csv
+        reader = csv.DictReader(io.StringIO(raw.decode("utf-8")))
+        sentences = []
+        for row in reader:
+            idx = int(row.get("sentence_index", len(sentences)))
+            text = row.get("sentence_text", "").strip()
+            if text:
+                sentences.append({"sentence_index": idx, "sentence_text": text})
+
+        if not sentences:
+            return {"red_flags": []}
+
+        # Build numbered transcript for GPT
+        numbered = "\n".join([f"[{s['sentence_index']}] {s['sentence_text']}" for s in sentences[:500]])
+
+        from openai import OpenAI
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        resp = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[{
+                "role": "system",
+                "content": """You are a financial analyst. Analyze earnings call transcripts for RED FLAGS that could concern investors.
+Return JSON: {"red_flags": [{"sentence_index": int, "quote": "exact quote", "category": string, "severity": "high"|"medium"|"low", "description": "brief explanation"}]}.
+Categories: vague_evasive, guidance_change, margin_pressure, regulatory_legal, management_change, debt_leverage, other.
+Only include genuine concerns. Be conservative - max 12 flags. Use sentence_index from the transcript. Return valid JSON only."""
+            }, {
+                "role": "user",
+                "content": f"Earnings call transcript (sentence_index, text):\n\n{numbered}"
+            }],
+            response_format={"type": "json_object"},
+            temperature=0.2
+        )
+        out = json.loads(resp.choices[0].message.content)
+        flags = out.get("red_flags", out.get("flags", []))
+        if isinstance(flags, dict):
+            flags = list(flags.values()) if isinstance(next(iter(flags.values()), None), dict) else []
+        return {"red_flags": flags[:15]}
+    except Exception as e:
+        print(f"Red flags error: {e}")
+        return {"red_flags": [], "error": str(e)}
+
+
 @app.post("/generate-stock")
 def generate_stock(payload: dict):
     ticker = payload.get("ticker")
