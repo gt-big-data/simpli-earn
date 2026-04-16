@@ -43,14 +43,14 @@ function DashboardContent() {
         try {
           data = await res.json();
         } catch {
-          setSummary("Could not parse server response. Ensure the RAG API is running on port 8000.");
+          setSummary("❌ Could not parse server response. Ensure the RAG API is running on port 8000.");
           setSummarySections([]);
           return;
         }
 
         if (!res.ok) {
           const msg = data?.detail ?? `Server error (${res.status})`;
-          setSummary(`Summary unavailable: ${msg}. If you use OpenAI, check your API quota at platform.openai.com.`);
+          setSummary(`❌ Summary unavailable: ${msg}. If you use OpenAI, check your API quota at platform.openai.com.`);
           setSummarySections([]);
           return;
         }
@@ -71,7 +71,7 @@ function DashboardContent() {
         }
       } catch (err) {
         console.error("Error fetching summary:", err);
-        setSummary("Failed to connect to the summary API. Ensure the RAG API is running (port 8000) and try again.");
+        setSummary("❌ Failed to connect to the summary API. Ensure the RAG API is running (port 8000) and try again.");
         setSummarySections([]);
       }
     };
@@ -112,7 +112,7 @@ function DashboardContent() {
         background:
           "radial-gradient(50% 50% at 50% 50%, rgba(129, 209, 141, 0.1) 0%, rgba(217, 217, 217, 0) 100%)",
       }}
-      className="font-[family-name:var(--font-geist-sans)] w-full min-h-[calc(100vh-57px)] relative"
+      className="w-full min-h-[calc(100vh-57px)] relative"
     >
       <div className="w-full h-full">
         <div className="flex justify-center">

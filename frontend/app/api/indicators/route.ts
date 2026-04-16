@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { spawn } from "child_process";
 import path from "path";
+import { existsSync } from "fs";
+
+// Use project venv Python (has yfinance, pandas, etc.)
+const venvPython = path.join(process.cwd(), "..", "venv", "bin", "python3");
+const pythonPath = existsSync(venvPython) ? venvPython : "python3";
 
 export async function POST(request: Request): Promise<Response> {
   try {
@@ -42,7 +47,7 @@ export async function POST(request: Request): Promise<Response> {
         args.push(indicators.join(","));
       }
 
-      const pythonProcess = spawn("python3", args);
+      const pythonProcess = spawn(pythonPath, args);
 
       let indicatorData = "";
       let errorData = "";

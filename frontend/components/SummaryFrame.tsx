@@ -91,7 +91,10 @@ export default function SummaryFrame({
                           {typeof section.timestamp === "number" && onTimestampClick && (
                             <button
                               type="button"
-                              onClick={() => onTimestampClick(section.timestamp)}
+                              onClick={() => {
+                                const t = section.timestamp;
+                                if (typeof t === "number") onTimestampClick(t);
+                              }}
                               className="ml-2 inline-flex h-[40px] min-w-[78px] items-center justify-center rounded-full border border-white/20 bg-[#232323] px-4 align-middle text-[18px] font-medium leading-none text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:bg-[#2d2d2d]"
                             >
                               {formatTimestamp(section.timestamp)}

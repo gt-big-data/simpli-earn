@@ -91,8 +91,8 @@ const teamMembers = [
   },
   {
     name: "Soham Pati",
-    role: "Full Stack",
-    description: "I'm a second-year Computer Science student at Georgia Tech. In my free time, I enjoy golfing and playing the violin.",
+    role: "Project Lead",
+    description: "I'm a third-year Computer Science student at Georgia Tech. In my free time, I enjoy golfing and playing the violin.",
     image: "/images/team_imgs/Soham_Pati.jpeg",
     socials: {
       linkedin: "https://www.linkedin.com/in/soham--pati/",

@@ -5,6 +5,8 @@ import SentimentGraph from "./SentimentGraph";
 import StockChart from "./StockChart";
 import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import { useSearchParams } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api-config";
+import type { RedFlag } from "./SentimentGraph";
 
 // Dashboard configurations - now only for ticker and date
 const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
@@ -31,12 +33,11 @@ interface SentimentDataPoint {
 }
 
 export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
-  const [activeTab, setActiveTab] = useState("stock");
+  const [activeTab, setActiveTab] = useState<"stock" | "sentiment">("stock");
   const [indicatorView, setIndicatorView] = useState<"stock" | "VIX" | "TNX" | "DXY">("stock");
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
   const ticker = searchParams.get("ticker"); // Get ticker from URL params
-  const videoUrl = searchParams.get("video_url");
   
   // Use config from dashboardConfigs for preloaded dashboards, or create dynamic config for new videos
   let config = dashboardId ? dashboardConfigs[dashboardId] : null;
@@ -53,6 +54,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
     relevance: SentimentDataPoint[];
     specificity: SentimentDataPoint[];
   } | null>(null);
+  const [redFlags, setRedFlags] = useState<RedFlag[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -94,6 +96,22 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
           relevance: data.relevance_data.data as SentimentDataPoint[],
           specificity: data.specificity_data.data as SentimentDataPoint[],
         });
+
+        // Fetch red flags from RAG API
+        try {
+          const rfRes = await fetch(`${API_BASE_URL}/red-flags`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              dashboard_id: dashboardId || null,
+              video_url: videoUrl || null,
+            }),
+          });
+          const rfData = await rfRes.json();
+          setRedFlags(rfData.red_flags || []);
+        } catch {
+          setRedFlags([]);
+        }
       } catch (err) {
         console.error("Error fetching sentiment data:", err);
         setError(err instanceof Error ? err.message : "Failed to fetch sentiment data");
@@ -209,10 +227,11 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   <p className="text-sm mt-2">{error}</p>
                 </div>
               ) : sentimentData ? (
-                <SentimentGraph 
+                <SentimentGraph
                   relevanceData={sentimentData.relevance}
                   specificityData={sentimentData.specificity}
-                  onTimestampClick={onTimestampClick} 
+                  redFlags={redFlags}
+                  onTimestampClick={onTimestampClick}
                 />
               ) : (
                 <div className="text-center text-white/70">

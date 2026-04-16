@@ -1,5 +1,5 @@
 # api_chatbot.py
-from fastapi import FastAPI, Query, Body
+from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt
 from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
@@ -9,7 +9,6 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 from datetime import datetime
 from pathlib import Path
 from langchain.chains import ConversationalRetrievalChain
-from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -22,6 +21,8 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 from fastapi.middleware.cors import CORSMiddleware
+
+from llm_provider import get_llm, run_with_fallback, get_active_provider
 
 # Load environment variables and initialize Supabase
 load_dotenv()
@@ -49,7 +50,12 @@ except ImportError as e:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://simpli-earn-2-simpli-earns-projects.vercel.app",
+        "https://simpli-earn-2.vercel.app",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -67,6 +73,12 @@ STATIC_TRANSCRIPTS = {
     "4": "transcripts/shell_seeking_alpha.txt",
     "5": "transcripts/tesla_seeking_alpha.txt",
     "6": "transcripts/walmart_seeking_alpha.txt",
+    # Apple historical quarters (from Alpha Vantage)
+    "aapl_2024Q4": "transcripts/apple_2024Q4_seeking_alpha.txt",
+    "aapl_2024Q3": "transcripts/apple_2024Q3_seeking_alpha.txt",
+    "aapl_2024Q2": "transcripts/apple_2024Q2_seeking_alpha.txt",
+    "aapl_2024Q1": "transcripts/apple_2024Q1_seeking_alpha.txt",
+    "aapl_2023Q4": "transcripts/apple_2023Q4_seeking_alpha.txt",
 }
 
 PRELOADED_VIDEOS_PATH = Path(__file__).resolve().parent.parent / "frontend" / "lib" / "preloaded_videos.json"
@@ -400,37 +412,49 @@ def chat_endpoint(req: ChatRequest):
     if not retriever:
         return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
 
-    if qa_chain is None:
-        prompt_template = ChatPromptTemplate.from_template(
-            """
-            You are a financial assistant providing insights from this transcript of an earnings call you currently have.
-            You are to give objective answers at all times.
-            This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
-            Use the provided context and chat history to answer the user's questions.
-            If the question is irrelevant to the document, politely state so.
-            Assume the user is not a financial expert.
-            If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
-            Do not start your response by citing the transcript of the call.
+    chat_prompt = ChatPromptTemplate.from_template(
+        """
+        You are a financial assistant providing insights from this transcript of an earnings call you currently have.
+        You are to give objective answers at all times.
+        This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
+        Use the provided context and chat history to answer the user's questions.
+        If the question is irrelevant to the document, politely state so.
+        Assume the user is not a financial expert.
+        If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
+        Do not start your response by citing the transcript of the call.
 
-            Context: {context}
-            Chat History: {chat_history}
-            User: {question}
-            Assistant:
-            """
-        )
+        Context: {context}
+        Chat History: {chat_history}
+        User: {question}
+        Assistant:
+        """
+    )
+
+    def _build_qa_chain():
+        global qa_chain
         qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
+            llm=get_llm(),
             retriever=retriever,
             memory=memory,
-            combine_docs_chain_kwargs={"prompt": prompt_template},
+            combine_docs_chain_kwargs={"prompt": chat_prompt},
             return_source_documents=True,
-            output_key="answer"
+            output_key="answer",
         )
 
-    response = qa_chain.invoke({"question": req.message})
+    if qa_chain is None:
+        _build_qa_chain()
+
+    def _invoke():
+        return qa_chain.invoke({"question": req.message})
+
+    try:
+        response = run_with_fallback(_invoke, rebuild_fn=_build_qa_chain)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
     chat_history.append({"question": req.message, "answer": response["answer"]})
 
-    source_docs = response.get("source_documents", [])
+    source_docs = response.get("source_documents", []) or []
     sources = []
     seen_chunks = set()
     for doc in source_docs:
@@ -452,15 +476,21 @@ def chat_endpoint(req: ChatRequest):
         retriever=retriever
     )
 
-    return {"response": response["answer"], "suggestions": suggestions, "sources": sources}
+    return {
+        "response": response["answer"],
+        "suggestions": suggestions,
+        "sources": sources,
+        "provider": get_active_provider(),
+    }
 
 
 @app.get("/summary")
 def generate_summary(id: str = Query("1")):
+    """For preloaded dashboards: return static summary from codebase. No DB or OpenAI."""
     from static_summaries import STATIC_SUMMARIES
 
     if id not in STATIC_TRANSCRIPTS:
-        return {"summary": "âŒ Unknown dashboard ID or missing transcript."}
+        return {"summary": "âŒ Unknown dashboard ID or missing transcript.", "provider": None}
 
     if id in STATIC_SUMMARIES and STATIC_SUMMARIES[id]:
         sections = build_summary_sections(STATIC_SUMMARIES[id], [])
@@ -471,33 +501,10 @@ def generate_summary(id: str = Query("1")):
             "provider": "static",
         }
 
-    transcript_path = STATIC_TRANSCRIPTS[id]
-    try:
-        with open(transcript_path, "r", encoding="utf-8") as f:
-            transcript_text = f.read()
-    except Exception as e:
-        return {"summary": f"âŒ Failed to load transcript: {str(e)}"}
-
-    global summary_chain
-    if summary_chain is None:
-        prompt = PromptTemplate(
-            input_variables=["transcript"],
-            template="""
-You are a financial analyst assistant. Read the following earnings call transcript and generate a detailed yet concise summary highlighting the key financial results, executive commentary, and any forward-looking statements. Bold any key terms in the summary. Start the summary with a very brief (max one paragraph) overall summary of the call, then go into a mode detailed summary.
-
-Transcript:
-{transcript}
-
-Summary:
-"""
-        )
-        summary_chain = LLMChain(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
-            prompt=prompt
-        )
-
-    summary = summary_chain.run(transcript=transcript_text)
-    return {"summary": summary}
+    return {
+        "summary": "âŒ Static summary not yet generated. Run from project root: python scripts/populate_preloaded_summaries.py",
+        "provider": None,
+    }
 
 
 @app.post("/summary")
@@ -544,11 +551,9 @@ def generate_summary_from_youtube(data: dict = Body(...)):
         except Exception as e:
             return {"summary": f"âŒ Failed to read transcript: {str(e)}"}
 
-    global summary_chain
-    if summary_chain is None:
-        prompt = PromptTemplate(
-            input_variables=["transcript"],
-            template="""
+    post_summary_prompt = PromptTemplate(
+        input_variables=["transcript"],
+        template="""
 You are a financial analyst assistant. Read the following earnings call transcript and generate a summary highlighting the key financial results, executive commentary, and any forward-looking statements.
 Don't make it too long and do not use complicated financial terminology, assume the user has little knowledge of finance.
 If you do want to use complicated terminology/jargon please do define it as well/explain it so it is clear for the user.
@@ -558,18 +563,29 @@ Transcript:
 
 Summary:
 """
-        )
-        summary_chain = LLMChain(
-            llm=ChatOpenAI(model_name="gpt-4o", openai_api_key=os.getenv("OPENAI_API_KEY")),
-            prompt=prompt
-        )
+    )
 
-    result = summary_chain.run(transcript=transcript_text)
-    return {
-        "summary": result,
-        "sections": build_summary_sections(result, transcript_entries or []),
-        "provider": "openai",
-    }
+    global summary_chain
+
+    def _build_yt_summary():
+        global summary_chain
+        summary_chain = LLMChain(llm=get_llm(), prompt=post_summary_prompt)
+
+    if summary_chain is None:
+        _build_yt_summary()
+
+    try:
+        result = run_with_fallback(
+            lambda: summary_chain.run(transcript=transcript_text),
+            rebuild_fn=_build_yt_summary,
+        )
+        return {
+            "summary": result,
+            "sections": build_summary_sections(result, transcript_entries or []),
+            "provider": get_active_provider(),
+        }
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
 
 
 HIGH_SIGNAL_WORDS = [
@@ -656,6 +672,91 @@ Return only the JSON object, no other text."""
     }
 
 
+# --- Red Flag Detection ---
+VIDEO_ID_MAPPINGS = {
+    "1": "dC9yOuhiNrk",
+    "2": "8K4aHLrekqQ",
+    "3": "URIsVKPmhGg",
+    "4": "fouFNKTDPmk",
+    "5": "Gub5qCTutZo",
+    "6": "AeznZIbgXhk",
+}
+
+
+def _normalize_video_id(dashboard_id: Optional[str], video_url: Optional[str]) -> Optional[str]:
+    if video_url and "v=" in video_url:
+        return video_url.split("v=")[1].split("&")[0]
+    if video_url and "youtu.be/" in video_url:
+        return video_url.split("youtu.be/")[1].split("?")[0]
+    return VIDEO_ID_MAPPINGS.get(str(dashboard_id or "")) if dashboard_id else None
+
+
+@app.post("/red-flags")
+def get_red_flags(data: dict = Body(...)):
+    """Detect red flags in earnings call transcript. Returns list of {sentence_index, quote, category, severity, description}."""
+    dashboard_id = data.get("dashboard_id")
+    video_url = data.get("video_url")
+    video_id = _normalize_video_id(dashboard_id, video_url)
+    if not video_id or not supabase:
+        return {"red_flags": [], "error": "Missing video identifier or Supabase"}
+
+    try:
+        result = supabase.table("video_analyses").select("relevance_filename").eq("video_identifier", video_id).execute()
+        if not result.data or len(result.data) == 0:
+            return {"red_flags": [], "error": "Video analysis not found"}
+
+        rel_file = result.data[0].get("relevance_filename")
+        if not rel_file:
+            return {"red_flags": []}
+
+        raw = supabase.storage.from_("sentiment").download(rel_file)
+        import io
+        import csv
+
+        reader = csv.DictReader(io.StringIO(raw.decode("utf-8")))
+        sentences = []
+        for row in reader:
+            idx = int(row.get("sentence_index", len(sentences)))
+            text = row.get("sentence_text", "").strip()
+            if text:
+                sentences.append({"sentence_index": idx, "sentence_text": text})
+
+        if not sentences:
+            return {"red_flags": []}
+
+        numbered = "\n".join([f"[{s['sentence_index']}] {s['sentence_text']}" for s in sentences[:500]])
+
+        from openai import OpenAI
+
+        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        resp = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {
+                    "role": "system",
+                    "content": """You are a financial analyst. Analyze earnings call transcripts for RED FLAGS that could concern investors.
+Return JSON: {"red_flags": [{"sentence_index": int, "quote": "exact quote", "category": string, "severity": "high"|"medium"|"low", "description": "brief explanation"}]}.
+Categories: vague_evasive, guidance_change, margin_pressure, regulatory_legal, management_change, debt_leverage, other.
+Only include genuine concerns. Be conservative - max 12 flags. Use sentence_index from the transcript. Return valid JSON only.""",
+                },
+                {
+                    "role": "user",
+                    "content": f"Earnings call transcript (sentence_index, text):\n\n{numbered}",
+                },
+            ],
+            response_format={"type": "json_object"},
+            temperature=0.2,
+        )
+        out = json.loads(resp.choices[0].message.content)
+        flags = out.get("red_flags", out.get("flags", []))
+        if isinstance(flags, dict):
+            flags = list(flags.values()) if isinstance(next(iter(flags.values()), None), dict) else []
+        return {"red_flags": flags[:15]}
+    except Exception as e:
+        print(f"Red flags error: {e}")
+        return {"red_flags": [], "error": str(e)}
+
+
 @app.post("/generate-stock")
 def generate_stock(payload: dict):
     ticker = payload.get("ticker")
@@ -684,6 +785,7 @@ def generate_stock(payload: dict):
 
 @app.post("/generate-indicators")
 def generate_indicators(payload: dict = Body(...)):
+    """Generate economic indicators (VIX, TNX, DXY) data for the given time window."""
     start_local = payload.get("startLocal")
     hours = payload.get("hours", 48)
     interval = payload.get("interval", "5m")
