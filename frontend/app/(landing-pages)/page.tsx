@@ -7,6 +7,7 @@ import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
 
 import { useState, useEffect } from "react";
+import { SENTIMENT_API_BASE_URL } from "@/lib/api-config";
 
 interface LibraryVideo {
   id: string;
@@ -30,7 +31,7 @@ export default function Home() {
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
-        const response = await fetch("http://localhost:8001/library");
+        const response = await fetch(`${SENTIMENT_API_BASE_URL}/library`);
         const data = await response.json();
         setLibraryVideos(data.videos || []);
       } catch (error) {
@@ -87,7 +88,7 @@ export default function Home() {
     if (!confirm("Are you sure you want to delete this earnings call?")) return;
     
     try {
-      await fetch(`http://localhost:8001/library/${videoId}`, {
+      await fetch(`${SENTIMENT_API_BASE_URL}/library/${videoId}`, {
         method: "DELETE",
       });
       
