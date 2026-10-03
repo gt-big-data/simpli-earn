@@ -2,7 +2,7 @@
 Centralized LLM provider with automatic OpenAI → Gemini fallback.
 
 - Primary: OpenAI (gpt-4o)
-- Fallback: Google Gemini (gemini-2.0-flash, free tier)
+- Fallback: Google Gemini (gemini-3.1-flash-lite)
 - Cooldown: after an OpenAI quota failure, skip OpenAI for N seconds
 """
 
@@ -16,7 +16,7 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
 
 OPENAI_COOLDOWN_SECONDS = int(os.getenv("OPENAI_COOLDOWN_SECONDS", "300"))
 
