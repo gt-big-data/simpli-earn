@@ -49,16 +49,30 @@ const formatDateTime = (timestamp: string): string => {
 
 type ChartView = '48h-close' | 'price-movement';
 
+// Survives unmounts (switching to VIX/TNX/DXY or another tab and back) so the chart doesn't refetch
+const stockDataCache = new Map<string, StockData>();
+
 const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
-  const [stockData, setStockData] = useState<StockData | null>(null);
+  const cacheKey = `${ticker}|${date}`;
+  const [stockData, setStockData] = useState<StockData | null>(() => stockDataCache.get(cacheKey) ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !stockDataCache.has(cacheKey));
   const [chartView] = useState<ChartView>('48h-close');
 
   useEffect(() => {
+    const cached = stockDataCache.get(cacheKey);
+    if (cached) {
+      setStockData(cached);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
     const fetchStockData = async () => {
       try {
         setLoading(true);
+        setError(null);
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
         const response = await fetch(`${apiUrl}/generate-stock`, {
           method: 'POST',
@@ -69,20 +83,23 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
         });
 
         const data = await response.json();
+        if (cancelled) return;
         if (data.error) {
           setError(data.error);
         } else {
+          stockDataCache.set(cacheKey, data);
           setStockData(data);
         }
       } catch {
-        setError('Failed to fetch stock data');
+        if (!cancelled) setError('Failed to fetch stock data');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchStockData();
-  }, [ticker, date]);
+    return () => { cancelled = true; };
+  }, [cacheKey, ticker, date]);
 
   if (loading) {
     return <div className="flex justify-center items-center h-64">Loading stock data...</div>;

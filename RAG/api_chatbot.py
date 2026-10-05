@@ -1,7 +1,7 @@
 # api_chatbot.py
 from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
-from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt
+from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
 from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
 from langchain.memory import ConversationBufferMemory
 import os
@@ -757,6 +757,9 @@ Only include genuine concerns. Be conservative - max 12 flags. Use sentence_inde
         return {"red_flags": [], "error": str(e)}
 
 
+_stock_chart_cache: dict = {}
+
+
 @app.post("/generate-stock")
 def generate_stock(payload: dict):
     ticker = payload.get("ticker")
@@ -765,22 +768,16 @@ def generate_stock(payload: dict):
     if not ticker or not date:
         return {"error": "ticker and date required"}
 
-    process = subprocess.Popen(
-        ["python3", "stockchartgenerationV2.py", ticker, date],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        env=os.environ
-    )
-    out, err = process.communicate(timeout=30)
+    # Runs in-process (like /generate-indicators); a finished 48h window never changes, so cache it
+    key = (ticker.upper(), date)
+    if key in _stock_chart_cache:
+        return _stock_chart_cache[key]
 
-    if process.returncode != 0:
-        return {"error": err}
-
-    try:
-        return json.loads(out)
-    except Exception as e:
-        return {"error": "Failed to parse JSON", "details": str(e), "raw": out}
+    from stockchartgenerationV2 import get_stock_chart
+    result = get_stock_chart(ticker, date)
+    if "error" not in result and datetime.strptime(result["end_date"], "%Y-%m-%d") <= datetime.now():
+        _stock_chart_cache[key] = result
+    return result
 
 
 @app.post("/generate-indicators")
@@ -805,3 +802,64 @@ def generate_indicators(payload: dict = Body(...)):
 
     from economicIndicatorsV2 import get_economic_indicators_json
     return get_economic_indicators_json(formatted_date, hours, interval, indicators)
+
+
+_video_date_cache: dict = {}
+
+
+def _yt_upload_date(video_id: str) -> Optional[str]:
+    """YouTube upload date (YYYYMMDD) via yt-dlp; cached since it never changes."""
+    if video_id in _video_date_cache:
+        return _video_date_cache[video_id]
+    try:
+        result = subprocess.run(
+            ["yt-dlp", "--no-update", "--skip-download", "--print", "upload_date",
+             f"https://www.youtube.com/watch?v={video_id}"],
+            capture_output=True, text=True, timeout=45,
+        )
+        date = result.stdout.strip().splitlines()[-1] if result.returncode == 0 and result.stdout.strip() else None
+    except Exception as e:
+        print(f"yt-dlp upload date failed for {video_id}: {e}")
+        date = None
+    if date:
+        _video_date_cache[video_id] = date
+    return date
+
+
+def _to_chart_date(raw: Optional[str]) -> Optional[str]:
+    """Normalize YYYYMMDD or ISO dates to the M/D/YY format the chart endpoints expect."""
+    if not raw:
+        return None
+    raw = str(raw).strip()
+    for fmt, length in (("%Y%m%d", 8), ("%Y-%m-%d", 10)):
+        try:
+            d = datetime.strptime(raw[:length], fmt)
+            return f"{d.month}/{d.day}/{d.strftime('%y')}"
+        except ValueError:
+            continue
+    return None
+
+
+@app.get("/video-info")
+def video_info(video_url: str = Query(...)):
+    """Ticker and call date for a custom (non-preloaded) dashboard, used by the stock/indicator charts."""
+    video_id = extract_video_id(video_url)
+    row = {}
+    if supabase:
+        try:
+            result = supabase.table("video_analyses").select("*").eq("video_identifier", video_id).execute()
+            row = result.data[0] if result.data else {}
+        except Exception as e:
+            print(f"video-info lookup failed: {e}")
+    metadata = row.get("metadata") or {}
+
+    ticker = metadata.get("ticker")
+    if not ticker:
+        # Pipeline names files "<ticker>_<video_id>_<timestamp>_transcript.txt"
+        prefix = (row.get("transcript_filename") or "").split("_")[0]
+        ticker = prefix.upper() if prefix else None
+    if ticker == "UNKNOWN":
+        ticker = None
+
+    date = _to_chart_date(metadata.get("upload_date")) or _to_chart_date(_yt_upload_date(video_id))
+    return {"video_id": video_id, "ticker": ticker, "date": date, "title": metadata.get("title")}

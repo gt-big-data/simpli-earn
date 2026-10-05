@@ -22,7 +22,7 @@ sentence_index,sentence_text,raw_label,label_id,label_name,score,relevance_0_1,r
 20,We have exciting momentum.,LABEL_1,1,LABEL_1,0.471395,0.49556,-0.01888,0.737852
 21,Alphabet revenue grew 24% year over year.,LABEL_2,2,LABEL_2,0.528641,0.844451,0.688903,0.755349
 22,Our AI investments are redefining what's possible across every part of our business.,LABEL_2,2,LABEL_2,0.624632,0.876128,0.752257,0.774049
-23,"Our momentum starts with Search, where people are adopting one seamless search experience across AI Overviews and AI Mode.",LABEL_2,2,LABEL_2,0.536915,0.847182,0.694364,0.77337
+23,"Our momentum starts with Search, where people are adopting one seamless search experience Across AI Overviews and AI Mode.",LABEL_2,2,LABEL_2,0.536915,0.847182,0.694364,0.77337
 24,"We saw 17% revenue growth in Search and Other, and YouTube ads grew 13%.",LABEL_2,2,LABEL_2,0.952982,0.984484,0.968968,0.779877
 25,"Cloud revenue grew 82%, powered by strong demand for AI infrastructure and AI solutions, and cloud backlog grew to $514 billion.",LABEL_2,2,LABEL_2,0.722385,0.908387,0.816774,0.7836
 26,"It's great to see the wide adoption of Gemini Enterprise, with nearly 90% of Fortune 100 using it.",LABEL_2,2,LABEL_2,0.896089,0.965709,0.931419,0.80718
@@ -159,7 +159,7 @@ sentence_index,sentence_text,raw_label,label_id,label_name,score,relevance_0_1,r
 157,"More broadly, on YouTube, we introduced an exclusive slate of creator shows, making it easier for brands to tap into the fandom of creators.",LABEL_2,2,LABEL_2,0.766748,0.923027,0.846054,0.914588
 158,"We launched custom sponsorships to put brands at the heart of the world's biggest moments as they unfold on YouTube, using AI to dynamically surface videos tailored to a brand's desired moment.",LABEL_2,2,LABEL_2,0.942677,0.981083,0.962167,0.916299
 159,Brands continue to partner with YouTube creators to engage new audiences.,LABEL_2,2,LABEL_2,0.587078,0.863736,0.727471,0.91239
-160,Kate Spade reached Gen Z through a first-of-its-kind YouTube creator campaign and partnered with creators Ellie Thuman and Hannah Meloche.,LABEL_2,2,LABEL_2,0.565659,0.856668,0.713335,0.9093
+160,Kate Spade reached Gen Z through a first-of-its-kind YouTube Creator Campaign and partnered with creators Ellie Thuman and Hannah Meloche.,LABEL_2,2,LABEL_2,0.565659,0.856668,0.713335,0.9093
 161,"By leveraging multiple format videos on YouTube, the brand drove a 3.25% brand lift in purchase intent.",LABEL_1,1,LABEL_1,0.45185,0.489111,-0.031779,0.88858
 162,This unique convergence of brand equity and commercial action makes YouTube a powerful full-funnel platform.,LABEL_2,2,LABEL_2,0.636734,0.880122,0.760244,0.884431
 163,"SMBs continue to fuel our direct response growth through campaigns like Demand Gen, They leverage our AI to scale visual storytelling across YouTube, Shorts, and now Google Maps.",LABEL_2,2,LABEL_2,0.785363,0.92917,0.85834,0.88438
@@ -207,30 +207,30 @@ sentence_index,sentence_text,raw_label,label_id,label_name,score,relevance_0_1,r
 205,"Total advertising revenues were up 14%, with growth across all major verticals.",LABEL_2,2,LABEL_2,0.571607,0.85863,0.717261,0.941305
 206,"We experienced strong ad growth related to the World Cup, particularly in YouTube ads.",LABEL_2,2,LABEL_2,0.783981,0.928714,0.857427,0.939822
 207,"Google Search and other advertising revenues increased by 17% to $63.3 billion, with retail and finance driving the largest contributions.",LABEL_2,2,LABEL_2,0.571051,0.858447,0.716894,0.934142
-208,"YouTube advertising revenues increased 13% to $11.1 billion, driven by direct response advertising as well as brand, with strength in the living room as Philip mentioned earlier.",LABEL_2,2,LABEL_2,0.582857,0.862343,0.724686,0.929294
-209,Network advertising revenues of $7.3 billion were down 1%.,LABEL_2,2,LABEL_2,0.540792,0.848461,0.696923,0.927195
-210,"Subscription platforms and devices revenues increased 15% this quarter to $12.9 billion due to strong growth in both YouTube subscriptions, particularly YouTube Music and Premium, and Google One, which was driven by demand for AI plans.",LABEL_2,2,LABEL_2,0.563513,0.855959,0.711919,0.928448
-211,"Google Services operating income increased 20% to $39.5 billion, and operating margin was 41.8%.",LABEL_2,2,LABEL_2,0.736295,0.912977,0.825954,0.930453
-212,"The Google Cloud segment delivered outstanding results in the 2nd quarter, driven by our enterprise AI products and services.",LABEL_2,2,LABEL_2,0.781039,0.927743,0.855486,0.93034
-213,"Cloud revenues were up 82% to $24.8 billion, driven primarily by GCP, which grew faster than cloud overall.",LABEL_2,2,LABEL_2,0.551643,0.852042,0.704084,0.927184
-214,"Core GCP, AI solutions, and AI infrastructure were all important drivers of growth.",LABEL_2,2,LABEL_2,0.538404,0.847673,0.695347,0.920649
-215,"We also began to recognize revenues from TPU system sales, which we delivered to customer data centers for the first time in Q2.",LABEL_2,2,LABEL_2,0.957136,0.985855,0.971709,0.921624
-216,Cloud revenue growth accelerated meaningfully even after excluding the impact of TPU system sales.,LABEL_2,2,LABEL_2,0.732177,0.911619,0.823237,0.91792
-217,"Cloud operating income was $8.8 billion, more than tripling year over year, and operating margin increased from 20.7% in the second quarter last year to 35.6%.",LABEL_2,2,LABEL_2,0.724351,0.909036,0.818071,0.915051
-218,"Google Cloud's backlog increased by more than $50 billion sequentially, reaching $514 billion in the second quarter.",LABEL_2,2,LABEL_2,0.6183,0.874039,0.748078,0.909492
-219,"The increase was driven by strong demand for our enterprise AI offerings, The majority of the backlog is related to typical GCP contracts for a broad mix of customers, and we expect to recognize just over 50% of the total backlog as revenue over the next 24 months.",LABEL_2,2,LABEL_2,0.769237,0.923848,0.847697,0.906348
-220,"In Other Bets, revenues were $382 million and operating loss was $1.8 billion as we continue to expand Waymo's business and invest in key Other Bets.",LABEL_2,2,LABEL_2,0.948872,0.983128,0.966255,0.907162
-221,"And in Alphabet-level activities, The operating loss was $5.8 billion, driven by shared AI R&D expenses.",LABEL_2,2,LABEL_2,0.550668,0.85172,0.703441,0.900566
-222,Turning to our outlook and business performance expectations in the second half of 2026.,LABEL_2,2,LABEL_2,0.5816,0.861928,0.723856,0.896479
-223,"First, in terms of revenues, at the current spot rates, we would expect a slight FX headwind to our consolidated revenue in Q3, compared to a 1 percentage point FX tailwind in Q2.",LABEL_2,2,LABEL_2,0.965766,0.988703,0.977405,0.896706
-224,This impact will be seen primarily in Search and YouTube ads.,LABEL_1,1,LABEL_1,0.459082,0.491497,-0.027006,0.876718
-225,"In Google Services, as Philip mentioned, we continue to benefit from innovation in Search by improving the user and advertiser experience with AI.",LABEL_2,2,LABEL_2,0.718984,0.907265,0.814529,0.87915
-226,"At the same time, in Q3, we will begin lapping an acceleration in Search performance that began in the 3rd quarter last year.",LABEL_2,2,LABEL_2,0.747705,0.916743,0.833485,0.878551
-227,"In Google Cloud, we're seeing significant demand for our products and services, which we expect to drive strong growth.",LABEL_2,2,LABEL_2,0.871894,0.957725,0.91545,0.883515
-228,"As I mentioned earlier, we started delivering TPU system to customer data centers in the 2nd quarter.",LABEL_2,2,LABEL_2,0.964646,0.988333,0.976667,0.889815
-229,"We continue to expect to recognize a relatively small portion of the revenues from our existing TPU system sales agreements this year, ramping as we exit 2026.",LABEL_2,2,LABEL_2,0.959304,0.98657,0.97314,0.89672
-230,We anticipate the vast majority of the revenues from these agreements will be realized in 2027.,LABEL_2,2,LABEL_2,0.949554,0.983353,0.966706,0.90309
-231,"And given the supply-constrained environment, we plan to expand the use of third-party capacity in Q3 as a bridging strategy while we build out more internal capacity.",LABEL_2,2,LABEL_2,0.544045,0.849535,0.699069,0.899918
+208,"YouTube advertising revenues increased 13% to $11.1 billion, driven by direct response advertising as well as brand, with strength in the living room, as Philip mentioned earlier.",LABEL_2,2,LABEL_2,0.615029,0.87296,0.745919,0.929824
+209,Network advertising revenues of $7.3 billion were down 1%.,LABEL_2,2,LABEL_2,0.540792,0.848461,0.696923,0.927726
+210,"Subscription platforms and devices revenues increased 15% this quarter to $12.9 billion due to strong growth in both YouTube subscriptions, particularly YouTube Music and Premium, and Google One, which was driven by demand for AI plans.",LABEL_2,2,LABEL_2,0.563513,0.855959,0.711919,0.928979
+211,"Google Services operating income increased 20% to $39.5 billion, and operating margin was 41.8%.",LABEL_2,2,LABEL_2,0.736295,0.912977,0.825954,0.930984
+212,"The Google Cloud segment delivered outstanding results in the second quarter, driven by our enterprise AI products and services.",LABEL_2,2,LABEL_2,0.770433,0.924243,0.848486,0.930696
+213,"Cloud revenues were up 82% to $24.8 billion, driven primarily by GCP, which grew faster than cloud overall.",LABEL_2,2,LABEL_2,0.551643,0.852042,0.704084,0.92754
+214,"Core GCP, AI solutions, and AI infrastructure were all important drivers of growth.",LABEL_2,2,LABEL_2,0.538404,0.847673,0.695347,0.921005
+215,"We also began to recognize revenues from TPU system sales, which we delivered to customer data centers for the first time in Q2.",LABEL_2,2,LABEL_2,0.957136,0.985855,0.971709,0.92198
+216,Cloud revenue growth accelerated meaningfully even after excluding the impact of TPU system sales.,LABEL_2,2,LABEL_2,0.732177,0.911619,0.823237,0.918276
+217,"Cloud operating income was $8.8 billion, more than tripling year over year, and operating margin increased from 20.7% in the second quarter last year to 35.6%.",LABEL_2,2,LABEL_2,0.724351,0.909036,0.818071,0.915407
+218,"Google Cloud's backlog increased by more than $50 billion sequentially, reaching $514 billion in the second quarter.",LABEL_2,2,LABEL_2,0.6183,0.874039,0.748078,0.909848
+219,"The increase was driven by strong demand for our enterprise AI offerings, The majority of the backlog is related to typical GCP contracts for a broad mix of customers, and we expect to recognize just over 50% of the total backlog as revenue over the next 24 months.",LABEL_2,2,LABEL_2,0.769237,0.923848,0.847697,0.906704
+220,"In Other Bets, revenues were $382 million and operating loss was $1.8 billion as we continue to expand Waymo's business and invest in key Other Bets.",LABEL_2,2,LABEL_2,0.948872,0.983128,0.966255,0.907518
+221,"And in Alphabet-level activities, The operating loss was $5.8 billion, driven by shared AI R&D expenses.",LABEL_2,2,LABEL_2,0.550668,0.85172,0.703441,0.900922
+222,Turning to our outlook and business performance expectations in the second half of 2026.,LABEL_2,2,LABEL_2,0.5816,0.861928,0.723856,0.896835
+223,"First, in terms of revenues, at the current spot rates, we would expect a slight FX headwind to our consolidated revenue in Q3, compared to a 1 percentage point FX tailwind in Q2.",LABEL_2,2,LABEL_2,0.965766,0.988703,0.977405,0.897062
+224,This impact will be seen primarily in Search and YouTube ads.,LABEL_1,1,LABEL_1,0.459082,0.491497,-0.027006,0.877074
+225,"In Google Services, as Philip mentioned, we continue to benefit from innovation in Search by improving the user and advertiser experience with AI.",LABEL_2,2,LABEL_2,0.718984,0.907265,0.814529,0.879506
+226,"At the same time, in Q3, we will begin lapping an acceleration in Search performance that began in the 3rd quarter last year.",LABEL_2,2,LABEL_2,0.747705,0.916743,0.833485,0.878907
+227,"In Google Cloud, we're seeing significant demand for our products and services, which we expect to drive strong growth.",LABEL_2,2,LABEL_2,0.871894,0.957725,0.91545,0.883871
+228,"As I mentioned earlier, we started delivering TPU system to customer data centers in the 2nd quarter.",LABEL_2,2,LABEL_2,0.964646,0.988333,0.976667,0.88964
+229,"We continue to expect to recognize a relatively small portion of the revenues from our existing TPU system sales agreements this year, ramping as we exit 2026.",LABEL_2,2,LABEL_2,0.959304,0.98657,0.97314,0.896545
+230,We anticipate the vast majority of the revenues from these agreements will be realized in 2027.,LABEL_2,2,LABEL_2,0.949554,0.983353,0.966706,0.902915
+231,"And given the supply-constrained environment, we plan to expand the use of third-party capacity in Q3 as a bridging strategy while we build out more internal capacity.",LABEL_2,2,LABEL_2,0.544045,0.849535,0.699069,0.899743
 232,This strategy allows us to keep growing our customer base and capture greater overall value.,LABEL_2,2,LABEL_2,0.662044,0.888474,0.776949,0.897954
 233,"However, it will create modest margin pressure in the near term as we utilise this capacity.",LABEL_2,2,LABEL_2,0.664538,0.889298,0.778595,0.899817
 234,"Moving to investments, we are updating our full-year 2026 CapEx guidance range to $195 to $205 billion, up from our previous estimate of $180 to $190 billion.",LABEL_2,2,LABEL_2,0.954264,0.984907,0.969814,0.906679
@@ -300,48 +300,48 @@ sentence_index,sentence_text,raw_label,label_id,label_name,score,relevance_0_1,r
 298,Coding and agent decoding is an example of that.,LABEL_2,2,LABEL_2,0.539426,0.84801,0.696021,0.784524
 299,"And I think the teams are very, very focused on it.",LABEL_2,2,LABEL_2,0.544022,0.849527,0.699055,0.777755
 300,"With 3.6 Flash, and by the way, Flash is our workhorse model and we see tremendous demand for it given it generally hits a sweet spot of performance, cost, reliability, latency, et cetera.",LABEL_2,2,LABEL_2,0.860829,0.954074,0.908147,0.777412
-301,And we've incorporated Gemini and Flash particularly in our entire portfolio of solutions.,LABEL_2,2,LABEL_2,0.948856,0.983122,0.966245,0.786238
-302,"Be it in cybersecurity, data analytics.",LABEL_2,2,LABEL_2,0.678567,0.893927,0.787854,0.804663
-303,"If you think about an area like customer service, you need really good voice quality, you need live streaming, you need the ability to reason on that.",LABEL_2,2,LABEL_2,0.663771,0.889044,0.778089,0.805333
-304,"Or if you're a professional services firm, you need high-quality summarization, content generation, etc.",LABEL_2,2,LABEL_2,0.792791,0.931621,0.863242,0.827407
-305,Flash does very well on all of that.,LABEL_2,2,LABEL_2,0.700695,0.901229,0.802459,0.831584
-306,"In terms of agent encoding, we are iterating and you will see us make continued iterations.",LABEL_2,2,LABEL_2,0.71319,0.905353,0.810706,0.835909
-307,"3.6 Flash, for example, compared to 3.5 Flash jumped over 10 points in DeepSV as a benchmark, and it is more token efficient doing so.",LABEL_2,2,LABEL_2,0.916934,0.972588,0.945176,0.835055
-308,So we are clearly using it internally.,LABEL_1,1,LABEL_1,0.567667,0.52733,0.04466,0.818991
-309,We are testing it with many customers in coding.,LABEL_2,2,LABEL_2,0.771822,0.924701,0.849402,0.824603
-310,"So we see the progress just in 6 weeks from the prior version to the new version, and you will see more continued iterations on that as well.",LABEL_2,2,LABEL_2,0.954899,0.985117,0.970233,0.847834
-311,"In terms of the frontier, we are both very committed and very confident of being at the frontier.",LABEL_2,2,LABEL_2,0.672935,0.892068,0.784137,0.847181
-312,"For the next generation of frontier, you're gonna need much larger base models.",LABEL_2,2,LABEL_2,0.89193,0.964337,0.928674,0.870879
-313,"We are now training Gemini 4, and we are being very ambitious with it.",LABEL_2,2,LABEL_2,0.969063,0.989791,0.979581,0.879969
-314,"I am very excited by the progress I'm seeing internally on Gemini 4, and I'm confident, you know, that people will be pleased when we are putting it out it outside.",LABEL_2,2,LABEL_2,0.961778,0.987387,0.974773,0.880259
-315,But we will need Gemini 4 as a larger base model to compete at that frontier level.,LABEL_2,2,LABEL_2,0.94342,0.981329,0.962658,0.887131
-316,And so we are focused on executing on that well.,LABEL_2,2,LABEL_2,0.692043,0.898374,0.796748,0.89013
-317,"And on the question regarding our capital structure and recent equity and debt raise, so as we think about our investment needs, and as I said, we look at the next year and multiple years out, we first look at how much we can support based on cash from operations.",LABEL_2,2,LABEL_2,0.938405,0.979674,0.959347,0.91293
-318,"And as you've seen in our results today, we continue to generate very healthy, strong cash flow from operations.",LABEL_2,2,LABEL_2,0.965429,0.988592,0.977183,0.919959
-319,So that's our first source of funding.,LABEL_2,2,LABEL_2,0.875461,0.958902,0.917805,0.925428
-320,And then we look at debt.,LABEL_1,1,LABEL_1,0.603031,0.539,0.068,0.904674
-321,"And most recently, we did the equity raise.",LABEL_2,2,LABEL_2,0.962913,0.987761,0.975522,0.904906
-322,And we have expanded our debt portfolio quite significantly over the past 12 months.,LABEL_2,2,LABEL_2,0.968041,0.989453,0.978907,0.909683
-323,"If you've seen a year ago, we were at about $16 billion, and we went to about $100 billion across multiple currencies and geographies.",LABEL_2,2,LABEL_2,0.964765,0.988372,0.976745,0.914649
-324,So we're expanding that portfolio.,LABEL_2,2,LABEL_2,0.788492,0.930202,0.860405,0.914578
-325,"But we also want to make sure we have a resilient, not just growth outlook, but also a resilient balance sheet and a strong balance sheet, healthy balance sheet, which is the rationale behind expanding into the equity markets.",LABEL_2,2,LABEL_2,0.964154,0.988171,0.976342,0.918925
-326,"At this point, we're not planning to go back to the equity markets with the exception of, as you recall, part of our equity offering was the ATM or at-the-market offering that we will do to address the stock-based comp— or the tax on SBC.",LABEL_2,2,LABEL_2,0.966981,0.989104,0.978207,0.923113
-327,Which we'll do for some period of time.,LABEL_2,2,LABEL_2,0.632948,0.878873,0.757746,0.918427
-328,"But we look at those 3 dimensions— the cash flow from operations, debt levels, and equity— in a way to balance it in a way that ensures that we continue to maintain a healthy, healthy balance sheet.",LABEL_2,2,LABEL_2,0.941707,0.980763,0.961527,0.941099
-329,Thank you both.,LABEL_2,2,LABEL_2,0.41397,0.80661,0.61322,0.935194
-330,Our next question comes from Eric Sheridan with Goldman Sachs.,LABEL_2,2,LABEL_2,0.462833,0.822735,0.64547,0.927075
-331,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.926254
-332,Thanks so much for taking the questions.,LABEL_1,1,LABEL_1,0.423912,0.479891,-0.050218,0.902032
-333,"Maybe 2 if I could, both on TPUs.",LABEL_2,2,LABEL_2,0.461636,0.82234,0.64468,0.893659
-334,"Sundar, can you talk about some of your key learnings as you scale your TPU efforts in terms of both the demand for TPUs and how you think about balancing the external demands for TPUs versus the internal demand for custom silicon inside the organization as you look over the next couple of years?",LABEL_1,1,LABEL_1,0.477718,0.497647,-0.014706,0.869172
-335,"And then Anand, if I could just follow up, you made some comments in your prepared remarks about the impact of TPUs on Google Cloud.",LABEL_2,2,LABEL_2,0.586783,0.863638,0.727277,0.863288
-336,"I didn't know if you could give a list, a little bit more granularity about the size of TPUs as a part of the revenue backlog and how to think about the revenue recognition or the potential for margin impact from TPUs in the years ahead.",LABEL_2,2,LABEL_2,0.755921,0.919454,0.838908,0.864342
-337,Thanks so much.,LABEL_2,2,LABEL_2,0.432638,0.812771,0.625541,0.855997
-338,Okay.,LABEL_2,2,LABEL_2,0.770135,0.924145,0.848289,0.852774
-339,"I think in terms of, first of all, we are very pleased with our TPU roadmap progress and the value in terms of performance and the edge it gives.",LABEL_2,2,LABEL_2,0.948634,0.983049,0.966099,0.853982
-340,"And we obviously use it extensively In terms of allocating TPUs, look, our first priority is making sure we are allocating what we need to compete at the frontier in terms of AGI development.",LABEL_2,2,LABEL_2,0.884683,0.961945,0.923891,0.875129
-341,And so that is the foundation for everything we do.,LABEL_2,2,LABEL_2,0.53308,0.845916,0.691833,0.868037
-342,"But given the extraordinary demand, to balance the external demand, even for most cloud customers, we are using both TPUs and GPUs mainly for serving our models.",LABEL_2,2,LABEL_2,0.875002,0.958751,0.917501,0.866501
+301,"And we've incorporated Gemini and Flash particularly in our entire portfolio of solutions be it in cybersecurity, data analytics.",LABEL_2,2,LABEL_2,0.957294,0.985907,0.971814,0.786377
+302,"If you think about an area like customer service, you need really good voice quality, you need live streaming, you need the ability to reason on that.",LABEL_2,2,LABEL_2,0.663771,0.889044,0.778089,0.804558
+303,"Or if you're a professional services firm, you need high-quality summarization, content generation, et cetera.",LABEL_2,2,LABEL_2,0.60909,0.871,0.742,0.804326
+304,So Flash does very well on all of that.,LABEL_2,2,LABEL_2,0.748423,0.91698,0.833959,0.825668
+305,"In terms of agent encoding, we are iterating and you will see us make continued iterations.",LABEL_2,2,LABEL_2,0.71319,0.905353,0.810706,0.830051
+306,"3.6 Flash, for example, compared to 3.5 Flash jumped over 10 points in DeepSWE as a benchmark, and it is more token efficient doing so.",LABEL_2,2,LABEL_2,0.89901,0.966673,0.933347,0.837442
+307,So we are clearly using it internally.,LABEL_1,1,LABEL_1,0.567667,0.52733,0.04466,0.814325
+308,We are testing it with many customers in coding.,LABEL_2,2,LABEL_2,0.771822,0.924701,0.849402,0.81813
+309,"So we see the progress just in 6 weeks from the prior version to the new version, and you will see more continued iterations on that as well.",LABEL_2,2,LABEL_2,0.954899,0.985117,0.970233,0.826763
+310,"In terms of the frontier, we are both very committed and very confident of being at the frontier.",LABEL_2,2,LABEL_2,0.672935,0.892068,0.784137,0.845341
+311,"For the next generation of frontier, you're gonna need much larger base models.",LABEL_2,2,LABEL_2,0.89193,0.964337,0.928674,0.848302
+312,"We are now training Gemini 4, and we are being very ambitious with it.",LABEL_2,2,LABEL_2,0.969063,0.989791,0.979581,0.873272
+313,"I am very excited by the progress I'm seeing internally on Gemini 4, and I'm confident, you know, that people will be pleased when we are putting it out it outside.",LABEL_2,2,LABEL_2,0.961778,0.987387,0.974773,0.882241
+314,But we will need Gemini 4 as a larger base model to compete at that frontier level.,LABEL_2,2,LABEL_2,0.94342,0.981329,0.962658,0.882229
+315,And so we are focused on executing on that well.,LABEL_2,2,LABEL_2,0.692043,0.898374,0.796748,0.884953
+316,"And on the question regarding our capital structure and recent equity and debt raise, so as we think about our investment needs, and as I said, we look at the next year and multiple years out, we first look at how much we can support based on cash from operations.",LABEL_2,2,LABEL_2,0.938405,0.979674,0.959347,0.892018
+317,"And as you've seen in our results today, we continue to generate very healthy, strong cash flow from operations.",LABEL_2,2,LABEL_2,0.965429,0.988592,0.977183,0.915263
+318,So that's our first source of funding.,LABEL_2,2,LABEL_2,0.875461,0.958902,0.917805,0.920808
+319,And then we look at debt.,LABEL_1,1,LABEL_1,0.603031,0.539,0.068,0.905282
+320,"And most recently, we did the equity raise.",LABEL_2,2,LABEL_2,0.962913,0.987761,0.975522,0.906966
+321,And we have expanded our debt portfolio quite significantly over the past 12 months.,LABEL_2,2,LABEL_2,0.968041,0.989453,0.978907,0.907143
+322,"If you've seen a year ago, we were at about $16 billion.",LABEL_2,2,LABEL_2,0.963938,0.9881,0.976199,0.912096
+323,And we went to about $100 billion across multiple currencies and geographies.,LABEL_2,2,LABEL_2,0.965304,0.98855,0.977101,0.917974
+324,So we're expanding that portfolio.,LABEL_2,2,LABEL_2,0.788492,0.930202,0.860405,0.918635
+325,"But we also want to make sure we have a resilient, not just growth outlook, but also a resilient balance sheet and a strong balance sheet, healthy balance sheet, which is the rationale behind expanding into the equity markets.",LABEL_2,2,LABEL_2,0.964154,0.988171,0.976342,0.922776
+326,"At this point, we're not planning to go back to the equity markets with the exception of, as you recall, part of our equity offering was the ATM or at-the-market offering that we will do to address the stock-based comp— or the tax on SBC.",LABEL_2,2,LABEL_2,0.966981,0.989104,0.978207,0.923897
+327,Which we'll do for some period of time.,LABEL_2,2,LABEL_2,0.632948,0.878873,0.757746,0.941474
+328,"But we look at those 3 dimensions— the cash flow from operations, debt levels, and equity— in a way to balance it in a way that ensures that we continue to maintain a healthy, healthy balance sheet.",LABEL_2,2,LABEL_2,0.941707,0.980763,0.961527,0.944277
+329,Thank you both.,LABEL_2,2,LABEL_2,0.41397,0.80661,0.61322,0.935352
+330,Our next question comes from Eric Sheridan with Goldman Sachs.,LABEL_2,2,LABEL_2,0.462833,0.822735,0.64547,0.931885
+331,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.927451
+332,Thanks so much for taking the questions.,LABEL_1,1,LABEL_1,0.423912,0.479891,-0.050218,0.901956
+333,"Maybe 2 if I could, both on TPUs.",LABEL_2,2,LABEL_2,0.461636,0.82234,0.64468,0.893704
+334,"Sundar, can you talk about some of your key learnings as you scale your TPU efforts in terms of both the demand for TPUs and how you think about balancing the external demands for TPUs versus the internal demand for custom silicon inside the organization as you look over the next couple of years?",LABEL_1,1,LABEL_1,0.477718,0.497647,-0.014706,0.86952
+335,"And then Anand, if I could just follow up, you made some comments in your prepared remarks about the impact of TPUs on Google Cloud.",LABEL_2,2,LABEL_2,0.586783,0.863638,0.727277,0.867783
+336,"I didn't know if you could give a list, a little bit more granularity about the size of TPUs as a part of the revenue backlog and how to think about the revenue recognition or the potential for margin impact from TPUs in the years ahead.",LABEL_2,2,LABEL_2,0.755921,0.919454,0.838908,0.864772
+337,Thanks so much.,LABEL_2,2,LABEL_2,0.432638,0.812771,0.625541,0.855981
+338,Okay.,LABEL_2,2,LABEL_2,0.770135,0.924145,0.848289,0.854243
+339,"I think in terms of, first of all, we are very pleased with our TPU roadmap progress and the value in terms of performance and the edge it gives.",LABEL_2,2,LABEL_2,0.948634,0.983049,0.966099,0.876445
+340,"And we obviously use it extensively In terms of allocating TPUs, look, our first priority is making sure we are allocating what we need to compete at the frontier in terms of AGI development.",LABEL_2,2,LABEL_2,0.884683,0.961945,0.923891,0.875155
+341,And so that is the foundation for everything we do.,LABEL_2,2,LABEL_2,0.53308,0.845916,0.691833,0.867978
+342,"But given the extraordinary demand, to balance the external demand, even for most cloud customers, we are using both TPUs and GPUs mainly for serving our models.",LABEL_2,2,LABEL_2,0.875002,0.958751,0.917501,0.86651
 343,"So think Vertex AI, Gemini Enterprise, the momentum we see.",LABEL_2,2,LABEL_2,0.455348,0.820265,0.64053,0.858096
 344,"So we are using it or agentic workloads, et cetera.",LABEL_2,2,LABEL_2,0.535847,0.846829,0.693659,0.853927
 345,So we are using it for those purposes.,LABEL_2,2,LABEL_2,0.64183,0.881804,0.763608,0.848609
@@ -379,26 +379,26 @@ sentence_index,sentence_text,raw_label,label_id,label_name,score,relevance_0_1,r
 377,We wanted to compete at the frontier level of where the frontier will be when Gemini 4 comes out.,LABEL_2,2,LABEL_2,0.875841,0.959028,0.918055,0.885249
 378,And so we are applying a lot of our compute and effort in that direction.,LABEL_2,2,LABEL_2,0.913535,0.971467,0.942933,0.888458
 379,"But with that, we are creating a baseline on which— on top of which you will see us rapidly iterate with subsequent model releases.",LABEL_2,2,LABEL_2,0.907448,0.969458,0.938915,0.889268
-380,"And so, you know, picking up pace and releasing models, you know, almost at a monthly cadence.",LABEL_2,2,LABEL_2,0.950809,0.983767,0.967534,0.894551
-381,Is part of our roadmap as we are building Gemini 4 as well.,LABEL_2,2,LABEL_2,0.674394,0.89255,0.7851,0.897289
-382,Your next question comes from Michael Nathanson with Muppets Nathanson.,LABEL_2,2,LABEL_2,0.634155,0.879271,0.758542,0.899293
-383,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.901903
-384,Thank you.,LABEL_1,1,LABEL_1,0.46698,0.494104,-0.021793,0.902344
-385,One for Sundar and one for Nat.,LABEL_2,2,LABEL_2,0.548264,0.850927,0.701854,0.90034
-386,"Sundar, just keeping with the model theme of this call, can you talk a bit about what do you think the moats are to this new model war, right?",LABEL_1,1,LABEL_1,0.468787,0.4947,-0.020601,0.877063
-387,"What is your strategic advantages that fuel your business that even if everyone gets to the same type of model capabilities, what gives you the edge to keep growing like you're doing?",LABEL_2,2,LABEL_2,0.454806,0.820086,0.640172,0.868593
-388,And then a knot back to Eric's question.,LABEL_1,1,LABEL_1,0.534136,0.516265,0.02253,0.846277
-389,"Anything you can tell about the margin impact on TPUs going forward, right?",LABEL_1,1,LABEL_1,0.473351,0.496206,-0.017588,0.827669
-390,Is it incremental margin to the core cloud margin or is it a lower margin coming Thanks.,LABEL_2,2,LABEL_2,0.646113,0.883217,0.766434,0.827815
-391,"Look, Michael, I mean, first of all, look, there are many, many layers at which we are providing solutions, right?",LABEL_2,2,LABEL_2,0.530985,0.845225,0.69045,0.825244
-392,"I think part of what the value of our full-stack approach is, customers are coming to us for solutions.",LABEL_2,2,LABEL_2,0.551542,0.852009,0.704018,0.821711
-393,"So if you take an area like cybersecurity or data analytics, people are deploying solutions in which models are an ingredient in that solution.",LABEL_2,2,LABEL_2,0.843659,0.948407,0.896815,0.822705
-394,Right?,LABEL_1,1,LABEL_1,0.534877,0.516509,0.023019,0.80484
-395,"So take cyber, people are using Chronicle and Wiz, and, you know, with our upcoming CodeMender product, you know, they're using it to detect and patch vulnerabilities and so on.",LABEL_2,2,LABEL_2,0.932524,0.977733,0.955466,0.804437
-396,"Or take data analytics, people are bringing what's been in the past siloed data sources, putting it all together, and having an intelligence layer on top of it with Gemini Enterprise.",LABEL_2,2,LABEL_2,0.846627,0.949387,0.898774,0.808798
-397,"And so the model is just an ingredient in those solutions, so I think it's important to remember that.",LABEL_1,1,LABEL_1,0.499593,0.504866,-0.000269,0.78609
-398,"Then even within where you're purely on a more model consumption area, you know, people are, you know, there is what looks as models are increasingly becoming end-to-end orchestrated systems, right, workflows, agentic workflows, and to develop all this, it's your ability not just to bring the compute you need to train and serve, the data quality, the environments you have, your ability to continually improve, provide customers with that peace of mind that all the data they have, their data, their trajectories are confidential to them.",LABEL_2,2,LABEL_2,0.936227,0.978955,0.95791,0.786465
-399,None of that in any way flows back to the models.,LABEL_1,1,LABEL_1,0.557914,0.524112,0.038223,0.764197
+380,And so picking up pace and releasing models almost at a monthly cadence.,LABEL_2,2,LABEL_2,0.809533,0.937146,0.874292,0.89222
+381,Is part of our roadmap as we are building Gemini 4 as well.,LABEL_2,2,LABEL_2,0.674394,0.89255,0.7851,0.894958
+382,Your next question comes from Michael Nathanson with Muppets Nathanson.,LABEL_2,2,LABEL_2,0.634155,0.879271,0.758542,0.896962
+383,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.899572
+384,Thank you.,LABEL_1,1,LABEL_1,0.46698,0.494104,-0.021793,0.900013
+385,One for Sundar and one for Nat.,LABEL_2,2,LABEL_2,0.548264,0.850927,0.701854,0.898009
+386,"Sundar, just keeping with the model theme of this call, can you talk a bit about what do you think the moats are to this new model war, right?",LABEL_1,1,LABEL_1,0.468787,0.4947,-0.020601,0.874732
+387,"What is your strategic advantages that fuel your business that even if everyone gets to the same type of model capabilities, what gives you the edge to keep growing like you're doing?",LABEL_2,2,LABEL_2,0.454806,0.820086,0.640172,0.866262
+388,And then a knot back to Eric's question.,LABEL_1,1,LABEL_1,0.534136,0.516265,0.02253,0.843946
+389,"Anything you can tell about the margin impact on TPUs going forward, right?",LABEL_1,1,LABEL_1,0.473351,0.496206,-0.017588,0.825338
+390,Is it incremental margin to the core cloud margin or is it a lower margin coming Thanks.,LABEL_2,2,LABEL_2,0.646113,0.883217,0.766434,0.825484
+391,"Look, Michael, I mean, first of all, look, there are many, many layers at which we are providing solutions, right?",LABEL_2,2,LABEL_2,0.530985,0.845225,0.69045,0.822913
+392,"I think part of what the value of our full-stack approach is, customers are coming to us for solutions.",LABEL_2,2,LABEL_2,0.551542,0.852009,0.704018,0.81938
+393,"So if you take an area like cybersecurity or data analytics, people are deploying solutions in which models are an ingredient in that solution.",LABEL_2,2,LABEL_2,0.843659,0.948407,0.896815,0.820374
+394,Right?,LABEL_1,1,LABEL_1,0.534877,0.516509,0.023019,0.802509
+395,"So take cyber, people are using Chronicle and Wiz, and, you know, with our upcoming CodeMender product, you know, they're using it to detect and patch vulnerabilities and so on.",LABEL_2,2,LABEL_2,0.932524,0.977733,0.955466,0.802106
+396,"Or take data analytics, people are bringing what's been in the past siloed data sources, putting it all together, and having an intelligence layer on top of it with Gemini Enterprise.",LABEL_2,2,LABEL_2,0.846627,0.949387,0.898774,0.806467
+397,"And so the model is just an ingredient in those solutions, so I think it's important to remember that.",LABEL_1,1,LABEL_1,0.499593,0.504866,-0.000269,0.783759
+398,"Then even within where you're purely on a more model consumption area, you know, people are, you know, there is what looks as models are increasingly becoming end-to-end orchestrated systems, right, workflows, agentic workflows, and to develop all this, it's your ability not just to bring the compute you need to train and serve, the data quality, the environments you have, your ability to continually improve, provide customers with that peace of mind that all the data they have, their data, their trajectories are confidential to them.",LABEL_2,2,LABEL_2,0.936227,0.978955,0.95791,0.784134
+399,None of that in any way flows back to the models.,LABEL_1,1,LABEL_1,0.557914,0.524112,0.038223,0.761866
 400,"Their ability to configure and serve all this in a secure way, and manage it and provision it and so on.",LABEL_2,2,LABEL_2,0.918716,0.973176,0.946353,0.763668
 401,So these are big end-to-end things.,LABEL_1,1,LABEL_1,0.571432,0.528572,0.047145,0.745469
 402,And so this is what our cloud business as a whole is focused on building it.,LABEL_2,2,LABEL_2,0.609018,0.870976,0.741952,0.745054
@@ -452,48 +452,48 @@ sentence_index,sentence_text,raw_label,label_id,label_name,score,relevance_0_1,r
 450,"And we're really deeply, deeply integrating Gemini into the customer tools to make the campaigns more efficient, which comes on top of this.",LABEL_2,2,LABEL_2,0.775936,0.926059,0.852117,0.794941
 451,And then we have our AI-powered campaigns like AI Max that help advertisers actually adapt and find the opportunities beyond keyword.,LABEL_2,2,LABEL_2,0.896479,0.965838,0.931676,0.793708
 452,"Again, that's an ability for us to go deeper and target better, and AI Max continues to unlock— we mentioned this— billions of net new searches that weren't really monetizable before.",LABEL_2,2,LABEL_2,0.917826,0.972882,0.945765,0.816435
-453,"And then on the YouTube side, high level, the ads growth was driven by direct response and brand advertising.",LABEL_2,2,LABEL_2,0.760561,0.920985,0.84197,0.822012
-454,I shared earlier We continue to see a lot of fomenting in the living room.,LABEL_2,2,LABEL_2,0.65808,0.887166,0.774333,0.822588
-455,"We have a really exciting ads roadmap as well ahead of us on the brand side, on the direct response side.",LABEL_2,2,LABEL_2,0.475757,0.827,0.654,0.819584
-456,Demand gen and Shorts remain really interesting opportunities here.,LABEL_2,2,LABEL_2,0.745621,0.916055,0.83211,0.840936
-457,"Again, this has targeting components to it, obviously, and we continue to innovate really heavily in direct response with shoppable ad formats in the living room, which will help us drive strength in retail as well.",LABEL_2,2,LABEL_2,0.74581,0.916117,0.832235,0.861235
-458,Your next question comes from Ken Goralski with Wells Fargo.,LABEL_2,2,LABEL_2,0.537654,0.847426,0.694852,0.86163
-459,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.880206
-460,Thank you very much.,LABEL_1,1,LABEL_1,0.447281,0.487603,-0.034795,0.855727
-461,"2 questions, please.",LABEL_2,2,LABEL_2,0.808011,0.936644,0.873288,0.853493
-462,"First, how would you assess the forecasted returns on compute capacity investments in, in '27 compared to prior years, '25 and '26, in light of the supply constraints, the supply chain constraints and supply chain inflation we're seeing.",LABEL_2,2,LABEL_2,0.680333,0.89451,0.78902,0.873521
-463,I'm curious as to how you think about the return profile of '27 and kind of future investments versus past investment investments in capacity.,LABEL_2,2,LABEL_2,0.777779,0.926667,0.853334,0.895149
-464,"And the second one, a little different, different topic here.",LABEL_1,1,LABEL_1,0.525492,0.513412,0.016824,0.876763
-465,"When you think about Waymo, what are the key factors you would consider when evaluating that, you know, a change in corporate structure for Waymo?",LABEL_1,1,LABEL_1,0.506681,0.507205,0.004409,0.852685
-466,"I know you've previously been reticent to talk about this, but the business is scaling.",LABEL_2,2,LABEL_2,0.533216,0.845961,0.691922,0.8498
-467,"Clearly, there's leadership there and has a lot of momentum.",LABEL_1,1,LABEL_1,0.539095,0.517902,0.025803,0.826564
-468,Under what conditions would it make sense for Waymo to live outside of Alphabet?,LABEL_1,1,LABEL_1,0.463452,0.492939,-0.024122,0.807759
-469,Thank you.,LABEL_1,1,LABEL_1,0.46698,0.494104,-0.021793,0.783606
-470,"Look, Ken, on your first question, if I understand it, you know, look, we are working off a discipline ROIC framework here.",LABEL_1,1,LABEL_1,0.426648,0.480794,-0.048412,0.761343
-471,"Obviously, you know, we, to the extent that our input costs going up to us, you know, we reflect that, you know, in our ability to, you know, price our solutions and see returns there.",LABEL_2,2,LABEL_2,0.97342,0.991229,0.982457,0.762613
-472,So all of that is factored into how we are planning.,LABEL_2,2,LABEL_2,0.647395,0.88364,0.767281,0.75815
-473,"I think our compute capacity investments in '27, I think to the first question I answered, I think we are seeing strong demand indicators including long-term deals, the existing deals which we have which are renewing with exceptional demand on a moving forward basis.",LABEL_2,2,LABEL_2,0.970393,0.99023,0.98046,0.761613
-474,And so we are using all that to plan and invest accordingly.,LABEL_2,2,LABEL_2,0.894039,0.965033,0.930066,0.765506
-475,"And so I think if anything, the dynamics look healthier than where we were about a year ago.",LABEL_1,1,LABEL_1,0.541753,0.518778,0.027557,0.750095
-476,And so that's what gives us the confidence to undertake those investments.,LABEL_2,2,LABEL_2,0.950816,0.983769,0.967538,0.753481
-477,"On Waymo, look, I think we are really focused on executing and scaling up Waymo.",LABEL_2,2,LABEL_2,0.630934,0.878208,0.756417,0.751585
-478,We have set it up with our bet structure and given the team a lot of support.,LABEL_2,2,LABEL_2,0.8705,0.957265,0.91453,0.757077
-479,"Alphabet has continued, I think, our ability to think and plan long-term and invest in the business and give them that long-term roadmap, the confidence in undertaking a long-term roadmap and scaling up, I think is all hugely valuable.",LABEL_2,2,LABEL_2,0.950444,0.983646,0.967293,0.762477
-480,"We are really focused on scaling the business right now and executing to that extraordinary potential, and that's what we are focused on.",LABEL_2,2,LABEL_2,0.89471,0.965254,0.930508,0.786359
-481,Thank you very much.,LABEL_1,1,LABEL_1,0.447281,0.487603,-0.034795,0.763907
-482,Our last question comes from Sridhar Kajuria with Wolfe Research.,LABEL_1,1,LABEL_1,0.458916,0.491442,-0.027115,0.743754
-483,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.741203
-484,"Okay, thanks a lot for taking my questions.",LABEL_2,2,LABEL_2,0.490895,0.831995,0.663991,0.757132
-485,Could I please ask you 2?,LABEL_1,1,LABEL_1,0.436903,0.484178,-0.041644,0.755981
-486,One is on TPU long-term strategy.,LABEL_1,1,LABEL_1,0.486306,0.500481,-0.009038,0.738707
-487,"Longer term, is it fair to think that as TPU sales scale, you'd build merchant silicon business with a software stack that goes with it?",LABEL_2,2,LABEL_2,0.924469,0.975075,0.95015,0.761566
-488,And second is on YouTube revenue.,LABEL_2,2,LABEL_2,0.863824,0.955062,0.910124,0.784672
-489,"Given how strong engagement is, what are some of the factors that could drive accelerating growth rate at YouTube on a go-forward basis?",LABEL_1,1,LABEL_1,0.581232,0.531806,0.053613,0.786557
-490,Thank you.,LABEL_1,1,LABEL_1,0.46698,0.494104,-0.021793,0.787223
-491,"You know, maybe I'll answer the first one and Philip can broadly talk about YouTube revenue growth as well.",LABEL_2,2,LABEL_2,0.701909,0.90163,0.80326,0.782743
-492,"On the first one, on TPUs, Look, I think we've been operating with TPUs for a while.",LABEL_1,1,LABEL_1,0.490013,0.501704,-0.006591,0.763646
-493,"A lot of our cloud serving is done on TPUs, and we are also seeing strong demand for TPUs as standalone systems from other customers.",LABEL_2,2,LABEL_2,0.882729,0.961301,0.922601,0.762199
-494,"And so we'll, obviously the industry is has constraints too.",LABEL_2,2,LABEL_2,0.607678,0.870534,0.741068,0.757474
+453,"And then on the YouTube side, high level, the ads growth was driven by direct response and brand advertising I shared earlier.",LABEL_2,2,LABEL_2,0.778291,0.926836,0.853672,0.822305
+454,We continue to see a lot of fomenting in the living room.,LABEL_1,1,LABEL_1,0.495726,0.50359,-0.002821,0.803702
+455,"We have a really exciting ads roadmap as well ahead of us on the brand side, on the direct response side.",LABEL_2,2,LABEL_2,0.475757,0.827,0.654,0.800698
+456,Demand gen and Shorts remain really interesting opportunities here.,LABEL_2,2,LABEL_2,0.745621,0.916055,0.83211,0.82205
+457,"Again, this has targeting components to it, obviously, and we continue to innovate really heavily in direct response with shoppable ad formats in the living room, which will help us drive strength in retail as well.",LABEL_2,2,LABEL_2,0.74581,0.916117,0.832235,0.842349
+458,Your next question comes from Ken Goralski with Wells Fargo.,LABEL_2,2,LABEL_2,0.537654,0.847426,0.694852,0.842744
+459,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.86132
+460,Thank you very much.,LABEL_1,1,LABEL_1,0.447281,0.487603,-0.034795,0.836841
+461,"2 questions, please.",LABEL_2,2,LABEL_2,0.808011,0.936644,0.873288,0.834607
+462,"First, how would you assess the forecasted returns on compute capacity investments in, in '27 compared to prior years, '25 and '26, in light of the supply constraints, the supply chain constraints and supply chain inflation we're seeing.",LABEL_2,2,LABEL_2,0.680333,0.89451,0.78902,0.854635
+463,I'm curious as to how you think about the return profile of '27 and kind of future investments versus past investment investments in capacity.,LABEL_2,2,LABEL_2,0.777779,0.926667,0.853334,0.876263
+464,"And the second one, a little different, different topic here.",LABEL_1,1,LABEL_1,0.525492,0.513412,0.016824,0.857876
+465,"When you think about Waymo, what are the key factors you would consider when evaluating that, you know, a change in corporate structure for Waymo?",LABEL_1,1,LABEL_1,0.506681,0.507205,0.004409,0.833799
+466,"I know you've previously been reticent to talk about this, but the business is scaling.",LABEL_2,2,LABEL_2,0.533216,0.845961,0.691922,0.830914
+467,"Clearly, there's leadership there and has a lot of momentum.",LABEL_1,1,LABEL_1,0.539095,0.517902,0.025803,0.807678
+468,Under what conditions would it make sense for Waymo to live outside of Alphabet?,LABEL_1,1,LABEL_1,0.463452,0.492939,-0.024122,0.788873
+469,Thank you.,LABEL_1,1,LABEL_1,0.46698,0.494104,-0.021793,0.76472
+470,"Look, Ken, on your first question, if I understand it, you know, look, we are working off a discipline ROIC framework here.",LABEL_1,1,LABEL_1,0.426648,0.480794,-0.048412,0.742457
+471,"Obviously, you know, we, to the extent that our input costs going up to us, you know, we reflect that, you know, in our ability to, you know, price our solutions and see returns there.",LABEL_2,2,LABEL_2,0.97342,0.991229,0.982457,0.743726
+472,So all of that is factored into how we are planning.,LABEL_2,2,LABEL_2,0.647395,0.88364,0.767281,0.739264
+473,"I think our compute capacity investments in '27, I think to the first question I answered, I think we are, you know, we are seeing strong demand indicators including long-term deals, the existing deals which we have which are renewing at, you know, with exceptional demand on a moving forward basis.",LABEL_2,2,LABEL_2,0.967913,0.989411,0.978823,0.742393
+474,And so we are using all that to plan and invest accordingly.,LABEL_2,2,LABEL_2,0.894039,0.965033,0.930066,0.765465
+475,"And so, you know, I think if anything, the dynamics look healthier than where we were about a year ago.",LABEL_2,2,LABEL_2,0.590352,0.864816,0.729632,0.767356
+476,And so that's what gives us the confidence to undertake those investments.,LABEL_2,2,LABEL_2,0.950816,0.983769,0.967538,0.770742
+477,"On Waymo, look, I think we are really focused on executing and scaling up Waymo.",LABEL_2,2,LABEL_2,0.630934,0.878208,0.756417,0.768846
+478,We have set it up with our bet structure and given the team a lot of support.,LABEL_2,2,LABEL_2,0.8705,0.957265,0.91453,0.774338
+479,"Alphabet has continued, I think, our ability to think and plan long-term and invest in the business and give them that long-term roadmap, the confidence in undertaking a long-term roadmap and scaling up, I think is all hugely valuable.",LABEL_2,2,LABEL_2,0.950444,0.983646,0.967293,0.779738
+480,"We are really focused on scaling the business right now and executing to that extraordinary potential, and that's what we are focused on.",LABEL_2,2,LABEL_2,0.89471,0.965254,0.930508,0.80362
+481,Thank you very much.,LABEL_1,1,LABEL_1,0.447281,0.487603,-0.034795,0.781168
+482,Our last question comes from Sridhar Kajuria with Wolfe Research.,LABEL_1,1,LABEL_1,0.458916,0.491442,-0.027115,0.761015
+483,Your line is now open.,LABEL_2,2,LABEL_2,0.623187,0.875652,0.751304,0.758464
+484,"Okay, thanks a lot for taking my questions.",LABEL_2,2,LABEL_2,0.490895,0.831995,0.663991,0.774393
+485,Could I please ask you 2?,LABEL_1,1,LABEL_1,0.436903,0.484178,-0.041644,0.773242
+486,One is on TPU long-term strategy.,LABEL_1,1,LABEL_1,0.486306,0.500481,-0.009038,0.755968
+487,"Longer term, is it fair to think that as TPU sales scale, you'd build merchant silicon business with a software stack that goes with it?",LABEL_2,2,LABEL_2,0.924469,0.975075,0.95015,0.778827
+488,And second is on YouTube revenue.,LABEL_2,2,LABEL_2,0.863824,0.955062,0.910124,0.801933
+489,"Given how strong engagement is, what are some of the factors that could drive accelerating growth rate at YouTube on a go-forward basis?",LABEL_1,1,LABEL_1,0.581232,0.531806,0.053613,0.803818
+490,Thank you.,LABEL_1,1,LABEL_1,0.46698,0.494104,-0.021793,0.804484
+491,"You know, maybe I'll answer the first one and Philip can broadly talk about YouTube revenue growth as well.",LABEL_2,2,LABEL_2,0.701909,0.90163,0.80326,0.800004
+492,"On the first one, on TPUs, Look, I think we've been operating with TPUs for a while.",LABEL_1,1,LABEL_1,0.490013,0.501704,-0.006591,0.780907
+493,"A lot of our cloud serving is done on TPUs, and we are also seeing strong demand for TPUs as standalone systems from other customers.",LABEL_2,2,LABEL_2,0.882729,0.961301,0.922601,0.779501
+494,"And so we'll, obviously the industry is has constraints too.",LABEL_2,2,LABEL_2,0.607678,0.870534,0.741068,0.774776
 495,So we have to plan and we allocate on a forward-looking basis along the principles I spoke about earlier.,LABEL_1,1,LABEL_1,0.462122,0.4925,-0.024999,0.75616
 496,"So I don't want to project out too far into the future there, but I do think we are, you know, obviously we will scale up based on the opportunities we see and the demand we see, commensurate with the constraints that exist and the allocation needs we have for frontier model development, making sure we can serve our consumer businesses and enterprise businesses well.",LABEL_2,2,LABEL_2,0.867732,0.956352,0.912703,0.75479
 497,"And Philip, you want to add on YouTube monetization?",LABEL_2,2,LABEL_2,0.679449,0.894218,0.788436,0.75559

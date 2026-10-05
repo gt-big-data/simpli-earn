@@ -47,24 +47,53 @@ const APPLE_QUARTER_ORDER = [
   "aapl_2023Q4",
 ] as const;
 
+type ChartsTab = "stock" | "sentiment" | "compare";
+type IndicatorView = "stock" | "VIX" | "TNX" | "DXY";
+
 export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
-  const [activeTab, setActiveTab] = useState<"stock" | "sentiment" | "compare">("stock");
-  const [indicatorView, setIndicatorView] = useState<"stock" | "VIX" | "TNX" | "DXY">("stock");
+  const [activeTab, setActiveTabState] = useState<ChartsTab>("stock");
+  const [indicatorView, setIndicatorViewState] = useState<IndicatorView>("stock");
+  // Tabs/indicator views are mounted lazily on first visit, then kept mounted (hidden when inactive)
+  const [visitedTabs, setVisitedTabs] = useState<Set<ChartsTab>>(() => new Set(["stock"]));
+  const [lastIndicator, setLastIndicator] = useState<Exclude<IndicatorView, "stock"> | null>(null);
+
+  const setActiveTab = (tab: ChartsTab) => {
+    setActiveTabState(tab);
+    setVisitedTabs((prev) => (prev.has(tab) ? prev : new Set(prev).add(tab)));
+  };
+  const setIndicatorView = (view: IndicatorView) => {
+    setIndicatorViewState(view);
+    if (view !== "stock") setLastIndicator(view);
+  };
+  const tabPanelClass = (tab: ChartsTab, extra: string) =>
+    `${activeTab === tab ? "flex" : "hidden"} w-full min-h-0 flex-1 flex-col ${extra}`;
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id");
   const ticker = searchParams.get("ticker"); // Get ticker from URL params
   
-  // Use config from dashboardConfigs for preloaded dashboards, or create dynamic config for new videos
-  let config = dashboardId ? dashboardConfigs[dashboardId] : null;
-  
-  // For new videos, create a dynamic config if ticker is provided
-  if (!config && ticker) {
-    config = {
-      ticker: ticker.toUpperCase(),
-      date: new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: '2-digit' })
-    };
-  }
-  
+  const videoUrlParam = searchParams.get("video_url");
+  const preloadedConfig = dashboardId ? dashboardConfigs[dashboardId] : null;
+
+  // For custom videos, look up the ticker and call date (YouTube upload date) from the RAG API
+  const [videoInfo, setVideoInfo] = useState<{ ticker: string | null; date: string | null } | null>(null);
+  const [videoInfoLoading, setVideoInfoLoading] = useState(false);
+  useEffect(() => {
+    if (preloadedConfig || !videoUrlParam) return;
+    let cancelled = false;
+    setVideoInfoLoading(true);
+    fetch(`${API_BASE_URL}/video-info?video_url=${encodeURIComponent(videoUrlParam)}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => { if (!cancelled) setVideoInfo(data); })
+      .catch(() => { if (!cancelled) setVideoInfo(null); })
+      .finally(() => { if (!cancelled) setVideoInfoLoading(false); });
+    return () => { cancelled = true; };
+  }, [preloadedConfig, videoUrlParam]);
+
+  // A ticker typed by the user (URL param) wins over the detected one
+  const customTicker = ticker && ticker !== "N/A" ? ticker.toUpperCase() : videoInfo?.ticker;
+  const config = preloadedConfig
+    ?? (customTicker && videoInfo?.date ? { ticker: customTicker, date: videoInfo.date } : null);
+
   const [sentimentData, setSentimentData] = useState<{
     relevance: SentimentDataPoint[];
     specificity: SentimentDataPoint[];
@@ -249,7 +278,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
             <label className="text-sm font-medium text-white/70 mr-2">View:</label>
             <select
               value={indicatorView}
-              onChange={(e) => setIndicatorView(e.target.value as "stock" | "VIX" | "TNX" | "DXY")}
+              onChange={(e) => setIndicatorView(e.target.value as IndicatorView)}
               className="bg-white/10 border border-white/25 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-white/40"
             >
               <option value="stock">Stock</option>
@@ -260,39 +289,48 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
           </div>
         )}
         
-        <div
-          className={`flex w-full min-h-0 flex-1 flex-col ${
-            activeTab === "compare"
-              ? "overflow-y-auto overflow-x-hidden"
-              : "items-center justify-center overflow-hidden"
-          }`}
-        >
-          {activeTab === "stock" && (
-            <>
+        {/* Panels stay mounted after their first visit and are only hidden, so switching
+            tabs/views keeps their fetched data and UI state instead of refetching */}
+        <div className="flex w-full min-h-0 flex-1 flex-col">
+          {visitedTabs.has("stock") && (
+            <div className={tabPanelClass("stock", "items-center justify-center overflow-hidden")}>
               {config ? (
                 <>
-                  {indicatorView === "stock" ? (
+                  <div className={indicatorView === "stock" ? "contents" : "hidden"}>
                     <StockChart ticker={config.ticker} date={config.date} />
-                  ) : (
-                    <EconomicIndicatorsChart 
-                      startLocal={`${config.date} 09:30`}
-                      hours={48} 
-                      interval="5m"
-                      initialIndicator={indicatorView}
-                    />
+                  </div>
+                  {lastIndicator && (
+                    <div className={indicatorView !== "stock" ? "contents" : "hidden"}>
+                      <EconomicIndicatorsChart
+                        startLocal={`${config.date} 09:30`}
+                        hours={48}
+                        interval="5m"
+                        initialIndicator={lastIndicator}
+                      />
+                    </div>
                   )}
                 </>
+              ) : videoInfoLoading ? (
+                <div className="text-center text-white/70">
+                  <p className="text-lg font-medium">Loading chart…</p>
+                </div>
               ) : (
                 <div className="text-center text-white/70">
                   <p className="text-lg font-medium">Unable to display chart</p>
-                  <p className="text-sm mt-2">Please select a valid dashboard</p>
+                  <p className="text-sm mt-2">
+                    {videoUrlParam
+                      ? !customTicker
+                        ? "Couldn't detect a ticker for this call. Re-create the dashboard with a ticker symbol."
+                        : "Couldn't determine the call date for this video."
+                      : "Please select a valid dashboard"}
+                  </p>
                 </div>
               )}
-            </>
+            </div>
           )}
-          
-          {activeTab === "sentiment" && (
-            <>
+
+          {visitedTabs.has("sentiment") && (
+            <div className={tabPanelClass("sentiment", "items-center justify-center overflow-hidden")}>
               {loading ? (
                 <div className="text-center text-white/70">
                   <p className="text-lg font-medium">Loading sentiment data...</p>
@@ -321,11 +359,11 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   <p className="text-sm mt-2">Please select a valid dashboard</p>
                 </div>
               )}
-            </>
+            </div>
           )}
 
-          {activeTab === "compare" && (
-            <>
+          {visitedTabs.has("compare") && (
+            <div className={tabPanelClass("compare", "overflow-y-auto overflow-x-hidden")}>
               {compareEligible ? (
                 <div className="flex min-h-[420px] w-full flex-1 flex-col">
                   <QoQComparison
@@ -344,7 +382,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                   </p>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>

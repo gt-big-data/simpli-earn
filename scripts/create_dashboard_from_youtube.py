@@ -99,6 +99,10 @@ class DashboardCreator:
                     'upload_date': snippet['publishedAt'],
                     'description': snippet.get('description', '')
                 }
+            # Invalid key / quota exceeded / video not found: fall back to yt-dlp
+            err = data.get('error', {}).get('message', 'no items returned')
+            print(f"⚠️  YouTube API failed: {err}, trying yt-dlp...")
+            return self.get_metadata_ytdlp(f"https://www.youtube.com/watch?v={video_id}")
         except Exception as e:
             print(f"⚠️  YouTube API failed: {e}, trying pytube...")
             
@@ -181,29 +185,40 @@ class DashboardCreator:
         """Download audio from YouTube video using yt-dlp (more reliable)"""
         print("🎵 Downloading audio from YouTube...")
         
-        # Primary method: yt-dlp downloading best audio format directly (no ffmpeg needed)
-        try:
-            import subprocess
-            output_file = self.temp_dir / f"audio_{int(time.time())}.m4a"
-            
-            print("  → Using yt-dlp (downloading audio-only format)...")
-            result = subprocess.run([
-                'yt-dlp',
-                '-f', 'bestaudio',  # Download best audio stream directly (no conversion)
-                '-o', str(output_file),
-                youtube_url
-            ], capture_output=True, text=True, timeout=600)
-            
-            if result.returncode == 0 and output_file.exists():
-                print(f"✅ Audio downloaded: {output_file}")
-                return output_file
-            else:
+        # Primary method: yt-dlp downloading an audio-only format directly (no ffmpeg needed).
+        # YouTube intermittently 403s individual stream URLs, so try several formats and retry.
+        # Low-bitrate audio is plenty for speech transcription and downloads ~2.5x faster.
+        format_attempts = [
+            'bestaudio[abr<=80][protocol=https]/bestaudio[protocol=https]',
+            'bestaudio[protocol=https]',
+            'bestaudio[protocol^=m3u8]',  # HLS audio: slower, but uses different URLs
+        ]
+        import subprocess
+        for attempt, fmt in enumerate(format_attempts, 1):
+            try:
+                stem = f"audio_{int(time.time())}"
+                print(f"  → Using yt-dlp (attempt {attempt}/{len(format_attempts)}, format: {fmt})...")
+                result = subprocess.run([
+                    'yt-dlp',
+                    '--no-update',
+                    '-f', fmt,
+                    '-o', str(self.temp_dir / f"{stem}.%(ext)s"),
+                    youtube_url
+                ], capture_output=True, text=True, timeout=900)
+
+                downloaded = [p for p in self.temp_dir.glob(f"{stem}.*") if not p.name.endswith('.part')]
+                if result.returncode == 0 and downloaded:
+                    print(f"✅ Audio downloaded: {downloaded[0]}")
+                    return downloaded[0]
+
                 print(f"⚠️  yt-dlp download failed")
                 if result.stderr:
-                    print(f"   Error: {result.stderr[:200]}")
-                
-        except Exception as e:
-            print(f"⚠️  yt-dlp failed: {e}")
+                    # Show ERROR lines (warnings like "version is older than 90 days" come first and hide the cause)
+                    err_lines = [l for l in result.stderr.splitlines() if l.startswith('ERROR')]
+                    print(f"   Error: {chr(10).join(err_lines) or result.stderr[-500:]}")
+            except Exception as e:
+                print(f"⚠️  yt-dlp failed: {e}")
+            time.sleep(2)
         
         # Fallback: pytube
         try:
@@ -344,8 +359,19 @@ class DashboardCreator:
                 'specificity_filename': sentiment_filenames.get('specificity_filename')
             }
             
+            # Ticker + call date drive the stock/indicator charts (see docs/migrations/002_video_analyses_metadata.sql)
+            if metadata:
+                data['metadata'] = {k: metadata.get(k) for k in ('title', 'ticker', 'upload_date')}
+
             # Upsert (insert or update if exists) - specify the unique column
-            result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
+            try:
+                result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
+            except Exception as e:
+                if 'metadata' not in data or 'metadata' not in str(e):
+                    raise
+                print("⚠️  video_analyses has no metadata column yet; saving without it")
+                data.pop('metadata')
+                result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
             
             print(f"✅ Database entry created for: {video_identifier}")
             print(f"   📝 Transcript: {transcript_filename}")

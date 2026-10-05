@@ -1,9 +1,6 @@
 import os
 import requests
 import yfinance as yf
-import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import pandas as pd
@@ -154,10 +151,10 @@ def get_stock_chart(ticker, event_date_str):
                 perfect_hours_df.at[hour, 'Close'] = data_after['Close'].iloc[0]
                 
         # Forward fill any remaining NaN values
-        perfect_hours_df.fillna(method='ffill', inplace=True)
+        perfect_hours_df = perfect_hours_df.ffill()
         
         # If still have NaNs at the beginning, backfill
-        perfect_hours_df.fillna(method='bfill', inplace=True)
+        perfect_hours_df = perfect_hours_df.bfill()
 
         # Calculate percentage changes
         start_price = perfect_hours_df['Close'].iloc[0]

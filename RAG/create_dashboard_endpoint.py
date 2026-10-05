@@ -124,7 +124,8 @@ def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] 
             jobs[job_id]["video_id"] = _extract_video_id(youtube_url)
         else:
             jobs[job_id]["status"] = "failed"
-            err_msg = (result.stderr or result.stdout or "Unknown error")[:500]
+            # Keep the tail: the failing step is printed last, after the progress banner
+            err_msg = ((result.stdout or "") + (result.stderr or "")).strip()[-1500:] or "Unknown error"
             jobs[job_id]["error"] = err_msg
             jobs[job_id]["completed_at"] = datetime.now().isoformat()
             print(f"[dashboard] Job {job_id} FAILED (exit {result.returncode}):\n{result.stderr or result.stdout}")

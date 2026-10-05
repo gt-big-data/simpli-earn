@@ -62,6 +62,9 @@ interface QoQComparisonProps {
   setCompareId: (id: string) => void;
 }
 
+// Comparisons are LLM-generated and slow; keep each (current, previous) pair for the session
+const compareCache = new Map<string, CompareData>();
+
 export default function QoQComparison({ currentId, compareId, setCompareId }: QoQComparisonProps) {
   const [data, setData] = useState<CompareData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -101,6 +104,16 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
       return;
     }
 
+    const cacheKey = `${effectiveCurrentId}|${safeCompareId}`;
+    const cached = compareCache.get(cacheKey);
+    if (cached) {
+      setData(cached);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
     const fetchComparison = async () => {
       setLoading(true);
       setError(null);
@@ -137,15 +150,17 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
         if (json.error) {
           throw new Error(json.error);
         }
-        setData(json);
+        compareCache.set(cacheKey, json);
+        if (!cancelled) setData(json);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to fetch comparison");
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to fetch comparison");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchComparison();
+    return () => { cancelled = true; };
   }, [effectiveCurrentId, safeCompareId]);
 
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

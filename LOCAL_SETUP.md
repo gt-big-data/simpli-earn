@@ -6,7 +6,7 @@ This guide gets SimpliEarn running completely locally (frontend, RAG API, sentim
 
 - **Python 3.9+** (3.11+ recommended)
 - **Node.js 18+** and npm
-- **yt-dlp** (for YouTube audio download): `brew install yt-dlp` on macOS
+- **yt-dlp** (for YouTube audio download): `brew install yt-dlp` on macOS, plus **deno** (`brew install deno`) — YouTube returns 403s without a JS runtime. Keep yt-dlp current (`yt-dlp -U` / `pip install -U "yt-dlp[default]"`)
 
 ## 1. Environment Variables
 

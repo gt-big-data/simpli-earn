@@ -63,18 +63,32 @@ const formatDateTime = (timestamp: string): string => {
   }
 };
 
-const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({ 
+// Survives unmounts (e.g. leaving and reopening a dashboard) so indicators don't refetch
+const indicatorsCache = new Map<string, IndicatorsResponse>();
+
+const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
   startLocal, 
   hours = 48,
   interval = "5m",
   initialIndicator = "VIX"
 }) => {
-  const [indicatorsData, setIndicatorsData] = useState<IndicatorsResponse | null>(null);
+  const cacheKey = `${startLocal}|${hours}|${interval}`;
+  const [indicatorsData, setIndicatorsData] = useState<IndicatorsResponse | null>(() => indicatorsCache.get(cacheKey) ?? null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !indicatorsCache.has(cacheKey));
   const [activeIndicator, setActiveIndicator] = useState<string>(initialIndicator);
 
+  // One request returns all three indicators, so switching VIX/TNX/DXY only changes activeIndicator
   useEffect(() => {
+    const cached = indicatorsCache.get(cacheKey);
+    if (cached) {
+      setIndicatorsData(cached);
+      setError(null);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
     const fetchIndicatorsData = async () => {
       try {
         setLoading(true);
@@ -95,35 +109,26 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
         });
 
         const data = await response.json();
+        if (cancelled) return;
         if (!data.ok || data.error) {
           setError(data.error || 'Failed to fetch indicator data');
         } else {
+          // If activeIndicator has no data, the render below falls back to the first available one
+          indicatorsCache.set(cacheKey, data);
           setIndicatorsData(data);
-          // Set default active indicator to initialIndicator if available, otherwise first available
-          if (data.data) {
-            const availableIndicators = Object.keys(data.data).filter(key => 
-              data.data[key] && !data.data[key].error && data.data[key].values.length > 0
-            );
-            if (availableIndicators.length > 0) {
-              // Prefer initialIndicator if it's available, otherwise use first available
-              if (initialIndicator && availableIndicators.includes(initialIndicator)) {
-                setActiveIndicator(initialIndicator);
-              } else {
-                setActiveIndicator(availableIndicators[0]);
-              }
-            }
-          }
         }
       } catch (err) {
+        if (cancelled) return;
         setError('Failed to fetch indicator data');
         console.error(err);
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchIndicatorsData();
-  }, [startLocal, hours, interval, initialIndicator]);
+    return () => { cancelled = true; };
+  }, [cacheKey, startLocal, hours, interval]);
 
   // Update activeIndicator when initialIndicator prop changes
   useEffect(() => {

@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt fastapi uvicorn
 COPY RAG/ .
 COPY scripts/create_dashboard_from_youtube.py /app/scripts/create_dashboard_from_youtube.py
 COPY sentiment/ /app/sentiment/
+COPY frontend/lib/preloaded_videos.json /app/frontend/lib/preloaded_videos.json
 
 EXPOSE 8080
 
