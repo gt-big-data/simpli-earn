@@ -66,6 +66,7 @@ def _row_to_job_status(row: dict) -> dict:
 class CreateDashboardRequest(BaseModel):
     youtube_url: str
     ticker: Optional[str] = None
+    force: bool = False  # reprocess even if an analysis already exists
 
 
 class JobStatus(BaseModel):
@@ -90,6 +91,26 @@ def _extract_video_id(youtube_url: str) -> Optional[str]:
     if "youtube.com/live/" in youtube_url:
         return youtube_url.split("youtube.com/live/")[1].split("?")[0]
     return None
+
+
+def _has_complete_analysis(video_id: Optional[str]) -> bool:
+    """True if video_analyses already has transcript + both sentiment files for this video."""
+    sb = _get_supabase()
+    if not video_id or not sb:
+        return False
+    try:
+        res = (
+            sb.table("video_analyses")
+            .select("transcript_filename,relevance_filename,specificity_filename")
+            .eq("video_identifier", video_id)
+            .limit(1)
+            .execute()
+        )
+    except Exception as e:
+        print(f"[dashboard] existing-analysis check failed: {e}")
+        return False
+    row = res.data[0] if res.data else {}
+    return all(row.get(k) for k in ("transcript_filename", "relevance_filename", "specificity_filename"))
 
 
 def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] = None):
@@ -145,7 +166,18 @@ async def create_dashboard(request: CreateDashboardRequest, background_tasks: Ba
     """
     Trigger dashboard creation from YouTube URL.
     With YOUTUBE_HOME_WORKER=1, only enqueues to Supabase; home worker runs yt-dlp.
+    Already-processed videos return immediately (status "completed", job_id None).
     """
+    video_id = _extract_video_id(request.youtube_url)
+    if not request.force and _has_complete_analysis(video_id):
+        return {
+            "job_id": None,
+            "status": "completed",
+            "message": "Dashboard already exists",
+            "video_id": video_id,
+            "existing": True,
+        }
+
     if _youtube_home_worker_enabled():
         sb = _get_supabase()
         if not sb:
@@ -173,6 +205,17 @@ async def create_dashboard(request: CreateDashboardRequest, background_tasks: Ba
             "ticker_provided": request.ticker is not None,
             "home_worker": True,
         }
+
+    # Same video already processing (e.g. submitted twice): reuse that job
+    for job in jobs.values():
+        if job["status"] in ("pending", "running") and _extract_video_id(job["youtube_url"]) == video_id:
+            return {
+                "job_id": job["job_id"],
+                "status": job["status"],
+                "message": "Dashboard creation already in progress",
+                "ticker_provided": request.ticker is not None,
+                "home_worker": False,
+            }
 
     job_id = str(uuid.uuid4())
     jobs[job_id] = {

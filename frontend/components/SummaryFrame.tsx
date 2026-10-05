@@ -17,6 +17,8 @@ interface SummaryFrameProps {
   summary: string;
   summarySections?: SummarySection[];
   onTimestampClick?: (timestamp: number) => void;
+  /** When set, show a loading skeleton with this message instead of the summary */
+  placeholder?: string | null;
 }
 
 export default function SummaryFrame({
@@ -25,6 +27,7 @@ export default function SummaryFrame({
   summary,
   summarySections = [],
   onTimestampClick,
+  placeholder = null,
 }: SummaryFrameProps) {
   const parseToJSX = (htmlString: string, inline = false) => {
     const parts = htmlString.split(/(<b>.*?<\/b>)/g);
@@ -73,7 +76,18 @@ export default function SummaryFrame({
           Summary
         </h1>
         <div className="w-full px-8 pt-4 pb-8">
-          {summarySections.length > 0 ? (
+          {placeholder ? (
+            <div className="flex w-full flex-col gap-4" aria-busy="true">
+              <p className="text-center text-[16px] text-white/70">{placeholder}</p>
+              {[92, 78, 85, 60, 88, 70, 80, 55].map((width, i) => (
+                <div
+                  key={i}
+                  className="h-4 animate-pulse rounded-full bg-white/10"
+                  style={{ width: `${width}%` }}
+                />
+              ))}
+            </div>
+          ) : summarySections.length > 0 ? (
             <div className="flex w-full min-w-0 flex-col gap-7">
               {summarySections.map((section, index) => (
                 <div key={`${section.timestamp ?? "none"}-${index}`} className="w-full min-w-0">

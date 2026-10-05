@@ -6,7 +6,7 @@ import { FaSearch, FaChevronDown, FaTrash } from "react-icons/fa";
 import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 interface LibraryVideo {
   id: string;
@@ -26,18 +26,6 @@ export default function Home() {
   const [processingStatus, setProcessingStatus] = useState("");
   const [libraryVideos, setLibraryVideos] = useState<LibraryVideo[]>([]);
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
-  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Cleanup poll interval on unmount
-  useEffect(() => {
-    return () => {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-    };
-  }, []);
-
   // Load library videos from database
   useEffect(() => {
     const fetchLibrary = async () => {
@@ -73,46 +61,17 @@ export default function Home() {
       });
       
       const data = await response.json();
-      const jobId = data.job_id;
-      
-      setProcessingStatus("Processing video (this may take several minutes)...");
-      
+      if (!response.ok) {
+        throw new Error(data?.detail || `Request failed: ${response.status}`);
+      }
+
+      // Go straight to the dashboard: the video plays right away and the summary / sentiment
+      // show placeholders while the job runs (the dashboard polls it via the `job` param).
+      // Already-processed videos come back with no job_id and load immediately.
       const tickerParam = tickerSymbol?.trim() ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}` : "";
-      const dashboardUrl = `/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}`;
-
-      const pollStatus = async () => {
-        try {
-          const statusResponse = await fetch(`${apiUrl}/dashboard/job-status/${jobId}`);
-          const statusData = await statusResponse.json();
-          
-          if (statusData.status === "completed") {
-            if (pollIntervalRef.current) {
-              clearInterval(pollIntervalRef.current);
-              pollIntervalRef.current = null;
-            }
-            setProcessingStatus("Complete! Redirecting...");
-            // Use window.location for reliable redirect (router.push can fail in some edge cases)
-            setTimeout(() => {
-              window.location.href = dashboardUrl;
-            }, 800);
-          } else if (statusData.status === "failed") {
-            if (pollIntervalRef.current) {
-              clearInterval(pollIntervalRef.current);
-              pollIntervalRef.current = null;
-            }
-            setProcessingStatus(`Failed: ${statusData.error || "Unknown error"}`);
-            setIsProcessing(false);
-          } else {
-            setProcessingStatus(`Processing: ${statusData.status}...`);
-          }
-        } catch (error) {
-          console.error("Status check failed:", error);
-        }
-      };
-
-      // Poll immediately, then every 3 seconds
-      pollStatus();
-      pollIntervalRef.current = setInterval(pollStatus, 3000);
+      const jobParam = data.job_id ? `&job=${encodeURIComponent(data.job_id)}` : "";
+      setProcessingStatus("Opening dashboard...");
+      window.location.href = `/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}${jobParam}`;
       
     } catch (error) {
       console.error("Failed to create dashboard:", error);

@@ -1,13 +1,14 @@
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import VideoFrame from "@/components/VideoFrame";
 import SummaryFrame from "@/components/SummaryFrame";
 import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
 import FullChat from "@/components/FullChat";
+import type { PipelineState } from "@/components/ChartsFrame";
 
 type SummarySection = {
   heading?: string | null;
@@ -16,16 +17,75 @@ type SummarySection = {
   timestamp: number | null;
 };
 
+const PIPELINE_STATUS_TEXT: Record<string, string> = {
+  pending: "Queued for processing…",
+  running: "Transcribing the call and analyzing sentiment — this usually takes a few minutes…",
+};
+
 function DashboardContent() {
   const searchParams = useSearchParams();
-  const [summary, setSummary] = useState("Loading summary...");
+  const router = useRouter();
+  const [summary, setSummary] = useState("");
   const [summarySections, setSummarySections] = useState<SummarySection[]>([]);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+
+  // Custom links open here right away with `job=<id>` while the pipeline (download, transcript,
+  // sentiment) runs. Poll it; when it finishes, drop the param so summary/charts load normally.
+  const jobId = searchParams.get("job");
+  const [pipeline, setPipeline] = useState<PipelineState | null>(jobId ? { status: "pending" } : null);
 
   useEffect(() => {
+    if (!jobId) {
+      setPipeline(null);
+      return;
+    }
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    const finish = () => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("job");
+      setPipeline(null);
+      router.replace(`/dashboard?${params.toString()}`);
+    };
+
+    const poll = async () => {
+      try {
+        const res = await fetch(`${apiUrl}/dashboard/job-status/${encodeURIComponent(jobId)}`);
+        if (cancelled) return;
+        // 404: API restarted and forgot the in-memory job; just try loading whatever exists
+        if (res.status === 404) return finish();
+        const data = await res.json();
+        if (cancelled) return;
+        if (data.status === "completed") return finish();
+        if (data.status === "failed") {
+          setPipeline({ status: "failed", error: data.error || "Unknown error" });
+          return;
+        }
+        setPipeline({ status: data.status });
+      } catch {
+        // API briefly unreachable; keep polling
+      }
+      if (!cancelled) timer = setTimeout(poll, 3000);
+    };
+
+    poll();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [jobId, router, searchParams]);
+
+  useEffect(() => {
+    // Summary needs the transcript the job is still producing
+    if (searchParams.get("job")) return;
+
     const fetchSummary = async () => {
       const id = searchParams.get("id");
       const videoUrl = searchParams.get("video_url");
 
+      setSummaryLoading(true);
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         let res;
@@ -73,11 +133,29 @@ function DashboardContent() {
         console.error("Error fetching summary:", err);
         setSummary("❌ Failed to connect to the summary API. Ensure the RAG API is running (port 8000) and try again.");
         setSummarySections([]);
+      } finally {
+        setSummaryLoading(false);
       }
     };
 
     fetchSummary();
   }, [searchParams]);
+
+  const summaryPlaceholder =
+    pipeline?.status === "failed"
+      ? null
+      : pipeline
+        ? PIPELINE_STATUS_TEXT[pipeline.status] ?? PIPELINE_STATUS_TEXT.running
+        : summaryLoading
+          ? "Generating summary…"
+          : null;
+
+  useEffect(() => {
+    if (pipeline?.status === "failed") {
+      setSummary(`❌ Processing this call failed:\n${pipeline.error}`);
+      setSummarySections([]);
+    }
+  }, [pipeline]);
 
   const [activeDisplay, setActiveDisplay] = useState("full");
   const [chatMinimized, setChatMinimized] = useState(false);
@@ -123,7 +201,7 @@ function DashboardContent() {
             <div className="flex flex-col gap-[40px]">
               <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
               <div className="w-full grow min-h-[450px]">
-                <ChartsFrame onTimestampClick={handleTimestampSeek} />
+                <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
               </div>
             </div>
             <div className="flex flex-col gap-[40px] -mt-[40px] sm:max-h-[1100px]">
@@ -140,6 +218,7 @@ function DashboardContent() {
                   summary={summary}
                   summarySections={summarySections}
                   onTimestampClick={handleTimestampSeek}
+                  placeholder={summaryPlaceholder}
                 />
               </div>
               {!fullscreen && !(activeDisplay == "full") && (

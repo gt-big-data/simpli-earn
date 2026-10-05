@@ -513,9 +513,40 @@ def generate_summary_from_youtube(data: dict = Body(...)):
     if not video_url:
         return {"summary": "âŒ No video URL provided."}
 
-    video_id = None
-    if "v=" in video_url:
-        video_id = video_url.split("v=")[1].split("&")[0]
+    video_id = extract_video_id(video_url)
+
+    # Summaries are generated once per video and saved to video_analyses.summary
+    analysis_row = None
+    if video_id and supabase:
+        try:
+            result = supabase.table("video_analyses").select("transcript_filename,summary").eq("video_identifier", video_id).execute()
+            analysis_row = result.data[0] if result.data else None
+        except Exception as e:
+            print(f"Failed to look up video analysis: {e}")
+    saved = (analysis_row or {}).get("summary")
+    if saved and saved.get("summary"):
+        sections = saved.get("sections") or []
+        # Bullets get timestamps from YouTube captions; if captions were unavailable when this was
+        # saved, re-anchor them now (no LLM call). Prose sections never carry timestamps.
+        if any(s.get("bullet") and s.get("timestamp") is None for s in sections):
+            try:
+                entries = get_video_transcript_entries(video_url)
+            except Exception:
+                entries = None
+            if entries:
+                sections = build_summary_sections(saved["summary"], entries)
+                try:
+                    supabase.table("video_analyses").update({
+                        "summary": {**saved, "sections": sections},
+                    }).eq("video_identifier", video_id).execute()
+                except Exception as e:
+                    print(f"Failed to update summary timestamps for {video_id}: {e}")
+        return {
+            "summary": saved["summary"],
+            "sections": sections,
+            "provider": saved.get("provider"),
+            "cached": True,
+        }
 
     transcript_entries = None
     try:
@@ -524,16 +555,14 @@ def generate_summary_from_youtube(data: dict = Body(...)):
         transcript_entries = None
 
     transcript_text = None
-    if video_id and supabase:
+    if analysis_row:
         try:
-            result = supabase.table("video_analyses").select("transcript_filename").eq("video_identifier", video_id).execute()
-            if result.data and len(result.data) > 0:
-                transcript_filename = result.data[0].get("transcript_filename")
-                if transcript_filename:
-                    print(f"ðŸ“¥ Downloading transcript from Supabase: {transcript_filename}")
-                    transcript_data = supabase.storage.from_("transcripts").download(transcript_filename)
-                    transcript_text = transcript_data.decode("utf-8")
-                    print(f"âœ… Transcript loaded from Supabase ({len(transcript_text)} chars)")
+            transcript_filename = analysis_row.get("transcript_filename")
+            if transcript_filename:
+                print(f"ðŸ“¥ Downloading transcript from Supabase: {transcript_filename}")
+                transcript_data = supabase.storage.from_("transcripts").download(transcript_filename)
+                transcript_text = transcript_data.decode("utf-8")
+                print(f"âœ… Transcript loaded from Supabase ({len(transcript_text)} chars)")
         except Exception as e:
             print(f"âš ï¸  Failed to load transcript from Supabase: {e}")
 
@@ -579,13 +608,23 @@ Summary:
             lambda: summary_chain.run(transcript=transcript_text),
             rebuild_fn=_build_yt_summary,
         )
-        return {
-            "summary": result,
-            "sections": build_summary_sections(result, transcript_entries or []),
-            "provider": get_active_provider(),
-        }
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
+    response = {
+        "summary": result,
+        "sections": build_summary_sections(result, transcript_entries or []),
+        "provider": get_active_provider(),
+    }
+    # Only processed videos have a row to save into; YouTube-caption fallbacks regenerate each time
+    if analysis_row:
+        try:
+            supabase.table("video_analyses").update({
+                "summary": {**response, "generated_at": datetime.now().isoformat()},
+            }).eq("video_identifier", video_id).execute()
+        except Exception as e:
+            print(f"Failed to save summary for {video_id}: {e}")
+    return response
 
 
 HIGH_SIGNAL_WORDS = [
@@ -701,9 +740,22 @@ def get_red_flags(data: dict = Body(...)):
         return {"red_flags": [], "error": "Missing video identifier or Supabase"}
 
     try:
-        result = supabase.table("video_analyses").select("relevance_filename").eq("video_identifier", video_id).execute()
+        # Red flags are generated once per video and saved to video_analyses.red_flags
+        # (docs/migrations/003). Until that column exists, fall back to generating every time.
+        try:
+            result = supabase.table("video_analyses").select("relevance_filename,red_flags").eq("video_identifier", video_id).execute()
+            can_save = True
+        except Exception as e:
+            if "red_flags" not in str(e):
+                raise
+            result = supabase.table("video_analyses").select("relevance_filename").eq("video_identifier", video_id).execute()
+            can_save = False
         if not result.data or len(result.data) == 0:
             return {"red_flags": [], "error": "Video analysis not found"}
+
+        saved = result.data[0].get("red_flags")
+        if saved and isinstance(saved.get("flags"), list):
+            return {"red_flags": saved["flags"], "cached": True}
 
         rel_file = result.data[0].get("relevance_filename")
         if not rel_file:
@@ -751,7 +803,16 @@ Only include genuine concerns. Be conservative - max 12 flags. Use sentence_inde
         flags = out.get("red_flags", out.get("flags", []))
         if isinstance(flags, dict):
             flags = list(flags.values()) if isinstance(next(iter(flags.values()), None), dict) else []
-        return {"red_flags": flags[:15]}
+        flags = flags[:15]
+
+        if can_save:
+            try:
+                supabase.table("video_analyses").update({
+                    "red_flags": {"flags": flags, "model": "gpt-4o", "generated_at": datetime.now().isoformat()},
+                }).eq("video_identifier", video_id).execute()
+            except Exception as e:
+                print(f"Failed to save red flags for {video_id}: {e}")
+        return {"red_flags": flags}
     except Exception as e:
         print(f"Red flags error: {e}")
         return {"red_flags": [], "error": str(e)}

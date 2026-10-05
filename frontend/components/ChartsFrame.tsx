@@ -19,8 +19,12 @@ const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
   "6": { ticker: "WMT", date: "2/20/25" }
 };
 
+/** Status of a custom-link processing job (null when there is none / it finished) */
+export type PipelineState = { status: string; error?: string };
+
 interface ChartsFrameSentimentGraphProps {
   onTimestampClick: (timestamp: number) => void; // Callback to update video timestamp
+  pipeline?: PipelineState | null;
 }
 
 interface SentimentDataPoint {
@@ -50,7 +54,8 @@ const APPLE_QUARTER_ORDER = [
 type ChartsTab = "stock" | "sentiment" | "compare";
 type IndicatorView = "stock" | "VIX" | "TNX" | "DXY";
 
-export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGraphProps) {
+export default function ChartsFrame({ onTimestampClick, pipeline = null }: ChartsFrameSentimentGraphProps) {
+  const pipelineStatus = pipeline?.status ?? null;
   const [activeTab, setActiveTabState] = useState<ChartsTab>("stock");
   const [indicatorView, setIndicatorViewState] = useState<IndicatorView>("stock");
   // Tabs/indicator views are mounted lazily on first visit, then kept mounted (hidden when inactive)
@@ -87,7 +92,7 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
       .catch(() => { if (!cancelled) setVideoInfo(null); })
       .finally(() => { if (!cancelled) setVideoInfoLoading(false); });
     return () => { cancelled = true; };
-  }, [preloadedConfig, videoUrlParam]);
+  }, [preloadedConfig, videoUrlParam, pipelineStatus]);
 
   // A ticker typed by the user (URL param) wins over the detected one
   const customTicker = ticker && ticker !== "N/A" ? ticker.toUpperCase() : videoInfo?.ticker;
@@ -125,6 +130,11 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
     const fetchSentimentData = async () => {
       // Need either dashboardId or videoUrl
       if (!dashboardId && !searchParams.get("video_url")) {
+        setSentimentData(null);
+        return;
+      }
+      // Sentiment files are produced by the processing job; wait for it
+      if (pipelineStatus) {
         setSentimentData(null);
         return;
       }
@@ -174,22 +184,6 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
         } else {
           setSentimentNotice(null);
         }
-
-        // Fetch red flags from RAG API
-        try {
-          const rfRes = await fetch(`${API_BASE_URL}/red-flags`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              dashboard_id: dashboardId || null,
-              video_url: videoUrl || null,
-            }),
-          });
-          const rfData = await rfRes.json();
-          setRedFlags(rfData.red_flags || []);
-        } catch {
-          setRedFlags([]);
-        }
       } catch (err) {
         console.error("Error fetching sentiment data:", err);
         setError(err instanceof Error ? err.message : "Failed to fetch sentiment data");
@@ -200,7 +194,30 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
     };
 
     fetchSentimentData();
-  }, [dashboardId, searchParams]);
+  }, [dashboardId, searchParams, pipelineStatus]);
+
+  // Red flags are an LLM call (slow on first run per video), so load them separately:
+  // the sentiment graph renders right away and the flags appear on it when ready.
+  useEffect(() => {
+    const videoUrl = searchParams.get("video_url");
+    if ((!dashboardId && !videoUrl) || pipelineStatus) {
+      setRedFlags([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`${API_BASE_URL}/red-flags`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        dashboard_id: dashboardId || null,
+        video_url: videoUrl || null,
+      }),
+    })
+      .then((res) => res.json())
+      .then((rfData) => { if (!cancelled) setRedFlags(rfData.red_flags || []); })
+      .catch(() => { if (!cancelled) setRedFlags([]); });
+    return () => { cancelled = true; };
+  }, [dashboardId, searchParams, pipelineStatus]);
 
   const renderTabs = () => {
     const isStock = activeTab === "stock";
@@ -310,9 +327,12 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
                     </div>
                   )}
                 </>
-              ) : videoInfoLoading ? (
+              ) : videoInfoLoading || (pipelineStatus && pipelineStatus !== "failed") ? (
                 <div className="text-center text-white/70">
-                  <p className="text-lg font-medium">Loading chart…</p>
+                  <p className="animate-pulse text-lg font-medium">Loading chart…</p>
+                  {pipelineStatus && !customTicker && (
+                    <p className="text-sm mt-2">Detecting the ticker — this appears when processing finishes.</p>
+                  )}
                 </div>
               ) : (
                 <div className="text-center text-white/70">
@@ -331,7 +351,17 @@ export default function ChartsFrame({ onTimestampClick }: ChartsFrameSentimentGr
 
           {visitedTabs.has("sentiment") && (
             <div className={tabPanelClass("sentiment", "items-center justify-center overflow-hidden")}>
-              {loading ? (
+              {pipelineStatus === "failed" ? (
+                <div className="mx-auto max-w-lg px-4 text-center text-white/70">
+                  <p className="text-lg font-medium">Processing failed</p>
+                  <p className="mt-2 whitespace-pre-wrap text-sm">{pipeline?.error}</p>
+                </div>
+              ) : pipelineStatus ? (
+                <div className="text-center text-white/70">
+                  <p className="animate-pulse text-lg font-medium">Analyzing sentiment…</p>
+                  <p className="text-sm mt-2">This appears automatically when processing finishes.</p>
+                </div>
+              ) : loading ? (
                 <div className="text-center text-white/70">
                   <p className="text-lg font-medium">Loading sentiment data...</p>
                 </div>
