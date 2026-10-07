@@ -364,14 +364,15 @@ class DashboardCreator:
                 data['metadata'] = {k: metadata.get(k) for k in ('title', 'ticker', 'upload_date')}
 
             # Owner may delete it from the library (docs/migrations/004_video_analyses_owner.sql).
-            # Reprocessing an existing video never transfers ownership.
+            # Only a brand-new row gets an owner: reprocessing an existing video (owned or legacy
+            # ownerless) never assigns or transfers ownership.
             if created_by:
                 try:
                     existing = (
-                        self.supabase.table("video_analyses").select("created_by")
+                        self.supabase.table("video_analyses").select("video_identifier")
                         .eq("video_identifier", video_identifier).limit(1).execute()
                     )
-                    if not existing.data or not existing.data[0].get("created_by"):
+                    if not existing.data:
                         data['created_by'] = created_by
                 except Exception as e:
                     print(f"⚠️  Could not check dashboard owner (is migration 004 applied?): {e}")

@@ -61,6 +61,7 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 - `OPENAI_API_KEY` and/or `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY`. See `RAG/.env.example`.
 - `cloudbuild.yaml` deploys with `--update-secrets`/`--update-env-vars`, so a key added by hand persists across deploys, e.g. Gemini:
   `gcloud run services update simpli-earn-backend --update-secrets GEMINI_API_KEY=gemini-api-key:latest`.
+- `LIBRARY_ADMIN_EMAILS` / `LIBRARY_ADMIN_USER_IDS` (same values as the sentiment service): who may reprocess (`force`) any existing dashboard. Otherwise only its creator can, and dashboards without an owner cannot be reprocessed.
 - **`STRICT_CONFIG=1`** (set by `cloudbuild.yaml`) makes the service refuse to start when a required value is missing, so a misconfigured revision never takes traffic.
 - **`YOUTUBE_HOME_WORKER=1`** — enable queue-only mode for YouTube jobs (requires migration + home worker).
 - Omit or set **`YOUTUBE_HOME_WORKER=0`** for classic mode (subprocess on the same host as uvicorn).

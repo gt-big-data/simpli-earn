@@ -44,10 +44,10 @@ def _get_supabase():
     return _supabase
 
 
-def _request_user_id(authorization: Optional[str]) -> Optional[str]:
+def _request_user(authorization: Optional[str]):
     """
-    Supabase user id for an `Authorization: Bearer <access token>` header, recorded as the
-    dashboard's owner (video_analyses.created_by). Signed-out requests return None.
+    Supabase user for an `Authorization: Bearer <access token>` header; its id is recorded as a
+    new dashboard's owner (video_analyses.created_by). Signed-out requests return None.
     """
     if not authorization:
         return None
@@ -63,7 +63,29 @@ def _request_user_id(authorization: Optional[str]) -> Optional[str]:
         user = None
     if not user or not getattr(user, "id", None):
         raise HTTPException(status_code=401, detail="Invalid or expired session")
-    return str(user.id)
+    return user
+
+
+def _csv_env(name: str) -> set[str]:
+    return {value.strip().lower() for value in os.getenv(name, "").split(",") if value.strip()}
+
+
+def _is_admin(user) -> bool:
+    """Same allowlist as the sentiment API's library_auth.is_admin."""
+    if user is None:
+        return False
+    email = (getattr(user, "email", None) or "").lower()
+    return str(user.id).lower() in _csv_env("LIBRARY_ADMIN_USER_IDS") or (
+        bool(email) and email in _csv_env("LIBRARY_ADMIN_EMAILS")
+    )
+
+
+def _can_reprocess(user, row: dict) -> bool:
+    """Reprocessing replaces a dashboard's transcript and analysis: owner or admin only."""
+    if user is None:
+        return False
+    owner = row.get("created_by")
+    return (bool(owner) and str(owner) == str(user.id)) or _is_admin(user)
 
 
 def _row_to_job_status(row: dict) -> dict:
@@ -115,24 +137,33 @@ def _extract_video_id(youtube_url: str) -> Optional[str]:
     return None
 
 
-def _has_complete_analysis(video_id: Optional[str]) -> bool:
-    """True if video_analyses already has transcript + both sentiment files for this video."""
+_ANALYSIS_FILES = ("transcript_filename", "relevance_filename", "specificity_filename")
+
+
+def _existing_analysis(video_id: Optional[str]) -> Optional[dict]:
+    """
+    The video's video_analyses row (file names and owner), or None if it has none.
+    Fails closed: if the lookup errors we cannot tell whether reprocessing would overwrite
+    someone else's dashboard, so the request is refused.
+    """
     sb = _get_supabase()
     if not video_id or not sb:
-        return False
+        return None
+    query = lambda columns: (
+        sb.table("video_analyses").select(columns).eq("video_identifier", video_id).limit(1).execute()
+    )
     try:
-        res = (
-            sb.table("video_analyses")
-            .select("transcript_filename,relevance_filename,specificity_filename")
-            .eq("video_identifier", video_id)
-            .limit(1)
-            .execute()
-        )
+        try:
+            res = query(",".join(_ANALYSIS_FILES + ("created_by",)))
+        except Exception as e:
+            if "created_by" not in str(e):
+                raise
+            # Migration 004 not applied: every existing row is ownerless (admin-only)
+            res = query(",".join(_ANALYSIS_FILES))
     except Exception as e:
         print(f"[dashboard] existing-analysis check failed: {e}")
-        return False
-    row = res.data[0] if res.data else {}
-    return all(row.get(k) for k in ("transcript_filename", "relevance_filename", "specificity_filename"))
+        raise HTTPException(status_code=503, detail="Could not check for an existing dashboard; try again") from e
+    return res.data[0] if res.data else None
 
 
 def run_dashboard_creation(
@@ -199,9 +230,11 @@ async def create_dashboard(
     Already-processed videos return immediately (status "completed", job_id None).
     A signed-in caller (Bearer token) is recorded as the new dashboard's owner.
     """
-    created_by = _request_user_id(authorization)
+    user = _request_user(authorization)
+    created_by = str(user.id) if user else None
     video_id = _extract_video_id(request.youtube_url)
-    if not request.force and _has_complete_analysis(video_id):
+    existing = _existing_analysis(video_id)
+    if existing and not request.force and all(existing.get(k) for k in _ANALYSIS_FILES):
         return {
             "job_id": None,
             "status": "completed",
@@ -209,6 +242,11 @@ async def create_dashboard(
             "video_id": video_id,
             "existing": True,
         }
+    # Anything past this point (force, or retrying an incomplete analysis) overwrites the row
+    if existing and not _can_reprocess(user, existing):
+        if user is None:
+            raise HTTPException(status_code=401, detail="Sign in as this dashboard's owner to reprocess it")
+        raise HTTPException(status_code=403, detail="Only this dashboard's owner or an admin can reprocess it")
 
     if _youtube_home_worker_enabled():
         sb = _get_supabase()

@@ -93,7 +93,9 @@ export default function Home() {
       
     } catch (error) {
       console.error("Failed to create dashboard:", error);
-      setProcessingStatus("Failed to start processing. Please try again.");
+      // Server reasons (e.g. "Only this dashboard's owner or an admin can reprocess it") are actionable
+      const reason = error instanceof Error && error.message !== "Failed to fetch" ? ` ${error.message}` : "";
+      setProcessingStatus(`Failed to start processing.${reason || " Please try again."}`);
       setIsProcessing(false);
     }
   };
