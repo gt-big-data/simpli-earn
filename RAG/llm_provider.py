@@ -66,11 +66,11 @@ def get_llm(temperature: float = 0, streaming: bool = False):
     """Return the best available LangChain chat model (OpenAI preferred, Gemini fallback)."""
 
     if _openai_available():
-        from langchain.chat_models import ChatOpenAI
+        from langchain_openai import ChatOpenAI
 
         return ChatOpenAI(
-            model_name=OPENAI_MODEL,
-            openai_api_key=OPENAI_API_KEY,
+            model=OPENAI_MODEL,
+            api_key=OPENAI_API_KEY,
             temperature=temperature,
             streaming=streaming,
         )
@@ -78,11 +78,11 @@ def get_llm(temperature: float = 0, streaming: bool = False):
     if GEMINI_API_KEY:
         from langchain_google_genai import ChatGoogleGenerativeAI
 
+        # System messages are sent as Gemini system instructions natively
         return ChatGoogleGenerativeAI(
             model=GEMINI_MODEL,
             google_api_key=GEMINI_API_KEY,
             temperature=temperature,
-            convert_system_message_to_human=True,
         )
 
     raise RuntimeError(

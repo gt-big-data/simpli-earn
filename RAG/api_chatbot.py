@@ -2,16 +2,13 @@
 from fastapi import FastAPI, Query, Body, HTTPException
 from pydantic import BaseModel
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
-from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
-from langchain.memory import ConversationBufferMemory
+from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 from datetime import datetime
 from pathlib import Path
-from langchain.chains import ConversationalRetrievalChain
-from langchain.prompts import ChatPromptTemplate
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from typing import Optional
 from collections import Counter
 import subprocess
@@ -61,10 +58,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
+memory: list[tuple[str, str]] = []
 retriever = None
-qa_chain = None
-summary_chain = None
 
 STATIC_TRANSCRIPTS = {
     "1": "transcripts/apple_seeking_alpha.txt",
@@ -350,7 +345,7 @@ def save_transcript_in_uploads(video_url, transcript_text):
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
-    global retriever, qa_chain, memory, last_used_id
+    global retriever, memory, last_used_id
 
     source_changed = False
 
@@ -364,9 +359,8 @@ def chat_endpoint(req: ChatRequest):
             last_used_id = req.id
 
     if source_changed:
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
+        memory = []
         retriever = None
-        qa_chain = None
 
     if req.video_url and not retriever:
         video_id = None
@@ -430,28 +424,16 @@ def chat_endpoint(req: ChatRequest):
         """
     )
 
-    def _build_qa_chain():
-        global qa_chain
-        qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=get_llm(),
-            retriever=retriever,
-            memory=memory,
-            combine_docs_chain_kwargs={"prompt": chat_prompt},
-            return_source_documents=True,
-            output_key="answer",
-        )
-
-    if qa_chain is None:
-        _build_qa_chain()
-
     def _invoke():
-        return qa_chain.invoke({"question": req.message})
+        # get_llm() is resolved per attempt, so a quota fallback retries on the next provider
+        return answer_question(req.message, retriever, memory, prompt=chat_prompt)
 
     try:
-        response = run_with_fallback(_invoke, rebuild_fn=_build_qa_chain)
+        response = run_with_fallback(_invoke)
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {e}")
 
+    memory.append((req.message, response["answer"]))
     chat_history.append({"question": req.message, "answer": response["answer"]})
 
     source_docs = response.get("source_documents", []) or []
@@ -594,19 +576,10 @@ Summary:
 """
     )
 
-    global summary_chain
-
-    def _build_yt_summary():
-        global summary_chain
-        summary_chain = LLMChain(llm=get_llm(), prompt=post_summary_prompt)
-
-    if summary_chain is None:
-        _build_yt_summary()
-
     try:
+        # Chain is built per attempt so a quota fallback picks up the next provider
         result = run_with_fallback(
-            lambda: summary_chain.run(transcript=transcript_text),
-            rebuild_fn=_build_yt_summary,
+            lambda: (post_summary_prompt | get_llm() | StrOutputParser()).invoke({"transcript": transcript_text}),
         )
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {e}")

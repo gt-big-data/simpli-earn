@@ -1,18 +1,15 @@
 import os
 import hashlib
 from dotenv import load_dotenv
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.schema import Document
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
-from langchain.chains import ConversationalRetrievalChain
-from langchain.memory import ConversationBufferMemory
-from langchain.prompts import ChatPromptTemplate
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
+from langchain_core.documents import Document
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 import time
 
-from llm_provider import get_llm, run_with_fallback, is_quota_error, mark_openai_unavailable
+from llm_provider import get_llm
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -20,7 +17,30 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 if not OPENAI_API_KEY:
     print("⚠️  OPENAI_API_KEY not found – embeddings/retrieval will fail until set")
 
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
+embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
+
+# Same wording as LangChain's ConversationalRetrievalChain default, which this module replaces.
+CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(
+    "Given the following conversation and a follow up question, rephrase the follow up question "
+    "to be a standalone question, in its original language.\n\n"
+    "Chat History:\n{chat_history}\nFollow Up Input: {question}\nStandalone question:"
+)
+
+DEFAULT_CHAT_PROMPT = ChatPromptTemplate.from_template(
+    """
+    You are a financial assistant providing insights from this document you currently have.
+    You are to give objective answers at all times.
+    This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
+    Use the provided context and chat history to answer the user's questions.
+    If the question is irrelevant to the document, politely state so.
+
+    Context: {context}
+    Chat History: {chat_history}
+    User: {question}
+    Assistant:
+    """
+)
+
 
 def generate_content_hash(file_content: str) -> str:
     """Generates a unique SHA-256 hash from the file content."""
@@ -62,40 +82,50 @@ def summarize_document(file_path):
         template="Summarize the following document in a concise and informative manner:\n\n{document}"
     )
 
-    llm = get_llm(streaming=True)
-    chain = LLMChain(llm=llm, prompt=summary_prompt)
+    chain = summary_prompt | get_llm(streaming=True) | StrOutputParser()
 
     for chunk in chain.stream({"document": transcript_text[:3000]}):
         time.sleep(0.05)
-        yield chunk["text"]
+        yield chunk
 
-def get_chat_response(user_input, retriever, memory):
-    """Generates responses using conversational retrieval with memory."""
 
-    prompt_template = ChatPromptTemplate.from_template(
-            """
-            You are a financial assistant providing insights from this document you currently have.
-            You are to give objective answers at all times.
-            This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
-            Use the provided context and chat history to answer the user's questions.
-            If the question is irrelevant to the document, politely state so.
+def format_chat_history(chat_history: list[tuple[str, str]]) -> str:
+    """Render (question, answer) pairs as the Human/Assistant transcript the prompts expect."""
+    return "\n".join(f"Human: {question}\nAssistant: {answer}" for question, answer in chat_history)
 
-            Context: {context}
-            Chat History: {chat_history}
-            User: {question}
-            Assistant:
-            """
-        )
 
-    qa_chain = ConversationalRetrievalChain.from_llm(
-        llm=get_llm(),
-        retriever=retriever,
-        memory=memory,
-        combine_docs_chain_kwargs={"prompt": prompt_template}
-    )
+def answer_question(question: str, retriever, chat_history: list[tuple[str, str]], prompt=None, llm=None) -> dict:
+    """
+    Conversational retrieval: condense a follow-up into a standalone question, retrieve
+    transcript chunks for it, and answer from those chunks.
 
-    response = qa_chain.invoke({"question": user_input})
-    return response["answer"]
+    Returns {"answer": str, "source_documents": list[Document]}. Does not modify chat_history.
+    """
+    llm = llm or get_llm()
+    history_text = format_chat_history(chat_history)
+
+    standalone_question = question
+    if chat_history:
+        condense = CONDENSE_QUESTION_PROMPT | llm | StrOutputParser()
+        standalone_question = condense.invoke({"chat_history": history_text, "question": question}).strip()
+
+    source_documents = retriever.invoke(standalone_question)
+    context = "\n\n".join(doc.page_content for doc in source_documents)
+
+    answer_chain = (prompt or DEFAULT_CHAT_PROMPT) | llm | StrOutputParser()
+    answer = answer_chain.invoke({
+        "context": context,
+        "chat_history": history_text,
+        "question": standalone_question,
+    })
+    return {"answer": answer, "source_documents": source_documents}
+
+
+def get_chat_response(user_input, retriever, chat_history: list[tuple[str, str]]):
+    """Generates a response and records the exchange in chat_history."""
+    answer = answer_question(user_input, retriever, chat_history)["answer"]
+    chat_history.append((user_input, answer))
+    return answer
 
 def generate_follow_up_questions(user_question: str, bot_answer: str, chat_history: list, retriever=None):
     """
@@ -153,14 +183,13 @@ Format your response as a simple numbered list:
 Do not include any other text, just the numbered questions."""
         )
 
-        llm = get_llm(temperature=0.7)
-        chain = LLMChain(llm=llm, prompt=suggestion_prompt)
+        chain = suggestion_prompt | get_llm(temperature=0.7) | StrOutputParser()
 
-        result = chain.run(
-            user_question=user_question,
-            bot_answer=bot_answer[:500],
-            chat_history=history_str if history_str else "No previous conversation"
-        )
+        result = chain.invoke({
+            "user_question": user_question,
+            "bot_answer": bot_answer[:500],
+            "chat_history": history_str if history_str else "No previous conversation",
+        })
 
         # Parse the response
         suggestions = []
