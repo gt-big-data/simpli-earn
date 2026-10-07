@@ -49,14 +49,27 @@ try:
 except ImportError as e:
     print(f"Warning: Could not import dashboard creation endpoint: {e}")
 
+DEFAULT_CORS_ORIGINS = [
+    "https://simpli-earn-2-simpli-earns-projects.vercel.app",
+    "https://simpli-earn-2.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+
+def cors_origins(env=None) -> list[str]:
+    """
+    Browser origins allowed to call this API: the defaults plus CORS_ALLOWED_ORIGINS
+    (comma-separated). cloudbuild.yaml adds the Cloud Run frontend's URLs there on each deploy.
+    """
+    env = os.environ if env is None else env
+    extra = [origin.strip().rstrip("/") for origin in (env.get("CORS_ALLOWED_ORIGINS") or "").split(",")]
+    return list(dict.fromkeys(DEFAULT_CORS_ORIGINS + [origin for origin in extra if origin]))
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://simpli-earn-2-simpli-earns-projects.vercel.app",
-        "https://simpli-earn-2.vercel.app",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

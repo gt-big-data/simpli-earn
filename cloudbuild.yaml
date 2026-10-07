@@ -219,6 +219,41 @@ steps:
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
+  # Allow the frontend's Cloud Run origin(s) to call the RAG API (CORS). Merged into the backend's
+  # CORS_ALLOWED_ORIGINS so origins added by hand (e.g. a custom domain) are kept; the backend is
+  # only updated when something new needs adding.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'allow-frontend-origin'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        gcloud run services describe ${_SERVICE_NAME_FRONTEND} --region=${_REGION} --format=json > /workspace/frontend-service.json
+        gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format=json > /workspace/backend-service.json
+        MERGED=$$(python3 - <<'PY'
+        import json
+        frontend = json.load(open("/workspace/frontend-service.json"))
+        backend = json.load(open("/workspace/backend-service.json"))
+        # Cloud Run serves a service on its status.url and, for newer services, a second URL form
+        urls = [frontend["status"]["url"]]
+        urls += json.loads(frontend.get("metadata", {}).get("annotations", {}).get("run.googleapis.com/urls", "[]"))
+        env = backend["spec"]["template"]["spec"]["containers"][0].get("env", [])
+        current = next((e.get("value", "") for e in env if e["name"] == "CORS_ALLOWED_ORIGINS"), "")
+        origins = [o.strip().rstrip("/") for o in current.split(",") if o.strip()]
+        merged = list(dict.fromkeys(origins + [u.rstrip("/") for u in urls if u]))
+        print(",".join(merged) if merged != origins else "")
+        PY
+        )
+        if [ -z "$$MERGED" ]; then
+          echo "CORS_ALLOWED_ORIGINS already includes the frontend"
+        else
+          echo "Setting CORS_ALLOWED_ORIGINS=$$MERGED on ${_SERVICE_NAME_BACKEND}"
+          gcloud run services update ${_SERVICE_NAME_BACKEND} --region=${_REGION} --update-env-vars="^@^CORS_ALLOWED_ORIGINS=$$MERGED"
+        fi
+    env:
+      - 'CLOUDSDK_RUN_PLATFORM=managed'
+
 # Substitutions for environment variables
 substitutions:
   _PROJECT_ID: 'simpliearn-452813'
