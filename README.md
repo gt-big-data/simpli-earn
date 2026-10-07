@@ -19,7 +19,7 @@ and shows the defaults. Never commit the filled-in files.
 | File | Copy from | Required |
 | --- | --- | --- |
 | `RAG/.env` | `RAG/.env.example` | `OPENAI_API_KEY` **or** `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY` for dashboard creation (may live in `sentiment/.env`) |
-| `sentiment/.env` | `sentiment/.env.example` | `SUPABASE_URL`, `SUPABASE_KEY` (service role); `LIBRARY_ADMIN_EMAILS` to let someone delete any library entry |
+| `sentiment/.env` | `sentiment/.env.example` | `SUPABASE_URL`, `SUPABASE_KEY` (service role) |
 | `frontend/.env.local` | `frontend/.env.example` | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (anon key), `SUPABASE_SERVICE_ROLE_KEY` (account deletion); `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_SENTIMENT_API_URL` for any deployed build |
 
 Both APIs report missing or malformed required settings when they start; with `STRICT_CONFIG=1`

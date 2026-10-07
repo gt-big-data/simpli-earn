@@ -90,8 +90,7 @@ Use **Secret Manager** for sensitive values; use `--set-env-vars` only for non-s
 
 ### C. Sentiment API (Cloud Run)
 
-Deploy the `sentiment/` image with `SUPABASE_*`, `ASSEMBLYAI_KEY`, `HF_TOKEN` as before, plus `STRICT_CONFIG=1`. Set **`LIBRARY_ADMIN_EMAILS`** (or `LIBRARY_ADMIN_USER_IDS`) for people who may delete any library entry; otherwise only each entry's creator can, and entries created before migration 004 cannot be deleted:
-`gcloud run services update simpli-earn-sentiment --update-env-vars LIBRARY_ADMIN_EMAILS=you@example.com`. See [`docs/BACKEND_DEPLOYMENT_GUIDE.md`](./BACKEND_DEPLOYMENT_GUIDE.md).
+Deploy the `sentiment/` image with `SUPABASE_*`, `ASSEMBLYAI_KEY`, `HF_TOKEN` as before, plus `STRICT_CONFIG=1`. See [`docs/BACKEND_DEPLOYMENT_GUIDE.md`](./BACKEND_DEPLOYMENT_GUIDE.md).
 
 ### D. Frontend (Vercel or other)
 

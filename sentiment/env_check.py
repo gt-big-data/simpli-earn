@@ -21,12 +21,6 @@ def check_environment(env=None) -> tuple[list[str], list[str]]:
     url = urlparse(get("SUPABASE_URL"))
     if get("SUPABASE_URL") and (url.scheme not in ("http", "https") or not url.netloc):
         errors.append(f"SUPABASE_URL must be an http(s) URL, got {get('SUPABASE_URL')!r}")
-
-    if not get("LIBRARY_ADMIN_USER_IDS") and not get("LIBRARY_ADMIN_EMAILS"):
-        warnings.append(
-            "No LIBRARY_ADMIN_USER_IDS / LIBRARY_ADMIN_EMAILS: library entries without an owner cannot be "
-            "deleted and the admin-only endpoints are unusable"
-        )
     return errors, warnings
 
 

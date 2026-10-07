@@ -9,7 +9,6 @@ import mockCalls from "@/public/data/mock-calls.json";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
-import { useAuth } from "@/lib/auth/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
 interface LibraryVideo {
@@ -21,11 +20,9 @@ interface LibraryVideo {
     upload_date: string;
   };
   created_at: string;
-  // Set by the sentiment API: true when the signed-in user added this call (or is an admin)
-  can_delete?: boolean;
 }
 
-/** Bearer header for the signed-in Supabase user, so the APIs can check ownership. */
+/** Bearer header for the signed-in Supabase user, so the RAG API can check admin rights. */
 async function authHeaders(): Promise<Record<string, string>> {
   const { data } = await createClient().auth.getSession();
   const token = data.session?.access_token;
@@ -39,16 +36,12 @@ export default function Home() {
   const [processingStatus, setProcessingStatus] = useState("");
   const [libraryVideos, setLibraryVideos] = useState<LibraryVideo[]>([]);
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
-  const { user } = useAuth();
   const router = useRouter();
-  const userId = user?.id;
-  // Load library videos from database; reload on sign-in/out so can_delete matches the user
+  // Load library videos from database
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
-        const response = await fetch(`${SENTIMENT_API_BASE_URL}/library`, {
-          headers: await authHeaders(),
-        });
+        const response = await fetch(`${SENTIMENT_API_BASE_URL}/library`);
         const data = await response.json();
         setLibraryVideos(data.videos || []);
       } catch (error) {
@@ -56,7 +49,7 @@ export default function Home() {
       }
     };
     fetchLibrary();
-  }, [userId]);
+  }, []);
 
   const handleSubmit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -70,7 +63,7 @@ export default function Home() {
       // Trigger dashboard creation
       const response = await fetch(`${API_BASE_URL}/dashboard/create-dashboard`, {
         method: "POST",
-        // Signed-in users become the dashboard's owner and can delete it later
+        // Lets an admin reprocess an existing dashboard (force)
         headers: { "Content-Type": "application/json", ...(await authHeaders()) },
         body: JSON.stringify({ 
           youtube_url: youtubeLink,
@@ -93,7 +86,7 @@ export default function Home() {
       
     } catch (error) {
       console.error("Failed to create dashboard:", error);
-      // Server reasons (e.g. "Only this dashboard's owner or an admin can reprocess it") are actionable
+      // Server reasons (e.g. "Only an admin can reprocess an existing dashboard") are actionable
       const reason = error instanceof Error && error.message !== "Failed to fetch" ? ` ${error.message}` : "";
       setProcessingStatus(`Failed to start processing.${reason || " Please try again."}`);
       setIsProcessing(false);
@@ -107,21 +100,11 @@ export default function Home() {
     if (!confirm("Are you sure you want to delete this earnings call?")) return;
     
     try {
-      const response = await fetch(`${SENTIMENT_API_BASE_URL}/library/${encodeURIComponent(videoId)}`, {
+      await fetch(`${SENTIMENT_API_BASE_URL}/library/${videoId}`, {
         method: "DELETE",
-        headers: await authHeaders(),
       });
-      if (!response.ok) {
-        const body = await response.json().catch(() => null);
-        const reason =
-          response.status === 401
-            ? "Please sign in to delete earnings calls."
-            : body?.detail || `Request failed (${response.status})`;
-        alert(`Failed to delete video: ${reason}`);
-        return;
-      }
-
-      // Only drop the card once the server confirmed the delete
+      
+      // Refresh library
       setLibraryVideos(prev => prev.filter(v => v.video_identifier !== videoId));
     } catch (error) {
       console.error("Failed to delete:", error);
@@ -291,7 +274,7 @@ export default function Home() {
                   </Link>
                   
                   {/* Delete button on hover */}
-                  {hoveredVideoId === video.video_identifier && video.can_delete && (
+                  {hoveredVideoId === video.video_identifier && (
                     <button
                       onClick={(e) => handleDelete(video.video_identifier, e)}
                       className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full shadow-lg transition-all z-10"
@@ -305,7 +288,7 @@ export default function Home() {
             })}
           </div>
           <p className="w-full opacity-60 mt-4">
-            <em>Click a video card above. Hover to delete calls you added.</em>
+            <em>Click a video card above. Hover to delete custom uploads.</em>
           </p>
         </div>
       </main>

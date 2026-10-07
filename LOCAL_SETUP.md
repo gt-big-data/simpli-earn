@@ -30,7 +30,6 @@ Copy from `sentiment/.env.example`. Required keys:
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_KEY=your-service-role-key
 ASSEMBLYAI_KEY=your-assemblyai-key  # For YouTube transcription (https://assemblyai.com)
-LIBRARY_ADMIN_EMAILS=you@example.com # Optional: may delete any library entry
 ```
 
 Get Supabase credentials: Project → Settings → API. Use the **service_role** key (not anon).
@@ -117,4 +116,3 @@ First run will download ML models (~500MB) for sentiment analysis.
 - **"yt-dlp not found"** – Install with `brew install yt-dlp` (macOS) or `pip install yt-dlp`.
 - **Transcription fails** – Check `ASSEMBLYAI_KEY` in `sentiment/.env` and your AssemblyAI credits.
 - **Chatbot errors** – Ensure `OPENAI_API_KEY` or `GEMINI_API_KEY` is set in `RAG/.env`.
-- **Can't delete a library entry** – Sign in as the user who added it, or add yourself to `LIBRARY_ADMIN_EMAILS` in `sentiment/.env`.

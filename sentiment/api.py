@@ -1,20 +1,15 @@
 """
 FastAPI backend for sentiment analysis
 Endpoints:
-  - POST /analyze/specificity - Run specificity analysis (admin)
-  - POST /analyze/relevance - Run relevance analysis (admin)
+  - POST /analyze/specificity - Run specificity analysis
+  - POST /analyze/relevance - Run relevance analysis
   - GET /sentiment - List all results in sentiment bucket
   - GET /sentiment/{filename} - Download a specific result file
   - GET /sentiment/{filename}/data - Get result data as JSON
-  - DELETE /sentiment/{filename} - Delete a result file (admin)
   - GET /transcripts - List all transcripts in transcripts bucket
-  - GET /library - List custom dashboards, with can_delete for the signed-in user
-  - DELETE /library/{video_identifier} - Delete a dashboard and its files (owner or admin)
-
-Destructive endpoints require `Authorization: Bearer <Supabase access token>`; see library_auth.py.
 """
 
-from fastapi import FastAPI, HTTPException, BackgroundTasks, Query, Header, Depends
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -26,8 +21,6 @@ from datetime import datetime
 from pathlib import Path
 import io
 import csv
-
-from library_auth import AuthUser, can_manage, is_admin, resolve_user
 
 # Load environment variables
 try:
@@ -77,27 +70,6 @@ app.add_middleware(
 
 # In-memory job tracking
 jobs = {}
-
-
-def optional_user(authorization: Optional[str] = Header(None)) -> Optional[AuthUser]:
-    """Signed-in user if a valid token was sent; anonymous otherwise (never fails the request)."""
-    try:
-        return resolve_user(supabase, authorization)
-    except HTTPException:
-        return None
-
-
-def require_user(authorization: Optional[str] = Header(None)) -> AuthUser:
-    user = resolve_user(supabase, authorization)
-    if user is None:
-        raise HTTPException(status_code=401, detail="Sign in required", headers={"WWW-Authenticate": "Bearer"})
-    return user
-
-
-def require_admin(user: AuthUser = Depends(require_user)) -> AuthUser:
-    if not is_admin(user):
-        raise HTTPException(status_code=403, detail="Admin access required")
-    return user
 
 # Pydantic models
 class AnalysisRequest(BaseModel):
@@ -267,9 +239,7 @@ async def root():
     }
 
 @app.post("/analyze/specificity", response_model=AnalysisResponse)
-async def analyze_specificity(
-    request: AnalysisRequest, background_tasks: BackgroundTasks, _admin: AuthUser = Depends(require_admin)
-):
+async def analyze_specificity(request: AnalysisRequest, background_tasks: BackgroundTasks):
     """
     Run specificity analysis on a transcript
     """
@@ -303,9 +273,7 @@ async def analyze_specificity(
     )
 
 @app.post("/analyze/relevance", response_model=AnalysisResponse)
-async def analyze_relevance(
-    request: AnalysisRequest, background_tasks: BackgroundTasks, _admin: AuthUser = Depends(require_admin)
-):
+async def analyze_relevance(request: AnalysisRequest, background_tasks: BackgroundTasks):
     """
     Run relevance analysis on a transcript
     """
@@ -489,7 +457,7 @@ async def get_sentiment_data(filename: str):
         raise HTTPException(status_code=404, detail=f"Failed to read file: {str(e)}")
 
 @app.delete("/sentiment/{filename}")
-async def delete_sentiment_file(filename: str, _admin: AuthUser = Depends(require_admin)):
+async def delete_sentiment_file(filename: str):
     """
     Delete a result file from sentiment bucket
     """
@@ -610,7 +578,7 @@ async def _get_sentiment_data_by_identifier(video_identifier: Optional[str]) -> 
 
 
 @app.get("/library")
-async def get_library(user: Optional[AuthUser] = Depends(optional_user)):
+async def get_library():
     """Get all video analyses for library display (excludes preloaded dashboards)"""
     if not supabase:
         raise HTTPException(status_code=500, detail="Supabase not configured")
@@ -644,10 +612,6 @@ async def get_library(user: Optional[AuthUser] = Depends(optional_user)):
                     'title': f"{ticker} Earnings Call",
                     'ticker': ticker
                 }
-
-            # Tell the UI whether to offer delete; don't publish other users' ids
-            video['can_delete'] = can_manage(user, video)
-            video.pop('created_by', None)
             
             filtered_videos.append(video)
         
@@ -656,8 +620,8 @@ async def get_library(user: Optional[AuthUser] = Depends(optional_user)):
         raise HTTPException(status_code=500, detail=f"Failed to fetch library: {str(e)}")
 
 @app.delete("/library/{video_identifier}")
-async def delete_from_library(video_identifier: str, user: AuthUser = Depends(require_user)):
-    """Delete a video analysis and its stored files. Only its creator or an admin may do this."""
+async def delete_from_library(video_identifier: str):
+    """Delete a video analysis from the library"""
     if not supabase:
         raise HTTPException(status_code=500, detail="Supabase not configured")
     
@@ -669,25 +633,17 @@ async def delete_from_library(video_identifier: str, user: AuthUser = Depends(re
             raise HTTPException(status_code=404, detail="Video not found")
         
         record = result.data[0]
-        # Authorize before touching storage
-        if not can_manage(user, record):
-            raise HTTPException(status_code=403, detail="You can only delete earnings calls you added")
         
-        # Delete associated files from storage. Stop on failure and keep the row so the delete can be
-        # retried (removing an already-deleted object is a no-op) instead of orphaning files.
-        stored_files = [
-            ("transcripts", record.get("transcript_filename")),
-            ("sentiment", record.get("relevance_filename")),
-            ("sentiment", record.get("specificity_filename")),
-        ]
-        for bucket, filename in stored_files:
-            if not filename:
-                continue
-            try:
-                supabase.storage.from_(bucket).remove([filename])
-            except Exception as e:
-                print(f"Failed to delete {bucket}/{filename} for {video_identifier}: {e}")
-                raise HTTPException(status_code=502, detail="Failed to delete stored files; please try again")
+        # Delete associated files from storage
+        try:
+            if record.get("transcript_filename"):
+                supabase.storage.from_("transcripts").remove([record["transcript_filename"]])
+            if record.get("relevance_filename"):
+                supabase.storage.from_("sentiment").remove([record["relevance_filename"]])
+            if record.get("specificity_filename"):
+                supabase.storage.from_("sentiment").remove([record["specificity_filename"]])
+        except Exception as e:
+            print(f"Warning: Could not delete some files: {e}")
         
         # Delete the database record
         supabase.table("video_analyses").delete().eq("video_identifier", video_identifier).execute()
