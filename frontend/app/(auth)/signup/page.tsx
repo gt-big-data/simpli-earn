@@ -70,15 +70,15 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="rounded-xl border border-[rgba(129,209,141,0.26)] bg-[rgba(0,0,0,0.4)] p-8 shadow-[0px_0px_8px_0px_rgba(129,209,141,0.25)] text-center">
-        <h1 className="text-2xl font-bold mb-4 text-white">Check your email</h1>
-        <p className="text-gray-400 mb-6">
-          We sent a confirmation link to <strong className="text-white">{email}</strong>.
+      <div className="surface rounded-2xl p-8 text-center">
+        <h1 className="mb-4 text-2xl font-light tracking-tight text-foreground">Check your email</h1>
+        <p className="mb-6 text-muted-foreground">
+          We sent a confirmation link to <strong className="text-foreground">{email}</strong>.
           Click the link to activate your account.
         </p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Didn&apos;t receive the email? Check your spam folder or{' '}
-          <Link href="/signup" className="text-[#81D18D] hover:underline">
+          <Link href="/signup" className="text-brand no-underline">
             try again
           </Link>
           .
@@ -88,18 +88,18 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="rounded-xl border border-[rgba(129,209,141,0.26)] bg-[rgba(0,0,0,0.4)] p-8 shadow-[0px_0px_8px_0px_rgba(129,209,141,0.25)]">
-      <h1 className="text-2xl font-bold text-center mb-6 text-white">
+    <div className="surface rounded-2xl p-8">
+      <h1 className="mb-6 text-center text-2xl font-light tracking-tight text-foreground">
         Create your account
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/20 text-red-400 text-sm">
+          <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive">
             {error}
           </div>
         )}
         <div>
-          <label htmlFor="fullName" className="block text-sm text-gray-300 mb-1">
+          <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-muted-foreground">
             Name
           </label>
           <input
@@ -107,12 +107,12 @@ export default function SignUpPage() {
             type="text"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="w-full py-2 px-4 bg-[rgba(234,250,236,0.14)] rounded-lg border border-[rgba(129,209,141,0.3)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]"
+            className="field"
             placeholder="Your name"
           />
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-muted-foreground">
             Email
           </label>
           <input
@@ -121,12 +121,12 @@ export default function SignUpPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full py-2 px-4 bg-[rgba(234,250,236,0.14)] rounded-lg border border-[rgba(129,209,141,0.3)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]"
+            className="field"
             placeholder="you@example.com"
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-muted-foreground">
             Password
           </label>
           <input
@@ -136,12 +136,12 @@ export default function SignUpPage() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
-            className="w-full py-2 px-4 bg-[rgba(234,250,236,0.14)] rounded-lg border border-[rgba(129,209,141,0.3)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]"
+            className="field"
             placeholder="At least 6 characters"
           />
         </div>
         <div>
-          <label htmlFor="confirmPassword" className="block text-sm text-gray-300 mb-1">
+          <label htmlFor="confirmPassword" className="mb-1 block text-sm font-medium text-muted-foreground">
             Confirm password
           </label>
           <input
@@ -151,42 +151,42 @@ export default function SignUpPage() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             minLength={6}
-            className="w-full py-2 px-4 bg-[rgba(234,250,236,0.14)] rounded-lg border border-[rgba(129,209,141,0.3)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]"
+            className="field"
             placeholder="••••••••"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-[#81D18D] text-[#121612] font-semibold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn-primary w-full"
         >
           {loading ? 'Creating account...' : 'Sign up'}
         </button>
         <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-600" />
+            <span className="w-full border-t border-white/8" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-[rgba(0,0,0,0.4)] px-2 text-gray-500">or</span>
+            <span className="bg-[#111413] px-2 text-muted-foreground">or</span>
           </div>
         </div>
         <button
           type="button"
           onClick={() => signInWithGoogle()}
           disabled={loading}
-          className="w-full py-3 rounded-lg border border-[rgba(129,209,141,0.3)] text-gray-300 hover:bg-[rgba(234,250,236,0.08)] transition-all disabled:opacity-50"
+          className="btn-outline w-full"
         >
           Continue with Google
         </button>
       </form>
-      <p className="mt-6 text-center text-gray-400 text-sm">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link href="/login" className="text-[#81D18D] hover:underline">
+        <Link href="/login" className="text-brand no-underline">
           Sign in
         </Link>
       </p>
-      <p className="mt-2 text-center text-gray-500 text-xs">
-        <Link href="/" className="hover:text-gray-400">
+      <p className="mt-2 text-center text-xs text-muted-foreground">
+        <Link href="/" className="text-brand no-underline">
           ← Back to home
         </Link>
       </p>

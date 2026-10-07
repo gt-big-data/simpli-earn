@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import Image from "next/image";
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/lib/auth/AuthContext';
-import { FaUserCircle } from 'react-icons/fa';
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { Menu, UserRound } from "lucide-react";
+import LogoMark from "./LogoMark";
 
-const NavBar: React.FC = () => {
+const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const ref = useRef<HTMLDivElement | null>(null);
@@ -24,8 +24,8 @@ const NavBar: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -46,57 +46,56 @@ const NavBar: React.FC = () => {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  const navLinkClass = "text-white hover:text-[#81D18D] transition-colors font-normal text-sm whitespace-nowrap no-underline";
-  const greenBtnClass = "bg-[#81D18D] text-[#121612] font-semibold rounded-full px-4 py-2 text-sm whitespace-nowrap no-underline hover:brightness-110 transition-all inline-flex items-center justify-center";
+  const navLinkClass =
+    "text-sm font-normal whitespace-nowrap text-foreground no-underline transition-colors hover:text-brand";
 
   return (
-    <nav
-      className="font-montserrat fixed top-5 left-1/2 -translate-x-1/2 flex items-center flex-nowrap gap-5 md:gap-6 px-5 py-2.5 border border-white/20 bg-[#121612] rounded-full shadow-lg z-[1000] w-auto"
-    >
-      {/* Logo */}
-      <Link href="/" className="flex items-center gap-2 shrink-0 no-underline">
-        <Image src="/logo.png" alt="SimpliEarn" width={22} height={22} />
-        <span className="text-white font-medium text-base tracking-wide whitespace-nowrap">SimpliEarn</span>
+    <nav className="fixed top-5 left-1/2 z-[1000] flex w-auto -translate-x-1/2 flex-nowrap items-center gap-5 border border-white/8 bg-[rgba(17,20,19,0.72)] px-5 py-2.5 backdrop-blur-xl rounded-2xl md:gap-6">
+      <Link href="/" className="flex shrink-0 items-center gap-2 no-underline">
+        <LogoMark className="size-5" />
+        <span className="whitespace-nowrap text-[1.65rem] font-light leading-none tracking-tight text-brand">
+          SimpliEarn
+        </span>
       </Link>
 
-      {/* Nav Links - hidden on mobile */}
-      <div className="hidden md:flex items-center gap-5 md:gap-6 shrink-0">
-        <Link href="/about" className={navLinkClass}>About Us</Link>
-        <Link href="/faq" className={navLinkClass}>FAQs</Link>
-        <Link href="mailto:simpliearnbdbi@gmail.com" className={navLinkClass}>Contact</Link>
+      <div className="hidden shrink-0 items-center gap-5 md:flex md:gap-6">
+        <Link href="/about" className={navLinkClass}>
+          About Us
+        </Link>
+        <Link href="/faq" className={navLinkClass}>
+          FAQs
+        </Link>
+        <Link href="mailto:simpliearnbdbi@gmail.com" className={navLinkClass}>
+          Contact
+        </Link>
       </div>
 
-      {/* Auth + hamburger */}
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex shrink-0 items-center gap-3">
         <button
           onClick={toggleMenu}
-          className="md:hidden p-2 border-none bg-transparent cursor-pointer text-white hover:text-[#81D18D]"
+          className="cursor-pointer border-none bg-transparent p-2 text-foreground hover:text-brand md:hidden"
           aria-label="Menu"
         >
-          <div className="space-y-1.5">
-            <span className="block w-5 h-0.5 bg-current rounded" />
-            <span className="block w-5 h-0.5 bg-current rounded" />
-            <span className="block w-5 h-0.5 bg-current rounded" />
-          </div>
+          <Menu className="size-4" />
         </button>
 
         {!authLoading && (
-          <div className="hidden md:flex items-center gap-3 flex-nowrap">
+          <div className="hidden flex-nowrap items-center gap-3 md:flex">
             {user ? (
               <>
-                <Link href="/my-dashboard" className={greenBtnClass}>
+                <Link href="/my-dashboard" className="btn-primary no-underline">
                   My Dashboard
                 </Link>
                 <Link
                   href="/settings"
-                  className="text-[#81D18D] hover:brightness-125 transition-all p-1"
+                  className="p-1 text-brand transition-colors hover:text-foreground"
                   aria-label="Account settings"
                 >
-                  <FaUserCircle size={24} />
+                  <UserRound className="size-4" />
                 </Link>
               </>
             ) : (
-              <Link href="/login" className={greenBtnClass}>
+              <Link href="/login" className="btn-primary no-underline">
                 Login
               </Link>
             )}
@@ -104,43 +103,44 @@ const NavBar: React.FC = () => {
         )}
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div
           ref={ref}
-          className="md:hidden fixed top-20 left-4 right-4 flex flex-col gap-4 p-5 bg-[#0f110f]/99 border border-white/20 rounded-2xl z-[999]"
+          className="surface fixed top-20 right-4 left-4 z-[999] flex flex-col gap-4 rounded-2xl p-5 md:hidden"
         >
-          <Link href="/about" className="text-white hover:text-[#81D18D] no-underline font-normal">
+          <Link href="/about" className="font-normal text-foreground no-underline hover:text-brand">
             About Us
           </Link>
-          <Link href="/faq" className="text-white hover:text-[#81D18D] no-underline font-normal">
+          <Link href="/faq" className="font-normal text-foreground no-underline hover:text-brand">
             FAQs
           </Link>
-          <Link href="mailto:simpliearnbdbi@gmail.com" className="text-white hover:text-[#81D18D] no-underline font-normal">
+          <Link
+            href="mailto:simpliearnbdbi@gmail.com"
+            className="font-normal text-foreground no-underline hover:text-brand"
+          >
             Contact
           </Link>
-          {!authLoading && (
-            user ? (
+          {!authLoading &&
+            (user ? (
               <>
-                <Link href="/my-dashboard" className={greenBtnClass}>
+                <Link href="/my-dashboard" className="btn-primary no-underline">
                   My Dashboard
                 </Link>
-                <Link href="/settings" className="text-white hover:text-[#81D18D] no-underline font-normal">
+                <Link href="/settings" className="font-normal text-foreground no-underline hover:text-brand">
                   Account
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="text-white hover:text-[#81D18D] text-left font-normal bg-transparent border-none cursor-pointer py-1"
+                  className="cursor-pointer border-none bg-transparent py-1 text-left font-normal text-foreground hover:text-brand"
                 >
                   Logout
                 </button>
               </>
             ) : (
-              <Link href="/login" className={greenBtnClass}>
+              <Link href="/login" className="btn-primary no-underline">
                 Login
               </Link>
-            )
-          )}
+            ))}
         </div>
       )}
     </nav>

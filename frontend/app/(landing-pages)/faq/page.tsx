@@ -1,5 +1,4 @@
-import NavBar from "@/components/Navbar";
-import Head from 'next/head';
+import { Metadata } from "next";
 
 const faqs = [
   {
@@ -20,27 +19,20 @@ const faqs = [
   },
 ];
 
+export const metadata: Metadata = {
+  title: "FAQ | SimpliEarn",
+};
+
 export default function FAQ() {
   return (
-    <div style={{ backgroundColor: 'black', minHeight: '100vh', color: 'white' }}>
-      <Head>
-        <title>FAQ | SimpliEarn</title>
-      </Head>
-      <NavBar />
-      <div style={{ padding: '20px', marginTop: '80px' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '40px' }}>FAQ</h1>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          {faqs.map((faq, index) => (
-            <div 
-              key={index} 
-              style={{ 
-                marginBottom: '20px', 
-                borderBottom: '1px solid #333', 
-                paddingBottom: '20px' 
-              }}
-            >
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '10px', color: '#81D18D' }}>{faq.question}</h3>
-              <p style={{ lineHeight: '1.6' }}>{faq.answer}</p>
+    <div className="min-h-screen text-foreground">
+      <div className="mx-auto max-w-3xl px-5 pt-32 pb-16">
+        <h1 className="mb-10 text-center text-5xl font-light tracking-tight">FAQ</h1>
+        <div>
+          {faqs.map((faq) => (
+            <div key={faq.question} className="mb-5 border-b border-white/8 pb-5">
+              <h3 className="mb-2 text-lg font-medium text-brand">{faq.question}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{faq.answer}</p>
             </div>
           ))}
         </div>

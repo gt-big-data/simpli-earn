@@ -233,10 +233,10 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
             isStock ? "rounded-tr-[23px]" : "rounded-br-[23px]"
           } w-1/3 h-[40px] ${
             isStock ? "border-t-[1px]" : "border-b-[1px]"
-          } border-white/25 cursor-pointer relative`}
+          } border-white/8 cursor-pointer relative`}
           onClick={() => setActiveTab("stock")}
         >
-          <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
+          <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full ${
             isStock ? "" : "opacity-50"
           }`}>
             Indicators
@@ -248,10 +248,10 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
           type="button"
           className={`flex justify-center items-center ${
             isSentiment ? "rounded-tl-[23px] rounded-tr-[23px] border-t-[1px]" : "border-b-[1px]"
-          } border-white/25 cursor-pointer relative w-1/3 h-[40px]`}
+          } border-white/8 cursor-pointer relative w-1/3 h-[40px]`}
           onClick={() => setActiveTab("sentiment")}
         >
-          <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
+          <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full ${
             isSentiment ? "" : "opacity-50"
           }`}>
             Sentiment
@@ -265,10 +265,10 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
             isCompare ? "rounded-tl-[23px]" : "rounded-bl-[23px]"
           } w-1/3 h-[40px] ${
             isCompare ? "border-t-[1px]" : "border-b-[1px]"
-          } border-white/25 cursor-pointer relative`}
+          } border-white/8 cursor-pointer relative`}
           onClick={() => setActiveTab("compare")}
         >
-          <h1 className={`flex justify-center items-center font-bold text-xs font-montserrat w-full h-full ${
+          <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full ${
             isCompare ? "" : "opacity-50"
           }`}>
             Compare
@@ -286,7 +286,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
 
   return (
     <div className="flex flex-col text-white w-full h-full max-h-120 min-h-0">
-      <div className="bg-white/4 text-white rounded-[30px] w-full h-full border border-white/25 overflow-hidden relative flex min-h-0 flex-col">
+      <div className="surface relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl text-foreground">
         {renderTabs()}
         
         {/* View Selector for Indicators Tab - positioned below tabs */}
@@ -296,7 +296,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
             <select
               value={indicatorView}
               onChange={(e) => setIndicatorView(e.target.value as IndicatorView)}
-              className="bg-white/10 border border-white/25 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-white/40"
+              className="h-8 rounded-[0.65rem] border border-white/10 bg-black/35 px-3 text-sm text-foreground focus:border-brand/70 focus:outline-none"
             >
               <option value="stock">Stock</option>
               <option value="VIX">VIX (Volatility Index)</option>

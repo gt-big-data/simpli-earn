@@ -1,36 +1,157 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #050505;
+  --foreground: #f5f5f5;
+  --muted-foreground: #9aa0a6;
+  --brand: #6fd98a;
+  --primary: #6fd98a;
+  --primary-foreground: #07140c;
+  --surface: rgba(17, 20, 19, 0.78);
+  --card: rgba(17, 20, 19, 0.78);
+  --popover: #141716;
+  --popover-foreground: #f5f5f5;
+  --pill: #2b2d2c;
+  --secondary: #2b2d2c;
+  --muted: #161918;
+  --accent: #1a2820;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --destructive: #e06b6b;
+  --radius: 0.75rem;
   scroll-behavior: smooth;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  /* Next/font sets --font-montserrat; use it as our sans stack */
-  --font-sans: var(--font-montserrat);
-  --color-green: #81D18D;
-  --linear-green: linear-gradient(#81D18D, #426B48);
-
+  --color-muted-foreground: var(--muted-foreground);
+  --color-brand: var(--brand);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-pill: var(--pill);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-destructive: var(--destructive);
+  --font-sans: var(--font-urbanist);
   --breakpoint-xs: 560px;
 }
 
-body {
+html {
   background: var(--background);
+}
+
+body {
+  background: transparent;
   color: var(--foreground);
-  font-family: var(--font-montserrat), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-urbanist), system-ui, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Legacy nav classes - kept for any external references */
-.nav-link {
-  text-decoration: none;
-  color: white;
-  font-weight: 300;
-  white-space: nowrap;
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px);
 }
 
-.nav-link:hover {
-  color: #81D18D !important;
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding-inline: 0.625rem;
+  border-radius: 0.5rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: filter 150ms ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding-inline: 0.625rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-outline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-destructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  padding-inline: 0.625rem;
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--destructive) 16%, transparent);
+  color: var(--destructive);
+  border: 1px solid color-mix(in srgb, var(--destructive) 35%, transparent);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.btn-destructive:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--destructive) 24%, transparent);
+}
+
+.btn-destructive:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.field {
+  height: 2.25rem;
+  width: 100%;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  padding-inline: 0.75rem;
+}
+
+.field::placeholder {
+  color: var(--muted-foreground);
+}
+
+.field:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--brand) 70%, transparent);
 }

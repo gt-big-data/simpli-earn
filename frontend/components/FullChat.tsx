@@ -1,9 +1,8 @@
 "use client";
 
-import { IoClose } from "react-icons/io5";
+import { Minimize2, X } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import ChatBot, { Message } from "./ChatBot";
-import { FaCompressAlt } from "react-icons/fa";
 
 interface FullChatProps {
     setFullscreen: Dispatch<SetStateAction<boolean>>;
@@ -19,30 +18,32 @@ export default function FullChat({ setFullscreen, onMinimizedChange, fullscreen,
             <div className="flex flex-col w-full h-full relative">
                 <div className="grid xs:grid-cols-[1fr_400px_1fr] relative justify-end xs:justify-between">
                     {/* SimpliChat Button */}
-                    <div className="hidden xs:flex justify-start items-start rounded-tl-[30px] rounded-tr-[23px] w-full h-[40px] border-t border-white/25 relative"></div>
+                    <div className="relative hidden h-10 w-full items-start justify-start rounded-tl-2xl border-t border-white/8 xs:flex"></div>
 
-                    <div className="hidden xs:flex justify-end items-end rounded-b-[23px] w-full h-[40px] border-b border-white/25 relative"></div>
+                    <div className="relative hidden h-10 w-full items-end justify-end border-b border-white/8 xs:flex"></div>
                     
                     {/* Close Button */}
                     <button
-                        className="flex mt-3 xs:mt-0 rounded-tr-[30px] rounded-tl-[23px] w-full h-[40px] bordert-t-none xs:border-t border-white/25 cursor-pointer relative"
+                        className="relative mt-3 flex h-10 w-full cursor-pointer rounded-tr-2xl border-white/8 xs:mt-0 xs:border-t"
                         onClick={() => {
                             setFullscreen(false); // Exit fullscreen
                             onMinimizedChange(true); // Minimize chat
                             onMinimizedChange(false); // reset
                         }}
                     >
-                        <h1 className="flex justify-end items-center font-bold text-sm font-montserrat w-full h-full text-white opacity-50">
-                            <IoClose size={30} className="mt-4 mr-4" />
+                        <h1 className="flex h-full w-full items-center justify-end text-sm font-medium text-muted-foreground">
+                            <X className="mt-4 mr-4 size-4" />
                         </h1>
                     </button>
                 </div>
 
                 <div className="flex w-full h-full">
-                    <div className="w-1/4 -mt-10 border-white/25 border-x border-b bg-white/12 rounded-l-[30px] hidden lg:block">
-                        <div className="w-full flex justify-between p-5">
-                            <FaCompressAlt className="cursor-pointer z-100" size={20} onClick={() => setFullscreen(false)} />
-                            <p className="text-lg font-bold -mt-1">SimpliChat</p>
+                    <div className="surface -mt-10 hidden w-1/4 rounded-l-2xl border-x border-b lg:block">
+                        <div className="flex w-full justify-between p-5">
+                            <button type="button" className="z-100 cursor-pointer" aria-label="Exit fullscreen" onClick={() => setFullscreen(false)}>
+                              <Minimize2 className="size-4" />
+                            </button>
+                            <p className="-mt-1 text-lg font-medium">SimpliChat</p>
                         </div>
 
                         <div className="p-5">
@@ -50,7 +51,7 @@ export default function FullChat({ setFullscreen, onMinimizedChange, fullscreen,
                             <p>chat history</p>
                         </div>
                     </div>
-                    <div className="-mt-10 pt-12 xs:pt-18 pb-8 px-8 w-full lg:w-3/4 rounded-r-[30px] rounded-l-[30px] lg:rounded-l-none border-b border-t xs:border-t-0 border-r border-white/25"><div className="relative h-full"><ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages} /></div></div>
+                    <div className="surface -mt-10 h-full w-full rounded-2xl px-8 pt-12 pb-8 xs:pt-18 lg:w-3/4 lg:rounded-l-none"><div className="relative h-full"><ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages} /></div></div>
                 </div>
             </div>
         </div>

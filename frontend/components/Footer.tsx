@@ -1,35 +1,30 @@
+import { Mail } from "lucide-react";
+import PointCloud from "./PointCloud";
+
 export default function Footer() {
-    return (
-      <footer className="w-full text-[#e6f0e8b7] py-4 border-t border-[#4f895f40]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm">&copy; {new Date().getFullYear()} SimpliEarn. All rights reserved.</p>
-          <div className="flex items-center space-x-4 mt-2 md:mt-0">
-            <a href="/about" className="transition-all hover:text-white">About Us</a>
-            <a href="/faq" className="transition-all hover:text-white">FAQ&rsquo;s</a>
-            <a href="mailto:simpliearnbdbi@gmail.com" className="transition-all hover:text-white">Contact Us</a>
-            <a
-              href="mailto:simpliearnbdbi@gmail.com"
-              className="hover:text-white"
-              aria-label="Email us"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.922l-7.44 4.65a2.25 2.25 0 01-2.38 0l-7.44-4.65A2.25 2.25 0 012.25 6.993V6.75"
-                />
-              </svg>
-            </a>
-          </div>
+  return (
+    <footer className="relative w-full overflow-hidden border-t border-white/8 py-4 text-muted-foreground">
+      <PointCloud variant="footer" />
+      <div className="relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-between px-4 md:flex-row">
+        <p className="text-sm">&copy; {new Date().getFullYear()} SimpliEarn. All rights reserved.</p>
+        <div className="mt-2 flex items-center space-x-4 md:mt-0">
+          <a href="/about" className="text-sm text-brand no-underline transition-colors hover:text-foreground">
+            About Us
+          </a>
+          <a href="/faq" className="text-sm text-brand no-underline transition-colors hover:text-foreground">
+            FAQ&rsquo;s
+          </a>
+          <a
+            href="mailto:simpliearnbdbi@gmail.com"
+            className="text-sm text-brand no-underline transition-colors hover:text-foreground"
+          >
+            Contact Us
+          </a>
+          <a href="mailto:simpliearnbdbi@gmail.com" className="text-brand hover:text-foreground" aria-label="Email us">
+            <Mail className="size-4" />
+          </a>
         </div>
-      </footer>
-    );
-  }
-  
+      </div>
+    </footer>
+  );
+}

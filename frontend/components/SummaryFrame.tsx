@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import ChatIcon from "./ChatIcon";
 import { Dispatch, SetStateAction } from "react";
 
@@ -54,25 +53,17 @@ export default function SummaryFrame({
   return (
     <div className="relative flex h-full w-full">
       {!halfHeight && (
-        <>
-          <div
-            className="absolute -right-[1px] -bottom-[1px] z-40 flex items-end"
-            style={{ shapeOutside: "inset(calc(100% - 110px) 0 0)" }}
-          >
-            <Image src="/inset-corner.svg" alt="" width={144} height={144} />
-          </div>
-          <div className="absolute bottom-0 right-0">
-            <button onClick={() => setActiveDisplay("half")}>
-              <ChatIcon />
-            </button>
-          </div>
-        </>
+        <div className="absolute right-3 bottom-3 z-40">
+          <button onClick={() => setActiveDisplay("half")} aria-label="Open chat">
+            <ChatIcon />
+          </button>
+        </div>
       )}
       <div
-        className="relative mt-[40px] max-h-[84vmax] w-full overflow-auto rounded-[30px] border border-white/25 bg-white/4 font-montserrat text-white"
+        className="surface relative mt-10 w-full max-h-[84vmax] overflow-auto rounded-2xl text-foreground"
         style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
       >
-        <h1 className="flex justify-center items-start pt-8 font-bold text-lg font-montserrat">
+        <h1 className="flex items-start justify-center pt-8 text-lg font-medium">
           Summary
         </h1>
         <div className="w-full px-8 pt-4 pb-8">
@@ -109,7 +100,7 @@ export default function SummaryFrame({
                                 const t = section.timestamp;
                                 if (typeof t === "number") onTimestampClick(t);
                               }}
-                              className="ml-2 inline-flex h-[40px] min-w-[78px] items-center justify-center rounded-full border border-white/20 bg-[#232323] px-4 align-middle text-[18px] font-medium leading-none text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:bg-[#2d2d2d]"
+                              className="ml-2 inline-flex h-8 min-w-[4.5rem] items-center justify-center rounded-[10px] border border-white/8 bg-pill px-2.5 align-middle text-sm font-medium leading-none text-foreground transition-colors hover:bg-muted"
                             >
                               {formatTimestamp(section.timestamp)}
                             </button>

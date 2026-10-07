@@ -1,6 +1,6 @@
 "use client";
 
-import { TbSend2 } from "react-icons/tb";
+import { Send } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useSearchParams } from "next/navigation";
@@ -175,13 +175,13 @@ export default function ChatBot({
             placeholder="Message RAG Chatbot"
             onKeyDown={handleKeyDown}
             style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
-            className="w-full h-[120px] p-3 bg-white/4 text-white rounded-[15px] border-[1px] border-white/25 resize-none"
+            className="h-[120px] w-full resize-none rounded-[0.65rem] border border-white/10 bg-black/35 p-3 text-sm text-foreground"
           ></textarea>
           <div
-            className="-mt-13 mr-3 py-1.5 px-3 bg-white/15 text-white rounded-full border-[1px] border-white/25 cursor-pointer"
+            className="btn-primary -mt-13 mr-3"
             onClick={sendMessage}
           >
-            <TbSend2 size={25} />
+            <Send className="size-4" />
           </div>
         </div>
       </div>

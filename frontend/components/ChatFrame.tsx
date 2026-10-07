@@ -1,9 +1,8 @@
 "use client";
 
-import { IoClose } from "react-icons/io5";
+import { Maximize2, X } from "lucide-react";
 import { useEffect, Dispatch, SetStateAction } from "react";
 import ChatBot, { Message } from "./ChatBot";
-import { FaExpandAlt } from "react-icons/fa";
 
 interface ChatFrameProps {
     onMinimizedChange: (minimized: boolean) => void;
@@ -39,12 +38,16 @@ export default function ChatFrame({ onMinimizedChange, minimized, setFullscreen,
   }
 
     return (
-        <div className="bg-white/4 text-white rounded-[30px] w-full h-full border-[1px] border-white/25 p-5">
-            <div className="relative w-full h-full">
+        <div className="surface h-full w-full rounded-2xl p-5 text-foreground">
+            <div className="relative h-full w-full">
                 <div className="flex justify-between">
-                    <FaExpandAlt className="cursor-pointer" size={20} onClick={handleExpand} />
-                    <h1 className="font-bold text-lg">SimpliChat</h1>
-                    <IoClose size={25} className="cursor-pointer" onClick={handleMinimize} />
+                    <button type="button" className="cursor-pointer text-foreground" aria-label="Expand chat" onClick={handleExpand}>
+                      <Maximize2 className="size-4" />
+                    </button>
+                    <h1 className="text-lg font-medium">SimpliChat</h1>
+                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={handleMinimize}>
+                      <X className="size-4" />
+                    </button>
                 </div>
                 <ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages}/>
             </div>

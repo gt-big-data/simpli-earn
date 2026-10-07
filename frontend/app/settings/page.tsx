@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth/AuthContext'
 import NavBar from '@/components/Navbar'
 import { SECTOR_PREFERENCES } from '@/lib/auth/constants'
 import type { SectorPreferenceSlug } from '@/lib/auth/constants'
-import { FaUserCircle } from 'react-icons/fa'
+import { UserRound } from 'lucide-react'
 
 export default function SettingsPage() {
   const { user, loading: authLoading, signOut } = useAuth()
@@ -196,30 +196,22 @@ export default function SettingsPage() {
 
   if (authLoading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#81D18D]" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-brand" />
       </div>
     )
   }
 
-  const inputClass =
-    'w-full py-2.5 px-4 bg-[rgba(234,250,236,0.08)] rounded-lg border border-[rgba(129,209,141,0.25)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]/50 focus:border-[#81D18D]'
-  const labelClass = 'block text-sm font-medium text-gray-300 mb-2'
-  const sectionClass =
-    'rounded-xl border border-[rgba(129,209,141,0.2)] bg-[rgba(0,0,0,0.3)] p-6 mb-6'
+  const inputClass = 'field'
+  const labelClass = 'mb-2 block text-sm font-medium text-muted-foreground'
+  const sectionClass = 'surface mb-6 rounded-2xl p-6'
 
   return (
-    <div
-      className="min-h-screen bg-[#0a0a0a] font-montserrat"
-      style={{
-        background:
-          'radial-gradient(50% 50% at 50% 0%, rgba(129, 209, 141, 0.06) 0%, transparent 50%)',
-      }}
-    >
+    <div className="min-h-screen bg-background">
       <NavBar />
 
       <main className="pt-28 pb-16 px-6 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-medium text-white mb-6 tracking-tight">
+        <h1 className="mb-6 text-2xl font-light tracking-tight text-foreground">
           Account
         </h1>
 
@@ -227,8 +219,8 @@ export default function SettingsPage() {
           <div
             className={`mb-6 p-4 rounded-lg text-sm ${
               message.type === 'success'
-                ? 'bg-[#81D18D]/20 text-[#81D18D]'
-                : 'bg-red-500/20 text-red-400'
+                ? 'bg-accent text-brand'
+                : 'bg-destructive/15 text-destructive'
             }`}
           >
             {message.text}
@@ -237,11 +229,11 @@ export default function SettingsPage() {
 
         {/* Avatar */}
         <section className={sectionClass}>
-          <h2 className="text-sm font-semibold text-[#81D18D] uppercase tracking-wider mb-4">
+          <h2 className="mb-4 text-sm font-medium text-brand">
             Avatar
           </h2>
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full overflow-hidden bg-[rgba(129,209,141,0.15)] flex items-center justify-center shrink-0">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent">
               {avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -250,7 +242,7 @@ export default function SettingsPage() {
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <FaUserCircle className="text-[#81D18D]/60" size={48} />
+                <UserRound className="size-8 text-brand/70" />
               )}
             </div>
             <div className="flex flex-col gap-2">
@@ -265,7 +257,7 @@ export default function SettingsPage() {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={loading}
-                className="text-sm text-[#81D18D] hover:underline disabled:opacity-50"
+                className="text-sm text-brand disabled:opacity-50"
               >
                 Change
               </button>
@@ -274,7 +266,7 @@ export default function SettingsPage() {
                   type="button"
                   onClick={handleRemoveAvatar}
                   disabled={loading}
-                  className="text-sm text-gray-400 hover:text-red-400 disabled:opacity-50"
+                  className="text-sm text-muted-foreground transition-colors hover:text-destructive disabled:opacity-50"
                 >
                   Remove
                 </button>
@@ -285,7 +277,7 @@ export default function SettingsPage() {
 
         {/* Name, Email & Sectors */}
         <section className={sectionClass}>
-          <h2 className="text-sm font-semibold text-[#81D18D] uppercase tracking-wider mb-4">
+          <h2 className="mb-4 text-sm font-medium text-brand">
             Profile
           </h2>
           <form onSubmit={handleSaveProfile} className="space-y-4">
@@ -314,7 +306,7 @@ export default function SettingsPage() {
                 className={inputClass}
                 placeholder="you@example.com"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Changing email may require verification.
               </p>
             </div>
@@ -324,15 +316,15 @@ export default function SettingsPage() {
                 {SECTOR_PREFERENCES.map(({ slug, label }) => (
                   <label
                     key={slug}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-[rgba(234,250,236,0.06)] border border-[rgba(129,209,141,0.15)] cursor-pointer hover:border-[rgba(129,209,141,0.3)] transition-colors"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg border border-white/8 bg-black/20 p-3 transition-colors hover:bg-white/5"
                   >
                     <input
                       type="checkbox"
                       checked={sectorPreferences.includes(slug)}
                       onChange={() => toggleSector(slug)}
-                      className="accent-[#81D18D] rounded"
+                      className="rounded accent-brand"
                     />
-                    <span className="text-white text-sm">{label}</span>
+                    <span className="text-sm text-foreground">{label}</span>
                   </label>
                 ))}
               </div>
@@ -340,7 +332,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="py-2.5 px-6 rounded-lg bg-[#81D18D] text-[#121612] font-semibold hover:brightness-110 disabled:opacity-50 transition-all"
+              className="btn-primary px-6"
             >
               Save
             </button>
@@ -349,7 +341,7 @@ export default function SettingsPage() {
 
         {/* Password */}
         <section className={sectionClass}>
-          <h2 className="text-sm font-semibold text-[#81D18D] uppercase tracking-wider mb-4">
+          <h2 className="mb-4 text-sm font-medium text-brand">
             Password
           </h2>
           <form onSubmit={handleChangePassword} className="space-y-4">
@@ -383,7 +375,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="py-2.5 px-6 rounded-lg bg-[#81D18D] text-[#121612] font-semibold hover:brightness-110 disabled:opacity-50 transition-all"
+              className="btn-primary px-6"
             >
               Update Password
             </button>
@@ -392,13 +384,13 @@ export default function SettingsPage() {
 
         {/* Logout */}
         <section className={sectionClass}>
-          <h2 className="text-sm font-semibold text-[#81D18D] uppercase tracking-wider mb-4">
+          <h2 className="mb-4 text-sm font-medium text-brand">
             Session
           </h2>
           <button
             type="button"
             onClick={() => signOut().then(() => router.push('/'))}
-            className="py-2.5 px-6 rounded-lg border border-[rgba(129,209,141,0.4)] text-gray-300 hover:bg-[rgba(129,209,141,0.1)] hover:text-white transition-colors"
+            className="btn-outline px-6"
           >
             Log out
           </button>
@@ -406,16 +398,16 @@ export default function SettingsPage() {
 
         {/* Delete Account */}
         <section className={sectionClass}>
-          <h2 className="text-sm font-semibold text-red-400/90 uppercase tracking-wider mb-4">
+          <h2 className="mb-4 text-sm font-medium text-destructive">
             Danger Zone
           </h2>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="mb-4 text-sm text-muted-foreground">
             Permanently delete your account and all associated data. This cannot be undone.
           </p>
           <button
             type="button"
             onClick={() => setDeleteModalOpen(true)}
-            className="py-2.5 px-6 rounded-lg border border-red-500/50 text-red-400 hover:bg-red-500/10 transition-colors"
+            className="btn-destructive px-6"
           >
             Delete Account
           </button>
@@ -425,10 +417,10 @@ export default function SettingsPage() {
       {/* Delete Confirmation Modal */}
       {deleteModalOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[2000] p-4">
-          <div className="rounded-xl border border-red-500/30 bg-[#121612] p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold text-white mb-2">Delete Account</h3>
-            <p className="text-gray-400 text-sm mb-4">
-              Type <strong className="text-white">delete</strong> to confirm.
+          <div className="w-full max-w-md rounded-2xl border border-destructive/30 bg-popover p-6">
+            <h3 className="mb-2 text-lg font-medium text-foreground">Delete Account</h3>
+            <p className="mb-4 text-sm text-muted-foreground">
+              Type <strong className="text-foreground">delete</strong> to confirm.
             </p>
             <input
               type="text"
@@ -441,7 +433,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleDeleteAccount}
                 disabled={deleteConfirmText !== 'delete' || loading}
-                className="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn-destructive flex-1"
               >
                 Delete
               </button>
@@ -450,7 +442,7 @@ export default function SettingsPage() {
                   setDeleteModalOpen(false)
                   setDeleteConfirmText('')
                 }}
-                className="flex-1 py-2.5 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-800"
+                className="btn-outline flex-1"
               >
                 Cancel
               </button>
