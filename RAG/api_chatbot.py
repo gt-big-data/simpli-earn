@@ -14,11 +14,14 @@ from collections import Counter
 import subprocess
 import json
 import re
+import threading
+import uuid
 from dotenv import load_dotenv
 from supabase import create_client
 
 from fastapi.middleware.cors import CORSMiddleware
 
+from chat_sessions import ChatSessionStore, normalize_conversation_id
 from llm_provider import get_llm, run_with_fallback, get_active_provider, get_model_name, invoke_json
 
 # Load environment variables and initialize Supabase
@@ -34,8 +37,6 @@ try:
         print("âš ï¸  Supabase not configured")
 except Exception as e:
     print(f"âš ï¸  Failed to initialize Supabase: {e}")
-
-last_used_id = None
 
 app = FastAPI()
 
@@ -58,8 +59,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-memory: list[tuple[str, str]] = []
-chat_transcript_path = None
+chat_sessions = ChatSessionStore()
 
 STATIC_TRANSCRIPTS = {
     "1": "transcripts/apple_seeking_alpha.txt",
@@ -85,13 +85,14 @@ with open(PRELOADED_SUMMARY_ANCHORS_PATH, "r", encoding="utf-8") as f:
     PRELOADED_SUMMARY_ANCHORS = json.load(f)
 
 UPLOADS_DIR = "uploads"
-chat_history = []
 
 
 class ChatRequest(BaseModel):
     message: str
     id: Optional[str] = None
     video_url: Optional[str] = None
+    # Client-generated id that scopes chat history; one is minted (and returned) if missing
+    conversation_id: Optional[str] = None
 
 
 STOP_WORDS = {
@@ -343,26 +344,35 @@ def save_transcript_in_uploads(video_url, transcript_text):
     return file_path
 
 
-@app.post("/chat")
-def chat_endpoint(req: ChatRequest):
-    global chat_transcript_path, memory, last_used_id
+def _chat_source_key(req: ChatRequest) -> Optional[str]:
+    if req.video_url:
+        return f"YT::{req.video_url}"
+    if req.id:
+        return f"ID::{req.id}"
+    return None
 
-    source_changed = False
+
+# Transcripts are public call data, so local copies are shared across conversations
+_chat_transcripts: dict[str, str] = {}
+_chat_transcripts_lock = threading.Lock()
+
+
+def _write_atomically(path: str, text: str) -> None:
+    """Concurrent conversations may fetch the same transcript; never expose a half-written file."""
+    tmp_path = f"{path}.{uuid.uuid4().hex}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.replace(tmp_path, path)
+
+
+def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optional[str], Optional[str]]:
+    """Return (local transcript path, error response text)."""
+    with _chat_transcripts_lock:
+        cached = _chat_transcripts.get(source_key)
+    if cached and os.path.exists(cached):
+        return cached, None
 
     if req.video_url:
-        if last_used_id != f"YT::{req.video_url}":
-            source_changed = True
-            last_used_id = f"YT::{req.video_url}"
-    elif req.id:
-        if last_used_id != req.id:
-            source_changed = True
-            last_used_id = req.id
-
-    if source_changed:
-        memory = []
-        chat_transcript_path = None
-
-    if req.video_url and not chat_transcript_path:
         video_id = None
         if "v=" in req.video_url:
             video_id = req.video_url.split("v=")[1].split("&")[0]
@@ -381,8 +391,7 @@ def chat_endpoint(req: ChatRequest):
                         upload_dir = os.path.join(os.getcwd(), "uploads")
                         os.makedirs(upload_dir, exist_ok=True)
                         transcript_path = os.path.join(upload_dir, f"transcript_{video_id}.txt")
-                        with open(transcript_path, "w", encoding="utf-8") as f:
-                            f.write(transcript_text)
+                        _write_atomically(transcript_path, transcript_text)
                         print(f"âœ… Transcript saved locally: {transcript_path}")
             except Exception as e:
                 print(f"âš ï¸  Failed to load transcript from Supabase: {e}")
@@ -391,51 +400,64 @@ def chat_endpoint(req: ChatRequest):
             print("ðŸ“¥ Fetching transcript from YouTube...")
             transcript = get_video_transcript(req.video_url)
             if "Error:" in transcript:
-                return {"response": transcript}
+                return None, transcript
             transcript_path = save_transcript_in_uploads(req.video_url, transcript)
+    elif req.id in STATIC_TRANSCRIPTS:
+        transcript_path = STATIC_TRANSCRIPTS[req.id]
+    else:
+        return None, "âŒ Unknown dashboard ID or missing transcript."
 
-        chat_transcript_path = transcript_path
+    with _chat_transcripts_lock:
+        _chat_transcripts[source_key] = transcript_path
+    return transcript_path, None
 
-    elif req.id and not chat_transcript_path:
-        if req.id in STATIC_TRANSCRIPTS:
-            chat_transcript_path = STATIC_TRANSCRIPTS[req.id]
-        else:
-            return {"response": "âŒ Unknown dashboard ID or missing transcript."}
 
-    if not chat_transcript_path:
-        return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
+@app.post("/chat")
+def chat_endpoint(req: ChatRequest):
+    conversation_id = normalize_conversation_id(req.conversation_id)
+    source_key = _chat_source_key(req)
+    if not source_key:
+        return {"response": "âŒ No transcript loaded. Provide video_url or valid id.", "conversation_id": conversation_id}
 
-    chat_prompt = ChatPromptTemplate.from_template(
-        """
-        You are a financial assistant providing insights from this transcript of an earnings call you currently have.
-        You are to give objective answers at all times.
-        This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
-        Use the provided context and chat history to answer the user's questions.
-        If the question is irrelevant to the document, politely state so.
-        Assume the user is not a financial expert.
-        If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
-        Do not start your response by citing the transcript of the call.
+    session = chat_sessions.get(conversation_id, source_key)
+    with session.lock:
+        if not session.transcript_path:
+            transcript_path, error = _resolve_chat_transcript(req, source_key)
+            if error:
+                return {"response": error, "conversation_id": conversation_id}
+            session.transcript_path = transcript_path
 
-        Context: {context}
-        Chat History: {chat_history}
-        User: {question}
-        Assistant:
-        """
-    )
+        chat_prompt = ChatPromptTemplate.from_template(
+            """
+            You are a financial assistant providing insights from this transcript of an earnings call you currently have.
+            You are to give objective answers at all times.
+            This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
+            Use the provided context and chat history to answer the user's questions.
+            If the question is irrelevant to the document, politely state so.
+            Assume the user is not a financial expert.
+            If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
+            Do not start your response by citing the transcript of the call.
 
-    def _invoke():
-        # Retriever and LLM are resolved per attempt, so after an OpenAI quota error the retry
-        # uses Gemini for both (with a Gemini-built index, never OpenAI vectors)
-        retriever, _ = initialize_retrieval(chat_transcript_path)
-        return answer_question(req.message, retriever, memory, prompt=chat_prompt)
+            Context: {context}
+            Chat History: {chat_history}
+            User: {question}
+            Assistant:
+            """
+        )
 
-    try:
-        response = run_with_fallback(_invoke)
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+        def _invoke():
+            # Retriever and LLM are resolved per attempt, so after an OpenAI quota error the retry
+            # uses Gemini for both (with a Gemini-built index, never OpenAI vectors)
+            retriever, _ = initialize_retrieval(session.transcript_path)
+            return answer_question(req.message, retriever, session.history, prompt=chat_prompt)
 
-    memory.append((req.message, response["answer"]))
-    chat_history.append({"question": req.message, "answer": response["answer"]})
+        try:
+            response = run_with_fallback(_invoke)
+        except Exception as e:
+            raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+
+        session.add_turn(req.message, response["answer"])
+        recent_history = [{"question": q, "answer": a} for q, a in session.history]
 
     source_docs = response.get("source_documents", []) or []
     sources = []
@@ -455,7 +477,7 @@ def chat_endpoint(req: ChatRequest):
     suggestions = generate_follow_up_questions(
         user_question=req.message,
         bot_answer=response["answer"],
-        chat_history=chat_history,
+        chat_history=recent_history,
     )
 
     return {
@@ -463,6 +485,7 @@ def chat_endpoint(req: ChatRequest):
         "suggestions": suggestions,
         "sources": sources,
         "provider": get_active_provider(),
+        "conversation_id": conversation_id,
     }
 
 

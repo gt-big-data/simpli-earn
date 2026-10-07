@@ -12,6 +12,22 @@ export type Message = {
   suggestions?: string[]; // Optional array of follow-up question suggestions
 };
 
+// One server-side conversation per transcript for the life of the page. ChatBot remounts when
+// switching between the docked and fullscreen chat, so the id cannot live in component state.
+const conversationIds = new Map<string, string>();
+
+function getConversationId(sourceKey: string): string {
+  let id = conversationIds.get(sourceKey);
+  if (!id) {
+    id =
+      typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join("");
+    conversationIds.set(sourceKey, id);
+  }
+  return id;
+}
+
 export default function ChatBot({
   fullscreen,
   messages,
@@ -29,6 +45,42 @@ export default function ChatBot({
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
+  const askBot = async (text: string) => {
+    try {
+      const conversationId = getConversationId(`${dashboardId ?? ""}|${videoUrl ?? ""}`);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+      const res = await fetch(`${apiUrl}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: text,
+          id: dashboardId,
+          video_url: videoUrl,
+          conversation_id: conversationId,
+        }),
+      });
+
+      const data = await res.json();
+      const botMessage: Message = {
+        id: messages.length + 2,
+        sender: "bot", // Explicitly set to "bot"
+        text: data.response || "⚠️ No response from server.",
+        suggestions: data.suggestions || [], // Include suggestions from API
+      };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: messages.length + 2,
+        sender: "bot", // Explicitly set to "bot"
+        text: "⚠️ Failed to connect to server. Check API is running.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+      console.error("Error sending message:", error);
+    }
+  };
+
   const sendMessage = async () => {
     if (userInput.trim()) {
       const newMessage: Message = {
@@ -38,38 +90,7 @@ export default function ChatBot({
       };
       setMessages((prev) => [...prev, newMessage]);
       setUserInput("");
-
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/chat`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: userInput,
-            id: dashboardId, // Tesla dashboard for now (can be made dynamic)
-            video_url: videoUrl,
-          }),
-        });
-
-        const data = await res.json();
-        const botMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot", // Explicitly set to "bot"
-          text: data.response || "⚠️ No response from server.",
-          suggestions: data.suggestions || [], // Include suggestions from API
-        };
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        const errorMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot", // Explicitly set to "bot"
-          text: "⚠️ Failed to connect to server. Check API is running.",
-        };
-        setMessages((prev) => [...prev, errorMessage]);
-        console.error("Error sending message:", error);
-      }
+      await askBot(userInput);
     }
   };
 
@@ -95,39 +116,7 @@ export default function ChatBot({
     setMessages((prev) => [...prev, newMessage]);
 
     // Send the suggestion to the backend
-    (async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/chat`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: suggestion,
-            id: dashboardId,
-            video_url: videoUrl,
-          }),
-        });
-
-        const data = await res.json();
-        const botMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot",
-          text: data.response || "⚠️ No response from server.",
-          suggestions: data.suggestions || [],
-        };
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        const errorMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot",
-          text: "⚠️ Failed to connect to server. Check API is running.",
-        };
-        setMessages((prev) => [...prev, errorMessage]);
-        console.error("Error sending message:", error);
-      }
-    })();
+    void askBot(suggestion);
 
     // Clear the input
     setUserInput("");

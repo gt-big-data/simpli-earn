@@ -11,6 +11,7 @@ for name in ("OPENAI_API_KEY", "GEMINI_API_KEY", "SUPABASE_URL", "SUPABASE_KEY")
 os.environ.setdefault("KMP_DUPLICATE_LIB_OK", "TRUE")
 
 import json
+import time
 
 import pytest
 from langchain_core.embeddings import DeterministicFakeEmbedding
@@ -36,6 +37,8 @@ class FakeGeminiChat(BaseChatModel):
     temperature: float = 0
     response_mime_type: str | None = None
     instances: list = []
+    prompts: list = []
+    delay_seconds: float = 0.0
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -47,6 +50,9 @@ class FakeGeminiChat(BaseChatModel):
 
     def _generate(self, messages, stop=None, run_manager=None, **kwargs):
         text = "\n".join(str(m.content) for m in messages)
+        FakeGeminiChat.prompts.append(text)
+        if FakeGeminiChat.delay_seconds:
+            time.sleep(FakeGeminiChat.delay_seconds)
         if "follow-up questions" in text:
             reply = "1. What drove margins?\n2. Any guidance change?\n3. How was China?"
         elif "RED FLAGS" in text:
@@ -95,4 +101,6 @@ def gemini_only(monkeypatch, tmp_path):
     monkeypatch.setattr(langchain_testing, "_vectorstores", type(langchain_testing._vectorstores)())
     monkeypatch.chdir(RAG_DIR)  # static transcripts use paths relative to RAG/
     FakeGeminiChat.instances = []
+    FakeGeminiChat.prompts = []
+    FakeGeminiChat.delay_seconds = 0.0
     return tmp_path
