@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { Suspense, useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import VideoFrame from "@/components/VideoFrame";
@@ -11,6 +11,7 @@ import FullChat from "@/components/FullChat";
 import type { PipelineState } from "@/components/ChartsFrame";
 import type { Message } from "@/components/ChatBot";
 import { useAuth } from "@/lib/auth/AuthContext";
+import { chatForAccount, startChat, updateMessages, type AccountChat } from "@/lib/account-chat";
 import { API_BASE_URL } from "@/lib/api-config";
 
 type SummarySection = {
@@ -171,29 +172,21 @@ function DashboardContent() {
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
 
-  // The chat (which is also the history sent to the RAG API) belongs to the account that wrote it:
-  // signing out or switching users in this tab starts a fresh chat.
+  // The chat (which is also the history sent to the RAG API) belongs to the account that wrote it.
+  // Any account change (sign out, sign in, switch) replaces it; see lib/account-chat.ts.
   const { user } = useAuth();
   const accountId = user?.id ?? null;
-  const [chat, setChat] = useState<{ accountId: string | null; messages: Message[] }>({
-    accountId,
-    messages: INITIAL_MESSAGES,
-  });
-  const messages = chat.accountId === accountId ? chat.messages : INITIAL_MESSAGES;
-  const currentAccount = useRef(accountId);
-  useEffect(() => {
-    currentAccount.current = accountId;
-  }, [accountId]);
+  const [chat, setChat] = useState<AccountChat>(() => startChat(accountId, INITIAL_MESSAGES));
+  const currentChat = chatForAccount(chat, accountId, INITIAL_MESSAGES);
+  if (currentChat !== chat) {
+    // Adjusting state while rendering (React's pattern for resetting state when an input changes)
+    setChat(currentChat);
+  }
+  const messages = currentChat.messages;
+  const { epoch } = currentChat;
   const setMessages = useCallback<Dispatch<SetStateAction<Message[]>>>(
-    (action) => {
-      // A reply that lands after the account changed belongs to the previous user: drop it
-      if (currentAccount.current !== accountId) return;
-      setChat((prev) => {
-        const base = prev.accountId === accountId ? prev.messages : INITIAL_MESSAGES;
-        return { accountId, messages: typeof action === "function" ? action(base) : action };
-      });
-    },
-    [accountId]
+    (update) => setChat((prev) => updateMessages(prev, epoch, update)),
+    [epoch]
   );
 
   const handleChatMinimized = (isMinimized: boolean) => {
