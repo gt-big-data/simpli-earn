@@ -26,8 +26,8 @@ Both APIs report missing or malformed required settings when they start; with `S
 (set on Cloud Run) they refuse to start. `NEXT_PUBLIC_*` values are compiled into the frontend by
 `next build`, so set them before building (the frontend Docker image requires them as build args).
 
-Run the SQL in `docs/migrations/001`–`003` in Supabase (job queue, dashboard metadata, cached
-summaries and red flags).
+The SQL in `docs/migrations/001`–`003` is optional: the app runs without it. 001 is needed only for the
+home-worker queue (`YOUTUBE_HOME_WORKER=1`); 002 and 003 add chart metadata and summary/red-flag caching.
 
 ## Install Dependencies
 

@@ -604,10 +604,22 @@ def generate_summary_from_youtube(data: dict = Body(...)):
     video_id = extract_video_id(video_url)
 
     # Summaries are generated once per video and saved to video_analyses.summary
+    # (docs/migrations/003). Until that column exists, still use the stored transcript but
+    # generate the summary every time, as /red-flags does.
     analysis_row = None
+    can_save = False
     if video_id and supabase:
+        lookup = lambda columns: (
+            supabase.table("video_analyses").select(columns).eq("video_identifier", video_id).execute()
+        )
         try:
-            result = supabase.table("video_analyses").select("transcript_filename,summary").eq("video_identifier", video_id).execute()
+            try:
+                result = lookup("transcript_filename,summary")
+                can_save = True
+            except Exception as e:
+                if "summary" not in str(e):
+                    raise
+                result = lookup("transcript_filename")
             analysis_row = result.data[0] if result.data else None
         except Exception as e:
             print(f"Failed to look up video analysis: {e}")
@@ -696,7 +708,7 @@ Summary:
         "provider": get_active_provider(),
     }
     # Only processed videos have a row to save into; YouTube-caption fallbacks regenerate each time
-    if analysis_row:
+    if analysis_row and can_save:
         try:
             supabase.table("video_analyses").update({
                 "summary": {**response, "generated_at": datetime.now().isoformat()},

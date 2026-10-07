@@ -48,8 +48,8 @@ The API URLs default to `localhost:8000` / `:8001`.
 
 ### Supabase SQL
 
-Run `docs/migrations/001` through `003` in the Supabase SQL editor (job queue, dashboard metadata,
-cached summaries/red flags).
+Optional: `docs/migrations/001` through `003` add the home-worker job queue (only needed with
+`YOUTUBE_HOME_WORKER=1`), dashboard metadata, and summary/red-flag caching. The app runs without them.
 
 For auth + settings setup details, see:
 - [docs/AUTH_IMPLEMENTATION_STEPS.md](docs/AUTH_IMPLEMENTATION_STEPS.md)

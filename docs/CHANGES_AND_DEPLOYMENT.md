@@ -46,7 +46,7 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 ### A. Supabase (once per project)
 
-1. Open **Supabase Dashboard → SQL** and run, in order:
+1. Optionally, in **Supabase Dashboard → SQL**, run (the app works without them; 001 is required only for the home worker):
    - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue),
    - [`002_video_analyses_metadata.sql`](./migrations/002_video_analyses_metadata.sql) (chart ticker/date),
    - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags).
