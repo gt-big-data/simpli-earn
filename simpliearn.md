@@ -418,7 +418,7 @@ app/
 ### Challenge 3: Chat Memory Mixing Up Different Earnings Calls
 **Problem:** If a user chatted about Apple Q1, then navigated to Tesla Q3, the conversation memory still contained Apple context. The chatbot would give confused, wrong answers.
 
-**Solution:** Source change detection. Every chat request includes `id` or `video_url`. Compare to the globally tracked `current_source`. If changed → clear the FAISS retriever AND the conversation memory buffer. Fresh start for each new source.
+**Solution (originally):** Source change detection against a globally tracked `current_source`, clearing the retriever and memory buffer when it changed. That global state also mixed different users' conversations, so the API is now stateless: the browser sends the earlier turns about the same transcript with each `/chat` request (each chat message is tagged with its transcript), and the retriever is looked up per request from a shared, read-only index cache.
 
 ---
 
@@ -568,12 +568,12 @@ For our scale (~1,000 chunks per transcript), a flat L2 index is fine. For milli
 
 **Q: How do you handle conversation history in the RAG chatbot?**
 
-A: We use LangChain's `ConversationBufferMemory` paired with `ConversationalRetrievalChain`. The chain has two steps:
+A: The chain (originally LangChain's `ConversationalRetrievalChain`, now an equivalent LCEL pipeline in `RAG/langchain_testing.py`) has two steps:
 
 1. **Condense**: Takes the conversation history + the new question and asks GPT to rephrase the question as a standalone query (so "Tell me more about that" becomes "Tell me more about Apple's iPhone revenue from the earnings call")
 2. **Retrieve and generate**: Uses the condensed question to query FAISS, retrieves relevant chunks, and generates a response with the chunks + history as context
 
-The memory buffer accumulates all messages in the current session. When the user switches to a different earnings call, we clear the memory entirely to prevent cross-contamination.
+The history comes from the browser with each request (the last 20 turns about the current earnings call), so the API holds no per-user state and any Cloud Run instance can answer a follow-up. Switching to a different call starts with empty history.
 
 ---
 

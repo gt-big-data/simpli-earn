@@ -11,22 +11,29 @@ export type Message = {
   sender: string;
   text: string;
   suggestions?: string[]; // Optional array of follow-up question suggestions
+  source?: string; // Transcript the exchange was about (dashboard id or video URL)
 };
 
-// One server-side conversation per transcript for the life of the page. ChatBot remounts when
-// switching between the docked and fullscreen chat, so the id cannot live in component state.
-const conversationIds = new Map<string, string>();
+// The RAG API keeps no chat state: each request carries the earlier turns about the same
+// transcript (messages stay on screen when switching dashboards, but history doesn't carry over).
+const MAX_HISTORY_TURNS = 20;
 
-function getConversationId(sourceKey: string): string {
-  let id = conversationIds.get(sourceKey);
-  if (!id) {
-    id =
-      typeof crypto.randomUUID === "function"
-        ? crypto.randomUUID()
-        : Array.from(crypto.getRandomValues(new Uint8Array(16)), (b) => b.toString(16).padStart(2, "0")).join("");
-    conversationIds.set(sourceKey, id);
+function historyFor(messages: Message[], source: string) {
+  const turns: { question: string; answer: string }[] = [];
+  for (let i = 0; i < messages.length - 1; i++) {
+    const question = messages[i];
+    const answer = messages[i + 1];
+    if (
+      question.sender === "user" &&
+      answer.sender === "bot" &&
+      question.source === source &&
+      answer.source === source &&
+      !answer.text.startsWith("⚠️")
+    ) {
+      turns.push({ question: question.text, answer: answer.text });
+    }
   }
-  return id;
+  return turns.slice(-MAX_HISTORY_TURNS);
 }
 
 export default function ChatBot({
@@ -46,9 +53,12 @@ export default function ChatBot({
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
+  const source = `${dashboardId ?? ""}|${videoUrl ?? ""}`;
+
   const askBot = async (text: string) => {
+    // `messages` is the list before this question was added, i.e. exactly the earlier turns
+    const history = historyFor(messages, source);
     try {
-      const conversationId = getConversationId(`${dashboardId ?? ""}|${videoUrl ?? ""}`);
       const res = await fetch(`${API_BASE_URL}/chat`, {
         method: "POST",
         headers: {
@@ -58,7 +68,7 @@ export default function ChatBot({
           message: text,
           id: dashboardId,
           video_url: videoUrl,
-          conversation_id: conversationId,
+          history,
         }),
       });
 
@@ -68,6 +78,7 @@ export default function ChatBot({
         sender: "bot", // Explicitly set to "bot"
         text: data.response || "⚠️ No response from server.",
         suggestions: data.suggestions || [], // Include suggestions from API
+        source,
       };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
@@ -87,6 +98,7 @@ export default function ChatBot({
         id: messages.length + 1,
         sender: "user",
         text: userInput,
+        source,
       };
       setMessages((prev) => [...prev, newMessage]);
       setUserInput("");
@@ -112,6 +124,7 @@ export default function ChatBot({
       id: messages.length + 1,
       sender: "user",
       text: suggestion,
+      source,
     };
     setMessages((prev) => [...prev, newMessage]);
 

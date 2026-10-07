@@ -22,7 +22,6 @@ from supabase import create_client
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from chat_sessions import ChatSessionStore, normalize_conversation_id
 from env_check import validate_environment
 from llm_provider import get_llm, run_with_fallback, get_active_provider, get_model_name, invoke_json
 
@@ -75,7 +74,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-chat_sessions = ChatSessionStore()
 
 STATIC_TRANSCRIPTS = {
     "1": "transcripts/apple_seeking_alpha.txt",
@@ -103,12 +101,34 @@ with open(PRELOADED_SUMMARY_ANCHORS_PATH, "r", encoding="utf-8") as f:
 UPLOADS_DIR = "uploads"
 
 
+class ChatTurn(BaseModel):
+    question: str
+    answer: str
+
+
 class ChatRequest(BaseModel):
     message: str
     id: Optional[str] = None
     video_url: Optional[str] = None
-    # Client-generated id that scopes chat history; one is minted (and returned) if missing
-    conversation_id: Optional[str] = None
+    # Earlier turns of this conversation about this transcript, oldest first. The browser sends
+    # them, so the API keeps no per-user state and any instance can answer a follow-up.
+    history: list[ChatTurn] = []
+
+
+# Bounds on the client-supplied history, so it cannot inflate prompts without limit
+CHAT_MAX_TURNS = int(os.getenv("CHAT_MAX_TURNS", "20"))
+CHAT_MAX_QUESTION_CHARS = 2000
+CHAT_MAX_ANSWER_CHARS = 8000
+
+
+def chat_history_from_request(turns: list[ChatTurn]) -> list[tuple[str, str]]:
+    """Last CHAT_MAX_TURNS turns as (question, answer) pairs, each field truncated."""
+    recent = turns[-CHAT_MAX_TURNS:] if CHAT_MAX_TURNS > 0 else []
+    return [
+        (turn.question[:CHAT_MAX_QUESTION_CHARS], turn.answer[:CHAT_MAX_ANSWER_CHARS])
+        for turn in recent
+        if turn.question.strip() and turn.answer.strip()
+    ]
 
 
 STOP_WORDS = {
@@ -430,50 +450,45 @@ def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optiona
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
-    conversation_id = normalize_conversation_id(req.conversation_id)
     source_key = _chat_source_key(req)
     if not source_key:
-        return {"response": "âŒ No transcript loaded. Provide video_url or valid id.", "conversation_id": conversation_id}
+        return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
 
-    session = chat_sessions.get(conversation_id, source_key)
-    with session.lock:
-        if not session.transcript_path:
-            transcript_path, error = _resolve_chat_transcript(req, source_key)
-            if error:
-                return {"response": error, "conversation_id": conversation_id}
-            session.transcript_path = transcript_path
+    transcript_path, error = _resolve_chat_transcript(req, source_key)
+    if error:
+        return {"response": error}
+    history = chat_history_from_request(req.history)
 
-        chat_prompt = ChatPromptTemplate.from_template(
-            """
-            You are a financial assistant providing insights from this transcript of an earnings call you currently have.
-            You are to give objective answers at all times.
-            This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
-            Use the provided context and chat history to answer the user's questions.
-            If the question is irrelevant to the document, politely state so.
-            Assume the user is not a financial expert.
-            If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
-            Do not start your response by citing the transcript of the call.
+    chat_prompt = ChatPromptTemplate.from_template(
+        """
+        You are a financial assistant providing insights from this transcript of an earnings call you currently have.
+        You are to give objective answers at all times.
+        This document is the earnings call of a given company, and it will have typical information such as the name of the company, the participants at the start of the document.
+        Use the provided context and chat history to answer the user's questions.
+        If the question is irrelevant to the document, politely state so.
+        Assume the user is not a financial expert.
+        If the user states anything unrelated to the earnings call (need not be a question), please do not answer it and let them know that you are only allowed to answer questions and provide information of the given earnings call.
+        Do not start your response by citing the transcript of the call.
 
-            Context: {context}
-            Chat History: {chat_history}
-            User: {question}
-            Assistant:
-            """
-        )
+        Context: {context}
+        Chat History: {chat_history}
+        User: {question}
+        Assistant:
+        """
+    )
 
-        def _invoke():
-            # Retriever and LLM are resolved per attempt, so after an OpenAI quota error the retry
-            # uses Gemini for both (with a Gemini-built index, never OpenAI vectors)
-            retriever, _ = initialize_retrieval(session.transcript_path)
-            return answer_question(req.message, retriever, session.history, prompt=chat_prompt)
+    def _invoke():
+        # Retriever and LLM are resolved per attempt, so after an OpenAI quota error the retry
+        # uses Gemini for both (with a Gemini-built index, never OpenAI vectors)
+        retriever, _ = initialize_retrieval(transcript_path)
+        return answer_question(req.message, retriever, history, prompt=chat_prompt)
 
-        try:
-            response = run_with_fallback(_invoke)
-        except Exception as e:
-            raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+    try:
+        response = run_with_fallback(_invoke)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
 
-        session.add_turn(req.message, response["answer"])
-        recent_history = [{"question": q, "answer": a} for q, a in session.history]
+    recent_history = [{"question": q, "answer": a} for q, a in history + [(req.message, response["answer"])]]
 
     source_docs = response.get("source_documents", []) or []
     sources = []
@@ -501,7 +516,6 @@ def chat_endpoint(req: ChatRequest):
         "suggestions": suggestions,
         "sources": sources,
         "provider": get_active_provider(),
-        "conversation_id": conversation_id,
     }
 
 
