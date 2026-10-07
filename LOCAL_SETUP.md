@@ -48,8 +48,8 @@ The API URLs default to `localhost:8000` / `:8001`.
 
 ### Supabase SQL
 
-Run `docs/migrations/001` through `005` in the Supabase SQL editor (job queue, dashboard metadata,
-cached summaries/red flags, dashboard owners, owner checks for queued jobs).
+Run `docs/migrations/001` through `003` in the Supabase SQL editor (job queue, dashboard metadata,
+cached summaries/red flags).
 
 For auth + settings setup details, see:
 - [docs/AUTH_IMPLEMENTATION_STEPS.md](docs/AUTH_IMPLEMENTATION_STEPS.md)

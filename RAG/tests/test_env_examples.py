@@ -42,7 +42,7 @@ def frontend_sources():
 
 
 def test_scanner_finds_known_reads():
-    assert {"SUPABASE_URL", "GEMINI_API_KEY", "LIBRARY_ADMIN_EMAILS"} <= set(reads(python_sources(), PY_READ))
+    assert {"SUPABASE_URL", "GEMINI_API_KEY", "DASHBOARD_ADMIN_EMAILS"} <= set(reads(python_sources(), PY_READ))
     assert {"NEXT_PUBLIC_API_URL", "SUPABASE_SERVICE_ROLE_KEY"} <= set(reads(frontend_sources(), TS_READ))
 
 

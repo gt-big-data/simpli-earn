@@ -1,4 +1,4 @@
-"""The pipeline's final write enforces, atomically, the ownership the API authorized at request time."""
+"""The pipeline's final write never replaces a complete analysis unless an admin forced it."""
 
 import importlib.util
 from types import SimpleNamespace
@@ -7,14 +7,16 @@ import pytest
 
 from conftest import RAG_DIR
 
-ALICE = "11111111-1111-1111-1111-111111111111"
-BOB = "22222222-2222-2222-2222-222222222222"
 FILES = {"relevance_filename": "r.csv", "specificity_filename": "s.csv"}
 META = {"title": "t", "ticker": "AAPL", "upload_date": "20250101"}
+COMPLETE = {"video_identifier": "vid", "transcript_filename": "done.txt",
+            "relevance_filename": "done-r.csv", "specificity_filename": "done-s.csv"}
+INCOMPLETE = {"video_identifier": "vid", "transcript_filename": "half.txt",
+              "relevance_filename": None, "specificity_filename": None}
 
 
 class RowStore:
-    """video_analyses keyed by video_identifier, with the unique key and filtered UPDATE of Postgres."""
+    """video_analyses keyed by video_identifier, with Postgres' unique key and filtered UPDATE."""
 
     def __init__(self, rows=None, missing_columns=()):
         self.rows = {r["video_identifier"]: dict(r) for r in (rows or [])}
@@ -52,27 +54,28 @@ class Query:
         return self
 
     def eq(self, column, value):
-        self.filters.append((column, value))
+        self.filters.append(lambda row: row.get(column) == value)
         return self
 
-    def is_(self, column, value):
-        self.filters.append((column, None))
+    def or_(self, expression):
+        # Only the "<column>.is.null,..." form used by the script
+        columns = [part.split(".is.null")[0] for part in expression.split(",")]
+        self.filters.append(lambda row: any(row.get(c) is None for c in columns))
         return self
 
     def execute(self):
-        used = set(self.data) | {c for c, _ in self.filters}
-        for column in self.store.missing_columns & used:
+        for column in self.store.missing_columns & set(self.data):
             raise RuntimeError(f"column video_analyses.{column} does not exist")
         rows, key = self.store.rows, self.data.get("video_identifier")
         if self.op == "insert":
             if key in rows:
-                raise RuntimeError('duplicate key value violates unique constraint (code 23505)')
+                raise RuntimeError("duplicate key value violates unique constraint (code 23505)")
             rows[key] = dict(self.data)
             return SimpleNamespace(data=[rows[key]])
         if self.op == "upsert":
             rows.setdefault(key, {}).update(self.data)
             return SimpleNamespace(data=[rows[key]])
-        matched = [r for r in rows.values() if all(r.get(c) == v for c, v in self.filters)]
+        matched = [r for r in rows.values() if all(f(r) for f in self.filters)]
         for r in matched:
             r.update(self.data)
         return SimpleNamespace(data=matched)
@@ -89,79 +92,83 @@ def load_script():
 SCRIPT = load_script()
 
 
-def write(store, transcript, created_by, expect_owner):
+def write(store, transcript, mode):
     creator = object.__new__(SCRIPT.DashboardCreator)
     creator.supabase = store
-    return creator.create_database_entry("vid", META, transcript, FILES, created_by=created_by, expect_owner=expect_owner)
+    return creator.create_database_entry("vid", META, transcript, FILES, write_mode=mode)
 
 
 def test_two_jobs_for_the_same_new_video_cannot_overwrite_each_other():
-    """Both were authorized when no row existed; whichever writes second must not replace the first."""
     store = RowStore()
 
-    assert write(store, "alice.txt", ALICE, "new")
-    assert not write(store, "bob.txt", BOB, "new")
+    assert write(store, "first.txt", "safe")
+    assert not write(store, "second.txt", "safe")
 
-    assert store.rows["vid"]["transcript_filename"] == "alice.txt"
-    assert store.rows["vid"]["created_by"] == ALICE
-    assert store.removed == ["transcripts/bob.txt", "sentiment/r.csv", "sentiment/s.csv"]
-
-
-def test_owner_reprocess_updates_without_changing_owner():
-    store = RowStore([{"video_identifier": "vid", "created_by": ALICE, "transcript_filename": "old.txt"}])
-
-    assert write(store, "new.txt", ALICE, ALICE)
-
-    assert store.rows["vid"] == {**store.rows["vid"], "transcript_filename": "new.txt", "created_by": ALICE}
-    assert store.removed == []
+    assert store.rows["vid"]["transcript_filename"] == "first.txt"
+    assert store.removed == ["transcripts/second.txt", "sentiment/r.csv", "sentiment/s.csv"]
 
 
-@pytest.mark.parametrize("current_owner, expect_owner", [
-    (BOB, ALICE),    # ownership differs from what was authorized
-    (ALICE, "none"),  # was ownerless when an admin queued it, claimed by a new row since
-])
-def test_reprocess_is_refused_if_ownership_changed(current_owner, expect_owner):
-    store = RowStore([{"video_identifier": "vid", "created_by": current_owner, "transcript_filename": "keep.txt"}])
+def test_safe_job_repairs_an_incomplete_dashboard():
+    store = RowStore([INCOMPLETE])
 
-    assert not write(store, "new.txt", ALICE, expect_owner)
+    assert write(store, "fixed.txt", "safe")
 
-    assert store.rows["vid"]["transcript_filename"] == "keep.txt"
+    assert store.rows["vid"]["transcript_filename"] == "fixed.txt" and store.removed == []
+
+
+def test_safe_job_never_replaces_a_complete_dashboard():
+    store = RowStore([COMPLETE])
+
+    assert not write(store, "new.txt", "safe")
+
+    assert store.rows["vid"] == COMPLETE
     assert "transcripts/new.txt" in store.removed
 
 
-def test_reprocess_is_refused_if_row_was_deleted():
-    assert not write(RowStore(), "new.txt", ALICE, ALICE)
+def test_concurrent_repairs_only_the_first_lands():
+    store = RowStore([INCOMPLETE])
+
+    assert write(store, "repair-a.txt", "safe")
+    assert not write(store, "repair-b.txt", "safe")  # row is complete now
+
+    assert store.rows["vid"]["transcript_filename"] == "repair-a.txt"
 
 
-def test_admin_reprocess_of_ownerless_row_never_claims_it():
-    store = RowStore([{"video_identifier": "vid", "created_by": None, "transcript_filename": "old.txt"}])
+def test_force_replaces_a_complete_dashboard():
+    store = RowStore([COMPLETE])
 
-    assert write(store, "new.txt", ALICE, "none")
-
-    assert store.rows["vid"]["transcript_filename"] == "new.txt"
-    assert store.rows["vid"]["created_by"] is None
-
-
-def test_manual_run_without_expectation_upserts():
-    store = RowStore([{"video_identifier": "vid", "created_by": BOB, "transcript_filename": "old.txt"}])
-
-    assert write(store, "new.txt", None, None)
-
-    assert store.rows["vid"]["transcript_filename"] == "new.txt" and store.rows["vid"]["created_by"] == BOB
-
-
-def test_without_migration_004_new_rows_are_inserted_without_owner():
-    store = RowStore(missing_columns={"created_by"})
-
-    assert write(store, "a.txt", ALICE, "new")
-    assert not write(store, "b.txt", BOB, "new")  # unique key still protects the first job
-
-    assert "created_by" not in store.rows["vid"] and store.rows["vid"]["transcript_filename"] == "a.txt"
-
-
-def test_without_migration_004_ownerless_reprocess_updates():
-    store = RowStore([{"video_identifier": "vid", "transcript_filename": "old.txt"}], missing_columns={"created_by"})
-
-    assert write(store, "new.txt", ALICE, "none")
+    assert write(store, "new.txt", "force")
 
     assert store.rows["vid"]["transcript_filename"] == "new.txt"
+
+
+def test_force_fails_if_the_dashboard_was_deleted_meanwhile():
+    store = RowStore()
+
+    assert not write(store, "new.txt", "force")
+
+    assert store.rows == {} and "transcripts/new.txt" in store.removed
+
+
+def test_manual_run_without_mode_upserts():
+    store = RowStore([COMPLETE])
+
+    assert write(store, "manual.txt", None)
+
+    assert store.rows["vid"]["transcript_filename"] == "manual.txt"
+
+
+def test_missing_metadata_column_still_saves():
+    store = RowStore(missing_columns={"metadata"})
+
+    assert write(store, "a.txt", "safe")
+
+    assert "metadata" not in store.rows["vid"]
+
+
+@pytest.mark.parametrize("bad", ["new", "replace", ""])
+def test_cli_rejects_unknown_write_modes(monkeypatch, bad):
+    monkeypatch.setattr("sys.argv", ["create_dashboard_from_youtube.py", "https://youtube.com/watch?v=abc", "--write-mode", bad])
+    with pytest.raises(SystemExit) as exit_info:
+        SCRIPT.main()
+    assert exit_info.value.code == 2

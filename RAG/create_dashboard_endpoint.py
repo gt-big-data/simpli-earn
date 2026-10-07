@@ -46,8 +46,8 @@ def _get_supabase():
 
 def _request_user(authorization: Optional[str]):
     """
-    Supabase user for an `Authorization: Bearer <access token>` header; its id is recorded as a
-    new dashboard's owner (video_analyses.created_by). Signed-out requests return None.
+    Supabase user for an `Authorization: Bearer <access token>` header, used to check whether the
+    caller may force-reprocess an existing dashboard. Signed-out requests return None.
     """
     if not authorization:
         return None
@@ -71,21 +71,13 @@ def _csv_env(name: str) -> set[str]:
 
 
 def _is_admin(user) -> bool:
-    """Same allowlist as the sentiment API's library_auth.is_admin."""
+    """Users in DASHBOARD_ADMIN_USER_IDS / DASHBOARD_ADMIN_EMAILS may force-reprocess dashboards."""
     if user is None:
         return False
     email = (getattr(user, "email", None) or "").lower()
-    return str(user.id).lower() in _csv_env("LIBRARY_ADMIN_USER_IDS") or (
-        bool(email) and email in _csv_env("LIBRARY_ADMIN_EMAILS")
+    return str(user.id).lower() in _csv_env("DASHBOARD_ADMIN_USER_IDS") or (
+        bool(email) and email in _csv_env("DASHBOARD_ADMIN_EMAILS")
     )
-
-
-def _can_reprocess(user, row: dict) -> bool:
-    """Reprocessing replaces a dashboard's transcript and analysis: owner or admin only."""
-    if user is None:
-        return False
-    owner = row.get("created_by")
-    return (bool(owner) and str(owner) == str(user.id)) or _is_admin(user)
 
 
 def _row_to_job_status(row: dict) -> dict:
@@ -142,24 +134,18 @@ _ANALYSIS_FILES = ("transcript_filename", "relevance_filename", "specificity_fil
 
 def _existing_analysis(video_id: Optional[str]) -> Optional[dict]:
     """
-    The video's video_analyses row (file names and owner), or None if it has none.
-    Fails closed: if the lookup errors we cannot tell whether reprocessing would overwrite
-    someone else's dashboard, so the request is refused.
+    The video's video_analyses row (file names), or None if it has none.
+    Fails closed: if the lookup errors we cannot tell whether a force would replace a complete
+    dashboard, so the request is refused.
     """
     sb = _get_supabase()
     if not video_id or not sb:
         return None
-    query = lambda columns: (
-        sb.table("video_analyses").select(columns).eq("video_identifier", video_id).limit(1).execute()
-    )
     try:
-        try:
-            res = query(",".join(_ANALYSIS_FILES + ("created_by",)))
-        except Exception as e:
-            if "created_by" not in str(e):
-                raise
-            # Migration 004 not applied: every existing row is ownerless (admin-only)
-            res = query(",".join(_ANALYSIS_FILES))
+        res = (
+            sb.table("video_analyses").select(",".join(_ANALYSIS_FILES))
+            .eq("video_identifier", video_id).limit(1).execute()
+        )
     except Exception as e:
         print(f"[dashboard] existing-analysis check failed: {e}")
         raise HTTPException(status_code=503, detail="Could not check for an existing dashboard; try again") from e
@@ -167,11 +153,7 @@ def _existing_analysis(video_id: Optional[str]) -> Optional[dict]:
 
 
 def run_dashboard_creation(
-    job_id: str,
-    youtube_url: str,
-    ticker: Optional[str] = None,
-    created_by: Optional[str] = None,
-    expect_owner: str = "new",
+    job_id: str, youtube_url: str, ticker: Optional[str] = None, write_mode: str = "safe"
 ):
     """Run the dashboard creation script in background (local / Cloud Run with YouTube access)."""
     jobs[job_id]["status"] = "running"
@@ -189,10 +171,8 @@ def run_dashboard_creation(
         cmd = [sys.executable, str(script_path), youtube_url]
         if ticker:
             cmd.extend(["--ticker", ticker])
-        if created_by:
-            cmd.extend(["--created-by", created_by])
-        # The script re-checks this atomically when it writes the row
-        cmd.extend(["--expect-owner", expect_owner])
+        # The script enforces this atomically when it writes the row (see --write-mode)
+        cmd.extend(["--write-mode", write_mode])
 
         result = subprocess.run(
             cmd,
@@ -234,13 +214,14 @@ async def create_dashboard(
     Trigger dashboard creation from YouTube URL.
     With YOUTUBE_HOME_WORKER=1, only enqueues to Supabase; home worker runs yt-dlp.
     Already-processed videos return immediately (status "completed", job_id None).
-    A signed-in caller (Bearer token) is recorded as the new dashboard's owner.
+    Jobs create the dashboard or repair an incomplete one, never replacing a complete analysis;
+    `force` on a complete dashboard needs an admin (DASHBOARD_ADMIN_*) and replaces it.
     """
     user = _request_user(authorization)
-    created_by = str(user.id) if user else None
     video_id = _extract_video_id(request.youtube_url)
     existing = _existing_analysis(video_id)
-    if existing and not request.force and all(existing.get(k) for k in _ANALYSIS_FILES):
+    complete = bool(existing) and all(existing.get(k) for k in _ANALYSIS_FILES)
+    if complete and not request.force:
         return {
             "job_id": None,
             "status": "completed",
@@ -248,14 +229,19 @@ async def create_dashboard(
             "video_id": video_id,
             "existing": True,
         }
-    # Anything past this point (force, or retrying an incomplete analysis) overwrites the row
-    if existing and not _can_reprocess(user, existing):
-        if user is None:
-            raise HTTPException(status_code=401, detail="Sign in as this dashboard's owner to reprocess it")
-        raise HTTPException(status_code=403, detail="Only this dashboard's owner or an admin can reprocess it")
-    # What this authorization assumed about the row; the pipeline writes only if it still holds
-    # ("new": nobody created it meanwhile; otherwise: still owned by the same owner)
-    expect_owner = "new" if existing is None else str(existing.get("created_by") or "none")
+    write_mode = "safe"
+    if complete:
+        if not _is_admin(user):
+            if user is None:
+                raise HTTPException(status_code=401, detail="Sign in as an admin to reprocess an existing dashboard")
+            raise HTTPException(status_code=403, detail="Only an admin can reprocess an existing dashboard")
+        if _youtube_home_worker_enabled():
+            # The queue cannot carry "forced", and the worker never replaces a complete analysis
+            raise HTTPException(
+                status_code=409,
+                detail="Reprocessing an existing dashboard is not available while jobs run on the home worker",
+            )
+        write_mode = "force"
 
     if _youtube_home_worker_enabled():
         sb = _get_supabase()
@@ -271,22 +257,8 @@ async def create_dashboard(
             "ticker": request.ticker,
             "status": "pending",
         }
-        if created_by:
-            job_row["created_by"] = created_by
-        job_row["expected_owner"] = expect_owner
         try:
-            while True:
-                try:
-                    sb.table("youtube_jobs").insert(job_row).execute()
-                    break
-                except Exception as e:
-                    # Columns from migrations 004/005 may be missing. Without expected_owner the
-                    # worker treats the job as "new" (insert only), so reprocessing fails safe.
-                    missing = next((c for c in ("created_by", "expected_owner") if c in job_row and c in str(e)), None)
-                    if not missing:
-                        raise
-                    print(f"[dashboard] youtube_jobs has no {missing} column (docs/migrations); queuing without it")
-                    job_row.pop(missing)
+            sb.table("youtube_jobs").insert(job_row).execute()
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to enqueue job: {e}") from e
 
@@ -319,9 +291,7 @@ async def create_dashboard(
         "created_at": datetime.now().isoformat(),
         "completed_at": None,
     }
-    background_tasks.add_task(
-        run_dashboard_creation, job_id, request.youtube_url, request.ticker, created_by, expect_owner
-    )
+    background_tasks.add_task(run_dashboard_creation, job_id, request.youtube_url, request.ticker, write_mode)
 
     return {
         "job_id": job_id,

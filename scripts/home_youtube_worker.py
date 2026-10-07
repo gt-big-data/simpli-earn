@@ -86,18 +86,13 @@ def claim_one_pending(sb) -> Optional[Dict[str, Any]]:
     return row
 
 
-def run_pipeline(
-    youtube_url: str, ticker: Optional[str], created_by: Optional[str] = None, expect_owner: Optional[str] = None
-) -> Tuple[int, str, str]:
+def run_pipeline(youtube_url: str, ticker: Optional[str]) -> Tuple[int, str, str]:
     script = ROOT / "scripts" / "create_dashboard_from_youtube.py"
     cmd = [sys.executable, str(script), youtube_url]
     if ticker:
         cmd.extend(["--ticker", ticker])
-    if created_by:
-        cmd.extend(["--created-by", str(created_by)])
-    # Authorization decided by the API when queuing; enforced atomically by the script's write.
-    # Jobs queued before migration 005 have none, so they may only create new dashboards.
-    cmd.extend(["--expect-owner", str(expect_owner or "new")])
+    # Create the dashboard or repair an incomplete one; never replace a complete analysis
+    cmd.extend(["--write-mode", "safe"])
     proc = subprocess.run(
         cmd,
         cwd=str(ROOT),
@@ -131,7 +126,7 @@ def process_one(sb) -> bool:
     url = row["youtube_url"]
     ticker = row.get("ticker")
     print(f"\n{'='*60}\n🏠 Claimed job {job_id}\n📹 {url}\n💹 ticker={ticker!r}\n{'='*60}")
-    code, combined, err_snip = run_pipeline(url, ticker, row.get("created_by"), row.get("expected_owner"))
+    code, combined, err_snip = run_pipeline(url, ticker)
     vid = extract_video_id(url)
     if code == 0:
         print("✅ Pipeline finished OK")

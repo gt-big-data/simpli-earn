@@ -47,11 +47,9 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 ### A. Supabase (once per project)
 
 1. Open **Supabase Dashboard → SQL** and run, in order:
-   - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue; also needed by 004),
+   - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue),
    - [`002_video_analyses_metadata.sql`](./migrations/002_video_analyses_metadata.sql) (chart ticker/date),
-   - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags),
-   - [`004_video_analyses_owner.sql`](./migrations/004_video_analyses_owner.sql) (who may delete a library entry),
-   - [`005_youtube_jobs_expected_owner.sql`](./migrations/005_youtube_jobs_expected_owner.sql) (lets home-worker jobs reprocess dashboards safely).
+   - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags).
 2. Confirm buckets **`transcripts`** and **`sentiment`** exist and policies match your app (unchanged by this doc).
 3. Ensure **`video_analyses`** table still matches your app (unchanged here).
 
@@ -62,7 +60,7 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 - `OPENAI_API_KEY` and/or `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY`. See `RAG/.env.example`.
 - `cloudbuild.yaml` deploys with `--update-secrets`/`--update-env-vars`, so a key added by hand persists across deploys, e.g. Gemini:
   `gcloud run services update simpli-earn-backend --update-secrets GEMINI_API_KEY=gemini-api-key:latest`.
-- `LIBRARY_ADMIN_EMAILS` / `LIBRARY_ADMIN_USER_IDS` (same values as the sentiment service): who may reprocess (`force`) any existing dashboard. Otherwise only its creator can, and dashboards without an owner cannot be reprocessed.
+- `DASHBOARD_ADMIN_EMAILS` / `DASHBOARD_ADMIN_USER_IDS`: who may force-reprocess a complete dashboard. Everyone else can create dashboards and retry incomplete ones; jobs never replace a complete analysis otherwise. Forcing is not available while `YOUTUBE_HOME_WORKER=1`.
 - `CORS_ALLOWED_ORIGINS`: extra browser origins (comma-separated) besides localhost and the Vercel URLs. `cloudbuild.yaml` adds the Cloud Run frontend's URLs after each deploy; add a custom domain by hand with `gcloud run services update simpli-earn-backend --update-env-vars "^@^CORS_ALLOWED_ORIGINS=<existing>,https://your.domain"`.
 - **`STRICT_CONFIG=1`** (set by `cloudbuild.yaml`) makes the service refuse to start when a required value is missing, so a misconfigured revision never takes traffic.
 - **`YOUTUBE_HOME_WORKER=1`** — enable queue-only mode for YouTube jobs (requires migration + home worker).

@@ -36,8 +36,12 @@ except ImportError as e:
     sys.exit(1)
 
 
-class DashboardOwnershipConflict(Exception):
-    """The dashboard row was created or changed by someone else while this job ran."""
+class DashboardWriteConflict(Exception):
+    """Another job completed (or deleted) this dashboard while this job ran."""
+
+
+# A dashboard whose row lacks any of these is incomplete and may be repaired by a later job
+INCOMPLETE_IF_MISSING = ("transcript_filename", "relevance_filename", "specificity_filename")
 
 
 class DashboardCreator:
@@ -351,15 +355,14 @@ class DashboardCreator:
     # Removed upload_sentiment_results - now done directly by analysis scripts
         
     def create_database_entry(self, video_identifier, metadata, transcript_filename, sentiment_filenames,
-                              created_by=None, expect_owner=None):
+                              write_mode=None):
         """
-        Write the video_analyses row.
-
-        expect_owner carries the authorization the API granted when the job was requested, and is
-        enforced atomically here (a job can run for many minutes, and another may finish first):
-          "new"       -> INSERT only; fails if the row was created meanwhile
-          "none"/uuid -> UPDATE only the row still owned by that owner ("none" = ownerless)
-          None        -> unconditional upsert (operators running this script by hand)
+        Write the video_analyses row. write_mode is enforced atomically here (a job runs for many
+        minutes, and another job for the same video may finish first):
+          "safe"  -> INSERT; if the row exists, UPDATE it only while its analysis is incomplete,
+                     so a complete analysis is never replaced (default for API/worker jobs)
+          "force" -> UPDATE the existing row (an admin asked to reprocess it)
+          None    -> unconditional upsert (operators running this script by hand)
         """
         print("💿 Creating database entry...")
         
@@ -376,45 +379,37 @@ class DashboardCreator:
             if metadata:
                 data['metadata'] = {k: metadata.get(k) for k in ('title', 'ticker', 'upload_date')}
 
-            # Owner may delete it from the library (docs/migrations/004_video_analyses_owner.sql).
-            # Only an inserted row gets an owner; updates never assign or transfer ownership.
-            if created_by and expect_owner == "new":
-                data['created_by'] = created_by
-
             table = lambda: self.supabase.table("video_analyses")
-            owner_filter = expect_owner not in (None, "new")
             # Optional columns are dropped if their migration has not been applied yet
             while True:
                 try:
-                    if expect_owner == "new":
-                        table().insert(data).execute()
-                    elif owner_filter:
-                        query = table().update(data).eq("video_identifier", video_identifier)
-                        if expect_owner == "none":
-                            query = query.is_("created_by", "null")
-                        else:
-                            query = query.eq("created_by", expect_owner)
-                        if not query.execute().data:
-                            raise DashboardOwnershipConflict()
+                    if write_mode == "safe":
+                        try:
+                            table().insert(data).execute()
+                        except Exception as e:
+                            if "23505" not in str(e) and "duplicate key" not in str(e):
+                                raise
+                            # Row exists: only repair it while it is still incomplete
+                            repaired = (
+                                table().update(data).eq("video_identifier", video_identifier)
+                                .or_(",".join(f"{column}.is.null" for column in INCOMPLETE_IF_MISSING))
+                                .execute()
+                            )
+                            if not repaired.data:
+                                raise DashboardWriteConflict()
+                    elif write_mode == "force":
+                        if not table().update(data).eq("video_identifier", video_identifier).execute().data:
+                            raise DashboardWriteConflict()  # deleted while this job ran
                     else:
                         table().upsert(data, on_conflict='video_identifier').execute()
                     break
-                except DashboardOwnershipConflict:
+                except DashboardWriteConflict:
                     raise
                 except Exception as e:
-                    if expect_owner == "new" and ("23505" in str(e) or "duplicate key" in str(e)):
-                        raise DashboardOwnershipConflict() from e
-                    if owner_filter and expect_owner == "none" and "created_by" in str(e):
-                        # Migration 004 not applied: there are no owners to protect
-                        print("⚠️  video_analyses has no created_by column yet; updating without owner check")
-                        owner_filter = False
-                        expect_owner = None
-                        continue
-                    missing = next((col for col in ('metadata', 'created_by') if col in data and col in str(e)), None)
-                    if not missing:
+                    if 'metadata' not in data or 'metadata' not in str(e):
                         raise
-                    print(f"⚠️  video_analyses has no {missing} column yet; saving without it")
-                    data.pop(missing)
+                    print("⚠️  video_analyses has no metadata column yet; saving without it")
+                    data.pop('metadata')
             
             print(f"✅ Database entry created for: {video_identifier}")
             print(f"   📝 Transcript: {transcript_filename}")
@@ -422,8 +417,8 @@ class DashboardCreator:
             print(f"   📊 Specificity: {sentiment_filenames.get('specificity_filename')}")
             return True
             
-        except DashboardOwnershipConflict:
-            print("❌ Another request created or changed this dashboard while this job ran; nothing was overwritten")
+        except DashboardWriteConflict:
+            print("❌ Another job completed or removed this dashboard while this job ran; nothing was overwritten")
             self.remove_uploaded_files(transcript_filename, sentiment_filenames)
             return False
         except Exception as e:
@@ -454,7 +449,7 @@ class DashboardCreator:
         except Exception as e:
             print(f"⚠️  Cleanup warning: {e}")
             
-    def process_youtube_video(self, youtube_url, ticker_override=None, created_by=None, expect_owner=None):
+    def process_youtube_video(self, youtube_url, ticker_override=None, write_mode=None):
         """Complete pipeline to process a YouTube video"""
         print(f"\n{'='*60}")
         print(f"🚀 Starting Dashboard Creation Pipeline")
@@ -523,8 +518,7 @@ class DashboardCreator:
             metadata=metadata,
             transcript_filename=transcript_filename,
             sentiment_filenames=sentiment_filenames,
-            created_by=created_by,
-            expect_owner=expect_owner,
+            write_mode=write_mode,
         )
         
         # Cleanup
@@ -559,35 +553,14 @@ def main():
     )
     
     parser.add_argument(
-        "--created-by",
-        help="Supabase user id of the person who requested this dashboard (recorded as its owner).",
-        default=None
-    )
-    
-    parser.add_argument(
-        "--expect-owner",
-        help="Set by the API: 'new' (insert only), 'none' (row must be ownerless) or the owner's user id. "
-             "Omit when running by hand to overwrite unconditionally.",
+        "--write-mode",
+        choices=("safe", "force"),
+        help="Set by the API: 'safe' creates the dashboard or repairs an incomplete one, never replacing "
+             "a complete analysis; 'force' replaces an existing one (admin). Omit when running by hand to upsert.",
         default=None
     )
     
     args = parser.parse_args()
-
-    if args.expect_owner not in (None, "new", "none"):
-        import uuid
-        try:
-            args.expect_owner = str(uuid.UUID(args.expect_owner))
-        except ValueError:
-            print("❌ --expect-owner must be new, none or a user UUID")
-            sys.exit(1)
-
-    if args.created_by:
-        import uuid
-        try:
-            args.created_by = str(uuid.UUID(args.created_by))
-        except ValueError:
-            print("❌ --created-by must be a user UUID")
-            sys.exit(1)
     
     # Validate URL
     if "youtube.com" not in args.youtube_url and "youtu.be" not in args.youtube_url:
@@ -595,9 +568,7 @@ def main():
         sys.exit(1)
         
     creator = DashboardCreator()
-    success = creator.process_youtube_video(
-        args.youtube_url, args.ticker, created_by=args.created_by, expect_owner=args.expect_owner
-    )
+    success = creator.process_youtube_video(args.youtube_url, args.ticker, write_mode=args.write_mode)
     
     sys.exit(0 if success else 1)
 
