@@ -39,5 +39,10 @@
   "main": "index.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "overrides": {
+    "@next/eslint-plugin-next": {
+      "fast-glob": "npm:tinyglobby@^0.2.17"
+    }
+  }
 }
