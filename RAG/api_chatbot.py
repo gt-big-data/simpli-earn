@@ -1,7 +1,7 @@
 # api_chatbot.py
 from fastapi import FastAPI, Query, Body, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
 from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
 import os
@@ -47,6 +47,60 @@ try:
     app.include_router(dashboard_router, prefix="/dashboard", tags=["dashboard"])
 except ImportError as e:
     print(f"Warning: Could not import dashboard creation endpoint: {e}")
+
+# Largest request body accepted by any endpoint. A full /chat request (20 turns at the field limits)
+# is well under 512 KB; nothing else sends more than a few KB.
+MAX_REQUEST_BODY_BYTES = int(os.getenv("MAX_REQUEST_BODY_BYTES", str(1024 * 1024)))
+
+
+class BodySizeLimitMiddleware:
+    """Reject request bodies over max_bytes with 413 before the app reads or parses them."""
+
+    def __init__(self, app, max_bytes: int):
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
+        declared = dict(scope.get("headers") or []).get(b"content-length")
+        if declared and declared.isdigit() and int(declared) > self.max_bytes:
+            return await self._too_large(send)
+
+        # Content-Length may be absent (chunked) or wrong, so count what actually arrives
+        chunks, size, more = [], 0, True
+        while more:
+            message = await receive()
+            if message["type"] != "http.request":
+                return
+            chunk = message.get("body", b"")
+            size += len(chunk)
+            if size > self.max_bytes:
+                return await self._too_large(send)
+            chunks.append(chunk)
+            more = message.get("more_body", False)
+
+        body, replayed = b"".join(chunks), False
+
+        async def replay():
+            nonlocal replayed
+            if replayed:
+                return await receive()
+            replayed = True
+            return {"type": "http.request", "body": body, "more_body": False}
+
+        await self.app(scope, replay, send)
+
+    async def _too_large(self, send):
+        payload = json.dumps({"detail": f"Request body exceeds {self.max_bytes} bytes"}).encode()
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(payload)).encode())]})
+        await send({"type": "http.response.body", "body": payload})
+
+
+# Added before CORS so CORS is the outer layer and a 413 still carries CORS headers the browser can read
+app.add_middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BODY_BYTES)
 
 DEFAULT_CORS_ORIGINS = [
     "https://simpli-earn-2-simpli-earns-projects.vercel.app",
@@ -101,34 +155,33 @@ with open(PRELOADED_SUMMARY_ANCHORS_PATH, "r", encoding="utf-8") as f:
 UPLOADS_DIR = "uploads"
 
 
+# Request limits, enforced by validation (422) before the endpoint runs. The browser trims what it
+# sends to these sizes (frontend/components/ChatBot.tsx), and the whole body is capped separately.
+CHAT_HISTORY_MAX_TURNS = 20
+CHAT_MAX_QUESTION_CHARS = 2000
+CHAT_MAX_ANSWER_CHARS = 8000
+# Turns actually used in prompts; can only lower CHAT_HISTORY_MAX_TURNS
+CHAT_MAX_TURNS = min(int(os.getenv("CHAT_MAX_TURNS", "20")), CHAT_HISTORY_MAX_TURNS)
+
+
 class ChatTurn(BaseModel):
-    question: str
-    answer: str
+    question: str = Field(max_length=CHAT_MAX_QUESTION_CHARS)
+    answer: str = Field(max_length=CHAT_MAX_ANSWER_CHARS)
 
 
 class ChatRequest(BaseModel):
-    message: str
-    id: Optional[str] = None
-    video_url: Optional[str] = None
+    message: str = Field(min_length=1, max_length=CHAT_MAX_QUESTION_CHARS)
+    id: Optional[str] = Field(default=None, max_length=200)
+    video_url: Optional[str] = Field(default=None, max_length=2000)
     # Earlier turns of this conversation about this transcript, oldest first. The browser sends
     # them, so the API keeps no per-user state and any instance can answer a follow-up.
-    history: list[ChatTurn] = []
-
-
-# Bounds on the client-supplied history, so it cannot inflate prompts without limit
-CHAT_MAX_TURNS = int(os.getenv("CHAT_MAX_TURNS", "20"))
-CHAT_MAX_QUESTION_CHARS = 2000
-CHAT_MAX_ANSWER_CHARS = 8000
+    history: list[ChatTurn] = Field(default_factory=list, max_length=CHAT_HISTORY_MAX_TURNS)
 
 
 def chat_history_from_request(turns: list[ChatTurn]) -> list[tuple[str, str]]:
-    """Last CHAT_MAX_TURNS turns as (question, answer) pairs, each field truncated."""
+    """Last CHAT_MAX_TURNS non-empty turns as (question, answer) pairs."""
     recent = turns[-CHAT_MAX_TURNS:] if CHAT_MAX_TURNS > 0 else []
-    return [
-        (turn.question[:CHAT_MAX_QUESTION_CHARS], turn.answer[:CHAT_MAX_ANSWER_CHARS])
-        for turn in recent
-        if turn.question.strip() and turn.answer.strip()
-    ]
+    return [(turn.question, turn.answer) for turn in recent if turn.question.strip() and turn.answer.strip()]
 
 
 STOP_WORDS = {

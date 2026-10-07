@@ -16,7 +16,10 @@ export type Message = {
 
 // The RAG API keeps no chat state: each request carries the earlier turns about the same
 // transcript (messages stay on screen when switching dashboards, but history doesn't carry over).
+// Must match the RAG API's request limits (RAG/api_chatbot.py), which reject anything larger
 const MAX_HISTORY_TURNS = 20;
+const MAX_QUESTION_CHARS = 2000;
+const MAX_ANSWER_CHARS = 8000;
 
 function historyFor(messages: Message[], source: string) {
   const turns: { question: string; answer: string }[] = [];
@@ -30,7 +33,10 @@ function historyFor(messages: Message[], source: string) {
       answer.source === source &&
       !answer.text.startsWith("⚠️")
     ) {
-      turns.push({ question: question.text, answer: answer.text });
+      turns.push({
+        question: question.text.slice(0, MAX_QUESTION_CHARS),
+        answer: answer.text.slice(0, MAX_ANSWER_CHARS),
+      });
     }
   }
   return turns.slice(-MAX_HISTORY_TURNS);
@@ -175,6 +181,7 @@ export default function ChatBot({
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Message RAG Chatbot"
+            maxLength={MAX_QUESTION_CHARS}
             onKeyDown={handleKeyDown}
             style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
             className="w-full h-[120px] p-3 bg-white/4 text-white rounded-[15px] border-[1px] border-white/25 resize-none"

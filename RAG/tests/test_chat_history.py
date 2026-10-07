@@ -50,14 +50,12 @@ def test_nothing_is_remembered_between_requests(client):
     assert not any("SECRET-QUESTION" in p for p in FakeGeminiChat.prompts)
 
 
-def test_history_is_capped_and_truncated(client, monkeypatch):
+def test_only_the_most_recent_turns_are_used(client, monkeypatch):
     http, api_chatbot = client
     monkeypatch.setattr(api_chatbot, "CHAT_MAX_TURNS", 2)
-    history = turns(("q0", "a0"), ("q1", "a1"), ("q2", "a2" + "x" * 20000), ("", "empty question dropped"))
+    history = turns(("q0", "a0"), ("q1", "a1"), ("q2", "a2"), ("", "empty question dropped"))
 
-    assert api_chatbot.chat_history_from_request([api_chatbot.ChatTurn(**t) for t in history]) == [
-        ("q2", ("a2" + "x" * 20000)[:api_chatbot.CHAT_MAX_ANSWER_CHARS]),
-    ]
+    assert api_chatbot.chat_history_from_request([api_chatbot.ChatTurn(**t) for t in history]) == [("q2", "a2")]
     http.post("/chat", json={"message": "follow", "id": "1", "history": history})
     assert not any("q0" in p or "q1" in p for p in FakeGeminiChat.prompts)
 
