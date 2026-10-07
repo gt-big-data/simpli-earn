@@ -7,7 +7,7 @@ import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
 
 import { useState, useEffect } from "react";
-import { SENTIMENT_API_BASE_URL } from "@/lib/api-config";
+import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
 
 interface LibraryVideo {
   id: string;
@@ -51,8 +51,7 @@ export default function Home() {
     
     try {
       // Trigger dashboard creation
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiUrl}/dashboard/create-dashboard`, {
+      const response = await fetch(`${API_BASE_URL}/dashboard/create-dashboard`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

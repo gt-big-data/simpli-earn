@@ -91,7 +91,7 @@ Set:
 - `NEXT_PUBLIC_SENTIMENT_API_URL` — HTTPS URL of **sentiment** Cloud Run service.
 - `SUPABASE_SERVICE_ROLE_KEY` — server-only, for routes like delete-account (if used).
 
-Redeploy after env changes.
+Redeploy after env changes: the `NEXT_PUBLIC_*` values are compiled in at build time. For the Cloud Run frontend, set the `_SUPABASE_PUBLIC_URL` and `_SUPABASE_ANON_KEY` substitutions on the Cloud Build trigger; the backend URLs are passed as Docker build args automatically.
 
 ### E. Home YouTube worker (when `YOUTUBE_HOME_WORKER=1`)
 

@@ -4,6 +4,7 @@ import { TbSend2 } from "react-icons/tb";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useSearchParams } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api-config";
 
 export type Message = {
   id: number;
@@ -48,8 +49,7 @@ export default function ChatBot({
   const askBot = async (text: string) => {
     try {
       const conversationId = getConversationId(`${dashboardId ?? ""}|${videoUrl ?? ""}`);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-      const res = await fetch(`${apiUrl}/chat`, {
+      const res = await fetch(`${API_BASE_URL}/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -9,6 +9,7 @@ import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
 import FullChat from "@/components/FullChat";
 import type { PipelineState } from "@/components/ChartsFrame";
+import { API_BASE_URL } from "@/lib/api-config";
 
 type SummarySection = {
   heading?: string | null;
@@ -39,7 +40,6 @@ function DashboardContent() {
       setPipeline(null);
       return;
     }
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
     let cancelled = false;
     let timer: ReturnType<typeof setTimeout> | undefined;
 
@@ -52,7 +52,7 @@ function DashboardContent() {
 
     const poll = async () => {
       try {
-        const res = await fetch(`${apiUrl}/dashboard/job-status/${encodeURIComponent(jobId)}`);
+        const res = await fetch(`${API_BASE_URL}/dashboard/job-status/${encodeURIComponent(jobId)}`);
         if (cancelled) return;
         // 404: API restarted and forgot the in-memory job; just try loading whatever exists
         if (res.status === 404) return finish();
@@ -87,16 +87,15 @@ function DashboardContent() {
 
       setSummaryLoading(true);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         let res;
         if (videoUrl) {
-          res = await fetch(`${apiUrl}/summary`, {
+          res = await fetch(`${API_BASE_URL}/summary`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ video_url: videoUrl }),
           });
         } else {
-          res = await fetch(`${apiUrl}/summary?id=${id || "1"}`);
+          res = await fetch(`${API_BASE_URL}/summary?id=${id || "1"}`);
         }
 
         let data: { summary?: string; detail?: string; sections?: SummarySection[] };

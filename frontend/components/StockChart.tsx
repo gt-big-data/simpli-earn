@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/lib/api-config';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Chart, TooltipItem } from 'chart.js';
 
@@ -73,8 +74,7 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
       try {
         setLoading(true);
         setError(null);
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/generate-stock`, {
+        const response = await fetch(`${API_BASE_URL}/generate-stock`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

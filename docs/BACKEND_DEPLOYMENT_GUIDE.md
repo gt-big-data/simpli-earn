@@ -201,8 +201,8 @@ const response = await fetch("/api/indicators");  // No such route: Python runs 
 ✅ Good:
 
 ```tsx
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-const response = await fetch(`${apiUrl}/summary`);
+import { API_BASE_URL } from "@/lib/api-config"; // NEXT_PUBLIC_API_URL, localhost fallback in dev
+const response = await fetch(`${API_BASE_URL}/summary`);
 ```
 
 ### Env vars by service
@@ -218,6 +218,10 @@ const response = await fetch(`${apiUrl}/summary`);
 
 - These are baked in at **build time**.
 - After changing them in Vercel, you must **redeploy** the frontend.
+- For the Cloud Run frontend, `cloudbuild.yaml` passes them to `frontend/Dockerfile` as `--build-arg`s
+  (backend URLs from the deployed services; `_SUPABASE_PUBLIC_URL` / `_SUPABASE_ANON_KEY` trigger
+  substitutions). Setting them with `gcloud run deploy --set-env-vars` has no effect on browser code.
+  The Docker build fails if any of the four is missing.
 - Never put secrets in `NEXT_PUBLIC_`* variables.
 
 ---
