@@ -29,7 +29,7 @@ This guide documents how to add new backend functionality to SimpliEarn and depl
 | **Frontend**      | Vercel or `simpli-earn-frontend` | Next.js app                                                          | 3000         |
 
 
-**Important:** Vercel serverless functions **cannot** run Python subprocesses. Any logic that spawns Python (e.g., `/api/stock`, `/api/indicators`) must run on Cloud Run, not in Next.js API routes.
+**Important:** Neither Vercel nor the frontend Docker image can run Python. Python logic belongs in a FastAPI service on Cloud Run (stock and indicator data are `POST /generate-stock` and `POST /generate-indicators` on the RAG backend), not in Next.js API routes.
 
 ---
 
@@ -195,7 +195,7 @@ def my_endpoint(payload: dict = Body(...)):
 
 ```tsx
 const response = await fetch("http://localhost:8000/summary");
-const response = await fetch("/api/indicators");  // Fails on Vercel!
+const response = await fetch("/api/indicators");  // No such route: Python runs on the backend
 ```
 
 ✅ Good:

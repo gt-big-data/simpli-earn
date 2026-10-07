@@ -394,11 +394,8 @@ app/
 | `VideoFrame.tsx` | YouTube embed with timestamp linking |
 | `SummaryFrame.tsx` | Collapsible AI-generated summary |
 
-### Why API Routes Spawn Python Subprocesses
-The `api/stock/route.ts` and `api/indicators/route.ts` Next.js routes spawn Python subprocesses to run `yfinance` and FRED API calls. This is a pragmatic hybrid:
-- Next.js handles the HTTP routing and CORS
-- Python handles the data fetching (existing team expertise + better finance libraries)
-- In production this could be replaced with the FastAPI backend, but it works for the prototype
+### Where Stock and Indicator Data Come From
+`StockChart.tsx` and `EconomicIndicatorsChart.tsx` call the RAG FastAPI backend (`POST /generate-stock`, `POST /generate-indicators`), which runs `yfinance` in-process (`RAG/stockchartgenerationV2.py`, `RAG/economicIndicatorsV2.py`). The frontend image has no Python, so the earlier `api/stock` and `api/indicators` Next.js routes that spawned Python subprocesses were removed. Bad input returns HTTP 400 with `{"error": ...}` (stock) or `{"ok": false, "error": ...}` (indicators); data problems return those bodies with HTTP 200.
 
 ---
 

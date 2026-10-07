@@ -1,5 +1,6 @@
 # api_chatbot.py
 from fastapi import FastAPI, Query, Body, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
 from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
@@ -802,8 +803,9 @@ def generate_stock(payload: dict):
     ticker = payload.get("ticker")
     date = payload.get("date")
 
-    if not ticker or not date:
-        return {"error": "ticker and date required"}
+    # Same contract as the former Next.js /api/stock route: 400 for bad input, {"error"} bodies otherwise
+    if not ticker or not date or not isinstance(ticker, str) or not isinstance(date, str):
+        return JSONResponse({"error": "Missing ticker or date parameter"}, status_code=400)
 
     # Runs in-process (like /generate-indicators); a finished 48h window never changes, so cache it
     key = (ticker.upper(), date)
@@ -817,25 +819,46 @@ def generate_stock(payload: dict):
     return result
 
 
+def _parses(value: str, fmt: str) -> bool:
+    try:
+        datetime.strptime(value, fmt)
+        return True
+    except ValueError:
+        return False
+
+
 @app.post("/generate-indicators")
 def generate_indicators(payload: dict = Body(...)):
     """Generate economic indicators (VIX, TNX, DXY) data for the given time window."""
     start_local = payload.get("startLocal")
     hours = payload.get("hours", 48)
     interval = payload.get("interval", "5m")
-    indicators = payload.get("indicators", ["VIX", "TNX", "DXY"])
+    indicators = payload.get("indicators") or ["VIX", "TNX", "DXY"]
 
-    if not start_local:
-        return {"ok": False, "error": "startLocal required"}
+    # Same contract as the former Next.js /api/indicators route: 400 + {"ok": false} for bad input
+    if not start_local or not isinstance(start_local, str):
+        return JSONResponse({"ok": False, "error": "Missing startLocal parameter"}, status_code=400)
+    if not isinstance(hours, (int, float)) or not 0 < hours <= 24 * 30:
+        return JSONResponse({"ok": False, "error": "hours must be a number between 0 and 720"}, status_code=400)
+    if not isinstance(interval, str) or not isinstance(indicators, list):
+        return JSONResponse({"ok": False, "error": "Invalid interval or indicators"}, status_code=400)
 
     formatted_date = start_local
-    if "/" in start_local:
-        parts = start_local.strip().split(" ")
-        date_part = parts[0]
-        time_part = parts[1] if len(parts) > 1 else "09:30"
-        m, d, y = date_part.split("/")
-        full_year = f"20{y}" if int(y) < 50 else f"19{y}"
-        formatted_date = f"{full_year}-{m.zfill(2)}-{d.zfill(2)} {time_part}"
+    try:
+        if "/" in start_local:
+            parts = start_local.strip().split(" ")
+            date_part = parts[0]
+            time_part = parts[1] if len(parts) > 1 else "09:30"
+            m, d, y = date_part.split("/")
+            full_year = f"20{y}" if int(y) < 50 else f"19{y}"
+            formatted_date = f"{full_year}-{m.zfill(2)}-{d.zfill(2)} {time_part}"
+        if not any(_parses(formatted_date, fmt) for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")):
+            raise ValueError(formatted_date)
+    except ValueError:
+        return JSONResponse(
+            {"ok": False, "error": "Invalid request", "details": f"Unrecognized startLocal: {start_local}"},
+            status_code=400,
+        )
 
     from economicIndicatorsV2 import get_economic_indicators_json
     return get_economic_indicators_json(formatted_date, hours, interval, indicators)
