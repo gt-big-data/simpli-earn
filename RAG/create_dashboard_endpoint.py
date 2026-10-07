@@ -167,7 +167,11 @@ def _existing_analysis(video_id: Optional[str]) -> Optional[dict]:
 
 
 def run_dashboard_creation(
-    job_id: str, youtube_url: str, ticker: Optional[str] = None, created_by: Optional[str] = None
+    job_id: str,
+    youtube_url: str,
+    ticker: Optional[str] = None,
+    created_by: Optional[str] = None,
+    expect_owner: str = "new",
 ):
     """Run the dashboard creation script in background (local / Cloud Run with YouTube access)."""
     jobs[job_id]["status"] = "running"
@@ -187,6 +191,8 @@ def run_dashboard_creation(
             cmd.extend(["--ticker", ticker])
         if created_by:
             cmd.extend(["--created-by", created_by])
+        # The script re-checks this atomically when it writes the row
+        cmd.extend(["--expect-owner", expect_owner])
 
         result = subprocess.run(
             cmd,
@@ -247,6 +253,9 @@ async def create_dashboard(
         if user is None:
             raise HTTPException(status_code=401, detail="Sign in as this dashboard's owner to reprocess it")
         raise HTTPException(status_code=403, detail="Only this dashboard's owner or an admin can reprocess it")
+    # What this authorization assumed about the row; the pipeline writes only if it still holds
+    # ("new": nobody created it meanwhile; otherwise: still owned by the same owner)
+    expect_owner = "new" if existing is None else str(existing.get("created_by") or "none")
 
     if _youtube_home_worker_enabled():
         sb = _get_supabase()
@@ -264,15 +273,20 @@ async def create_dashboard(
         }
         if created_by:
             job_row["created_by"] = created_by
+        job_row["expected_owner"] = expect_owner
         try:
-            try:
-                sb.table("youtube_jobs").insert(job_row).execute()
-            except Exception as e:
-                if "created_by" not in job_row or "created_by" not in str(e):
-                    raise
-                print("[dashboard] youtube_jobs has no created_by column (docs/migrations/004); queuing without owner")
-                job_row.pop("created_by")
-                sb.table("youtube_jobs").insert(job_row).execute()
+            while True:
+                try:
+                    sb.table("youtube_jobs").insert(job_row).execute()
+                    break
+                except Exception as e:
+                    # Columns from migrations 004/005 may be missing. Without expected_owner the
+                    # worker treats the job as "new" (insert only), so reprocessing fails safe.
+                    missing = next((c for c in ("created_by", "expected_owner") if c in job_row and c in str(e)), None)
+                    if not missing:
+                        raise
+                    print(f"[dashboard] youtube_jobs has no {missing} column (docs/migrations); queuing without it")
+                    job_row.pop(missing)
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to enqueue job: {e}") from e
 
@@ -305,7 +319,9 @@ async def create_dashboard(
         "created_at": datetime.now().isoformat(),
         "completed_at": None,
     }
-    background_tasks.add_task(run_dashboard_creation, job_id, request.youtube_url, request.ticker, created_by)
+    background_tasks.add_task(
+        run_dashboard_creation, job_id, request.youtube_url, request.ticker, created_by, expect_owner
+    )
 
     return {
         "job_id": job_id,

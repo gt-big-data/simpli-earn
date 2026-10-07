@@ -26,8 +26,8 @@ Both APIs report missing or malformed required settings when they start; with `S
 (set on Cloud Run) they refuse to start. `NEXT_PUBLIC_*` values are compiled into the frontend by
 `next build`, so set them before building (the frontend Docker image requires them as build args).
 
-Run the SQL in `docs/migrations/001`–`004` in Supabase (job queue, dashboard metadata, cached
-summaries and red flags, dashboard owners).
+Run the SQL in `docs/migrations/001`–`005` in Supabase (job queue, dashboard metadata, cached
+summaries and red flags, dashboard owners, owner checks for queued jobs).
 
 ## Install Dependencies
 

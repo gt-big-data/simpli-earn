@@ -50,7 +50,8 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
    - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue; also needed by 004),
    - [`002_video_analyses_metadata.sql`](./migrations/002_video_analyses_metadata.sql) (chart ticker/date),
    - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags),
-   - [`004_video_analyses_owner.sql`](./migrations/004_video_analyses_owner.sql) (who may delete a library entry).
+   - [`004_video_analyses_owner.sql`](./migrations/004_video_analyses_owner.sql) (who may delete a library entry),
+   - [`005_youtube_jobs_expected_owner.sql`](./migrations/005_youtube_jobs_expected_owner.sql) (lets home-worker jobs reprocess dashboards safely).
 2. Confirm buckets **`transcripts`** and **`sentiment`** exist and policies match your app (unchanged by this doc).
 3. Ensure **`video_analyses`** table still matches your app (unchanged here).
 

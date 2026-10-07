@@ -1,6 +1,5 @@
 """The signed-in user who requests a dashboard is recorded as its owner, and ownership never transfers."""
 
-import importlib.util
 from types import SimpleNamespace
 
 import pytest
@@ -8,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 import create_dashboard_endpoint as endpoint
-from conftest import RAG_DIR
+
 
 USER = "11111111-1111-1111-1111-111111111111"
 REAL_EXISTING_ANALYSIS = endpoint._existing_analysis
@@ -39,17 +38,18 @@ class FakeTable:
     def execute(self):
         if self.payload:
             kind, data = self.payload
-            if self.sb.missing_column and self.sb.missing_column in data:
-                raise RuntimeError(f"Could not find the '{self.sb.missing_column}' column")
+            for column in self.sb.missing_columns:
+                if column in data:
+                    raise RuntimeError(f"Could not find the '{column}' column")
             self.sb.writes.append((self.name, kind, dict(data)))
             return SimpleNamespace(data=[data])
         return SimpleNamespace(data=self.sb.existing)
 
 
 class FakeSupabase:
-    def __init__(self, existing=None, missing_column=None):
+    def __init__(self, existing=None, missing_columns=()):
         self.existing = existing or []
-        self.missing_column = missing_column
+        self.missing_columns = list(missing_columns)
         self.writes = []
 
         def get_user(token):
@@ -81,7 +81,7 @@ def test_signed_in_request_passes_owner_to_pipeline(app_client):
     res = client.post("/dashboard/create-dashboard", json={"youtube_url": "https://youtube.com/watch?v=abc"},
                       headers={"Authorization": "Bearer good-token"})
     assert res.status_code == 200
-    assert started[0][1:] == ("https://youtube.com/watch?v=abc", None, USER)
+    assert started[0][1:] == ("https://youtube.com/watch?v=abc", None, USER, "new")
 
 
 def test_anonymous_request_has_no_owner(app_client):
@@ -97,10 +97,12 @@ def test_invalid_token_is_rejected(app_client):
     assert res.status_code == 401 and started == []
 
 
-@pytest.mark.parametrize("missing_column, expect_owner", [(None, True), ("created_by", False)])
-def test_home_worker_queue_records_owner(app_client, monkeypatch, missing_column, expect_owner):
+@pytest.mark.parametrize("missing_columns, expect_owner", [
+    ((), True), (("created_by",), False), (("expected_owner",), True), (("created_by", "expected_owner"), False),
+])
+def test_home_worker_queue_records_owner(app_client, monkeypatch, missing_columns, expect_owner):
     client, sb, _ = app_client
-    sb.missing_column = missing_column
+    sb.missing_columns = list(missing_columns)
     monkeypatch.setenv("YOUTUBE_HOME_WORKER", "1")
     res = client.post("/dashboard/create-dashboard", json={"youtube_url": "https://youtube.com/watch?v=abc"},
                       headers={"Authorization": "Bearer good-token"})
@@ -108,43 +110,15 @@ def test_home_worker_queue_records_owner(app_client, monkeypatch, missing_column
     (table, kind, row), = sb.writes
     assert (table, kind) == ("youtube_jobs", "insert")
     assert (row.get("created_by") == USER) is expect_owner
+    assert row.get("expected_owner") == (None if "expected_owner" in missing_columns else "new")
 
 
 def test_pipeline_passes_owner_to_script(monkeypatch, tmp_path):
     calls = []
     monkeypatch.setattr(endpoint.subprocess, "run", lambda cmd, **kw: calls.append(cmd) or SimpleNamespace(returncode=0, stdout="", stderr=""))
     endpoint.jobs["j"] = {"status": "pending"}
-    endpoint.run_dashboard_creation("j", "https://youtube.com/watch?v=abc", "AAPL", USER)
-    assert calls[0][-4:] == ["--ticker", "AAPL", "--created-by", USER]
-
-
-def _load_script():
-    path = RAG_DIR.parent / "scripts" / "create_dashboard_from_youtube.py"
-    spec = importlib.util.spec_from_file_location("create_dashboard_from_youtube", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-
-@pytest.mark.parametrize("existing, missing_column, expected_owner", [
-    ([], None, USER),                                   # new dashboard: requester owns it
-    ([{"created_by": None}], None, "absent"),           # unowned legacy row: never claimed
-    ([{"created_by": "someone-else"}], None, "absent"),  # reprocessing never transfers ownership
-    ([], "created_by", "absent"),                        # migration 004 not applied: saved without owner
-])
-def test_script_records_owner_without_transferring_it(existing, missing_column, expected_owner):
-    script = _load_script()
-    creator = object.__new__(script.DashboardCreator)
-    creator.supabase = FakeSupabase(existing=existing, missing_column=missing_column)
-
-    ok = creator.create_database_entry("abc", {"title": "t", "ticker": "AAPL", "upload_date": "20250101"},
-                                       "t.txt", {"relevance_filename": "r.csv", "specificity_filename": "s.csv"},
-                                       created_by=USER)
-
-    assert ok
-    (_, kind, row), = creator.supabase.writes
-    assert kind == "upsert" and row["transcript_filename"] == "t.txt"
-    assert row.get("created_by", "absent") == expected_owner
+    endpoint.run_dashboard_creation("j", "https://youtube.com/watch?v=abc", "AAPL", USER, USER)
+    assert calls[0][-6:] == ["--ticker", "AAPL", "--created-by", USER, "--expect-owner", USER]
 
 
 OTHER = "22222222-2222-2222-2222-222222222222"
@@ -224,3 +198,18 @@ def test_existing_analysis_without_migration_004_is_ownerless(monkeypatch):
 
     assert row == COMPLETE and "created_by" not in row
     assert not endpoint._can_reprocess(SimpleNamespace(id=USER, email=None), row)
+
+
+@pytest.mark.parametrize("row, expected", [
+    (None, "new"),
+    ({**COMPLETE, "created_by": USER}, USER),
+    ({**COMPLETE, "created_by": None}, "none"),
+])
+def test_job_carries_the_ownership_it_was_authorized_against(app_client, monkeypatch, row, expected):
+    client, _, started = app_client
+    monkeypatch.setattr(endpoint, "_existing_analysis", lambda _vid: row)
+    monkeypatch.setenv("LIBRARY_ADMIN_EMAILS", "user@example.com")  # lets the ownerless case through
+
+    client.post("/dashboard/create-dashboard", json={**URL, "force": True}, headers=SIGNED_IN)
+
+    assert started[0][4] == expected
