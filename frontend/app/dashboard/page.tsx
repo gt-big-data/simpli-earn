@@ -33,14 +33,18 @@ function DashboardContent() {
   // Custom links open here right away with `job=<id>` while the pipeline (download, transcript,
   // sentiment) runs. Poll it; when it finishes, drop the param so summary/charts load normally.
   const jobId = searchParams.get("job");
-  const [pipeline, setPipeline] = useState<PipelineState | null>(jobId ? { status: "pending" } : null);
+  // Latest poll result, tagged with its job; a job with no result yet counts as pending
+  const [jobState, setJobState] = useState<{ jobId: string; pipeline: PipelineState | null } | null>(null);
+  const pipeline: PipelineState | null = !jobId
+    ? null
+    : jobState?.jobId === jobId
+      ? jobState.pipeline
+      : { status: "pending" };
 
   useEffect(() => {
-    if (!jobId) {
-      setPipeline(null);
-      return;
-    }
+    if (!jobId) return;
     let cancelled = false;
+    const setPipeline = (next: PipelineState | null) => setJobState({ jobId, pipeline: next });
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     const finish = () => {
@@ -149,12 +153,7 @@ function DashboardContent() {
           ? "Generating summary…"
           : null;
 
-  useEffect(() => {
-    if (pipeline?.status === "failed") {
-      setSummary(`❌ Processing this call failed:\n${pipeline.error}`);
-      setSummarySections([]);
-    }
-  }, [pipeline]);
+  const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
   const [activeDisplay, setActiveDisplay] = useState("full");
   const [chatMinimized, setChatMinimized] = useState(false);
@@ -214,8 +213,8 @@ function DashboardContent() {
                 <SummaryFrame
                   setActiveDisplay={setActiveDisplay}
                   halfHeight={activeDisplay !== "full"}
-                  summary={summary}
-                  summarySections={summarySections}
+                  summary={failedSummary ?? summary}
+                  summarySections={failedSummary ? [] : summarySections}
                   onTimestampClick={handleTimestampSeek}
                   placeholder={summaryPlaceholder}
                 />

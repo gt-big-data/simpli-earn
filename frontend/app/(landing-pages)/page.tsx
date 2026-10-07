@@ -7,6 +7,7 @@ import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { createClient } from "@/lib/supabase/client";
@@ -39,6 +40,7 @@ export default function Home() {
   const [libraryVideos, setLibraryVideos] = useState<LibraryVideo[]>([]);
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
   const { user } = useAuth();
+  const router = useRouter();
   const userId = user?.id;
   // Load library videos from database; reload on sign-in/out so can_delete matches the user
   useEffect(() => {
@@ -87,7 +89,7 @@ export default function Home() {
       const tickerParam = tickerSymbol?.trim() ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}` : "";
       const jobParam = data.job_id ? `&job=${encodeURIComponent(data.job_id)}` : "";
       setProcessingStatus("Opening dashboard...");
-      window.location.href = `/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}${jobParam}`;
+      router.push(`/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}${jobParam}`);
       
     } catch (error) {
       console.error("Failed to create dashboard:", error);

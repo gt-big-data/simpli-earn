@@ -8,19 +8,21 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import { FaUserCircle } from 'react-icons/fa';
 
 const NavBar: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  // The menu is open for the page it was opened on, so navigating closes it without an effect
+  const [menuOpenOnPath, setMenuOpenOnPath] = useState<string | null>(null);
+  const isMenuOpen = menuOpenOnPath === pathname;
   const ref = useRef<HTMLDivElement | null>(null);
   const { user, loading: authLoading, signOut } = useAuth();
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setMenuOpenOnPath(isMenuOpen ? null : pathname);
   };
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
-        setIsMenuOpen(false);
+        setMenuOpenOnPath(null);
       }
     };
 
@@ -31,7 +33,7 @@ const NavBar: React.FC = () => {
   useEffect(() => {
     const handleOutSideClick = (e: MouseEvent) => {
       if (!ref.current?.contains(e.target as Node)) {
-        setIsMenuOpen(false);
+        setMenuOpenOnPath(null);
       }
     };
 
@@ -41,10 +43,6 @@ const NavBar: React.FC = () => {
       window.removeEventListener("mousedown", handleOutSideClick);
     };
   }, [ref]);
-
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
 
   const navLinkClass = "text-white hover:text-[#81D18D] transition-colors font-normal text-sm whitespace-nowrap no-underline";
   const greenBtnClass = "bg-[#81D18D] text-[#121612] font-semibold rounded-full px-4 py-2 text-sm whitespace-nowrap no-underline hover:brightness-110 transition-all inline-flex items-center justify-center";

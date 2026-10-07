@@ -55,25 +55,22 @@ const stockDataCache = new Map<string, StockData>();
 
 const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
   const cacheKey = `${ticker}|${date}`;
-  const [stockData, setStockData] = useState<StockData | null>(() => stockDataCache.get(cacheKey) ?? null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(() => !stockDataCache.has(cacheKey));
+  // Outcome of the last request, tagged with the ticker/date it was for; everything else is derived
+  const [result, setResult] = useState<{ key: string; data?: StockData; error?: string } | null>(null);
   const [chartView] = useState<ChartView>('48h-close');
 
+  const cached = stockDataCache.get(cacheKey);
+  const current = result?.key === cacheKey ? result : null;
+  const stockData = cached ?? current?.data ?? null;
+  const error = cached ? null : current?.error ?? null;
+  const loading = !cached && !current;
+
   useEffect(() => {
-    const cached = stockDataCache.get(cacheKey);
-    if (cached) {
-      setStockData(cached);
-      setError(null);
-      setLoading(false);
-      return;
-    }
+    if (stockDataCache.has(cacheKey)) return;
 
     let cancelled = false;
     const fetchStockData = async () => {
       try {
-        setLoading(true);
-        setError(null);
         const response = await fetch(`${API_BASE_URL}/generate-stock`, {
           method: 'POST',
           headers: {
@@ -85,15 +82,13 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
         const data = await response.json();
         if (cancelled) return;
         if (data.error) {
-          setError(data.error);
+          setResult({ key: cacheKey, error: data.error });
         } else {
           stockDataCache.set(cacheKey, data);
-          setStockData(data);
+          setResult({ key: cacheKey, data });
         }
       } catch {
-        if (!cancelled) setError('Failed to fetch stock data');
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setResult({ key: cacheKey, error: 'Failed to fetch stock data' });
       }
     };
 
