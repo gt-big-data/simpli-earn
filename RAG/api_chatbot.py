@@ -23,10 +23,12 @@ from supabase import create_client
 from fastapi.middleware.cors import CORSMiddleware
 
 from chat_sessions import ChatSessionStore, normalize_conversation_id
+from env_check import validate_environment
 from llm_provider import get_llm, run_with_fallback, get_active_provider, get_model_name, invoke_json
 
 # Load environment variables and initialize Supabase
 load_dotenv()
+validate_environment()
 supabase = None
 try:
     supabase_url = os.getenv("SUPABASE_URL")

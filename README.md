@@ -7,28 +7,27 @@ SimpliEarn is a full-stack app for earnings-call analysis:
 
 ## Prerequisites
 
-- Python 3.9+ (3.11 recommended)
-- Node.js 18+ and npm
+- Python 3.11 (the version the Docker images use)
+- Node.js 20.9+ and npm (required by Next.js 16)
 - `yt-dlp` installed (`brew install yt-dlp` on macOS)
 
 ## Environment Setup
 
-Create these env files before running locally:
+Copy each example and fill in the values; every example marks its keys as **REQUIRED** or optional
+and shows the defaults. Never commit the filled-in files.
 
-- `RAG/.env`
-  - `OPENAI_API_KEY`
-  - `SUPABASE_URL`
-  - `SUPABASE_KEY` (service role)
-- `sentiment/.env`
-  - `SUPABASE_URL`
-  - `SUPABASE_KEY` (service role)
-  - `ASSEMBLYAI_KEY`
-- `frontend/.env.local`
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-  - `SUPABASE_SERVICE_ROLE_KEY` (required for delete-account API route)
+| File | Copy from | Required |
+| --- | --- | --- |
+| `RAG/.env` | `RAG/.env.example` | `OPENAI_API_KEY` **or** `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY` for dashboard creation (may live in `sentiment/.env`) |
+| `sentiment/.env` | `sentiment/.env.example` | `SUPABASE_URL`, `SUPABASE_KEY` (service role); `LIBRARY_ADMIN_EMAILS` to let someone delete any library entry |
+| `frontend/.env.local` | `frontend/.env.example` | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (anon key), `SUPABASE_SERVICE_ROLE_KEY` (account deletion); `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_SENTIMENT_API_URL` for any deployed build |
 
-Use the `.env.example` files where available.
+Both APIs report missing or malformed required settings when they start; with `STRICT_CONFIG=1`
+(set on Cloud Run) they refuse to start. `NEXT_PUBLIC_*` values are compiled into the frontend by
+`next build`, so set them before building (the frontend Docker image requires them as build args).
+
+Run the SQL in `docs/migrations/001`–`004` in Supabase (job queue, dashboard metadata, cached
+summaries and red flags, dashboard owners).
 
 ## Install Dependencies
 
@@ -74,6 +73,16 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+## Tests
+
+```bash
+pip install -r RAG/requirements-dev.txt -r sentiment/requirements-dev.txt
+(cd RAG && pytest tests) && (cd sentiment && pytest tests)
+cd frontend && npm run lint && npm run build
+```
+
+No API keys are needed: the Python tests use fake models and a fake Supabase client.
 
 ## Deployment and recent changes
 

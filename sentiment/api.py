@@ -41,6 +41,10 @@ try:
 except ImportError:
     pass
 
+from env_check import validate_environment
+
+validate_environment()
+
 # Supabase client
 try:
     from supabase import create_client, Client

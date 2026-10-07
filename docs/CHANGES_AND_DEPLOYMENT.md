@@ -46,7 +46,11 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 ### A. Supabase (once per project)
 
-1. Open **Supabase Dashboard → SQL** and run [`docs/migrations/001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) if you use the **home worker** path.
+1. Open **Supabase Dashboard → SQL** and run, in order:
+   - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue; also needed by 004),
+   - [`002_video_analyses_metadata.sql`](./migrations/002_video_analyses_metadata.sql) (chart ticker/date),
+   - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags),
+   - [`004_video_analyses_owner.sql`](./migrations/004_video_analyses_owner.sql) (who may delete a library entry).
 2. Confirm buckets **`transcripts`** and **`sentiment`** exist and policies match your app (unchanged by this doc).
 3. Ensure **`video_analyses`** table still matches your app (unchanged here).
 
@@ -54,7 +58,10 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 **Secrets / env (typical):**
 
-- `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_KEY` (service role), plus any existing keys (`GEMINI_API_KEY`, etc.).
+- `OPENAI_API_KEY` and/or `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY`. See `RAG/.env.example`.
+- `cloudbuild.yaml` deploys with `--update-secrets`/`--update-env-vars`, so a key added by hand persists across deploys, e.g. Gemini:
+  `gcloud run services update simpli-earn-backend --update-secrets GEMINI_API_KEY=gemini-api-key:latest`.
+- **`STRICT_CONFIG=1`** (set by `cloudbuild.yaml`) makes the service refuse to start when a required value is missing, so a misconfigured revision never takes traffic.
 - **`YOUTUBE_HOME_WORKER=1`** — enable queue-only mode for YouTube jobs (requires migration + home worker).
 - Omit or set **`YOUTUBE_HOME_WORKER=0`** for classic mode (subprocess on the same host as uvicorn).
 
@@ -80,7 +87,8 @@ Use **Secret Manager** for sensitive values; use `--set-env-vars` only for non-s
 
 ### C. Sentiment API (Cloud Run)
 
-Unchanged pattern; deploy `sentiment/` image with `SUPABASE_*`, `ASSEMBLYAI_KEY`, `HF_TOKEN` as before. See [`docs/BACKEND_DEPLOYMENT_GUIDE.md`](./BACKEND_DEPLOYMENT_GUIDE.md).
+Deploy the `sentiment/` image with `SUPABASE_*`, `ASSEMBLYAI_KEY`, `HF_TOKEN` as before, plus `STRICT_CONFIG=1`. Set **`LIBRARY_ADMIN_EMAILS`** (or `LIBRARY_ADMIN_USER_IDS`) for people who may delete any library entry; otherwise only each entry's creator can, and entries created before migration 004 cannot be deleted:
+`gcloud run services update simpli-earn-sentiment --update-env-vars LIBRARY_ADMIN_EMAILS=you@example.com`. See [`docs/BACKEND_DEPLOYMENT_GUIDE.md`](./BACKEND_DEPLOYMENT_GUIDE.md).
 
 ### D. Frontend (Vercel or other)
 
