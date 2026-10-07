@@ -79,10 +79,10 @@ Open `http://localhost:3000`.
 ```bash
 pip install -r RAG/requirements-dev.txt -r sentiment/requirements-dev.txt
 (cd RAG && pytest tests) && (cd sentiment && pytest tests)
-cd frontend && npm run lint && npm run build
+cd frontend && npm test && npm run lint && npm run build
 ```
 
-No API keys are needed: the Python tests use fake models and a fake Supabase client.
+No API keys are needed: the Python tests use fake models and a fake Supabase client. `npm test` uses Node's built-in test runner on TypeScript files, which needs Node 22.18+.
 
 ## Deployment and recent changes
 

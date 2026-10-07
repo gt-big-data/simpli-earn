@@ -5,42 +5,9 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useSearchParams } from "next/navigation";
 import { API_BASE_URL } from "@/lib/api-config";
+import { historyFor, MAX_QUESTION_CHARS, nextMessageId, type ChatMessage } from "@/lib/chat-history";
 
-export type Message = {
-  id: number;
-  sender: string;
-  text: string;
-  suggestions?: string[]; // Optional array of follow-up question suggestions
-  source?: string; // Transcript the exchange was about (dashboard id or video URL)
-};
-
-// The RAG API keeps no chat state: each request carries the earlier turns about the same
-// transcript (messages stay on screen when switching dashboards, but history doesn't carry over).
-// Must match the RAG API's request limits (RAG/api_chatbot.py), which reject anything larger
-const MAX_HISTORY_TURNS = 20;
-const MAX_QUESTION_CHARS = 2000;
-const MAX_ANSWER_CHARS = 8000;
-
-function historyFor(messages: Message[], source: string) {
-  const turns: { question: string; answer: string }[] = [];
-  for (let i = 0; i < messages.length - 1; i++) {
-    const question = messages[i];
-    const answer = messages[i + 1];
-    if (
-      question.sender === "user" &&
-      answer.sender === "bot" &&
-      question.source === source &&
-      answer.source === source &&
-      !answer.text.startsWith("⚠️")
-    ) {
-      turns.push({
-        question: question.text.slice(0, MAX_QUESTION_CHARS),
-        answer: answer.text.slice(0, MAX_ANSWER_CHARS),
-      });
-    }
-  }
-  return turns.slice(-MAX_HISTORY_TURNS);
-}
+export type Message = ChatMessage;
 
 export default function ChatBot({
   fullscreen,
@@ -61,9 +28,11 @@ export default function ChatBot({
 
   const source = `${dashboardId ?? ""}|${videoUrl ?? ""}`;
 
-  const askBot = async (text: string) => {
-    // `messages` is the list before this question was added, i.e. exactly the earlier turns
+  const ask = async (text: string) => {
+    // `messages` is the list before this question is added; unanswered questions are left out
     const history = historyFor(messages, source);
+    const questionId = nextMessageId();
+    setMessages((prev) => [...prev, { id: questionId, sender: "user", text, source }]);
     try {
       const res = await fetch(`${API_BASE_URL}/chat`, {
         method: "POST",
@@ -80,18 +49,20 @@ export default function ChatBot({
 
       const data = await res.json();
       const botMessage: Message = {
-        id: messages.length + 2,
+        id: nextMessageId(),
         sender: "bot", // Explicitly set to "bot"
         text: data.response || "⚠️ No response from server.",
         suggestions: data.suggestions || [], // Include suggestions from API
         source,
+        replyTo: questionId,
       };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       const errorMessage: Message = {
-        id: messages.length + 2,
+        id: nextMessageId(),
         sender: "bot", // Explicitly set to "bot"
         text: "⚠️ Failed to connect to server. Check API is running.",
+        replyTo: questionId,
       };
       setMessages((prev) => [...prev, errorMessage]);
       console.error("Error sending message:", error);
@@ -100,15 +71,8 @@ export default function ChatBot({
 
   const sendMessage = async () => {
     if (userInput.trim()) {
-      const newMessage: Message = {
-        id: messages.length + 1,
-        sender: "user",
-        text: userInput,
-        source,
-      };
-      setMessages((prev) => [...prev, newMessage]);
       setUserInput("");
-      await askBot(userInput);
+      await ask(userInput);
     }
   };
 
@@ -122,23 +86,9 @@ export default function ChatBot({
   }, [messages]);
 
   const handleSuggestionClick = (suggestion: string) => {
-    // Set the suggestion as input and automatically send it
-    setUserInput(suggestion);
-
-    // Create a user message with the suggestion
-    const newMessage: Message = {
-      id: messages.length + 1,
-      sender: "user",
-      text: suggestion,
-      source,
-    };
-    setMessages((prev) => [...prev, newMessage]);
-
-    // Send the suggestion to the backend
-    void askBot(suggestion);
-
-    // Clear the input
+    // Send the suggestion as the user's next question
     setUserInput("");
+    void ask(suggestion);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
