@@ -7,7 +7,7 @@ Modes:
   runs scripts/home_youtube_worker.py to execute yt-dlp + the rest of the pipeline.
 """
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Header, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Any
 import subprocess
@@ -42,6 +42,28 @@ def _get_supabase():
         return None
     _supabase = create_client(url, key)
     return _supabase
+
+
+def _request_user_id(authorization: Optional[str]) -> Optional[str]:
+    """
+    Supabase user id for an `Authorization: Bearer <access token>` header, recorded as the
+    dashboard's owner (video_analyses.created_by). Signed-out requests return None.
+    """
+    if not authorization:
+        return None
+    scheme, _, token = authorization.partition(" ")
+    if scheme.lower() != "bearer" or not token.strip():
+        return None
+    sb = _get_supabase()
+    if not sb:
+        raise HTTPException(status_code=503, detail="Authentication unavailable: Supabase not configured")
+    try:
+        user = sb.auth.get_user(token.strip()).user
+    except Exception:
+        user = None
+    if not user or not getattr(user, "id", None):
+        raise HTTPException(status_code=401, detail="Invalid or expired session")
+    return str(user.id)
 
 
 def _row_to_job_status(row: dict) -> dict:
@@ -113,7 +135,9 @@ def _has_complete_analysis(video_id: Optional[str]) -> bool:
     return all(row.get(k) for k in ("transcript_filename", "relevance_filename", "specificity_filename"))
 
 
-def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] = None):
+def run_dashboard_creation(
+    job_id: str, youtube_url: str, ticker: Optional[str] = None, created_by: Optional[str] = None
+):
     """Run the dashboard creation script in background (local / Cloud Run with YouTube access)."""
     jobs[job_id]["status"] = "running"
 
@@ -130,6 +154,8 @@ def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] 
         cmd = [sys.executable, str(script_path), youtube_url]
         if ticker:
             cmd.extend(["--ticker", ticker])
+        if created_by:
+            cmd.extend(["--created-by", created_by])
 
         result = subprocess.run(
             cmd,
@@ -162,12 +188,18 @@ def run_dashboard_creation(job_id: str, youtube_url: str, ticker: Optional[str] 
 
 
 @router.post("/create-dashboard", response_model=dict)
-async def create_dashboard(request: CreateDashboardRequest, background_tasks: BackgroundTasks):
+async def create_dashboard(
+    request: CreateDashboardRequest,
+    background_tasks: BackgroundTasks,
+    authorization: Optional[str] = Header(None),
+):
     """
     Trigger dashboard creation from YouTube URL.
     With YOUTUBE_HOME_WORKER=1, only enqueues to Supabase; home worker runs yt-dlp.
     Already-processed videos return immediately (status "completed", job_id None).
+    A signed-in caller (Bearer token) is recorded as the new dashboard's owner.
     """
+    created_by = _request_user_id(authorization)
     video_id = _extract_video_id(request.youtube_url)
     if not request.force and _has_complete_analysis(video_id):
         return {
@@ -186,15 +218,23 @@ async def create_dashboard(request: CreateDashboardRequest, background_tasks: Ba
                 detail="YOUTUBE_HOME_WORKER is enabled but Supabase is not configured (SUPABASE_URL / SUPABASE_KEY).",
             )
         job_id = str(uuid.uuid4())
+        job_row = {
+            "id": job_id,
+            "youtube_url": request.youtube_url,
+            "ticker": request.ticker,
+            "status": "pending",
+        }
+        if created_by:
+            job_row["created_by"] = created_by
         try:
-            sb.table("youtube_jobs").insert(
-                {
-                    "id": job_id,
-                    "youtube_url": request.youtube_url,
-                    "ticker": request.ticker,
-                    "status": "pending",
-                }
-            ).execute()
+            try:
+                sb.table("youtube_jobs").insert(job_row).execute()
+            except Exception as e:
+                if "created_by" not in job_row or "created_by" not in str(e):
+                    raise
+                print("[dashboard] youtube_jobs has no created_by column (docs/migrations/004); queuing without owner")
+                job_row.pop("created_by")
+                sb.table("youtube_jobs").insert(job_row).execute()
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Failed to enqueue job: {e}") from e
 
@@ -227,7 +267,7 @@ async def create_dashboard(request: CreateDashboardRequest, background_tasks: Ba
         "created_at": datetime.now().isoformat(),
         "completed_at": None,
     }
-    background_tasks.add_task(run_dashboard_creation, job_id, request.youtube_url, request.ticker)
+    background_tasks.add_task(run_dashboard_creation, job_id, request.youtube_url, request.ticker, created_by)
 
     return {
         "job_id": job_id,

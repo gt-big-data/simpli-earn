@@ -346,7 +346,7 @@ class DashboardCreator:
         
     # Removed upload_sentiment_results - now done directly by analysis scripts
         
-    def create_database_entry(self, video_identifier, metadata, transcript_filename, sentiment_filenames):
+    def create_database_entry(self, video_identifier, metadata, transcript_filename, sentiment_filenames, created_by=None):
         """Create entry in video_analyses table"""
         print("💿 Creating database entry...")
         
@@ -363,15 +363,31 @@ class DashboardCreator:
             if metadata:
                 data['metadata'] = {k: metadata.get(k) for k in ('title', 'ticker', 'upload_date')}
 
-            # Upsert (insert or update if exists) - specify the unique column
-            try:
-                result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
-            except Exception as e:
-                if 'metadata' not in data or 'metadata' not in str(e):
-                    raise
-                print("⚠️  video_analyses has no metadata column yet; saving without it")
-                data.pop('metadata')
-                result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
+            # Owner may delete it from the library (docs/migrations/004_video_analyses_owner.sql).
+            # Reprocessing an existing video never transfers ownership.
+            if created_by:
+                try:
+                    existing = (
+                        self.supabase.table("video_analyses").select("created_by")
+                        .eq("video_identifier", video_identifier).limit(1).execute()
+                    )
+                    if not existing.data or not existing.data[0].get("created_by"):
+                        data['created_by'] = created_by
+                except Exception as e:
+                    print(f"⚠️  Could not check dashboard owner (is migration 004 applied?): {e}")
+
+            # Upsert (insert or update if exists) - specify the unique column. Optional columns
+            # are dropped if their migration has not been applied yet.
+            while True:
+                try:
+                    result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
+                    break
+                except Exception as e:
+                    missing = next((col for col in ('metadata', 'created_by') if col in data and col in str(e)), None)
+                    if not missing:
+                        raise
+                    print(f"⚠️  video_analyses has no {missing} column yet; saving without it")
+                    data.pop(missing)
             
             print(f"✅ Database entry created for: {video_identifier}")
             print(f"   📝 Transcript: {transcript_filename}")
@@ -394,7 +410,7 @@ class DashboardCreator:
         except Exception as e:
             print(f"⚠️  Cleanup warning: {e}")
             
-    def process_youtube_video(self, youtube_url, ticker_override=None):
+    def process_youtube_video(self, youtube_url, ticker_override=None, created_by=None):
         """Complete pipeline to process a YouTube video"""
         print(f"\n{'='*60}")
         print(f"🚀 Starting Dashboard Creation Pipeline")
@@ -462,7 +478,8 @@ class DashboardCreator:
             video_identifier=video_id,
             metadata=metadata,
             transcript_filename=transcript_filename,
-            sentiment_filenames=sentiment_filenames
+            sentiment_filenames=sentiment_filenames,
+            created_by=created_by,
         )
         
         # Cleanup
@@ -496,7 +513,21 @@ def main():
         default=None
     )
     
+    parser.add_argument(
+        "--created-by",
+        help="Supabase user id of the person who requested this dashboard (recorded as its owner).",
+        default=None
+    )
+    
     args = parser.parse_args()
+
+    if args.created_by:
+        import uuid
+        try:
+            args.created_by = str(uuid.UUID(args.created_by))
+        except ValueError:
+            print("❌ --created-by must be a user UUID")
+            sys.exit(1)
     
     # Validate URL
     if "youtube.com" not in args.youtube_url and "youtu.be" not in args.youtube_url:
@@ -504,7 +535,7 @@ def main():
         sys.exit(1)
         
     creator = DashboardCreator()
-    success = creator.process_youtube_video(args.youtube_url, args.ticker)
+    success = creator.process_youtube_video(args.youtube_url, args.ticker, created_by=args.created_by)
     
     sys.exit(0 if success else 1)
 

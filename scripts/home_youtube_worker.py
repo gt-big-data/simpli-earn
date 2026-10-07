@@ -86,11 +86,13 @@ def claim_one_pending(sb) -> Optional[Dict[str, Any]]:
     return row
 
 
-def run_pipeline(youtube_url: str, ticker: Optional[str]) -> Tuple[int, str, str]:
+def run_pipeline(youtube_url: str, ticker: Optional[str], created_by: Optional[str] = None) -> Tuple[int, str, str]:
     script = ROOT / "scripts" / "create_dashboard_from_youtube.py"
     cmd = [sys.executable, str(script), youtube_url]
     if ticker:
         cmd.extend(["--ticker", ticker])
+    if created_by:
+        cmd.extend(["--created-by", str(created_by)])
     proc = subprocess.run(
         cmd,
         cwd=str(ROOT),
@@ -124,7 +126,7 @@ def process_one(sb) -> bool:
     url = row["youtube_url"]
     ticker = row.get("ticker")
     print(f"\n{'='*60}\n🏠 Claimed job {job_id}\n📹 {url}\n💹 ticker={ticker!r}\n{'='*60}")
-    code, combined, err_snip = run_pipeline(url, ticker)
+    code, combined, err_snip = run_pipeline(url, ticker, row.get("created_by"))
     vid = extract_video_id(url)
     if code == 0:
         print("✅ Pipeline finished OK")
