@@ -19,7 +19,7 @@ from supabase import create_client
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from llm_provider import get_llm, run_with_fallback, get_active_provider
+from llm_provider import get_llm, run_with_fallback, get_active_provider, get_model_name, invoke_json
 
 # Load environment variables and initialize Supabase
 load_dotenv()
@@ -59,7 +59,7 @@ app.add_middleware(
 )
 
 memory: list[tuple[str, str]] = []
-retriever = None
+chat_transcript_path = None
 
 STATIC_TRANSCRIPTS = {
     "1": "transcripts/apple_seeking_alpha.txt",
@@ -345,7 +345,7 @@ def save_transcript_in_uploads(video_url, transcript_text):
 
 @app.post("/chat")
 def chat_endpoint(req: ChatRequest):
-    global retriever, memory, last_used_id
+    global chat_transcript_path, memory, last_used_id
 
     source_changed = False
 
@@ -360,9 +360,9 @@ def chat_endpoint(req: ChatRequest):
 
     if source_changed:
         memory = []
-        retriever = None
+        chat_transcript_path = None
 
-    if req.video_url and not retriever:
+    if req.video_url and not chat_transcript_path:
         video_id = None
         if "v=" in req.video_url:
             video_id = req.video_url.split("v=")[1].split("&")[0]
@@ -394,16 +394,15 @@ def chat_endpoint(req: ChatRequest):
                 return {"response": transcript}
             transcript_path = save_transcript_in_uploads(req.video_url, transcript)
 
-        retriever, _ = initialize_retrieval(transcript_path)
+        chat_transcript_path = transcript_path
 
-    elif req.id and not retriever:
+    elif req.id and not chat_transcript_path:
         if req.id in STATIC_TRANSCRIPTS:
-            transcript_path = STATIC_TRANSCRIPTS[req.id]
-            retriever, _ = initialize_retrieval(transcript_path)
+            chat_transcript_path = STATIC_TRANSCRIPTS[req.id]
         else:
             return {"response": "âŒ Unknown dashboard ID or missing transcript."}
 
-    if not retriever:
+    if not chat_transcript_path:
         return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
 
     chat_prompt = ChatPromptTemplate.from_template(
@@ -425,7 +424,9 @@ def chat_endpoint(req: ChatRequest):
     )
 
     def _invoke():
-        # get_llm() is resolved per attempt, so a quota fallback retries on the next provider
+        # Retriever and LLM are resolved per attempt, so after an OpenAI quota error the retry
+        # uses Gemini for both (with a Gemini-built index, never OpenAI vectors)
+        retriever, _ = initialize_retrieval(chat_transcript_path)
         return answer_question(req.message, retriever, memory, prompt=chat_prompt)
 
     try:
@@ -455,7 +456,6 @@ def chat_endpoint(req: ChatRequest):
         user_question=req.message,
         bot_answer=response["answer"],
         chat_history=chat_history,
-        retriever=retriever
     )
 
     return {
@@ -635,9 +635,6 @@ def compare_transcripts(req: CompareRequest):
         "previous": count_words(previous_text),
     }
 
-    from openai import OpenAI
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
     prompt = f"""You are a financial analyst. You are given two earnings call transcripts.
 
 TRANSCRIPT A (current): {current_text[:6000]}
@@ -653,18 +650,9 @@ Return a JSON object with exactly these fields:
 Return only the JSON object, no other text."""
 
     try:
-        completion = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-        )
-        raw = completion.choices[0].message.content.strip()
-        if raw.startswith("```"):
-            raw = re.sub(r"^```[a-z]*\n?", "", raw)
-            raw = re.sub(r"\n?```$", "", raw)
-        gpt_data = json.loads(raw)
+        gpt_data = invoke_json([("human", prompt)], temperature=0.3)
     except Exception as e:
-        return {"error": f"GPT parse failure: {str(e)}"}
+        return {"error": f"AI comparison failed: {str(e)}"}
 
     sentiment_current = int(gpt_data.get("sentiment_current", 5))
     sentiment_previous = int(gpt_data.get("sentiment_previous", 5))
@@ -751,28 +739,20 @@ def get_red_flags(data: dict = Body(...)):
 
         numbered = "\n".join([f"[{s['sentence_index']}] {s['sentence_text']}" for s in sentences[:500]])
 
-        from openai import OpenAI
-
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        resp = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": """You are a financial analyst. Analyze earnings call transcripts for RED FLAGS that could concern investors.
+        model_name = get_model_name()
+        out = invoke_json(
+            [
+                (
+                    "system",
+                    """You are a financial analyst. Analyze earnings call transcripts for RED FLAGS that could concern investors.
 Return JSON: {"red_flags": [{"sentence_index": int, "quote": "exact quote", "category": string, "severity": "high"|"medium"|"low", "description": "brief explanation"}]}.
 Categories: vague_evasive, guidance_change, margin_pressure, regulatory_legal, management_change, debt_leverage, other.
 Only include genuine concerns. Be conservative - max 12 flags. Use sentence_index from the transcript. Return valid JSON only.""",
-                },
-                {
-                    "role": "user",
-                    "content": f"Earnings call transcript (sentence_index, text):\n\n{numbered}",
-                },
+                ),
+                ("human", f"Earnings call transcript (sentence_index, text):\n\n{numbered}"),
             ],
-            response_format={"type": "json_object"},
             temperature=0.2,
         )
-        out = json.loads(resp.choices[0].message.content)
         flags = out.get("red_flags", out.get("flags", []))
         if isinstance(flags, dict):
             flags = list(flags.values()) if isinstance(next(iter(flags.values()), None), dict) else []
@@ -781,7 +761,7 @@ Only include genuine concerns. Be conservative - max 12 flags. Use sentence_inde
         if can_save:
             try:
                 supabase.table("video_analyses").update({
-                    "red_flags": {"flags": flags, "model": "gpt-4o", "generated_at": datetime.now().isoformat()},
+                    "red_flags": {"flags": flags, "model": model_name, "generated_at": datetime.now().isoformat()},
                 }).eq("video_identifier", video_id).execute()
             except Exception as e:
                 print(f"Failed to save red flags for {video_id}: {e}")

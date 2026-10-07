@@ -1,23 +1,26 @@
 import os
 import hashlib
-from dotenv import load_dotenv
+import threading
+from collections import OrderedDict
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
 from langchain_core.documents import Document
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 import time
 
-from llm_provider import get_llm
+from llm_provider import get_embeddings, get_llm, run_with_fallback
 
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+FAISS_INDEX_ROOT = "faiss_indices"
+# Indexes created before embeddings became provider-aware were all OpenAI text-embedding-ada-002
+# and live directly under FAISS_INDEX_ROOT; they are reused only for that namespace.
+LEGACY_INDEX_NAMESPACE = "openai-text-embedding-ada-002"
 
-if not OPENAI_API_KEY:
-    print("⚠️  OPENAI_API_KEY not found – embeddings/retrieval will fail until set")
-
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
+# Loaded vector stores keyed by (embedding namespace, content hash). Read-only once built,
+# so they are safe to share between conversations.
+_VECTORSTORE_CACHE_SIZE = int(os.getenv("VECTORSTORE_CACHE_SIZE", "32"))
+_vectorstores: "OrderedDict[tuple[str, str], FAISS]" = OrderedDict()
+_vectorstores_lock = threading.Lock()
 
 # Same wording as LangChain's ConversationalRetrievalChain default, which this module replaces.
 CONDENSE_QUESTION_PROMPT = PromptTemplate.from_template(
@@ -46,31 +49,57 @@ def generate_content_hash(file_content: str) -> str:
     """Generates a unique SHA-256 hash from the file content."""
     return hashlib.sha256(file_content.encode('utf-8')).hexdigest()
 
-def initialize_retrieval(file_path):
-    """Creates a unique FAISS index based on file content hash."""
-    if embeddings is None:
-        raise RuntimeError("OpenAI embeddings not available – set OPENAI_API_KEY in RAG/.env")
+def index_path(namespace: str, content_hash: str) -> str:
+    """On-disk FAISS index for a transcript, separated by embedding provider+model."""
+    return os.path.join(FAISS_INDEX_ROOT, namespace, f"faiss_index_{content_hash}")
 
-    with open(file_path, "r", encoding="utf-8") as f:
-        transcript_text = f.read()
 
-    content_hash = generate_content_hash(transcript_text)
-    faiss_index_path = f"faiss_indices/faiss_index_{content_hash}"
+def _load_or_build_vectorstore(file_path: str, transcript_text: str, content_hash: str):
+    embeddings, namespace = get_embeddings()
+    key = (namespace, content_hash)
+    with _vectorstores_lock:
+        if key in _vectorstores:
+            _vectorstores.move_to_end(key)
+            return _vectorstores[key]
 
-    if os.path.exists(faiss_index_path):
-        print(f"Loading FAISS index for content hash {content_hash} from disk...")
-        vectorstore = FAISS.load_local(faiss_index_path, embeddings, allow_dangerous_deserialization=True)
+    path = index_path(namespace, content_hash)
+    legacy_path = os.path.join(FAISS_INDEX_ROOT, f"faiss_index_{content_hash}")
+    if not os.path.exists(path) and namespace == LEGACY_INDEX_NAMESPACE and os.path.exists(legacy_path):
+        path = legacy_path
+
+    if os.path.exists(path):
+        print(f"Loading FAISS index {namespace}/{content_hash} from disk...")
+        vectorstore = FAISS.load_local(path, embeddings, allow_dangerous_deserialization=True)
     else:
-        print(f"Creating new FAISS index for content hash {content_hash}...")
+        print(f"Creating new FAISS index {namespace}/{content_hash}...")
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
         chunks = text_splitter.split_text(transcript_text)
         documents = [Document(page_content=chunk, metadata={"source": os.path.basename(file_path), "chunk": i})
         for i, chunk in enumerate(chunks)]
         vectorstore = FAISS.from_documents(documents, embeddings)
-        vectorstore.save_local(faiss_index_path)
+        vectorstore.save_local(path)
 
-    retriever = vectorstore.as_retriever()
-    return retriever, content_hash
+    with _vectorstores_lock:
+        _vectorstores[key] = vectorstore
+        _vectorstores.move_to_end(key)
+        while len(_vectorstores) > _VECTORSTORE_CACHE_SIZE:
+            _vectorstores.popitem(last=False)
+    return vectorstore
+
+
+def initialize_retrieval(file_path):
+    """
+    Returns (retriever, content_hash) for a transcript, using a FAISS index built with the
+    active embedding provider. Indexes are cached per provider+model, so switching providers
+    builds a new index instead of querying vectors from a different embedding model.
+    """
+    with open(file_path, "r", encoding="utf-8") as f:
+        transcript_text = f.read()
+
+    content_hash = generate_content_hash(transcript_text)
+    # An OpenAI quota error while embedding retries once with Gemini embeddings
+    vectorstore = run_with_fallback(lambda: _load_or_build_vectorstore(file_path, transcript_text, content_hash))
+    return vectorstore.as_retriever(), content_hash
 
 def summarize_document(file_path):
     """Streams a summary of the document."""
