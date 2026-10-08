@@ -36,6 +36,14 @@ except ImportError as e:
     sys.exit(1)
 
 
+class DashboardWriteConflict(Exception):
+    """Another job completed (or deleted) this dashboard while this job ran."""
+
+
+# A dashboard whose row lacks any of these is incomplete and may be repaired by a later job
+INCOMPLETE_IF_MISSING = ("transcript_filename", "relevance_filename", "specificity_filename")
+
+
 class DashboardCreator:
     def __init__(self):
         # Load environment variables
@@ -346,8 +354,16 @@ class DashboardCreator:
         
     # Removed upload_sentiment_results - now done directly by analysis scripts
         
-    def create_database_entry(self, video_identifier, metadata, transcript_filename, sentiment_filenames):
-        """Create entry in video_analyses table"""
+    def create_database_entry(self, video_identifier, metadata, transcript_filename, sentiment_filenames,
+                              write_mode=None):
+        """
+        Write the video_analyses row. write_mode is enforced atomically here (a job runs for many
+        minutes, and another job for the same video may finish first):
+          "safe"  -> INSERT; if the row exists, UPDATE it only while its analysis is incomplete,
+                     so a complete analysis is never replaced (default for API/worker jobs)
+          "force" -> UPDATE the existing row (an admin asked to reprocess it)
+          None    -> unconditional upsert (operators running this script by hand)
+        """
         print("💿 Creating database entry...")
         
         try:
@@ -363,15 +379,37 @@ class DashboardCreator:
             if metadata:
                 data['metadata'] = {k: metadata.get(k) for k in ('title', 'ticker', 'upload_date')}
 
-            # Upsert (insert or update if exists) - specify the unique column
-            try:
-                result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
-            except Exception as e:
-                if 'metadata' not in data or 'metadata' not in str(e):
+            table = lambda: self.supabase.table("video_analyses")
+            # Optional columns are dropped if their migration has not been applied yet
+            while True:
+                try:
+                    if write_mode == "safe":
+                        try:
+                            table().insert(data).execute()
+                        except Exception as e:
+                            if "23505" not in str(e) and "duplicate key" not in str(e):
+                                raise
+                            # Row exists: only repair it while it is still incomplete
+                            repaired = (
+                                table().update(data).eq("video_identifier", video_identifier)
+                                .or_(",".join(f"{column}.is.null" for column in INCOMPLETE_IF_MISSING))
+                                .execute()
+                            )
+                            if not repaired.data:
+                                raise DashboardWriteConflict()
+                    elif write_mode == "force":
+                        if not table().update(data).eq("video_identifier", video_identifier).execute().data:
+                            raise DashboardWriteConflict()  # deleted while this job ran
+                    else:
+                        table().upsert(data, on_conflict='video_identifier').execute()
+                    break
+                except DashboardWriteConflict:
                     raise
-                print("⚠️  video_analyses has no metadata column yet; saving without it")
-                data.pop('metadata')
-                result = self.supabase.table("video_analyses").upsert(data, on_conflict='video_identifier').execute()
+                except Exception as e:
+                    if 'metadata' not in data or 'metadata' not in str(e):
+                        raise
+                    print("⚠️  video_analyses has no metadata column yet; saving without it")
+                    data.pop('metadata')
             
             print(f"✅ Database entry created for: {video_identifier}")
             print(f"   📝 Transcript: {transcript_filename}")
@@ -379,10 +417,27 @@ class DashboardCreator:
             print(f"   📊 Specificity: {sentiment_filenames.get('specificity_filename')}")
             return True
             
+        except DashboardWriteConflict:
+            print("❌ Another job completed or removed this dashboard while this job ran; nothing was overwritten")
+            self.remove_uploaded_files(transcript_filename, sentiment_filenames)
+            return False
         except Exception as e:
             print(f"❌ Failed to create database entry: {e}")
             return False
             
+    def remove_uploaded_files(self, transcript_filename, sentiment_filenames):
+        """Delete this job's uploads when its results were not saved (they would be orphaned)."""
+        targets = [("transcripts", transcript_filename),
+                   ("sentiment", sentiment_filenames.get('relevance_filename')),
+                   ("sentiment", sentiment_filenames.get('specificity_filename'))]
+        for bucket, name in targets:
+            if not name:
+                continue
+            try:
+                self.supabase.storage.from_(bucket).remove([name])
+            except Exception as e:
+                print(f"⚠️  Could not remove {bucket}/{name}: {e}")
+
     def cleanup(self):
         """Clean up temporary files"""
         print("🧹 Cleaning up temporary files...")
@@ -394,7 +449,7 @@ class DashboardCreator:
         except Exception as e:
             print(f"⚠️  Cleanup warning: {e}")
             
-    def process_youtube_video(self, youtube_url, ticker_override=None):
+    def process_youtube_video(self, youtube_url, ticker_override=None, write_mode=None):
         """Complete pipeline to process a YouTube video"""
         print(f"\n{'='*60}")
         print(f"🚀 Starting Dashboard Creation Pipeline")
@@ -462,7 +517,8 @@ class DashboardCreator:
             video_identifier=video_id,
             metadata=metadata,
             transcript_filename=transcript_filename,
-            sentiment_filenames=sentiment_filenames
+            sentiment_filenames=sentiment_filenames,
+            write_mode=write_mode,
         )
         
         # Cleanup
@@ -496,6 +552,14 @@ def main():
         default=None
     )
     
+    parser.add_argument(
+        "--write-mode",
+        choices=("safe", "force"),
+        help="Set by the API: 'safe' creates the dashboard or repairs an incomplete one, never replacing "
+             "a complete analysis; 'force' replaces an existing one (admin). Omit when running by hand to upsert.",
+        default=None
+    )
+    
     args = parser.parse_args()
     
     # Validate URL
@@ -504,7 +568,7 @@ def main():
         sys.exit(1)
         
     creator = DashboardCreator()
-    success = creator.process_youtube_video(args.youtube_url, args.ticker)
+    success = creator.process_youtube_video(args.youtube_url, args.ticker, write_mode=args.write_mode)
     
     sys.exit(0 if success else 1)
 

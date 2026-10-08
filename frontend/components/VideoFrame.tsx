@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import preloadedVideos from "@/lib/preloaded_videos.json";
 
 interface VideoFrameProps {
@@ -10,32 +11,28 @@ const PRELOADED_VIDEOS = preloadedVideos as Record<string, { url: string; title:
 
 export default function VideoFrame({ timestamp, seekNonce }: VideoFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [videoId, setVideoId] = useState<string | null>(null);
-  const [videoTitle, setVideoTitle] = useState<string>("Loading...");
+  const searchParams = useSearchParams();
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const encodedVideoUrl = params.get("video_url");
-      const dashboardId = params.get("id");
+  // Derived from the URL: ?video_url=... for custom calls, ?id=N for preloaded dashboards
+  const { videoId, videoTitle } = useMemo(() => {
+    const encodedVideoUrl = searchParams.get("video_url");
+    const dashboardId = searchParams.get("id");
 
-      let finalVideoUrl = "";
-      let title = params.get("video_url");
+    let finalVideoUrl = "";
+    let title = encodedVideoUrl;
 
-      if (encodedVideoUrl) {
-        finalVideoUrl = decodeURIComponent(encodedVideoUrl);
-      } else if (dashboardId && PRELOADED_VIDEOS[dashboardId]) {
-        finalVideoUrl = PRELOADED_VIDEOS[dashboardId].url;
-        title = PRELOADED_VIDEOS[dashboardId].title;
-      }
-
-      const videoIdMatch = finalVideoUrl.match(/(?:[?&]v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
-      if (videoIdMatch) {
-        setVideoId(videoIdMatch[1]);
-        setVideoTitle(title || "");
-      }
+    if (encodedVideoUrl) {
+      finalVideoUrl = decodeURIComponent(encodedVideoUrl);
+    } else if (dashboardId && PRELOADED_VIDEOS[dashboardId]) {
+      finalVideoUrl = PRELOADED_VIDEOS[dashboardId].url;
+      title = PRELOADED_VIDEOS[dashboardId].title;
     }
-  }, []);
+
+    const videoIdMatch = finalVideoUrl.match(/(?:[?&]v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
+    return videoIdMatch
+      ? { videoId: videoIdMatch[1], videoTitle: title || "" }
+      : { videoId: null, videoTitle: "Loading..." };
+  }, [searchParams]);
 
   useEffect(() => {
     const player = iframeRef.current;

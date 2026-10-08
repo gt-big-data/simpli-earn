@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/lib/api-config';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Chart, TooltipItem } from 'chart.js';
 
@@ -73,29 +74,25 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
   initialIndicator = "VIX"
 }) => {
   const cacheKey = `${startLocal}|${hours}|${interval}`;
-  const [indicatorsData, setIndicatorsData] = useState<IndicatorsResponse | null>(() => indicatorsCache.get(cacheKey) ?? null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(() => !indicatorsCache.has(cacheKey));
-  const [activeIndicator, setActiveIndicator] = useState<string>(initialIndicator);
+  // Outcome of the last request, tagged with the window it was for; everything else is derived
+  const [result, setResult] = useState<{ key: string; data?: IndicatorsResponse; error?: string } | null>(null);
+  // The parent's VIX/TNX/DXY selection; one response holds all three
+  const activeIndicator = initialIndicator || "VIX";
 
-  // One request returns all three indicators, so switching VIX/TNX/DXY only changes activeIndicator
+  const cached = indicatorsCache.get(cacheKey);
+  const current = result?.key === cacheKey ? result : null;
+  const indicatorsData = cached ?? current?.data ?? null;
+  const error = cached ? null : current?.error ?? null;
+  const loading = !cached && !current;
+
+  // One request returns all three indicators, so switching VIX/TNX/DXY needs no refetch
   useEffect(() => {
-    const cached = indicatorsCache.get(cacheKey);
-    if (cached) {
-      setIndicatorsData(cached);
-      setError(null);
-      setLoading(false);
-      return;
-    }
+    if (indicatorsCache.has(cacheKey)) return;
 
     let cancelled = false;
     const fetchIndicatorsData = async () => {
       try {
-        setLoading(true);
-        setError(null);
-
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/generate-indicators`, {
+        const response = await fetch(`${API_BASE_URL}/generate-indicators`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -111,31 +108,22 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
         const data = await response.json();
         if (cancelled) return;
         if (!data.ok || data.error) {
-          setError(data.error || 'Failed to fetch indicator data');
+          setResult({ key: cacheKey, error: data.error || 'Failed to fetch indicator data' });
         } else {
           // If activeIndicator has no data, the render below falls back to the first available one
           indicatorsCache.set(cacheKey, data);
-          setIndicatorsData(data);
+          setResult({ key: cacheKey, data });
         }
       } catch (err) {
         if (cancelled) return;
-        setError('Failed to fetch indicator data');
+        setResult({ key: cacheKey, error: 'Failed to fetch indicator data' });
         console.error(err);
-      } finally {
-        if (!cancelled) setLoading(false);
       }
     };
 
     fetchIndicatorsData();
     return () => { cancelled = true; };
   }, [cacheKey, startLocal, hours, interval]);
-
-  // Update activeIndicator when initialIndicator prop changes
-  useEffect(() => {
-    if (initialIndicator) {
-      setActiveIndicator(initialIndicator);
-    }
-  }, [initialIndicator]);
 
   if (loading) {
     return (

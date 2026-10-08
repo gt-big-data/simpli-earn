@@ -7,6 +7,9 @@ import { TbSend2 } from "react-icons/tb";
 import mockCalls from "@/public/data/mock-calls.json";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
+import { createClient } from "@/lib/supabase/client";
 
 interface LibraryVideo {
   id: string;
@@ -19,6 +22,13 @@ interface LibraryVideo {
   created_at: string;
 }
 
+/** Bearer header for the signed-in Supabase user, so the RAG API can check admin rights. */
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data } = await createClient().auth.getSession();
+  const token = data.session?.access_token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export default function Home() {
   const [youtubeLink, setYoutubeLink] = useState("");
   const [tickerSymbol, setTickerSymbol] = useState("");
@@ -26,11 +36,12 @@ export default function Home() {
   const [processingStatus, setProcessingStatus] = useState("");
   const [libraryVideos, setLibraryVideos] = useState<LibraryVideo[]>([]);
   const [hoveredVideoId, setHoveredVideoId] = useState<string | null>(null);
+  const router = useRouter();
   // Load library videos from database
   useEffect(() => {
     const fetchLibrary = async () => {
       try {
-        const response = await fetch("http://localhost:8001/library");
+        const response = await fetch(`${SENTIMENT_API_BASE_URL}/library`);
         const data = await response.json();
         setLibraryVideos(data.videos || []);
       } catch (error) {
@@ -50,10 +61,10 @@ export default function Home() {
     
     try {
       // Trigger dashboard creation
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiUrl}/dashboard/create-dashboard`, {
+      const response = await fetch(`${API_BASE_URL}/dashboard/create-dashboard`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        // Lets an admin reprocess an existing dashboard (force)
+        headers: { "Content-Type": "application/json", ...(await authHeaders()) },
         body: JSON.stringify({ 
           youtube_url: youtubeLink,
           ticker: tickerSymbol.trim().toUpperCase() || undefined
@@ -71,11 +82,13 @@ export default function Home() {
       const tickerParam = tickerSymbol?.trim() ? `&ticker=${encodeURIComponent(tickerSymbol.trim().toUpperCase())}` : "";
       const jobParam = data.job_id ? `&job=${encodeURIComponent(data.job_id)}` : "";
       setProcessingStatus("Opening dashboard...");
-      window.location.href = `/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}${jobParam}`;
+      router.push(`/dashboard?video_url=${encodeURIComponent(youtubeLink)}${tickerParam}${jobParam}`);
       
     } catch (error) {
       console.error("Failed to create dashboard:", error);
-      setProcessingStatus("Failed to start processing. Please try again.");
+      // Server reasons (e.g. "Only an admin can reprocess an existing dashboard") are actionable
+      const reason = error instanceof Error && error.message !== "Failed to fetch" ? ` ${error.message}` : "";
+      setProcessingStatus(`Failed to start processing.${reason || " Please try again."}`);
       setIsProcessing(false);
     }
   };
@@ -87,7 +100,7 @@ export default function Home() {
     if (!confirm("Are you sure you want to delete this earnings call?")) return;
     
     try {
-      await fetch(`http://localhost:8001/library/${videoId}`, {
+      await fetch(`${SENTIMENT_API_BASE_URL}/library/${videoId}`, {
         method: "DELETE",
       });
       

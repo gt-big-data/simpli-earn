@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import VideoFrame from "@/components/VideoFrame";
@@ -9,6 +9,10 @@ import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
 import FullChat from "@/components/FullChat";
 import type { PipelineState } from "@/components/ChartsFrame";
+import type { Message } from "@/components/ChatBot";
+import { useAuth } from "@/lib/auth/AuthContext";
+import { chatForAccount, startChat, updateMessages, type AccountChat } from "@/lib/account-chat";
+import { API_BASE_URL } from "@/lib/api-config";
 
 type SummarySection = {
   heading?: string | null;
@@ -16,6 +20,14 @@ type SummarySection = {
   bullet?: boolean;
   timestamp: number | null;
 };
+
+const INITIAL_MESSAGES: Message[] = [
+  {
+    id: 1,
+    sender: "bot",
+    text: "Hi, I'm SimpliBot! Feel free to ask me any questions about the given earnings call!",
+  },
+];
 
 const PIPELINE_STATUS_TEXT: Record<string, string> = {
   pending: "Queued for processing…",
@@ -32,15 +44,18 @@ function DashboardContent() {
   // Custom links open here right away with `job=<id>` while the pipeline (download, transcript,
   // sentiment) runs. Poll it; when it finishes, drop the param so summary/charts load normally.
   const jobId = searchParams.get("job");
-  const [pipeline, setPipeline] = useState<PipelineState | null>(jobId ? { status: "pending" } : null);
+  // Latest poll result, tagged with its job; a job with no result yet counts as pending
+  const [jobState, setJobState] = useState<{ jobId: string; pipeline: PipelineState | null } | null>(null);
+  const pipeline: PipelineState | null = !jobId
+    ? null
+    : jobState?.jobId === jobId
+      ? jobState.pipeline
+      : { status: "pending" };
 
   useEffect(() => {
-    if (!jobId) {
-      setPipeline(null);
-      return;
-    }
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    if (!jobId) return;
     let cancelled = false;
+    const setPipeline = (next: PipelineState | null) => setJobState({ jobId, pipeline: next });
     let timer: ReturnType<typeof setTimeout> | undefined;
 
     const finish = () => {
@@ -52,7 +67,7 @@ function DashboardContent() {
 
     const poll = async () => {
       try {
-        const res = await fetch(`${apiUrl}/dashboard/job-status/${encodeURIComponent(jobId)}`);
+        const res = await fetch(`${API_BASE_URL}/dashboard/job-status/${encodeURIComponent(jobId)}`);
         if (cancelled) return;
         // 404: API restarted and forgot the in-memory job; just try loading whatever exists
         if (res.status === 404) return finish();
@@ -87,16 +102,15 @@ function DashboardContent() {
 
       setSummaryLoading(true);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
         let res;
         if (videoUrl) {
-          res = await fetch(`${apiUrl}/summary`, {
+          res = await fetch(`${API_BASE_URL}/summary`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ video_url: videoUrl }),
           });
         } else {
-          res = await fetch(`${apiUrl}/summary?id=${id || "1"}`);
+          res = await fetch(`${API_BASE_URL}/summary?id=${id || "1"}`);
         }
 
         let data: { summary?: string; detail?: string; sections?: SummarySection[] };
@@ -150,12 +164,7 @@ function DashboardContent() {
           ? "Generating summary…"
           : null;
 
-  useEffect(() => {
-    if (pipeline?.status === "failed") {
-      setSummary(`❌ Processing this call failed:\n${pipeline.error}`);
-      setSummarySections([]);
-    }
-  }, [pipeline]);
+  const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
   const [activeDisplay, setActiveDisplay] = useState("full");
   const [chatMinimized, setChatMinimized] = useState(false);
@@ -163,14 +172,22 @@ function DashboardContent() {
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
 
-  const messageArray = [
-    {
-      id: 1,
-      sender: "bot",
-      text: "Hi, I'm SimpliBot! Feel free to ask me any questions about the given earnings call!",
-    },
-  ];
-  const [messages, setMessages] = useState(messageArray);
+  // The chat (which is also the history sent to the RAG API) belongs to the account that wrote it.
+  // Any account change (sign out, sign in, switch) replaces it; see lib/account-chat.ts.
+  const { user } = useAuth();
+  const accountId = user?.id ?? null;
+  const [chat, setChat] = useState<AccountChat>(() => startChat(accountId, INITIAL_MESSAGES));
+  const currentChat = chatForAccount(chat, accountId, INITIAL_MESSAGES);
+  if (currentChat !== chat) {
+    // Adjusting state while rendering (React's pattern for resetting state when an input changes)
+    setChat(currentChat);
+  }
+  const messages = currentChat.messages;
+  const { epoch } = currentChat;
+  const setMessages = useCallback<Dispatch<SetStateAction<Message[]>>>(
+    (update) => setChat((prev) => updateMessages(prev, epoch, update)),
+    [epoch]
+  );
 
   const handleChatMinimized = (isMinimized: boolean) => {
     setChatMinimized(isMinimized);
@@ -215,8 +232,8 @@ function DashboardContent() {
                 <SummaryFrame
                   setActiveDisplay={setActiveDisplay}
                   halfHeight={activeDisplay !== "full"}
-                  summary={summary}
-                  summarySections={summarySections}
+                  summary={failedSummary ?? summary}
+                  summarySections={failedSummary ? [] : summarySections}
                   onTimestampClick={handleTimestampSeek}
                   placeholder={summaryPlaceholder}
                 />

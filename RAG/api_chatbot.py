@@ -1,31 +1,33 @@
 # api_chatbot.py
 from fastapi import FastAPI, Query, Body, HTTPException
-from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
-from langchain_testing import initialize_retrieval, get_chat_response, generate_follow_up_questions
-from langchain.memory import ConversationBufferMemory
+from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 from datetime import datetime
 from pathlib import Path
-from langchain.chains import ConversationalRetrievalChain
-from langchain.prompts import ChatPromptTemplate
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
 from typing import Optional
 from collections import Counter
 import subprocess
 import json
 import re
+import threading
+import uuid
 from dotenv import load_dotenv
 from supabase import create_client
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from llm_provider import get_llm, run_with_fallback, get_active_provider
+from env_check import validate_environment
+from llm_provider import get_llm, run_with_fallback, get_active_provider, get_model_name, invoke_json
 
 # Load environment variables and initialize Supabase
 load_dotenv()
+validate_environment()
 supabase = None
 try:
     supabase_url = os.getenv("SUPABASE_URL")
@@ -38,8 +40,6 @@ try:
 except Exception as e:
     print(f"âš ï¸  Failed to initialize Supabase: {e}")
 
-last_used_id = None
-
 app = FastAPI()
 
 try:
@@ -48,23 +48,86 @@ try:
 except ImportError as e:
     print(f"Warning: Could not import dashboard creation endpoint: {e}")
 
+# Largest request body accepted by any endpoint. A full /chat request (20 turns at the field limits)
+# is well under 512 KB; nothing else sends more than a few KB.
+MAX_REQUEST_BODY_BYTES = int(os.getenv("MAX_REQUEST_BODY_BYTES", str(1024 * 1024)))
+
+
+class BodySizeLimitMiddleware:
+    """Reject request bodies over max_bytes with 413 before the app reads or parses them."""
+
+    def __init__(self, app, max_bytes: int):
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
+        declared = dict(scope.get("headers") or []).get(b"content-length")
+        if declared and declared.isdigit() and int(declared) > self.max_bytes:
+            return await self._too_large(send)
+
+        # Content-Length may be absent (chunked) or wrong, so count what actually arrives
+        chunks, size, more = [], 0, True
+        while more:
+            message = await receive()
+            if message["type"] != "http.request":
+                return
+            chunk = message.get("body", b"")
+            size += len(chunk)
+            if size > self.max_bytes:
+                return await self._too_large(send)
+            chunks.append(chunk)
+            more = message.get("more_body", False)
+
+        body, replayed = b"".join(chunks), False
+
+        async def replay():
+            nonlocal replayed
+            if replayed:
+                return await receive()
+            replayed = True
+            return {"type": "http.request", "body": body, "more_body": False}
+
+        await self.app(scope, replay, send)
+
+    async def _too_large(self, send):
+        payload = json.dumps({"detail": f"Request body exceeds {self.max_bytes} bytes"}).encode()
+        await send({"type": "http.response.start", "status": 413,
+                    "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(payload)).encode())]})
+        await send({"type": "http.response.body", "body": payload})
+
+
+# Added before CORS so CORS is the outer layer and a 413 still carries CORS headers the browser can read
+app.add_middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BODY_BYTES)
+
+DEFAULT_CORS_ORIGINS = [
+    "https://simpli-earn-2-simpli-earns-projects.vercel.app",
+    "https://simpli-earn-2.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+
+def cors_origins(env=None) -> list[str]:
+    """
+    Browser origins allowed to call this API: the defaults plus CORS_ALLOWED_ORIGINS
+    (comma-separated). cloudbuild.yaml adds the Cloud Run frontend's URLs there on each deploy.
+    """
+    env = os.environ if env is None else env
+    extra = [origin.strip().rstrip("/") for origin in (env.get("CORS_ALLOWED_ORIGINS") or "").split(",")]
+    return list(dict.fromkeys(DEFAULT_CORS_ORIGINS + [origin for origin in extra if origin]))
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://simpli-earn-2-simpli-earns-projects.vercel.app",
-        "https://simpli-earn-2.vercel.app",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
-retriever = None
-qa_chain = None
-summary_chain = None
 
 STATIC_TRANSCRIPTS = {
     "1": "transcripts/apple_seeking_alpha.txt",
@@ -90,13 +153,35 @@ with open(PRELOADED_SUMMARY_ANCHORS_PATH, "r", encoding="utf-8") as f:
     PRELOADED_SUMMARY_ANCHORS = json.load(f)
 
 UPLOADS_DIR = "uploads"
-chat_history = []
+
+
+# Request limits, enforced by validation (422) before the endpoint runs. The browser trims what it
+# sends to these sizes (frontend/components/ChatBot.tsx), and the whole body is capped separately.
+CHAT_HISTORY_MAX_TURNS = 20
+CHAT_MAX_QUESTION_CHARS = 2000
+CHAT_MAX_ANSWER_CHARS = 8000
+# Turns actually used in prompts; can only lower CHAT_HISTORY_MAX_TURNS
+CHAT_MAX_TURNS = min(int(os.getenv("CHAT_MAX_TURNS", "20")), CHAT_HISTORY_MAX_TURNS)
+
+
+class ChatTurn(BaseModel):
+    question: str = Field(max_length=CHAT_MAX_QUESTION_CHARS)
+    answer: str = Field(max_length=CHAT_MAX_ANSWER_CHARS)
 
 
 class ChatRequest(BaseModel):
-    message: str
-    id: Optional[str] = None
-    video_url: Optional[str] = None
+    message: str = Field(min_length=1, max_length=CHAT_MAX_QUESTION_CHARS)
+    id: Optional[str] = Field(default=None, max_length=200)
+    video_url: Optional[str] = Field(default=None, max_length=2000)
+    # Earlier turns of this conversation about this transcript, oldest first. The browser sends
+    # them, so the API keeps no per-user state and any instance can answer a follow-up.
+    history: list[ChatTurn] = Field(default_factory=list, max_length=CHAT_HISTORY_MAX_TURNS)
+
+
+def chat_history_from_request(turns: list[ChatTurn]) -> list[tuple[str, str]]:
+    """Last CHAT_MAX_TURNS non-empty turns as (question, answer) pairs."""
+    recent = turns[-CHAT_MAX_TURNS:] if CHAT_MAX_TURNS > 0 else []
+    return [(turn.question, turn.answer) for turn in recent if turn.question.strip() and turn.answer.strip()]
 
 
 STOP_WORDS = {
@@ -348,27 +433,35 @@ def save_transcript_in_uploads(video_url, transcript_text):
     return file_path
 
 
-@app.post("/chat")
-def chat_endpoint(req: ChatRequest):
-    global retriever, qa_chain, memory, last_used_id
+def _chat_source_key(req: ChatRequest) -> Optional[str]:
+    if req.video_url:
+        return f"YT::{req.video_url}"
+    if req.id:
+        return f"ID::{req.id}"
+    return None
 
-    source_changed = False
+
+# Transcripts are public call data, so local copies are shared across conversations
+_chat_transcripts: dict[str, str] = {}
+_chat_transcripts_lock = threading.Lock()
+
+
+def _write_atomically(path: str, text: str) -> None:
+    """Concurrent conversations may fetch the same transcript; never expose a half-written file."""
+    tmp_path = f"{path}.{uuid.uuid4().hex}.tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.replace(tmp_path, path)
+
+
+def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optional[str], Optional[str]]:
+    """Return (local transcript path, error response text)."""
+    with _chat_transcripts_lock:
+        cached = _chat_transcripts.get(source_key)
+    if cached and os.path.exists(cached):
+        return cached, None
 
     if req.video_url:
-        if last_used_id != f"YT::{req.video_url}":
-            source_changed = True
-            last_used_id = f"YT::{req.video_url}"
-    elif req.id:
-        if last_used_id != req.id:
-            source_changed = True
-            last_used_id = req.id
-
-    if source_changed:
-        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True, output_key="answer")
-        retriever = None
-        qa_chain = None
-
-    if req.video_url and not retriever:
         video_id = None
         if "v=" in req.video_url:
             video_id = req.video_url.split("v=")[1].split("&")[0]
@@ -387,8 +480,7 @@ def chat_endpoint(req: ChatRequest):
                         upload_dir = os.path.join(os.getcwd(), "uploads")
                         os.makedirs(upload_dir, exist_ok=True)
                         transcript_path = os.path.join(upload_dir, f"transcript_{video_id}.txt")
-                        with open(transcript_path, "w", encoding="utf-8") as f:
-                            f.write(transcript_text)
+                        _write_atomically(transcript_path, transcript_text)
                         print(f"âœ… Transcript saved locally: {transcript_path}")
             except Exception as e:
                 print(f"âš ï¸  Failed to load transcript from Supabase: {e}")
@@ -397,20 +489,28 @@ def chat_endpoint(req: ChatRequest):
             print("ðŸ“¥ Fetching transcript from YouTube...")
             transcript = get_video_transcript(req.video_url)
             if "Error:" in transcript:
-                return {"response": transcript}
+                return None, transcript
             transcript_path = save_transcript_in_uploads(req.video_url, transcript)
+    elif req.id in STATIC_TRANSCRIPTS:
+        transcript_path = STATIC_TRANSCRIPTS[req.id]
+    else:
+        return None, "âŒ Unknown dashboard ID or missing transcript."
 
-        retriever, _ = initialize_retrieval(transcript_path)
+    with _chat_transcripts_lock:
+        _chat_transcripts[source_key] = transcript_path
+    return transcript_path, None
 
-    elif req.id and not retriever:
-        if req.id in STATIC_TRANSCRIPTS:
-            transcript_path = STATIC_TRANSCRIPTS[req.id]
-            retriever, _ = initialize_retrieval(transcript_path)
-        else:
-            return {"response": "âŒ Unknown dashboard ID or missing transcript."}
 
-    if not retriever:
+@app.post("/chat")
+def chat_endpoint(req: ChatRequest):
+    source_key = _chat_source_key(req)
+    if not source_key:
         return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
+
+    transcript_path, error = _resolve_chat_transcript(req, source_key)
+    if error:
+        return {"response": error}
+    history = chat_history_from_request(req.history)
 
     chat_prompt = ChatPromptTemplate.from_template(
         """
@@ -430,29 +530,18 @@ def chat_endpoint(req: ChatRequest):
         """
     )
 
-    def _build_qa_chain():
-        global qa_chain
-        qa_chain = ConversationalRetrievalChain.from_llm(
-            llm=get_llm(),
-            retriever=retriever,
-            memory=memory,
-            combine_docs_chain_kwargs={"prompt": chat_prompt},
-            return_source_documents=True,
-            output_key="answer",
-        )
-
-    if qa_chain is None:
-        _build_qa_chain()
-
     def _invoke():
-        return qa_chain.invoke({"question": req.message})
+        # Retriever and LLM are resolved per attempt, so after an OpenAI quota error the retry
+        # uses Gemini for both (with a Gemini-built index, never OpenAI vectors)
+        retriever, _ = initialize_retrieval(transcript_path)
+        return answer_question(req.message, retriever, history, prompt=chat_prompt)
 
     try:
-        response = run_with_fallback(_invoke, rebuild_fn=_build_qa_chain)
+        response = run_with_fallback(_invoke)
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {e}")
 
-    chat_history.append({"question": req.message, "answer": response["answer"]})
+    recent_history = [{"question": q, "answer": a} for q, a in history + [(req.message, response["answer"])]]
 
     source_docs = response.get("source_documents", []) or []
     sources = []
@@ -472,8 +561,7 @@ def chat_endpoint(req: ChatRequest):
     suggestions = generate_follow_up_questions(
         user_question=req.message,
         bot_answer=response["answer"],
-        chat_history=chat_history,
-        retriever=retriever
+        chat_history=recent_history,
     )
 
     return {
@@ -516,10 +604,22 @@ def generate_summary_from_youtube(data: dict = Body(...)):
     video_id = extract_video_id(video_url)
 
     # Summaries are generated once per video and saved to video_analyses.summary
+    # (docs/migrations/003). Until that column exists, still use the stored transcript but
+    # generate the summary every time, as /red-flags does.
     analysis_row = None
+    can_save = False
     if video_id and supabase:
+        lookup = lambda columns: (
+            supabase.table("video_analyses").select(columns).eq("video_identifier", video_id).execute()
+        )
         try:
-            result = supabase.table("video_analyses").select("transcript_filename,summary").eq("video_identifier", video_id).execute()
+            try:
+                result = lookup("transcript_filename,summary")
+                can_save = True
+            except Exception as e:
+                if "summary" not in str(e):
+                    raise
+                result = lookup("transcript_filename")
             analysis_row = result.data[0] if result.data else None
         except Exception as e:
             print(f"Failed to look up video analysis: {e}")
@@ -594,19 +694,10 @@ Summary:
 """
     )
 
-    global summary_chain
-
-    def _build_yt_summary():
-        global summary_chain
-        summary_chain = LLMChain(llm=get_llm(), prompt=post_summary_prompt)
-
-    if summary_chain is None:
-        _build_yt_summary()
-
     try:
+        # Chain is built per attempt so a quota fallback picks up the next provider
         result = run_with_fallback(
-            lambda: summary_chain.run(transcript=transcript_text),
-            rebuild_fn=_build_yt_summary,
+            lambda: (post_summary_prompt | get_llm() | StrOutputParser()).invoke({"transcript": transcript_text}),
         )
     except Exception as e:
         raise HTTPException(status_code=503, detail=f"AI service error: {e}")
@@ -617,7 +708,7 @@ Summary:
         "provider": get_active_provider(),
     }
     # Only processed videos have a row to save into; YouTube-caption fallbacks regenerate each time
-    if analysis_row:
+    if analysis_row and can_save:
         try:
             supabase.table("video_analyses").update({
                 "summary": {**response, "generated_at": datetime.now().isoformat()},
@@ -662,9 +753,6 @@ def compare_transcripts(req: CompareRequest):
         "previous": count_words(previous_text),
     }
 
-    from openai import OpenAI
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
     prompt = f"""You are a financial analyst. You are given two earnings call transcripts.
 
 TRANSCRIPT A (current): {current_text[:6000]}
@@ -680,18 +768,9 @@ Return a JSON object with exactly these fields:
 Return only the JSON object, no other text."""
 
     try:
-        completion = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-        )
-        raw = completion.choices[0].message.content.strip()
-        if raw.startswith("```"):
-            raw = re.sub(r"^```[a-z]*\n?", "", raw)
-            raw = re.sub(r"\n?```$", "", raw)
-        gpt_data = json.loads(raw)
+        gpt_data = invoke_json([("human", prompt)], temperature=0.3)
     except Exception as e:
-        return {"error": f"GPT parse failure: {str(e)}"}
+        return {"error": f"AI comparison failed: {str(e)}"}
 
     sentiment_current = int(gpt_data.get("sentiment_current", 5))
     sentiment_previous = int(gpt_data.get("sentiment_previous", 5))
@@ -778,28 +857,20 @@ def get_red_flags(data: dict = Body(...)):
 
         numbered = "\n".join([f"[{s['sentence_index']}] {s['sentence_text']}" for s in sentences[:500]])
 
-        from openai import OpenAI
-
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        resp = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "system",
-                    "content": """You are a financial analyst. Analyze earnings call transcripts for RED FLAGS that could concern investors.
+        model_name = get_model_name()
+        out = invoke_json(
+            [
+                (
+                    "system",
+                    """You are a financial analyst. Analyze earnings call transcripts for RED FLAGS that could concern investors.
 Return JSON: {"red_flags": [{"sentence_index": int, "quote": "exact quote", "category": string, "severity": "high"|"medium"|"low", "description": "brief explanation"}]}.
 Categories: vague_evasive, guidance_change, margin_pressure, regulatory_legal, management_change, debt_leverage, other.
 Only include genuine concerns. Be conservative - max 12 flags. Use sentence_index from the transcript. Return valid JSON only.""",
-                },
-                {
-                    "role": "user",
-                    "content": f"Earnings call transcript (sentence_index, text):\n\n{numbered}",
-                },
+                ),
+                ("human", f"Earnings call transcript (sentence_index, text):\n\n{numbered}"),
             ],
-            response_format={"type": "json_object"},
             temperature=0.2,
         )
-        out = json.loads(resp.choices[0].message.content)
         flags = out.get("red_flags", out.get("flags", []))
         if isinstance(flags, dict):
             flags = list(flags.values()) if isinstance(next(iter(flags.values()), None), dict) else []
@@ -808,7 +879,7 @@ Only include genuine concerns. Be conservative - max 12 flags. Use sentence_inde
         if can_save:
             try:
                 supabase.table("video_analyses").update({
-                    "red_flags": {"flags": flags, "model": "gpt-4o", "generated_at": datetime.now().isoformat()},
+                    "red_flags": {"flags": flags, "model": model_name, "generated_at": datetime.now().isoformat()},
                 }).eq("video_identifier", video_id).execute()
             except Exception as e:
                 print(f"Failed to save red flags for {video_id}: {e}")
@@ -826,8 +897,9 @@ def generate_stock(payload: dict):
     ticker = payload.get("ticker")
     date = payload.get("date")
 
-    if not ticker or not date:
-        return {"error": "ticker and date required"}
+    # Same contract as the former Next.js /api/stock route: 400 for bad input, {"error"} bodies otherwise
+    if not ticker or not date or not isinstance(ticker, str) or not isinstance(date, str):
+        return JSONResponse({"error": "Missing ticker or date parameter"}, status_code=400)
 
     # Runs in-process (like /generate-indicators); a finished 48h window never changes, so cache it
     key = (ticker.upper(), date)
@@ -841,25 +913,46 @@ def generate_stock(payload: dict):
     return result
 
 
+def _parses(value: str, fmt: str) -> bool:
+    try:
+        datetime.strptime(value, fmt)
+        return True
+    except ValueError:
+        return False
+
+
 @app.post("/generate-indicators")
 def generate_indicators(payload: dict = Body(...)):
     """Generate economic indicators (VIX, TNX, DXY) data for the given time window."""
     start_local = payload.get("startLocal")
     hours = payload.get("hours", 48)
     interval = payload.get("interval", "5m")
-    indicators = payload.get("indicators", ["VIX", "TNX", "DXY"])
+    indicators = payload.get("indicators") or ["VIX", "TNX", "DXY"]
 
-    if not start_local:
-        return {"ok": False, "error": "startLocal required"}
+    # Same contract as the former Next.js /api/indicators route: 400 + {"ok": false} for bad input
+    if not start_local or not isinstance(start_local, str):
+        return JSONResponse({"ok": False, "error": "Missing startLocal parameter"}, status_code=400)
+    if not isinstance(hours, (int, float)) or not 0 < hours <= 24 * 30:
+        return JSONResponse({"ok": False, "error": "hours must be a number between 0 and 720"}, status_code=400)
+    if not isinstance(interval, str) or not isinstance(indicators, list):
+        return JSONResponse({"ok": False, "error": "Invalid interval or indicators"}, status_code=400)
 
     formatted_date = start_local
-    if "/" in start_local:
-        parts = start_local.strip().split(" ")
-        date_part = parts[0]
-        time_part = parts[1] if len(parts) > 1 else "09:30"
-        m, d, y = date_part.split("/")
-        full_year = f"20{y}" if int(y) < 50 else f"19{y}"
-        formatted_date = f"{full_year}-{m.zfill(2)}-{d.zfill(2)} {time_part}"
+    try:
+        if "/" in start_local:
+            parts = start_local.strip().split(" ")
+            date_part = parts[0]
+            time_part = parts[1] if len(parts) > 1 else "09:30"
+            m, d, y = date_part.split("/")
+            full_year = f"20{y}" if int(y) < 50 else f"19{y}"
+            formatted_date = f"{full_year}-{m.zfill(2)}-{d.zfill(2)} {time_part}"
+        if not any(_parses(formatted_date, fmt) for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d")):
+            raise ValueError(formatted_date)
+    except ValueError:
+        return JSONResponse(
+            {"ok": False, "error": "Invalid request", "details": f"Unrecognized startLocal: {start_local}"},
+            status_code=400,
+        )
 
     from economicIndicatorsV2 import get_economic_indicators_json
     return get_economic_indicators_json(formatted_date, hours, interval, indicators)

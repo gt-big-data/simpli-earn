@@ -4,13 +4,10 @@ import { TbSend2 } from "react-icons/tb";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useSearchParams } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api-config";
+import { historyFor, MAX_QUESTION_CHARS, nextMessageId, type ChatMessage } from "@/lib/chat-history";
 
-export type Message = {
-  id: number;
-  sender: string;
-  text: string;
-  suggestions?: string[]; // Optional array of follow-up question suggestions
-};
+export type Message = ChatMessage;
 
 export default function ChatBot({
   fullscreen,
@@ -29,47 +26,53 @@ export default function ChatBot({
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
+  const source = `${dashboardId ?? ""}|${videoUrl ?? ""}`;
+
+  const ask = async (text: string) => {
+    // `messages` is the list before this question is added; unanswered questions are left out
+    const history = historyFor(messages, source);
+    const questionId = nextMessageId();
+    setMessages((prev) => [...prev, { id: questionId, sender: "user", text, source }]);
+    try {
+      const res = await fetch(`${API_BASE_URL}/chat`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: text,
+          id: dashboardId,
+          video_url: videoUrl,
+          history,
+        }),
+      });
+
+      const data = await res.json();
+      const botMessage: Message = {
+        id: nextMessageId(),
+        sender: "bot", // Explicitly set to "bot"
+        text: data.response || "⚠️ No response from server.",
+        suggestions: data.suggestions || [], // Include suggestions from API
+        source,
+        replyTo: questionId,
+      };
+      setMessages((prev) => [...prev, botMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: nextMessageId(),
+        sender: "bot", // Explicitly set to "bot"
+        text: "⚠️ Failed to connect to server. Check API is running.",
+        replyTo: questionId,
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+      console.error("Error sending message:", error);
+    }
+  };
+
   const sendMessage = async () => {
     if (userInput.trim()) {
-      const newMessage: Message = {
-        id: messages.length + 1,
-        sender: "user",
-        text: userInput,
-      };
-      setMessages((prev) => [...prev, newMessage]);
       setUserInput("");
-
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/chat`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: userInput,
-            id: dashboardId, // Tesla dashboard for now (can be made dynamic)
-            video_url: videoUrl,
-          }),
-        });
-
-        const data = await res.json();
-        const botMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot", // Explicitly set to "bot"
-          text: data.response || "⚠️ No response from server.",
-          suggestions: data.suggestions || [], // Include suggestions from API
-        };
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        const errorMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot", // Explicitly set to "bot"
-          text: "⚠️ Failed to connect to server. Check API is running.",
-        };
-        setMessages((prev) => [...prev, errorMessage]);
-        console.error("Error sending message:", error);
-      }
+      await ask(userInput);
     }
   };
 
@@ -83,54 +86,9 @@ export default function ChatBot({
   }, [messages]);
 
   const handleSuggestionClick = (suggestion: string) => {
-    // Set the suggestion as input and automatically send it
-    setUserInput(suggestion);
-
-    // Create a user message with the suggestion
-    const newMessage: Message = {
-      id: messages.length + 1,
-      sender: "user",
-      text: suggestion,
-    };
-    setMessages((prev) => [...prev, newMessage]);
-
-    // Send the suggestion to the backend
-    (async () => {
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-        const res = await fetch(`${apiUrl}/chat`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            message: suggestion,
-            id: dashboardId,
-            video_url: videoUrl,
-          }),
-        });
-
-        const data = await res.json();
-        const botMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot",
-          text: data.response || "⚠️ No response from server.",
-          suggestions: data.suggestions || [],
-        };
-        setMessages((prev) => [...prev, botMessage]);
-      } catch (error) {
-        const errorMessage: Message = {
-          id: messages.length + 2,
-          sender: "bot",
-          text: "⚠️ Failed to connect to server. Check API is running.",
-        };
-        setMessages((prev) => [...prev, errorMessage]);
-        console.error("Error sending message:", error);
-      }
-    })();
-
-    // Clear the input
+    // Send the suggestion as the user's next question
     setUserInput("");
+    void ask(suggestion);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -173,6 +131,7 @@ export default function ChatBot({
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Message RAG Chatbot"
+            maxLength={MAX_QUESTION_CHARS}
             onKeyDown={handleKeyDown}
             style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
             className="w-full h-[120px] p-3 bg-white/4 text-white rounded-[15px] border-[1px] border-white/25 resize-none"

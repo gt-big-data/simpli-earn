@@ -14,8 +14,8 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent.parent / "RAG" / ".env")
 
-from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate
 
 PRELOADED = {
     "1": {"transcript_file": "apple_seeking_alpha.txt", "title": "Apple Q1 FY25"},
@@ -44,7 +44,6 @@ def main():
     output_file = base / "RAG" / "static_summaries.py"
 
     prompt = PromptTemplate(input_variables=["transcript"], template=SUMMARY_PROMPT)
-    chain = LLMChain(llm=get_llm(), prompt=prompt)
 
     summaries = {}
     for dash_id, config in PRELOADED.items():
@@ -58,7 +57,10 @@ def main():
             transcript_text = f.read()
 
         try:
-            result = run_with_fallback(lambda: chain.run(transcript=transcript_text))
+            # Build the chain per attempt so a quota fallback picks up the new provider
+            result = run_with_fallback(
+                lambda: (prompt | get_llm() | StrOutputParser()).invoke({"transcript": transcript_text})
+            )
             summaries[dash_id] = result
             print(f"   ✅ Done ({len(result)} chars)")
         except Exception as e:
