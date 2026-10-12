@@ -1,0 +1,16 @@
+source,filer_name,filer_title,agency_or_office,report_type,report_date,pdf_url,pdf_path,investment_kind,investment_line,transaction_date,transaction_type,amount_range,raw_excerpt
+house_clerk,Hon. Richard W. Allen,Member of Congress,GA12,House Periodic Transaction Report (PTR),1/15/2026,https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2026/20033751.pdf,data/public_disclosures/house_clerk/2026/pdfs_by_docid/20033751.pdf,transaction,"SP Netflix, Inc. - Common Stock (NFLX) S 12/12/2025 01/06/2026 $1,001 - $15,000",12/12/2025,sale,"$1,001 - $15,000","Filing ID #20033751
+P T R
+Clerk of the House of Representatives • Legislative Resource Center • B81 Cannon Building • Washington, DC 20515
+F I
+Name: Hon. Richard W. Allen
+Status: Member
+State/District: GA12
+T
+ID Owner Asset Transaction Date Notification Amount Cap.
+Type Date Gains >
+$200?
+SP Ferguson Enterprises Inc. Common P 12/12/2025 01/06/2026 $15,001 -
+Stock (FERG) [ST] $50,000
+F S: New
+S O: R.W. Allen & Associates, Inc. > R"

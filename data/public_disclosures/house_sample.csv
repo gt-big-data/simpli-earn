@@ -1,0 +1,2 @@
+source,filer_name,filer_title,agency_or_office,report_type,report_date,pdf_url,pdf_path,investment_kind,investment_line,transaction_date,transaction_type,amount_range,raw_section
+house_clerk,Jaliel Amador,Member of Congress,NY13,House Financial Disclosure (C),1/30/2026,https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2026/10073252.pdf,data/public_disclosures/house_clerk/2026/pdfs_by_docid/10073252.pdf,asset,""" income, transactions, or",,,,""" income, transactions, or"
