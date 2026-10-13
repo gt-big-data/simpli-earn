@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth/AuthContext";
+import Image from "next/image";
 import { Menu, UserRound } from "lucide-react";
-import LogoMark from "./LogoMark";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,7 +52,7 @@ const NavBar = () => {
   return (
     <nav className="fixed top-5 left-1/2 z-[1000] flex w-auto -translate-x-1/2 flex-nowrap items-center gap-5 border border-white/8 bg-[rgba(17,20,19,0.72)] px-5 py-2.5 backdrop-blur-xl rounded-2xl md:gap-6">
       <Link href="/" className="flex shrink-0 items-center gap-2 no-underline">
-        <LogoMark className="size-5" />
+        <Image src="/logo.png" alt="" width={24} height={24} className="size-6" />
         <span className="whitespace-nowrap text-[1.65rem] font-light leading-none tracking-tight text-brand">
           SimpliEarn
         </span>
