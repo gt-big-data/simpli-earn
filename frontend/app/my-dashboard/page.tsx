@@ -30,8 +30,8 @@ export default function MyDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#81D18D]" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-brand" />
       </div>
     )
   }
@@ -41,16 +41,11 @@ export default function MyDashboardPage() {
   }
 
   return (
-    <div
-      className="min-h-screen bg-[#0a0a0a] font-montserrat"
-      style={{
-        background: 'radial-gradient(50% 50% at 50% 0%, rgba(129, 209, 141, 0.08) 0%, transparent 50%)',
-      }}
-    >
+    <div className="min-h-screen bg-background">
       <NavBar />
 
-      <main className="pt-28 pb-16 px-6 max-w-6xl mx-auto">
-        <h1 className="text-2xl font-medium text-white mb-8 tracking-tight">
+      <main className="mx-auto max-w-6xl px-6 pt-28 pb-16">
+        <h1 className="mb-8 text-2xl font-light tracking-tight text-foreground">
           My Dashboard
         </h1>
 

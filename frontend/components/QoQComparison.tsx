@@ -169,7 +169,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     return (
       <div className="flex flex-col items-center gap-2 py-4">
         <span
-          className="text-5xl font-bold font-montserrat"
+          className="text-5xl font-bold"
           style={{ color }}
         >
           {deltaStr}
@@ -269,7 +269,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     if (!data) return null;
     return (
       <div className="px-4 pb-4">
-        <h2 className="text-xs font-bold font-montserrat text-white/70 uppercase tracking-widest mb-3">
+        <h2 className="text-xs font-bold text-white/70 uppercase tracking-widest mb-3">
           Narrative Shifts Detected
         </h2>
         <div className="flex flex-col gap-2">
@@ -293,7 +293,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     <div className="flex flex-col w-full h-full overflow-y-auto">
       {/* Controls bar */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
-        <span className="text-xs text-white/60 font-montserrat font-semibold whitespace-nowrap">
+        <span className="text-xs text-white/60 font-semibold whitespace-nowrap">
           Compare with:
         </span>
         <select
@@ -312,7 +312,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
       {/* Loading */}
       {loading && (
         <div className="flex flex-1 items-center justify-center py-8">
-          <p className="text-sm text-white/50 animate-pulse font-montserrat">
+          <p className="text-sm text-white/50 animate-pulse">
             Analyzing transcripts...
           </p>
         </div>
@@ -330,7 +330,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
         <>
           {/* Divider label */}
           <div className="px-4 pt-3 pb-1">
-            <p className="text-[10px] text-white/40 uppercase tracking-widest font-montserrat font-semibold">
+            <p className="text-[10px] text-white/40 uppercase tracking-widest font-semibold">
               Sentiment Delta
             </p>
           </div>
@@ -342,7 +342,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
 
           {/* B. Vocabulary Heatmap */}
           <div className="px-4 pb-1">
-            <p className="text-[10px] text-white/40 uppercase tracking-widest font-montserrat font-semibold mb-2">
+            <p className="text-[10px] text-white/40 uppercase tracking-widest font-semibold mb-2">
               Vocabulary Heatmap
             </p>
           </div>

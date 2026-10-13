@@ -51,18 +51,18 @@ function LoginForm() {
   }
 
   return (
-    <div className="rounded-xl border border-[rgba(129,209,141,0.26)] bg-[rgba(0,0,0,0.4)] p-8 shadow-[0px_0px_8px_0px_rgba(129,209,141,0.25)]">
-      <h1 className="text-2xl font-bold text-center mb-6 text-white">
+    <div className="surface rounded-2xl p-8">
+      <h1 className="mb-6 text-center text-2xl font-light tracking-tight text-foreground">
         Welcome back
       </h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="p-3 rounded-lg bg-red-500/20 text-red-400 text-sm">
+          <div className="rounded-lg bg-destructive/15 p-3 text-sm text-destructive">
             {error}
           </div>
         )}
         <div>
-          <label htmlFor="email" className="block text-sm text-gray-300 mb-1">
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-muted-foreground">
             Email
           </label>
           <input
@@ -71,12 +71,12 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full py-2 px-4 bg-[rgba(234,250,236,0.14)] rounded-lg border border-[rgba(129,209,141,0.3)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]"
+            className="field"
             placeholder="you@example.com"
           />
         </div>
         <div>
-          <label htmlFor="password" className="block text-sm text-gray-300 mb-1">
+          <label htmlFor="password" className="mb-1 block text-sm font-medium text-muted-foreground">
             Password
           </label>
           <input
@@ -85,42 +85,38 @@ function LoginForm() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full py-2 px-4 bg-[rgba(234,250,236,0.14)] rounded-lg border border-[rgba(129,209,141,0.3)] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#81D18D]"
+            className="field"
             placeholder="••••••••"
           />
         </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 rounded-lg bg-[#81D18D] text-[#121612] font-semibold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+        <button type="submit" disabled={loading} className="btn-primary w-full">
           {loading ? 'Signing in...' : 'Sign in'}
         </button>
         <div className="relative my-4">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-600" />
+            <span className="w-full border-t border-white/8" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-[rgba(0,0,0,0.4)] px-2 text-gray-500">or</span>
+            <span className="bg-[#111413] px-2 text-muted-foreground">or</span>
           </div>
         </div>
         <button
           type="button"
           onClick={() => signInWithGoogle()}
           disabled={loading}
-          className="w-full py-3 rounded-lg border border-[rgba(129,209,141,0.3)] text-gray-300 hover:bg-[rgba(234,250,236,0.08)] transition-all disabled:opacity-50"
+          className="btn-outline w-full"
         >
           Continue with Google
         </button>
       </form>
-      <p className="mt-6 text-center text-gray-400 text-sm">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?{' '}
-        <Link href="/signup" className="text-[#81D18D] hover:underline">
+        <Link href="/signup" className="text-brand no-underline">
           Sign up
         </Link>
       </p>
-      <p className="mt-2 text-center text-gray-500 text-xs">
-        <Link href="/" className="hover:text-gray-400">
+      <p className="mt-2 text-center text-xs text-muted-foreground">
+        <Link href="/" className="text-brand no-underline">
           ← Back to home
         </Link>
       </p>
@@ -130,7 +126,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="rounded-xl border border-[rgba(129,209,141,0.26)] bg-[rgba(0,0,0,0.4)] p-8 animate-pulse h-64" />}>
+    <Suspense fallback={<div className="surface h-64 animate-pulse rounded-2xl p-8" />}>
       <LoginForm />
     </Suspense>
   )

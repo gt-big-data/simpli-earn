@@ -19,10 +19,7 @@ export default function SuggestionChips({
         <button
           key={index}
           onClick={() => onSuggestionClick(suggestion)}
-          className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/25 hover:border-white/35
-                     text-white text-sm rounded-full transition-all duration-200
-                     hover:scale-[0.98] active:scale-95 cursor-pointer
-                     whitespace-normal text-left"
+          className="cursor-pointer whitespace-normal rounded-[10px] border border-white/8 bg-pill px-2.5 py-1 text-left text-xs text-foreground transition-colors hover:bg-muted"
         >
           {suggestion}
         </button>

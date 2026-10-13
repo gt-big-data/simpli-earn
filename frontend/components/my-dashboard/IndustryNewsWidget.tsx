@@ -9,7 +9,7 @@ interface IndustryNewsWidgetProps {
 export default function IndustryNewsWidget({  }: IndustryNewsWidgetProps) {
   return (
     <DashboardWidget title="Industry News" widgetId="industry-news">
-      <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
+      <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
         <p>News from sectors you care about.</p>
       </div>
     </DashboardWidget>

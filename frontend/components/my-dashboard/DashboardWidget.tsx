@@ -13,9 +13,9 @@ export default function DashboardWidget({ title, children, widgetId }: Dashboard
   return (
     <section
       data-widget-id={widgetId}
-      className="rounded-xl border border-[rgba(129,209,141,0.2)] bg-[rgba(0,0,0,0.3)] p-6 shadow-[0px_0px_8px_0px_rgba(129,209,141,0.08)] min-h-[200px] flex flex-col"
+      className="surface flex min-h-[200px] flex-col rounded-2xl p-6"
     >
-      <h2 className="text-sm font-semibold text-[#81D18D] uppercase tracking-wider mb-4">
+      <h2 className="mb-4 text-sm font-medium tracking-wide text-brand">
         {title}
       </h2>
       <div className="flex-1 flex flex-col">

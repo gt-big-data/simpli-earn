@@ -100,15 +100,15 @@ export default function OnboardingPage() {
 
   if (authLoading || !user) {
     return (
-      <div className="rounded-xl border border-[rgba(129,209,141,0.26)] bg-[rgba(0,0,0,0.4)] p-8 text-center w-full max-w-md">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#81D18D] mx-auto" />
-        <p className="text-gray-400 mt-4">Loading...</p>
+      <div className="surface w-full max-w-md rounded-2xl p-8 text-center">
+        <div className="mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-brand" />
+        <p className="mt-4 text-sm text-muted-foreground">Loading...</p>
       </div>
     )
   }
 
   const optionClass =
-    'flex items-center gap-3 p-4 rounded-xl bg-[rgba(234,250,236,0.06)] border border-[rgba(129,209,141,0.2)] cursor-pointer hover:border-[rgba(129,209,141,0.4)] transition-all'
+    'flex cursor-pointer items-center gap-3 rounded-xl border border-white/8 bg-black/20 p-4 transition-colors hover:bg-white/5'
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -118,25 +118,25 @@ export default function OnboardingPage() {
           <div
             key={s.id}
             className={`h-1 flex-1 rounded-full transition-colors ${
-              s.id <= step ? 'bg-[#81D18D]' : 'bg-[rgba(129,209,141,0.2)]'
+              s.id <= step ? 'bg-brand' : 'bg-white/10'
             }`}
           />
         ))}
       </div>
 
-      <div className="rounded-xl border border-[rgba(129,209,141,0.2)] bg-[rgba(0,0,0,0.3)] p-8 shadow-[0px_0px_12px_0px_rgba(129,209,141,0.08)]">
+      <div className="surface rounded-2xl p-8">
         {/* Step 1 */}
         {step === 1 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-medium text-foreground">
               What are you investing for?
             </h2>
-            <p className="text-gray-400 text-sm">We&apos;ll tailor insights to your goals.</p>
+            <p className="text-sm text-muted-foreground">We&apos;ll tailor insights to your goals.</p>
             <div className="space-y-2">
               {INVESTING_GOALS.map(({ slug, label }) => (
                 <label
                   key={slug}
-                  className={`${optionClass} ${investingGoal === slug ? 'border-[#81D18D] ring-1 ring-[#81D18D]/30' : ''}`}
+                  className={`${optionClass} ${investingGoal === slug ? 'border-brand bg-accent' : ''}`}
                 >
                   <input
                     type="radio"
@@ -144,9 +144,9 @@ export default function OnboardingPage() {
                     value={slug}
                     checked={investingGoal === slug}
                     onChange={() => setInvestingGoal(slug)}
-                    className="accent-[#81D18D] sr-only"
+                    className="sr-only accent-brand"
                   />
-                  <span className="text-white">{label}</span>
+                  <span className="text-foreground">{label}</span>
                 </label>
               ))}
             </div>
@@ -156,15 +156,15 @@ export default function OnboardingPage() {
         {/* Step 2 */}
         {step === 2 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-medium text-foreground">
               How familiar are you with investing?
             </h2>
-            <p className="text-gray-400 text-sm">Helps us match content to your level.</p>
+            <p className="text-sm text-muted-foreground">Helps us match content to your level.</p>
             <div className="space-y-2">
               {EXPERIENCE_LEVELS.map(({ slug, label }) => (
                 <label
                   key={slug}
-                  className={`${optionClass} ${experienceLevel === slug ? 'border-[#81D18D] ring-1 ring-[#81D18D]/30' : ''}`}
+                  className={`${optionClass} ${experienceLevel === slug ? 'border-brand bg-accent' : ''}`}
                 >
                   <input
                     type="radio"
@@ -172,9 +172,9 @@ export default function OnboardingPage() {
                     value={slug}
                     checked={experienceLevel === slug}
                     onChange={() => setExperienceLevel(slug)}
-                    className="accent-[#81D18D] sr-only"
+                    className="sr-only accent-brand"
                   />
-                  <span className="text-white">{label}</span>
+                  <span className="text-foreground">{label}</span>
                 </label>
               ))}
             </div>
@@ -184,23 +184,23 @@ export default function OnboardingPage() {
         {/* Step 3 */}
         {step === 3 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-white">
+            <h2 className="text-xl font-medium text-foreground">
               Sector preferences
             </h2>
-            <p className="text-gray-400 text-sm">Select any that interest you. Optional.</p>
+            <p className="text-sm text-muted-foreground">Select any that interest you. Optional.</p>
             <div className="space-y-2">
               {SECTOR_PREFERENCES.map(({ slug, label }) => (
                 <label
                   key={slug}
-                  className={`${optionClass} ${sectorPreferences.includes(slug) ? 'border-[#81D18D] ring-1 ring-[#81D18D]/30' : ''}`}
+                  className={`${optionClass} ${sectorPreferences.includes(slug) ? 'border-brand bg-accent' : ''}`}
                 >
                   <input
                     type="checkbox"
                     checked={sectorPreferences.includes(slug)}
                     onChange={() => toggleSector(slug)}
-                    className="accent-[#81D18D] rounded"
+                    className="rounded accent-brand"
                   />
-                  <span className="text-white">{label}</span>
+                  <span className="text-foreground">{label}</span>
                 </label>
               ))}
             </div>
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
         )}
 
         {submitError && (
-          <div className="mt-6 p-3 rounded-lg bg-red-500/20 text-red-400 text-sm">
+          <div className="mt-6 rounded-lg bg-destructive/15 p-3 text-sm text-destructive">
             {submitError}
           </div>
         )}
@@ -219,7 +219,7 @@ export default function OnboardingPage() {
             <button
               type="button"
               onClick={handleBack}
-              className="py-3 px-6 rounded-xl border border-[rgba(129,209,141,0.3)] text-gray-300 hover:border-[#81D18D] hover:text-white transition-all"
+              className="btn-outline px-6"
             >
               Back
             </button>
@@ -228,7 +228,7 @@ export default function OnboardingPage() {
             type="button"
             onClick={handleNext}
             disabled={(step <= 2 && !canProceed()) || submitting}
-            className="flex-1 py-3 rounded-xl bg-[#81D18D] text-[#121612] font-semibold hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary flex-1"
           >
             {submitting
               ? 'Saving...'
