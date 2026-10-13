@@ -77,8 +77,12 @@ steps:
       - '--allow-unauthenticated'
       - '--port'
       - '8080'
-      - '--set-secrets'
+      # --update-* merges, so values added by hand (e.g. GEMINI_API_KEY, YOUTUBE_HOME_WORKER) survive deploys
+      - '--update-secrets'
       - 'OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest'
+      # Refuse to start (keeping the previous revision live) if required config is missing
+      - '--update-env-vars'
+      - 'STRICT_CONFIG=1'
       - '--memory'
       - '1Gi'
       - '--cpu'
@@ -125,8 +129,10 @@ steps:
       - '--allow-unauthenticated'
       - '--port'
       - '8080'
-      - '--set-secrets'
+      - '--update-secrets'
       - 'SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest'
+      - '--update-env-vars'
+      - 'STRICT_CONFIG=1'
       - '--memory'
       - '1Gi'
       - '--cpu'
@@ -150,21 +156,38 @@ steps:
         SENTIMENT_URL=$$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
         echo "Backend URL: $$BACKEND_URL"
         echo "Sentiment URL: $$SENTIMENT_URL"
-        echo "BACKEND_URL=$$BACKEND_URL" >> /workspace/backend-url.env
+        echo "BACKEND_URL=$$BACKEND_URL" > /workspace/backend-url.env
         echo "SENTIMENT_URL=$$SENTIMENT_URL" >> /workspace/backend-url.env
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
   # Build Frontend Docker Image
+  # NEXT_PUBLIC_* values are compiled into the client bundle by `next build`, so they are passed as
+  # build args here (backend URLs from the step above, Supabase public config from substitutions).
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-frontend-image'
+    entrypoint: 'bash'
     args:
-      - 'build'
-      - '-t'
-      - 'gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA}'
-      - '-f'
-      - 'frontend/Dockerfile'
-      - 'frontend'
+      - '-c'
+      - |
+        set -euo pipefail
+        source /workspace/backend-url.env
+        if [ -z "$$BACKEND_URL" ] || [ -z "$$SENTIMENT_URL" ]; then
+          echo "Backend URLs are empty; cannot build the frontend" >&2
+          exit 1
+        fi
+        if [ -z "${_SUPABASE_PUBLIC_URL}" ] || [ -z "${_SUPABASE_ANON_KEY}" ]; then
+          echo "Set the _SUPABASE_PUBLIC_URL and _SUPABASE_ANON_KEY substitutions (Supabase URL and anon key) on the trigger" >&2
+          exit 1
+        fi
+        docker build \
+          --build-arg NEXT_PUBLIC_API_URL="$$BACKEND_URL" \
+          --build-arg NEXT_PUBLIC_SENTIMENT_API_URL="$$SENTIMENT_URL" \
+          --build-arg NEXT_PUBLIC_SUPABASE_URL="${_SUPABASE_PUBLIC_URL}" \
+          --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY="${_SUPABASE_ANON_KEY}" \
+          -t gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA} \
+          -f frontend/Dockerfile \
+          frontend
 
   # Push Frontend Image
   - name: 'gcr.io/cloud-builders/docker'
@@ -180,19 +203,54 @@ steps:
     args:
       - '-c'
       - |
-        BACKEND_URL=$$(gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format='value(status.url)')
-        SENTIMENT_URL=$$(gcloud run services describe ${_SERVICE_NAME_SENTIMENT} --region=${_REGION} --format='value(status.url)')
+        # Public API/Supabase URLs are baked into the image at build time (see build-frontend-image)
         gcloud run deploy ${_SERVICE_NAME_FRONTEND} \
           --image=gcr.io/${_PROJECT_ID}/${_SERVICE_NAME_FRONTEND}:${SHORT_SHA} \
           --platform=managed \
           --region=${_REGION} \
           --allow-unauthenticated \
           --port=3000 \
-          --set-env-vars="NODE_ENV=production,NEXT_PUBLIC_API_URL=$$BACKEND_URL,NEXT_PUBLIC_SENTIMENT_API_URL=$$SENTIMENT_URL" \
+          --set-env-vars="NODE_ENV=production" \
+          --update-secrets="SUPABASE_SERVICE_ROLE_KEY=supabase-key:latest" \
           --memory=1Gi \
           --cpu=2 \
           --timeout=300 \
           --max-instances=10
+    env:
+      - 'CLOUDSDK_RUN_PLATFORM=managed'
+
+  # Allow the frontend's Cloud Run origin(s) to call the RAG API (CORS). Merged into the backend's
+  # CORS_ALLOWED_ORIGINS so origins added by hand (e.g. a custom domain) are kept; the backend is
+  # only updated when something new needs adding.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'allow-frontend-origin'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        gcloud run services describe ${_SERVICE_NAME_FRONTEND} --region=${_REGION} --format=json > /workspace/frontend-service.json
+        gcloud run services describe ${_SERVICE_NAME_BACKEND} --region=${_REGION} --format=json > /workspace/backend-service.json
+        MERGED=$$(python3 - <<'PY'
+        import json
+        frontend = json.load(open("/workspace/frontend-service.json"))
+        backend = json.load(open("/workspace/backend-service.json"))
+        # Cloud Run serves a service on its status.url and, for newer services, a second URL form
+        urls = [frontend["status"]["url"]]
+        urls += json.loads(frontend.get("metadata", {}).get("annotations", {}).get("run.googleapis.com/urls", "[]"))
+        env = backend["spec"]["template"]["spec"]["containers"][0].get("env", [])
+        current = next((e.get("value", "") for e in env if e["name"] == "CORS_ALLOWED_ORIGINS"), "")
+        origins = [o.strip().rstrip("/") for o in current.split(",") if o.strip()]
+        merged = list(dict.fromkeys(origins + [u.rstrip("/") for u in urls if u]))
+        print(",".join(merged) if merged != origins else "")
+        PY
+        )
+        if [ -z "$$MERGED" ]; then
+          echo "CORS_ALLOWED_ORIGINS already includes the frontend"
+        else
+          echo "Setting CORS_ALLOWED_ORIGINS=$$MERGED on ${_SERVICE_NAME_BACKEND}"
+          gcloud run services update ${_SERVICE_NAME_BACKEND} --region=${_REGION} --update-env-vars="^@^CORS_ALLOWED_ORIGINS=$$MERGED"
+        fi
     env:
       - 'CLOUDSDK_RUN_PLATFORM=managed'
 
@@ -203,6 +261,10 @@ substitutions:
   _SERVICE_NAME_FRONTEND: 'simpli-earn-frontend'
   _SERVICE_NAME_BACKEND: 'simpli-earn-backend'
   _SERVICE_NAME_SENTIMENT: 'simpli-earn-sentiment'
+  # Public Supabase config compiled into the frontend (anon key, never the service_role key).
+  # Set these on the Cloud Build trigger; the frontend image build fails if they are empty.
+  _SUPABASE_PUBLIC_URL: ''
+  _SUPABASE_ANON_KEY: ''
 
 # Timeout for the entire build
 timeout: '1800s'

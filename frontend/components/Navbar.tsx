@@ -8,19 +8,21 @@ import Image from "next/image";
 import { Menu, UserRound } from "lucide-react";
 
 const NavBar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  // The menu is open for the page it was opened on, so navigating closes it without an effect
+  const [menuOpenOnPath, setMenuOpenOnPath] = useState<string | null>(null);
+  const isMenuOpen = menuOpenOnPath === pathname;
   const ref = useRef<HTMLDivElement | null>(null);
   const { user, loading: authLoading, signOut } = useAuth();
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setMenuOpenOnPath(isMenuOpen ? null : pathname);
   };
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
-        setIsMenuOpen(false);
+        setMenuOpenOnPath(null);
       }
     };
 
@@ -31,7 +33,7 @@ const NavBar = () => {
   useEffect(() => {
     const handleOutSideClick = (e: MouseEvent) => {
       if (!ref.current?.contains(e.target as Node)) {
-        setIsMenuOpen(false);
+        setMenuOpenOnPath(null);
       }
     };
 
@@ -41,10 +43,6 @@ const NavBar = () => {
       window.removeEventListener("mousedown", handleOutSideClick);
     };
   }, [ref]);
-
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
 
   const navLinkClass =
     "text-sm font-normal whitespace-nowrap text-foreground no-underline transition-colors hover:text-brand";

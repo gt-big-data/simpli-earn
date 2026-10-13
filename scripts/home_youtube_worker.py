@@ -91,6 +91,8 @@ def run_pipeline(youtube_url: str, ticker: Optional[str]) -> Tuple[int, str, str
     cmd = [sys.executable, str(script), youtube_url]
     if ticker:
         cmd.extend(["--ticker", ticker])
+    # Create the dashboard or repair an incomplete one; never replace a complete analysis
+    cmd.extend(["--write-mode", "safe"])
     proc = subprocess.run(
         cmd,
         cwd=str(ROOT),

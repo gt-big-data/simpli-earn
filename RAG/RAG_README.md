@@ -1,5 +1,34 @@
 # README for the RAG API
 
+## LLM providers and retrieval indexes
+
+`llm_provider.py` picks the provider for every LLM and embedding call. OpenAI is preferred when
+`OPENAI_API_KEY` is set; Gemini (`GEMINI_API_KEY`) is used otherwise, or for `OPENAI_COOLDOWN_SECONDS`
+after an OpenAI quota error. **Either key alone is enough**: with only `GEMINI_API_KEY`, chat,
+summaries, follow-up suggestions, `/compare`, `/red-flags` and transcript embeddings all run on
+Gemini and nothing calls OpenAI.
+
+Embeddings follow the same choice unless pinned with `EMBEDDING_PROVIDER=openai` or `gemini`
+(models: `OPENAI_EMBEDDING_MODEL`, default `text-embedding-ada-002`; `GEMINI_EMBEDDING_MODEL`,
+default `gemini-embedding-001`).
+
+FAISS indexes are stored per embedding provider and model:
+
+```
+RAG/faiss_indices/<provider>-<model>/faiss_index_<sha256 of transcript>/
+```
+
+Vectors from different embedding models cannot be compared, so an index is only ever loaded with
+the model that built it. When the provider or model changes (a new key, a pinned
+`EMBEDDING_PROVIDER`, or a quota fallback), the next chat on a transcript builds a new index under
+the new directory; the old indexes stay on disk untouched and are used again if you switch back.
+Indexes created before this layout (`RAG/faiss_indices/faiss_index_<hash>/`) were built with OpenAI
+`text-embedding-ada-002` and are still loaded for that provider and model only. Any index directory can
+be deleted safely; it is rebuilt on demand. In Cloud Run the directory lives on the container's
+ephemeral disk, so indexes are rebuilt after each new instance starts.
+
+Run the tests (no API keys needed) with `pip install -r requirements-dev.txt` and `pytest tests` from `RAG/`.
+
 # Update: April 16, 2025 by Neil Samant
 
 The RAG code has now been turned into an API, and it needs to be run with the frontend (most typically through a second command prompt/terminal).

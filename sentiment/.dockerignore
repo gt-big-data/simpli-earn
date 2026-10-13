@@ -1,0 +1,7 @@
+# Build context for sentiment/Dockerfile. Keep local secrets and host artifacts out of the image.
+.env
+.env.*
+!.env.example
+__pycache__
+*.pyc
+.pytest_cache

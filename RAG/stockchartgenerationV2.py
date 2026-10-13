@@ -127,6 +127,12 @@ def get_stock_chart(ticker, event_date_str):
         else:
             stock_data.index = stock_data.index.tz_convert(eastern_tz)
 
+        # yfinance returns (Price, Ticker) column MultiIndexes, so data['Close'] can be a one-column
+        # DataFrame; reduce it to a Series so each lookup below yields a scalar (required by pandas 3)
+        close_prices = stock_data['Close']
+        if isinstance(close_prices, pd.DataFrame):
+            close_prices = close_prices.iloc[:, 0]
+
         # Create a DataFrame with exactly 48 hourly slots for the two days
         hours = []
         for day in [day_start, next_day_start]:
@@ -140,15 +146,15 @@ def get_stock_chart(ticker, event_date_str):
         # For each hour in our perfect grid, find the closest data point in the actual stock data
         for hour in hours:
             # Find nearest data point before and after our target hour
-            data_before = stock_data[stock_data.index <= hour]
-            data_after = stock_data[stock_data.index > hour]
+            data_before = close_prices[close_prices.index <= hour]
+            data_after = close_prices[close_prices.index > hour]
             
             if not data_before.empty:
                 # Get the most recent price before this hour
-                perfect_hours_df.at[hour, 'Close'] = data_before['Close'].iloc[-1]
+                perfect_hours_df.at[hour, 'Close'] = float(data_before.iloc[-1])
             elif not data_after.empty:
                 # If no prior data, use the next available price
-                perfect_hours_df.at[hour, 'Close'] = data_after['Close'].iloc[0]
+                perfect_hours_df.at[hour, 'Close'] = float(data_after.iloc[0])
                 
         # Forward fill any remaining NaN values
         perfect_hours_df = perfect_hours_df.ffill()

@@ -1,0 +1,18 @@
+# Build context for RAG/Dockerfile (repo root). Keep local secrets and host artifacts out of images.
+**/.env
+**/.env.*
+!**/.env.example
+.git
+venv
+**/.venv
+**/node_modules
+frontend/.next
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+RAG/faiss_indices
+RAG/uploads
+RAG/models
+temp_processing
+google-cloud-sdk
+api_keys.txt

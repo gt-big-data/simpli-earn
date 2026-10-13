@@ -46,7 +46,10 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 ### A. Supabase (once per project)
 
-1. Open **Supabase Dashboard → SQL** and run [`docs/migrations/001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) if you use the **home worker** path.
+1. Optionally, in **Supabase Dashboard → SQL**, run (the app works without them; 001 is required only for the home worker):
+   - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue),
+   - [`002_video_analyses_metadata.sql`](./migrations/002_video_analyses_metadata.sql) (chart ticker/date),
+   - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags).
 2. Confirm buckets **`transcripts`** and **`sentiment`** exist and policies match your app (unchanged by this doc).
 3. Ensure **`video_analyses`** table still matches your app (unchanged here).
 
@@ -54,7 +57,12 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 **Secrets / env (typical):**
 
-- `OPENAI_API_KEY`, `SUPABASE_URL`, `SUPABASE_KEY` (service role), plus any existing keys (`GEMINI_API_KEY`, etc.).
+- `OPENAI_API_KEY` and/or `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY`. See `RAG/.env.example`.
+- `cloudbuild.yaml` deploys with `--update-secrets`/`--update-env-vars`, so a key added by hand persists across deploys, e.g. Gemini:
+  `gcloud run services update simpli-earn-backend --update-secrets GEMINI_API_KEY=gemini-api-key:latest`.
+- `DASHBOARD_ADMIN_EMAILS` / `DASHBOARD_ADMIN_USER_IDS`: who may force-reprocess a complete dashboard. Everyone else can create dashboards and retry incomplete ones; jobs never replace a complete analysis otherwise. Forcing is not available while `YOUTUBE_HOME_WORKER=1`.
+- `CORS_ALLOWED_ORIGINS`: extra browser origins (comma-separated) besides localhost and the Vercel URLs. `cloudbuild.yaml` adds the Cloud Run frontend's URLs after each deploy; add a custom domain by hand with `gcloud run services update simpli-earn-backend --update-env-vars "^@^CORS_ALLOWED_ORIGINS=<existing>,https://your.domain"`.
+- **`STRICT_CONFIG=1`** (set by `cloudbuild.yaml`) makes the service refuse to start when a required value is missing, so a misconfigured revision never takes traffic.
 - **`YOUTUBE_HOME_WORKER=1`** — enable queue-only mode for YouTube jobs (requires migration + home worker).
 - Omit or set **`YOUTUBE_HOME_WORKER=0`** for classic mode (subprocess on the same host as uvicorn).
 
@@ -80,7 +88,7 @@ Use **Secret Manager** for sensitive values; use `--set-env-vars` only for non-s
 
 ### C. Sentiment API (Cloud Run)
 
-Unchanged pattern; deploy `sentiment/` image with `SUPABASE_*`, `ASSEMBLYAI_KEY`, `HF_TOKEN` as before. See [`docs/BACKEND_DEPLOYMENT_GUIDE.md`](./BACKEND_DEPLOYMENT_GUIDE.md).
+Deploy the `sentiment/` image with `SUPABASE_*`, `ASSEMBLYAI_KEY`, `HF_TOKEN` as before, plus `STRICT_CONFIG=1`. See [`docs/BACKEND_DEPLOYMENT_GUIDE.md`](./BACKEND_DEPLOYMENT_GUIDE.md).
 
 ### D. Frontend (Vercel or other)
 
@@ -91,7 +99,7 @@ Set:
 - `NEXT_PUBLIC_SENTIMENT_API_URL` — HTTPS URL of **sentiment** Cloud Run service.
 - `SUPABASE_SERVICE_ROLE_KEY` — server-only, for routes like delete-account (if used).
 
-Redeploy after env changes.
+Redeploy after env changes: the `NEXT_PUBLIC_*` values are compiled in at build time. For the Cloud Run frontend, set the `_SUPABASE_PUBLIC_URL` and `_SUPABASE_ANON_KEY` substitutions on the Cloud Build trigger; the backend URLs are passed as Docker build args automatically.
 
 ### E. Home YouTube worker (when `YOUTUBE_HOME_WORKER=1`)
 

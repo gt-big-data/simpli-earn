@@ -1,0 +1,7 @@
+# Keep host artifacts and local secrets out of the image build context
+node_modules
+.next
+.env
+.env.*
+!.env.example
+npm-debug.log*

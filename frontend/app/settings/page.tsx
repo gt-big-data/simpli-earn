@@ -25,7 +25,10 @@ export default function SettingsPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
-  const supabase = createClient()
+  const [supabase] = useState(createClient)
+  // Primitives, so a token refresh (new user object) doesn't reload the profile over unsaved edits
+  const userId = user?.id
+  const userEmail = user?.email
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -34,26 +37,26 @@ export default function SettingsPage() {
   }, [user, authLoading, router])
 
   useEffect(() => {
-    if (!user) return
+    if (!userId) return
 
     const loadProfile = async () => {
       const { data } = await supabase
         .from('profiles')
         .select('full_name, email, avatar_url, sector_preferences')
-        .eq('id', user.id)
+        .eq('id', userId)
         .single()
 
       if (data) {
         setFullName(data.full_name || '')
-        setEmail(data.email || user.email || '')
+        setEmail(data.email || userEmail || '')
         setAvatarUrl(data.avatar_url || null)
         setSectorPreferences((data.sector_preferences as SectorPreferenceSlug[]) || [])
       } else {
-        setEmail(user.email || '')
+        setEmail(userEmail || '')
       }
     }
     loadProfile()
-  }, [user?.id])
+  }, [supabase, userId, userEmail])
 
   const showMessage = (type: 'success' | 'error', text: string) => {
     setMessage({ type, text })

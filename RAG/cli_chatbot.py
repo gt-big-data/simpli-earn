@@ -3,7 +3,6 @@ import time
 from datetime import datetime
 from transcript_retrieval import get_video_transcript, save_transcript_as_txt
 from langchain_testing import initialize_retrieval, get_chat_response
-from langchain.memory import ConversationBufferMemory
 
 # Define the uploads directory (same as Streamlit)
 UPLOADS_DIR = "uploads"
@@ -44,9 +43,9 @@ def main():
     transcript_path = save_transcript_in_uploads(video_url, transcript_text)
     print(f"✅ Transcript saved as `{transcript_path}`.")
 
-    # Initialize retriever and memory
+    # Initialize retriever and conversation memory
     retriever, _ = initialize_retrieval(transcript_path)
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    memory = []
 
     print("\n💬 Chatbot initialized! Start asking questions.")
     print("Type `exit` to quit.\n")

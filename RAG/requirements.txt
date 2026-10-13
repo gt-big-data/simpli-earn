@@ -4,12 +4,14 @@ uvicorn[standard]>=0.24.0
 pydantic>=2.0.0
 python-dotenv>=1.0.0
 
-# LLM + retrieval
-langchain==0.3.21
-langchain-openai==0.3.0
-langchain-community>=0.3.0
-langchain-google-genai>=2.0.0,<3.0.0
-faiss-cpu==1.9.0.post1
+# LLM + retrieval (LangChain 1.x split packages; the legacy `langchain` chains/memory are no longer used)
+langchain-core>=1.6,<2
+langchain-text-splitters>=1.1,<2
+langchain-openai>=1.6,<2
+langchain-google-genai>=4.4,<5
+# FAISS vector store still lives here; the package is in maintenance mode upstream
+langchain-community>=0.4.2,<0.5
+faiss-cpu>=1.15,<2
 youtube_transcript_api==1.2.4
 pytube==15.0.0
 supabase>=2.0.0
@@ -26,7 +28,7 @@ seaborn>=0.12.0
 pytz>=2024.1
 
 # Optional local UI / NLP utilities
-streamlit==1.41.1
+streamlit>=1.41,<2
 spacy>=3.5.0
 transformers>=4.30.0
 torch>=2.0.0

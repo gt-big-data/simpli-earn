@@ -66,9 +66,8 @@ interface QoQComparisonProps {
 const compareCache = new Map<string, CompareData>();
 
 export default function QoQComparison({ currentId, compareId, setCompareId }: QoQComparisonProps) {
-  const [data, setData] = useState<CompareData | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Outcome of the last request, tagged with the pair it compared; loading/error/data are derived
+  const [result, setResult] = useState<{ key: string; data?: CompareData; error?: string } | null>(null);
 
   const effectiveCurrentId = currentId || "1";
 
@@ -96,29 +95,20 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     }
   }, [safeCompareId, compareId, setCompareId]);
 
-  useEffect(() => {
-    if (!safeCompareId) {
-      setLoading(false);
-      setError("No comparison transcripts are available for this dashboard.");
-      setData(null);
-      return;
-    }
+  const cacheKey = `${effectiveCurrentId}|${safeCompareId}`;
+  const cached = safeCompareId ? compareCache.get(cacheKey) : undefined;
+  const current = result?.key === cacheKey ? result : null;
+  const data = cached ?? current?.data ?? null;
+  const error = !safeCompareId
+    ? "No comparison transcripts are available for this dashboard."
+    : cached ? null : current?.error ?? null;
+  const loading = Boolean(safeCompareId) && !cached && !current;
 
-    const cacheKey = `${effectiveCurrentId}|${safeCompareId}`;
-    const cached = compareCache.get(cacheKey);
-    if (cached) {
-      setData(cached);
-      setError(null);
-      setLoading(false);
-      return;
-    }
+  useEffect(() => {
+    if (!safeCompareId || compareCache.has(cacheKey)) return;
 
     let cancelled = false;
     const fetchComparison = async () => {
-      setLoading(true);
-      setError(null);
-      setData(null);
-
       try {
         const res = await fetch(`${API_BASE_URL}/compare`, {
           method: "POST",
@@ -151,17 +141,17 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
           throw new Error(json.error);
         }
         compareCache.set(cacheKey, json);
-        if (!cancelled) setData(json);
+        if (!cancelled) setResult({ key: cacheKey, data: json });
       } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to fetch comparison");
-      } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setResult({ key: cacheKey, error: err instanceof Error ? err.message : "Failed to fetch comparison" });
+        }
       }
     };
 
     fetchComparison();
     return () => { cancelled = true; };
-  }, [effectiveCurrentId, safeCompareId]);
+  }, [cacheKey, effectiveCurrentId, safeCompareId]);
 
   const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCompareId(e.target.value);

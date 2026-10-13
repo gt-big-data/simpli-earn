@@ -54,6 +54,18 @@ const APPLE_QUARTER_ORDER = [
 type ChartsTab = "stock" | "sentiment" | "compare";
 type IndicatorView = "stock" | "VIX" | "TNX" | "DXY";
 
+const NO_RED_FLAGS: RedFlag[] = [];
+
+/** Comparison target a dashboard starts with until the user picks another one. */
+function defaultCompareId(dashboardId: string | null): string {
+  if (!dashboardId || !QOQ_COMPARE_IDS.has(dashboardId) || dashboardId === "1") return "aapl_2024Q4";
+  if (dashboardId.startsWith("aapl_")) {
+    return APPLE_QUARTER_ORDER.filter((id) => id !== dashboardId)[0] ?? "aapl_2024Q4";
+  }
+  const others = (["1", "2", "3", "4", "5", "6"] as const).filter((id) => id !== dashboardId);
+  return others[0] ?? "1";
+}
+
 export default function ChartsFrame({ onTimestampClick, pipeline = null }: ChartsFrameSentimentGraphProps) {
   const pipelineStatus = pipeline?.status ?? null;
   const [activeTab, setActiveTabState] = useState<ChartsTab>("stock");
@@ -80,19 +92,23 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   const preloadedConfig = dashboardId ? dashboardConfigs[dashboardId] : null;
 
   // For custom videos, look up the ticker and call date (YouTube upload date) from the RAG API
-  const [videoInfo, setVideoInfo] = useState<{ ticker: string | null; date: string | null } | null>(null);
-  const [videoInfoLoading, setVideoInfoLoading] = useState(false);
+  // (re-fetched when the processing job's status changes, since the job fills in the metadata)
+  const videoInfoKey = !preloadedConfig && videoUrlParam ? `${videoUrlParam}|${pipelineStatus ?? ""}` : null;
+  const [videoInfoResult, setVideoInfoResult] = useState<{
+    key: string;
+    info: { ticker: string | null; date: string | null } | null;
+  } | null>(null);
+  const videoInfo = videoInfoResult?.info ?? null;
+  const videoInfoLoading = videoInfoKey !== null && videoInfoResult?.key !== videoInfoKey;
   useEffect(() => {
-    if (preloadedConfig || !videoUrlParam) return;
+    if (!videoInfoKey || !videoUrlParam) return;
     let cancelled = false;
-    setVideoInfoLoading(true);
     fetch(`${API_BASE_URL}/video-info?video_url=${encodeURIComponent(videoUrlParam)}`)
       .then((res) => (res.ok ? res.json() : null))
-      .then((data) => { if (!cancelled) setVideoInfo(data); })
-      .catch(() => { if (!cancelled) setVideoInfo(null); })
-      .finally(() => { if (!cancelled) setVideoInfoLoading(false); });
+      .then((data) => { if (!cancelled) setVideoInfoResult({ key: videoInfoKey, info: data }); })
+      .catch(() => { if (!cancelled) setVideoInfoResult({ key: videoInfoKey, info: null }); });
     return () => { cancelled = true; };
-  }, [preloadedConfig, videoUrlParam, pipelineStatus]);
+  }, [videoInfoKey, videoUrlParam]);
 
   // A ticker typed by the user (URL param) wins over the detected one
   const customTicker = ticker && ticker !== "N/A" ? ticker.toUpperCase() : videoInfo?.ticker;
@@ -103,28 +119,21 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
     relevance: SentimentDataPoint[];
     specificity: SentimentDataPoint[];
   } | null>(null);
-  const [redFlags, setRedFlags] = useState<RedFlag[]>([]);
+  const redFlagsVideoUrl = searchParams.get("video_url");
+  // No flags until the processing job has produced the sentiment files
+  const redFlagsKey =
+    (dashboardId || redFlagsVideoUrl) && !pipelineStatus ? `${dashboardId ?? ""}|${redFlagsVideoUrl ?? ""}` : null;
+  const [redFlagsResult, setRedFlagsResult] = useState<{ key: string; flags: RedFlag[] } | null>(null);
+  const redFlags = redFlagsKey && redFlagsResult?.key === redFlagsKey ? redFlagsResult.flags : NO_RED_FLAGS;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Set when the video exists but relevance/specificity CSVs are not ready yet (user pipeline in progress). */
   const [sentimentNotice, setSentimentNotice] = useState<string | null>(null);
-  const [compareId, setCompareId] = useState("aapl_2024Q4");
-
-  // Default comparison target when switching preloaded dashboard
-  useEffect(() => {
-    if (!dashboardId || !QOQ_COMPARE_IDS.has(dashboardId)) return;
-    if (dashboardId === "1") {
-      setCompareId("aapl_2024Q4");
-      return;
-    }
-    if (dashboardId.startsWith("aapl_")) {
-      const next = APPLE_QUARTER_ORDER.filter((id) => id !== dashboardId)[0];
-      if (next) setCompareId(next);
-      return;
-    }
-    const others = (["1", "2", "3", "4", "5", "6"] as const).filter((id) => id !== dashboardId);
-    setCompareId(others[0] ?? "1");
-  }, [dashboardId]);
+  // The user's comparison pick applies to the dashboard it was made on; others start at their default
+  const [compareChoice, setCompareChoice] = useState<{ dashboardId: string | null; id: string } | null>(null);
+  const compareId =
+    compareChoice && compareChoice.dashboardId === dashboardId ? compareChoice.id : defaultCompareId(dashboardId);
+  const setCompareId = (id: string) => setCompareChoice({ dashboardId, id });
 
   useEffect(() => {
     const fetchSentimentData = async () => {
@@ -199,25 +208,21 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   // Red flags are an LLM call (slow on first run per video), so load them separately:
   // the sentiment graph renders right away and the flags appear on it when ready.
   useEffect(() => {
-    const videoUrl = searchParams.get("video_url");
-    if ((!dashboardId && !videoUrl) || pipelineStatus) {
-      setRedFlags([]);
-      return;
-    }
+    if (!redFlagsKey) return;
     let cancelled = false;
     fetch(`${API_BASE_URL}/red-flags`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         dashboard_id: dashboardId || null,
-        video_url: videoUrl || null,
+        video_url: redFlagsVideoUrl || null,
       }),
     })
       .then((res) => res.json())
-      .then((rfData) => { if (!cancelled) setRedFlags(rfData.red_flags || []); })
-      .catch(() => { if (!cancelled) setRedFlags([]); });
+      .then((rfData) => { if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: rfData.red_flags || [] }); })
+      .catch(() => { if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: [] }); });
     return () => { cancelled = true; };
-  }, [dashboardId, searchParams, pipelineStatus]);
+  }, [redFlagsKey, dashboardId, redFlagsVideoUrl]);
 
   const renderTabs = () => {
     const isStock = activeTab === "stock";

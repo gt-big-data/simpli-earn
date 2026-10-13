@@ -1,6 +1,5 @@
 import streamlit as st
 from langchain_testing import initialize_retrieval, get_chat_response, summarize_document
-from langchain.memory import ConversationBufferMemory
 from transcript_retrieval import get_video_transcript, save_transcript_as_txt
 import os
 from datetime import datetime
@@ -74,7 +73,7 @@ if uploaded_file or "uploaded_file_path" in st.session_state:
     if "retriever" not in st.session_state or "memory" not in st.session_state:
         retriever, _ = initialize_retrieval(file_path)
         st.session_state.retriever = retriever
-        st.session_state.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        st.session_state.memory = []
         st.session_state.chat_history = []
 
     # Generate summary
