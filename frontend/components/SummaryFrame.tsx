@@ -28,17 +28,19 @@ export default function SummaryFrame({
   onTimestampClick,
   placeholder = null,
 }: SummaryFrameProps) {
-  const parseToJSX = (htmlString: string, inline = false) => {
-    const parts = htmlString.split(/(<b>.*?<\/b>)/g);
+  // Renders the model's markdown bold (**text**) as <b>. Applied to headings, bullet text and
+  // the plain summary alike; any unpaired ** left over from generation is dropped.
+  const parseToJSX = (markdown: string, inline = false) => {
+    const parts = markdown.split(/(\*\*.+?\*\*)/g);
     const Wrapper = inline ? "span" : "div";
 
     return (
       <Wrapper className={inline ? "" : "w-full min-w-0"}>
         {parts.map((part, index) => {
-          if (part.startsWith("<b>") && part.endsWith("</b>")) {
-            return <b key={index}>{part.replace(/<b>|<\/b>/g, "")}</b>;
+          if (part.length > 4 && part.startsWith("**") && part.endsWith("**")) {
+            return <b key={index}>{part.slice(2, -2)}</b>;
           }
-          return <span key={index}>{part}</span>;
+          return <span key={index}>{part.replaceAll("**", "")}</span>;
         })}
       </Wrapper>
     );
@@ -100,7 +102,9 @@ export default function SummaryFrame({
                                 const t = section.timestamp;
                                 if (typeof t === "number") onTimestampClick(t);
                               }}
-                              className="ml-2 inline-flex h-8 min-w-[4.5rem] items-center justify-center rounded-[10px] border border-white/8 bg-pill px-2.5 align-middle text-sm font-medium leading-none text-foreground transition-colors hover:bg-muted"
+                              title="Jump to this moment in the video"
+                              aria-label={`Jump to ${formatTimestamp(section.timestamp)} in the video`}
+                              className="ml-2 inline-flex h-8 min-w-[4.5rem] cursor-pointer items-center justify-center rounded-[10px] border border-white/8 bg-pill px-2.5 align-middle text-sm font-medium leading-none text-foreground transition-[background-color,border-color,color,transform] duration-150 hover:border-brand/50 hover:bg-accent hover:text-brand active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none"
                             >
                               {formatTimestamp(section.timestamp)}
                             </button>

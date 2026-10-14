@@ -130,11 +130,11 @@ function DashboardContent() {
         }
 
         if (data.summary) {
-          setSummary(data.summary.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"));
+          setSummary(data.summary);
           setSummarySections(
             (data.sections || []).map((section) => ({
               heading: section.heading ?? null,
-              text: section.text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+              text: section.text,
               bullet: section.bullet ?? false,
               timestamp: section.timestamp,
             }))
