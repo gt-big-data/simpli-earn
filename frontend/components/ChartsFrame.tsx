@@ -225,63 +225,98 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   }, [redFlagsKey, dashboardId, redFlagsVideoUrl]);
 
   const renderTabs = () => {
-    const isStock = activeTab === "stock";
-    const isSentiment = activeTab === "sentiment";
-    const isCompare = activeTab === "compare";
+    const tabs: { id: ChartsTab; label: string }[] = [
+      { id: "stock", label: "Indicators" },
+      { id: "sentiment", label: "Sentiment" },
+      { id: "compare", label: "Compare" },
+    ];
+    const activeIndex = tabs.findIndex((t) => t.id === activeTab);
+    // Width of the S-curve joining an inactive tab's bottom border to the frame's top edge
+    const curveWidth = 24;
+    // Shared by every moving part of the outline so the pieces stay joined mid-transition
+    const motion =
+      "duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none";
+
+    const curve = (risesToRight: boolean, visible: boolean) => (
+      <svg
+        aria-hidden
+        width={curveWidth}
+        height={40}
+        viewBox={`0 0 ${curveWidth} 40`}
+        overflow="visible"
+        className={`absolute top-0 ${risesToRight ? "left-0" : "right-0"} text-white/8 transition-opacity ${motion} ${
+          visible ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <path
+          d={
+            risesToRight
+              ? `M0 39.5 C${curveWidth / 2} 39.5 ${curveWidth / 2} -0.5 ${curveWidth} -0.5`
+              : `M0 -0.5 C${curveWidth / 2} -0.5 ${curveWidth / 2} 39.5 ${curveWidth} 39.5`
+          }
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1}
+        />
+      </svg>
+    );
 
     return (
       <div className="flex flex-row relative w-full">
-        {/* Stock/Indicators Tab */}
-        <button
-          type="button"
-          className={`flex justify-center items-center rounded-tl-[30px] ${
-            isStock ? "rounded-tr-[23px]" : "rounded-br-[23px]"
-          } w-1/3 h-[40px] ${
-            isStock ? "border-t-[1px]" : "border-b-[1px]"
-          } border-white/8 cursor-pointer relative`}
-          onClick={() => setActiveTab("stock")}
-        >
-          <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full ${
-            isStock ? "" : "opacity-50"
-          }`}>
-            Indicators
-          </h1>
-        </button>
+        {tabs.map((tab) => {
+          const isActive = tab.id === activeTab;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              className="flex justify-center items-center w-1/3 h-[40px] cursor-pointer relative"
+              onClick={() => setActiveTab(tab.id)}
+            >
+              <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full transition-opacity ${motion} ${
+                isActive ? "opacity-100" : "opacity-50"
+              }`}>
+                {tab.label}
+              </h1>
+            </button>
+          );
+        })}
 
-        {/* Sentiment Tab */}
-        <button
-          type="button"
-          className={`flex justify-center items-center ${
-            isSentiment ? "rounded-tl-[23px] rounded-tr-[23px] border-t-[1px]" : "border-b-[1px]"
-          } border-white/8 cursor-pointer relative w-1/3 h-[40px]`}
-          onClick={() => setActiveTab("sentiment")}
-        >
-          <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full ${
-            isSentiment ? "" : "opacity-50"
-          }`}>
-            Sentiment
-          </h1>
-        </button>
+        {/* The outline is drawn as an overlay so it can slide between tabs. The active tab
+            has no border of its own (the frame's top border is its top edge); the bottom
+            border runs under the inactive tabs on either side of it. */}
+        <div aria-hidden className="absolute inset-0 pointer-events-none">
+          {/* Bottom border left and right of the active tab, scaled from the outer edges */}
+          <div
+            className={`absolute bottom-0 left-0 h-px w-full bg-white/8 origin-left transition-transform ${motion}`}
+            style={{ transform: `scaleX(${activeIndex / 3})` }}
+          />
+          <div
+            className={`absolute bottom-0 right-0 h-px w-full bg-white/8 origin-right transition-transform ${motion}`}
+            style={{ transform: `scaleX(${(tabs.length - 1 - activeIndex) / 3})` }}
+          />
 
-        {/* Compare (QoQ) Tab */}
-        <button
-          type="button"
-          className={`flex justify-center items-center rounded-tr-[30px] ${
-            isCompare ? "rounded-tl-[23px]" : "rounded-bl-[23px]"
-          } w-1/3 h-[40px] ${
-            isCompare ? "border-t-[1px]" : "border-b-[1px]"
-          } border-white/8 cursor-pointer relative`}
-          onClick={() => setActiveTab("compare")}
-        >
-          <h1 className={`flex justify-center items-center font-medium text-xs w-full h-full ${
-            isCompare ? "" : "opacity-50"
-          }`}>
-            Compare
-          </h1>
-        </button>
+          {/* S-curves from the neighbouring bottom border up into the frame's top edge.
+              SVG keeps the stroke a constant 1px, where CSS corner borders taper to nothing
+              at the middle of the curve. The top end sits above the tab bar so it merges
+              into (and is clipped under) the frame's border. A curve against the frame's
+              outer edge has nothing to join, so it fades out there. */}
+          <div
+            className={`absolute top-0 left-0 h-full w-1/3 transition-transform ${motion}`}
+            style={{ transform: `translateX(${activeIndex * 100}%)` }}
+          >
+            {curve(true, activeIndex > 0)}
+            {curve(false, activeIndex < tabs.length - 1)}
+          </div>
 
-        <div className="absolute top-1/2 left-1/3 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20" />
-        <div className="absolute top-1/2 left-2/3 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform rotate-20" />
+          {/* Dividers only between two inactive tabs; next to the active tab the S-curve
+              forms the transition and a divider would cross it */}
+          <div className={`absolute top-1/2 left-1/3 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full rotate-20 transition-opacity ${motion} ${
+            activeIndex === 2 ? "opacity-100" : "opacity-0"
+          }`} />
+          <div className={`absolute top-1/2 left-2/3 w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full rotate-20 transition-opacity ${motion} ${
+            activeIndex === 0 ? "opacity-100" : "opacity-0"
+          }`} />
+        </div>
       </div>
     );
   };
