@@ -155,3 +155,33 @@ body {
   outline: none;
   border-color: color-mix(in srgb, var(--brand) 70%, transparent);
 }
+
+/* Compact dropdown for in-panel controls (e.g. the chart View / Compare with pickers) */
+.field-select {
+  height: 2rem;
+  min-width: 0;
+  border-radius: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  padding-inline: 0.75rem;
+  cursor: pointer;
+}
+
+.field-select:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--brand) 70%, transparent);
+}
+
+.field-select option {
+  background: var(--popover);
+  color: var(--popover-foreground);
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}

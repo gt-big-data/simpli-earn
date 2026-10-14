@@ -332,11 +332,12 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
         {/* View Selector for Indicators Tab - positioned below tabs */}
         {activeTab === "stock" && config && (
           <div className="flex justify-end items-center px-6 pt-2 pb-2">
-            <label className="text-sm font-medium text-white/70 mr-2">View:</label>
+            <label htmlFor="indicator-view" className="field-label mr-2">View:</label>
             <select
               value={indicatorView}
               onChange={(e) => setIndicatorView(e.target.value as IndicatorView)}
-              className="h-8 rounded-[0.65rem] border border-white/10 bg-black/35 px-3 text-sm text-foreground focus:border-brand/70 focus:outline-none"
+              id="indicator-view"
+              className="field-select"
             >
               <option value="stock">Stock</option>
               <option value="VIX">VIX (Volatility Index)</option>
