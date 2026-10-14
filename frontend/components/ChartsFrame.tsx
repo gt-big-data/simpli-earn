@@ -325,7 +325,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
     !!dashboardId && QOQ_COMPARE_IDS.has(dashboardId);
 
   return (
-    <div className="flex flex-col text-white w-full h-full max-h-120 min-h-0">
+    <div className="flex flex-col text-white w-full h-full min-h-0">
       <div className="surface relative flex h-full min-h-0 w-full flex-col overflow-hidden rounded-2xl text-foreground">
         {renderTabs()}
         

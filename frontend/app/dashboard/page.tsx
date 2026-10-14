@@ -214,7 +214,8 @@ function DashboardContent() {
             <div className="lg:col-start-1 lg:row-start-1">
               <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
             </div>
-            <div className="w-full min-h-[450px] lg:col-start-1 lg:row-start-2">
+            {/* Fixed height: the charts frame sizes its tabs, not the other way round */}
+            <div className="w-full h-120 lg:col-start-1 lg:row-start-2">
               <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
             </div>
             <div
