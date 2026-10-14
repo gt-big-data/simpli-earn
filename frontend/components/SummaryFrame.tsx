@@ -60,7 +60,7 @@ export default function SummaryFrame({
         </div>
       )}
       <div
-        className="surface relative mt-10 w-full max-h-[84vmax] overflow-auto rounded-2xl text-foreground"
+        className="surface relative w-full overflow-auto rounded-2xl text-foreground"
         style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
       >
         <h1 className="flex items-start justify-center pt-8 text-lg font-medium">

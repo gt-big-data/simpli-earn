@@ -208,21 +208,22 @@ function DashboardContent() {
           <DashboardTab />
         </div>
         {!fullscreen && (
-          <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] xl:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
-            <div className="flex flex-col gap-[40px]">
+          /* Two rows shared by both columns: video | summary (top), charts | chat (bottom).
+             Only the left column sizes the rows; the right-hand panels fill their grid area
+             absolutely on lg+, so the columns stay aligned at the top and bottom. */
+          <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
+            <div className="lg:col-start-1 lg:row-start-1">
               <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
-              <div className="w-full grow min-h-[450px]">
-                <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
-              </div>
             </div>
-            <div className="flex flex-col gap-[40px] -mt-[40px] sm:max-h-[1100px]">
-              <div
-                className={`h-[500px] ${
-                  activeDisplay == "full"
-                    ? "lg:h-[calc(34.875vw+542.1px)] 2xl:h-[1077.78px]"
-                    : "lg:h-[calc(0.34875*(100vw-80px)+80px)] 2xl:h-[587.78px]"
-                }`}
-              >
+            <div className="w-full min-h-[450px] lg:col-start-1 lg:row-start-2">
+              <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
+            </div>
+            <div
+              className={`relative h-[500px] lg:h-auto lg:col-start-2 lg:row-start-1 ${
+                activeDisplay == "full" ? "lg:row-span-2" : ""
+              }`}
+            >
+              <div className="h-full lg:absolute lg:inset-0">
                 <SummaryFrame
                   setActiveDisplay={setActiveDisplay}
                   halfHeight={activeDisplay !== "full"}
@@ -232,8 +233,10 @@ function DashboardContent() {
                   placeholder={summaryPlaceholder}
                 />
               </div>
-              {!fullscreen && !(activeDisplay == "full") && (
-                <div className="grow min-h-[450px]">
+            </div>
+            {!(activeDisplay == "full") && (
+              <div className="relative min-h-[450px] lg:min-h-0 lg:col-start-2 lg:row-start-2">
+                <div className="h-full lg:absolute lg:inset-0">
                   <ChatFrame
                     onMinimizedChange={handleChatMinimized}
                     minimized={chatMinimized}
@@ -243,8 +246,8 @@ function DashboardContent() {
                     fullscreen={fullscreen}
                   />
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </main>
         )}
       </div>
