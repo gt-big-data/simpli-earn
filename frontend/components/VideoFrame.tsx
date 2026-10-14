@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import preloadedVideos from "@/lib/preloaded_videos.json";
 
@@ -9,8 +9,41 @@ interface VideoFrameProps {
 
 const PRELOADED_VIDEOS = preloadedVideos as Record<string, { url: string; title: string }>;
 
+// Outline geometry, matching the chart tab bar in ChartsFrame
+const TAB_HEIGHT = 40;
+const TAB_WIDTH_RATIO = 0.53;
+const CURVE_WIDTH = 24;
+const RADIUS = 16; // rounded-2xl, same as the other dashboard frames
+
+// One continuous outline for the title tab and the video body below it. Every coordinate is
+// offset by half the 1px stroke so the line lands on whole pixels.
+function framePath(width: number, height: number) {
+  const tabEnd = Math.round(width * TAB_WIDTH_RATIO);
+  const top = 0.5;
+  const bodyTop = TAB_HEIGHT + 0.5;
+  const right = width - 0.5;
+  const bottom = height - 0.5;
+  const left = 0.5;
+  const mid = tabEnd + CURVE_WIDTH / 2;
+  return [
+    `M${left} ${RADIUS}`,
+    `A${RADIUS - 0.5} ${RADIUS - 0.5} 0 0 1 ${RADIUS} ${top}`,
+    `L${tabEnd} ${top}`,
+    `C${mid} ${top} ${mid} ${bodyTop} ${tabEnd + CURVE_WIDTH} ${bodyTop}`,
+    `L${width - RADIUS} ${bodyTop}`,
+    `A${RADIUS - 0.5} ${RADIUS - 0.5} 0 0 1 ${right} ${TAB_HEIGHT + RADIUS}`,
+    `L${right} ${height - RADIUS}`,
+    `A${RADIUS - 0.5} ${RADIUS - 0.5} 0 0 1 ${width - RADIUS} ${bottom}`,
+    `L${RADIUS} ${bottom}`,
+    `A${RADIUS - 0.5} ${RADIUS - 0.5} 0 0 1 ${left} ${height - RADIUS}`,
+    "Z",
+  ].join(" ");
+}
+
 export default function VideoFrame({ timestamp, seekNonce }: VideoFrameProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [frameSize, setFrameSize] = useState<{ width: number; height: number } | null>(null);
   const searchParams = useSearchParams();
 
   // Derived from the URL: ?video_url=... for custom calls, ?id=N for preloaded dashboards
@@ -48,18 +81,44 @@ export default function VideoFrame({ timestamp, seekNonce }: VideoFrameProps) {
     }
   }, [timestamp, videoId, seekNonce]);
 
+  // The outline is drawn from the frame's measured size, so re-measure whenever it resizes
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+    const observer = new ResizeObserver(() => {
+      setFrameSize({ width: frame.offsetWidth, height: frame.offsetHeight });
+    });
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="flex text-white w-full relative mt-[20px] lg:mt-0">
-      <div className="flex flex-row absolute w-full h-[40px]">
-        <button className="relative w-[53%] h-[40px] border-t-[1px] border-l-[1px] border-white/8 rounded-tl-[30px] rounded-tr-[23px] px-8 flex items-center">
-          <h1 className="w-full overflow-hidden font-medium text-sm whitespace-nowrap">
-            {videoTitle}
-          </h1>
-        </button>
-        <div className="flex justify-end rounded-bl-[23px] w-1/10 h-[40px] border-b-[1px] border-[#505050] relative"></div>
-        <div className="absolute top-1/2 left-[53%] w-[0.5px] h-[18px] bg-white/12 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none transform -rotate-20"></div>
+    <div ref={frameRef} className="flex flex-col text-foreground w-full relative mt-[20px] lg:mt-0">
+      {frameSize && (
+        <svg
+          aria-hidden
+          width={frameSize.width}
+          height={frameSize.height}
+          className="absolute inset-0 pointer-events-none"
+        >
+          <path
+            d={framePath(frameSize.width, frameSize.height)}
+            fill="var(--surface)"
+            stroke="var(--border)"
+            strokeWidth={1}
+          />
+        </svg>
+      )}
+      <div
+        className="relative flex items-center h-[40px] px-6"
+        style={{ width: `${TAB_WIDTH_RATIO * 100}%` }}
+      >
+        <h1 className="w-full truncate font-medium text-xs">
+          {videoTitle}
+        </h1>
       </div>
-      <div className="mt-[39px] aspect-16/9 w-full items-center justify-center overflow-hidden rounded-b-2xl rounded-tr-2xl border border-white/8 bg-black/35 text-foreground">
+      {/* Inset by the 1px outline; inner corners are the frame radius minus the border */}
+      <div className="relative mx-px mt-px mb-px aspect-16/9 overflow-hidden rounded-b-[15px] rounded-tr-[15px]">
         {videoId ? (
           <iframe
             ref={iframeRef}
