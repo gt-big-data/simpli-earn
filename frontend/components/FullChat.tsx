@@ -6,13 +6,13 @@ import ChatBot, { Message } from "./ChatBot";
 
 interface FullChatProps {
     setFullscreen: Dispatch<SetStateAction<boolean>>;
-    onMinimizedChange: (minimized: boolean) => void;
+    onClose: () => void;
     fullscreen: boolean;
     messages: Message[];
     setMessages: Dispatch<SetStateAction<Message[]>>;
 }
 
-export default function FullChat({ setFullscreen, onMinimizedChange, fullscreen, messages, setMessages }: FullChatProps) {
+export default function FullChat({ setFullscreen, onClose, fullscreen, messages, setMessages }: FullChatProps) {
     return (
         <div className="xs:-mt-4 px-5 pb-5 w-full h-[calc(100vh-82px)] z-50">
             <div className="flex flex-col w-full h-full relative">
@@ -25,11 +25,7 @@ export default function FullChat({ setFullscreen, onMinimizedChange, fullscreen,
                     {/* Close Button */}
                     <button
                         className="relative mt-3 flex h-10 w-full cursor-pointer rounded-tr-2xl border-white/8 xs:mt-0 xs:border-t"
-                        onClick={() => {
-                            setFullscreen(false); // Exit fullscreen
-                            onMinimizedChange(true); // Minimize chat
-                            onMinimizedChange(false); // reset
-                        }}
+                        onClick={onClose}
                     >
                         <h1 className="flex h-full w-full items-center justify-end text-sm font-medium text-muted-foreground">
                             <X className="mt-4 mr-4 size-4" />

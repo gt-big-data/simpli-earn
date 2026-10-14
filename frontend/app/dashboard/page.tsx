@@ -167,7 +167,6 @@ function DashboardContent() {
   const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
   const [activeDisplay, setActiveDisplay] = useState("full");
-  const [chatMinimized, setChatMinimized] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
@@ -189,11 +188,11 @@ function DashboardContent() {
     [epoch]
   );
 
-  const handleChatMinimized = (isMinimized: boolean) => {
-    setChatMinimized(isMinimized);
-    if (isMinimized) {
-      setActiveDisplay("full");
-    }
+  // Whether the chat is open is derived from activeDisplay alone ("half" = summary + chat), so
+  // reopening it from the summary's chat button always shows it again
+  const handleChatClose = () => {
+    setFullscreen(false);
+    setActiveDisplay("full");
   };
 
   const handleTimestampSeek = (nextTimestamp: number) => {
@@ -238,8 +237,7 @@ function DashboardContent() {
               <div className="relative min-h-[450px] lg:min-h-0 lg:col-start-2 lg:row-start-2">
                 <div className="h-full lg:absolute lg:inset-0">
                   <ChatFrame
-                    onMinimizedChange={handleChatMinimized}
-                    minimized={chatMinimized}
+                    onClose={handleChatClose}
                     setFullscreen={setFullscreen}
                     messages={messages}
                     setMessages={setMessages}
@@ -256,7 +254,7 @@ function DashboardContent() {
         <FullChat
           fullscreen={fullscreen}
           setFullscreen={setFullscreen}
-          onMinimizedChange={handleChatMinimized}
+          onClose={handleChatClose}
           messages={messages}
           setMessages={setMessages}
         />
