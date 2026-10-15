@@ -9,10 +9,9 @@ interface ChatFrameProps {
     setFullscreen: Dispatch<SetStateAction<boolean>>;
     messages: Message[];
     setMessages: Dispatch<SetStateAction<Message[]>>;
-    fullscreen: boolean;
 }
 
-export default function ChatFrame({ onClose, setFullscreen, messages, setMessages, fullscreen }: ChatFrameProps) {
+export default function ChatFrame({ onClose, setFullscreen, messages, setMessages }: ChatFrameProps) {
     
   const handleExpand = () => {
     setFullscreen(true);
@@ -30,7 +29,7 @@ export default function ChatFrame({ onClose, setFullscreen, messages, setMessage
                     </button>
                 </div>
                 <div className="relative min-h-0 w-full flex-1 px-5 pb-5">
-                    <ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages}/>
+                    <ChatBot messages={messages} setMessages={setMessages}/>
                 </div>
         </div>
     );

@@ -1,7 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Message from "./Message";
 import { useSearchParams } from "next/navigation";
 import { API_BASE_URL } from "@/lib/api-config";
@@ -10,11 +10,9 @@ import { historyFor, MAX_QUESTION_CHARS, nextMessageId, type ChatMessage } from 
 export type Message = ChatMessage;
 
 export default function ChatBot({
-  fullscreen,
   messages,
   setMessages,
 }: {
-  fullscreen: boolean;
   messages: Message[];
   setMessages: Dispatch<SetStateAction<Message[]>>;
 }) {
@@ -25,6 +23,15 @@ export default function ChatBot({
   const [userInput, setUserInput] = useState("");
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Grow the input with its content; max-h caps it at 3 lines, past which it scrolls
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (!input) return;
+    input.style.height = "auto";
+    input.style.height = `${input.scrollHeight}px`;
+  }, [userInput]);
 
   const source = `${dashboardId ?? ""}|${videoUrl ?? ""}`;
 
@@ -102,50 +109,46 @@ export default function ChatBot({
     }
   };
   return (
-    <div className="relative h-full w-full">
-      {/* The input box hangs 130px below this grid, and the box itself sticks out 20px past its
-          wrapper (the send button overlaps it via -mt-13), so 150px puts the box's bottom edge
-          on the chat panel's content edge */}
+    <div className="flex h-full w-full flex-col gap-3">
       <div
-        className={`absolute grid grid-cols-1 grid-rows-2 gap-0 w-full ${
-          fullscreen ? "h-[calc(100%-140px)]" : "h-[calc(100%-150px)]"
-        }`}
+        className="min-h-0 flex-1 overflow-auto"
+        ref={messageContainerRef}
+        style={{ scrollbarColor: "#ffffff9f #ffffff00" }}
       >
-        <div
-          className="flex row-start-1 row-span-2 overflow-auto"
-          ref={messageContainerRef}
-          style={{ scrollbarColor: "#ffffff9f #ffffff00" }}
-        >
-          <div className="">
-            {messages.map((message) => (
-              <Message
-                key={message.id}
-                text={message.text}
-                sender={message.sender}
-                suggestions={message.suggestions}
-                onSuggestionClick={handleSuggestionClick}
-              />
-            ))}
-          </div>
-        </div>
+        {messages.map((message) => (
+          <Message
+            key={message.id}
+            text={message.text}
+            sender={message.sender}
+            suggestions={message.suggestions}
+            onSuggestionClick={handleSuggestionClick}
+          />
+        ))}
+      </div>
 
-        <div className="absolute w-full bottom-[-130px] flex flex-col items-end">
-          <textarea
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Message RAG Chatbot"
-            maxLength={MAX_QUESTION_CHARS}
-            onKeyDown={handleKeyDown}
-            style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
-            className="h-[120px] w-full resize-none rounded-[0.65rem] border border-white/10 bg-black/35 p-3 text-sm text-foreground"
-          ></textarea>
-          <div
-            className="btn-primary -mt-13 mr-3"
-            onClick={sendMessage}
-          >
-            <Send className="size-4" />
-          </div>
-        </div>
+      {/* Equal padding on every side and items-end: the send button sits bottom-right in
+          every state, which is vertically centred while the input is one line tall */}
+      <div className="flex shrink-0 items-end gap-2.5 rounded-[0.65rem] border border-white/10 bg-black/35 p-2.5 focus-within:border-brand/70">
+        <textarea
+          ref={inputRef}
+          rows={1}
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          placeholder="Message RAG Chatbot"
+          maxLength={MAX_QUESTION_CHARS}
+          onKeyDown={handleKeyDown}
+          style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
+          // One line is 20px + 12px padding = 32px, the send button's height; caps at 3 lines
+          className="max-h-[72px] min-w-0 flex-1 resize-none bg-transparent py-1.5 text-sm leading-5 text-foreground outline-none placeholder:text-muted-foreground"
+        ></textarea>
+        <button
+          type="button"
+          aria-label="Send message"
+          onClick={sendMessage}
+          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-[filter] hover:brightness-110"
+        >
+          <Send className="size-4" />
+        </button>
       </div>
     </div>
   );

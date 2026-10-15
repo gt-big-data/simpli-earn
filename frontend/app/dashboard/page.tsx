@@ -242,7 +242,6 @@ function DashboardContent() {
                     setFullscreen={setFullscreen}
                     messages={messages}
                     setMessages={setMessages}
-                    fullscreen={fullscreen}
                   />
                 </div>
               </div>
@@ -253,7 +252,6 @@ function DashboardContent() {
 
       {fullscreen && (
         <FullChat
-          fullscreen={fullscreen}
           setFullscreen={setFullscreen}
           onClose={handleChatClose}
           messages={messages}

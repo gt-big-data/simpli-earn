@@ -7,12 +7,11 @@ import ChatBot, { Message } from "./ChatBot";
 interface FullChatProps {
     setFullscreen: Dispatch<SetStateAction<boolean>>;
     onClose: () => void;
-    fullscreen: boolean;
     messages: Message[];
     setMessages: Dispatch<SetStateAction<Message[]>>;
 }
 
-export default function FullChat({ setFullscreen, onClose, fullscreen, messages, setMessages }: FullChatProps) {
+export default function FullChat({ setFullscreen, onClose, messages, setMessages }: FullChatProps) {
     return (
         <div className="xs:-mt-4 px-5 pb-5 w-full h-[calc(100vh-82px)] z-50">
             <div className="flex flex-col w-full h-full relative">
@@ -47,7 +46,7 @@ export default function FullChat({ setFullscreen, onClose, fullscreen, messages,
                             <p>chat history</p>
                         </div>
                     </div>
-                    <div className="surface -mt-10 h-full w-full rounded-2xl px-8 pt-12 pb-8 xs:pt-18 lg:w-3/4 lg:rounded-l-none"><div className="relative h-full"><ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages} /></div></div>
+                    <div className="surface -mt-10 h-full w-full rounded-2xl px-8 pt-12 pb-8 xs:pt-18 lg:w-3/4 lg:rounded-l-none"><div className="relative h-full"><ChatBot messages={messages} setMessages={setMessages} /></div></div>
                 </div>
             </div>
         </div>
