@@ -68,14 +68,15 @@ export default function SummaryFrame({
           </button>
         </div>
       )}
-      <div
-        className="surface relative w-full overflow-auto rounded-2xl text-foreground"
-        style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
-      >
-        <h1 className="flex items-start justify-center pt-8 text-lg font-medium">
-          Summary
-        </h1>
-        <div className="w-full px-8 pt-4 pb-8">
+      <div className="surface relative flex w-full min-h-0 flex-col overflow-hidden rounded-2xl text-foreground">
+        {/* Pinned header, same padding and title style as the SimpliChat panel */}
+        <div className="flex shrink-0 justify-center px-5 pt-5 pb-4">
+          <h1 className="text-lg font-medium">Summary</h1>
+        </div>
+        <div
+          className="min-h-0 w-full flex-1 overflow-auto px-8 pb-8"
+          style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
+        >
           {placeholder ? (
             <div className="flex w-full flex-col gap-4" aria-busy="true">
               <p className="text-center text-[16px] text-white/70">{placeholder}</p>
