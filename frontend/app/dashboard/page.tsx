@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import VideoFrame from "@/components/VideoFrame";
@@ -12,6 +12,7 @@ import type { Message } from "@/components/ChatBot";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { chatForAccount, startChat, updateMessages, type AccountChat } from "@/lib/account-chat";
 import { API_BASE_URL } from "@/lib/api-config";
+import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
 type SummarySection = {
   heading?: string | null;
@@ -165,7 +166,15 @@ function DashboardContent() {
 
   const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
-  const [activeDisplay, setActiveDisplay] = useState("full");
+  // Summary alone (full height) vs summary + SimpliChat. chatClosing keeps the chat mounted while
+  // it animates closed.
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatClosing, setChatClosing] = useState(false);
+  const summaryPanelRef = useRef<HTMLDivElement>(null);
+  const chatPanelRef = useRef<HTMLDivElement>(null);
+  const chatAnimation = useRef<Animation | null>(null);
+  // Summary height just before a split change; set only when that change should animate
+  const summaryFromHeight = useRef<number | null>(null);
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
 
@@ -186,11 +195,42 @@ function DashboardContent() {
     [epoch]
   );
 
-  // Whether the chat is open is derived from activeDisplay alone ("half" = summary + chat), so
-  // reopening it from the summary's chat button always shows it again
-  const handleChatClose = () => {
-    setActiveDisplay("full");
+  const changeChatOpen = (open: boolean, animate: boolean) => {
+    // Only the side-by-side (lg+) layout animates; stacked, the chat just appears below
+    const animated = animate && !prefersReducedMotion() && window.matchMedia("(min-width: 1024px)").matches;
+    summaryFromHeight.current = animated ? summaryPanelRef.current?.getBoundingClientRect().height ?? null : null;
+    setChatClosing(!open && summaryFromHeight.current !== null);
+    setChatOpen(open);
   };
+  const handleChatOpen = () => changeChatOpen(true, true);
+  // Closing from fullscreen skips the animation: the panel is an overlay, not in its slot
+  const handleChatClose = (fromFullscreen: boolean) => changeChatOpen(false, !fromFullscreen);
+
+  // Animate the split: the summary's height moves between full and top-row, while the chat grows
+  // up from (or shrinks down to) the bottom edge it shares with the charts. Same timing for both,
+  // so the gap between them only ever eases between 0 and 40px and they never overlap.
+  useLayoutEffect(() => {
+    const from = summaryFromHeight.current;
+    summaryFromHeight.current = null;
+    const summary = summaryPanelRef.current;
+    if (from === null || !summary) return;
+
+    const timing = { duration: MOTION_MS, easing: MOTION_EASING };
+    summary.animate([{ height: `${from}px` }, { height: `${summary.getBoundingClientRect().height}px` }], timing);
+
+    const chat = chatPanelRef.current;
+    if (!chat) return;
+    chatAnimation.current?.cancel();
+    const hidden = { top: `${chat.getBoundingClientRect().height}px` };
+    const shown = { top: "0px" };
+    const animation = chat.animate(chatOpen ? [hidden, shown] : [shown, hidden], {
+      ...timing,
+      // Stay collapsed after closing until the chat unmounts
+      fill: chatOpen ? "none" : "forwards",
+    });
+    chatAnimation.current = animation;
+    if (!chatOpen) animation.onfinish = () => setChatClosing(false);
+  }, [chatOpen]);
 
   const handleTimestampSeek = (nextTimestamp: number) => {
     setTimestamp(nextTimestamp);
@@ -217,13 +257,13 @@ function DashboardContent() {
           </div>
           <div
             className={`relative h-[500px] lg:h-auto lg:col-start-2 lg:row-start-1 ${
-              activeDisplay == "full" ? "lg:row-span-2" : ""
+              chatOpen ? "" : "lg:row-span-2"
             }`}
           >
-            <div className="h-full lg:absolute lg:inset-0">
+            <div ref={summaryPanelRef} className="h-full lg:absolute lg:inset-0">
               <SummaryFrame
-                setActiveDisplay={setActiveDisplay}
-                halfHeight={activeDisplay !== "full"}
+                onOpenChat={handleChatOpen}
+                halfHeight={chatOpen}
                 summary={failedSummary ?? summary}
                 summarySections={failedSummary ? [] : summarySections}
                 onTimestampClick={handleTimestampSeek}
@@ -231,9 +271,10 @@ function DashboardContent() {
               />
             </div>
           </div>
-          {!(activeDisplay == "full") && (
+          {(chatOpen || chatClosing) && (
             <div className="relative min-h-[450px] lg:min-h-0 lg:col-start-2 lg:row-start-2">
-              <div className="h-full lg:absolute lg:inset-0">
+              {/* lg: height comes from inset-0 alone, so animating top resizes the panel from the bottom */}
+              <div ref={chatPanelRef} className="h-full lg:absolute lg:inset-0 lg:h-auto">
                 <ChatFrame
                   onClose={handleChatClose}
                   messages={messages}

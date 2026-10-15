@@ -3,15 +3,14 @@
 import { Maximize2, Minimize2, X } from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
 import ChatBot, { Message } from "./ChatBot";
+import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
 interface ChatFrameProps {
-    onClose: () => void;
+    /** fromFullscreen: the panel was a fullscreen overlay, so there is no docked slot to animate */
+    onClose: (fromFullscreen: boolean) => void;
     messages: Message[];
     setMessages: Dispatch<SetStateAction<Message[]>>;
 }
-
-const MOTION_MS = 300;
-const MOTION_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
 
 // One SimpliChat panel for both the docked and fullscreen views. Fullscreen only changes this
 // element's layout (fixed over the page), so the chat, its draft and scroll position, and the
@@ -33,7 +32,7 @@ export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameP
         const panel = panelRef.current;
         const from = fromRect.current;
         fromRect.current = null;
-        if (!panel || !from || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!panel || !from || prefersReducedMotion()) return;
 
         const to = panel.getBoundingClientRect();
         const animation = panel.animate(
@@ -97,7 +96,7 @@ export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameP
                         {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
                     </button>
                     <h1 className="text-lg font-medium">SimpliChat</h1>
-                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={onClose}>
+                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={() => onClose(fullscreen)}>
                         <X className="size-4" />
                     </button>
                 </div>
