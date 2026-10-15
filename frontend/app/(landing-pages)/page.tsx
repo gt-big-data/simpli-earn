@@ -139,7 +139,9 @@ export default function Home() {
                 value={youtubeLink}
                 onChange={(e) => setYoutubeLink(e.target.value)}
                 placeholder="Paste call link here...."
-                className="field pl-9"
+                // .field is unlayered CSS, so its padding-inline beats a plain pl-* utility; force the
+                // left padding clear of the search icon (12px inset + 16px icon + 12px gap)
+                className="field pl-10!"
                 disabled={isProcessing}
               />
             </div>

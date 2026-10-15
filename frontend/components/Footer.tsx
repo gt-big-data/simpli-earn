@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+// import { Mail } from "lucide-react";
 import PointCloud from "./PointCloud";
 
 export default function Footer() {
@@ -20,9 +20,10 @@ export default function Footer() {
           >
             Contact Us
           </a>
+          {/* Redundant with "Contact Us" (same mailto) and the only footer link with an icon
           <a href="mailto:simpliearnbdbi@gmail.com" className="text-brand hover:text-foreground" aria-label="Email us">
             <Mail className="size-4" />
-          </a>
+          </a> */}
         </div>
       </div>
     </footer>
