@@ -179,6 +179,15 @@ body {
   color: var(--popover-foreground);
 }
 
+/* Title row at the top of a dashboard panel (Summary, SimpliChat): equal padding on every side,
+   so the gap above the title matches the gap before the panel's content */
+.panel-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  padding: 1.25rem;
+}
+
 .field-label {
   font-size: 0.875rem;
   font-weight: 500;

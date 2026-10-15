@@ -19,9 +19,8 @@ export default function ChatFrame({ onClose, setFullscreen, messages, setMessage
   };
 
     return (
-        <div className="surface h-full w-full rounded-2xl p-5 text-foreground">
-            <div className="relative h-full w-full">
-                <div className="flex justify-between">
+        <div className="surface flex h-full w-full flex-col rounded-2xl text-foreground">
+                <div className="panel-header justify-between">
                     <button type="button" className="cursor-pointer text-foreground" aria-label="Expand chat" onClick={handleExpand}>
                       <Maximize2 className="size-4" />
                     </button>
@@ -30,8 +29,9 @@ export default function ChatFrame({ onClose, setFullscreen, messages, setMessage
                       <X className="size-4" />
                     </button>
                 </div>
-                <ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages}/>
-            </div>
+                <div className="relative min-h-0 w-full flex-1 px-5 pb-5">
+                    <ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages}/>
+                </div>
         </div>
     );
 }

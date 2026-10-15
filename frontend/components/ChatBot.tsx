@@ -103,9 +103,12 @@ export default function ChatBot({
   };
   return (
     <div className="relative h-full w-full">
+      {/* The input box hangs 130px below this grid, and the box itself sticks out 20px past its
+          wrapper (the send button overlaps it via -mt-13), so 150px puts the box's bottom edge
+          on the chat panel's content edge */}
       <div
         className={`absolute grid grid-cols-1 grid-rows-2 gap-0 w-full ${
-          fullscreen ? "h-[calc(100%-140px)]" : "h-[calc(100%-170px)]"
+          fullscreen ? "h-[calc(100%-140px)]" : "h-[calc(100%-150px)]"
         }`}
       >
         <div

@@ -70,7 +70,7 @@ export default function SummaryFrame({
       )}
       <div className="surface relative flex w-full min-h-0 flex-col overflow-hidden rounded-2xl text-foreground">
         {/* Pinned header, same padding and title style as the SimpliChat panel */}
-        <div className="flex shrink-0 justify-center px-5 pt-5 pb-4">
+        <div className="panel-header justify-center">
           <h1 className="text-lg font-medium">Summary</h1>
         </div>
         <div
