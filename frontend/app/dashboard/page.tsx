@@ -7,7 +7,6 @@ import VideoFrame from "@/components/VideoFrame";
 import SummaryFrame from "@/components/SummaryFrame";
 import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
-import FullChat from "@/components/FullChat";
 import type { PipelineState } from "@/components/ChartsFrame";
 import type { Message } from "@/components/ChatBot";
 import { useAuth } from "@/lib/auth/AuthContext";
@@ -167,7 +166,6 @@ function DashboardContent() {
   const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
   const [activeDisplay, setActiveDisplay] = useState("full");
-  const [fullscreen, setFullscreen] = useState(false);
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
 
@@ -191,7 +189,6 @@ function DashboardContent() {
   // Whether the chat is open is derived from activeDisplay alone ("half" = summary + chat), so
   // reopening it from the summary's chat button always shows it again
   const handleChatClose = () => {
-    setFullscreen(false);
     setActiveDisplay("full");
   };
 
@@ -203,64 +200,50 @@ function DashboardContent() {
   return (
     <div className="relative min-h-[calc(100vh-57px)] w-full bg-background">
       <div className="w-full h-full">
-        {/* Fullscreen chat has its own exits (minimise, close), so it hides this */}
-        {!fullscreen && (
-          <div className="flex justify-center">
-            <DashboardTab />
+        <div className="flex justify-center">
+          <DashboardTab />
+        </div>
+        {/* Two rows shared by both columns: video | summary (top), charts | chat (bottom).
+            Only the left column sizes the rows; the right-hand panels fill their grid area
+            absolutely on lg+, so the columns stay aligned at the top and bottom. The dashboard
+            stays mounted while SimpliChat is fullscreen; ChatFrame overlays it. */}
+        <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
+          <div className="lg:col-start-1 lg:row-start-1">
+            <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
           </div>
-        )}
-        {!fullscreen && (
-          /* Two rows shared by both columns: video | summary (top), charts | chat (bottom).
-             Only the left column sizes the rows; the right-hand panels fill their grid area
-             absolutely on lg+, so the columns stay aligned at the top and bottom. */
-          <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
-            <div className="lg:col-start-1 lg:row-start-1">
-              <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
+          {/* Fixed height: the charts frame sizes its tabs, not the other way round */}
+          <div className="w-full h-120 lg:col-start-1 lg:row-start-2">
+            <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
+          </div>
+          <div
+            className={`relative h-[500px] lg:h-auto lg:col-start-2 lg:row-start-1 ${
+              activeDisplay == "full" ? "lg:row-span-2" : ""
+            }`}
+          >
+            <div className="h-full lg:absolute lg:inset-0">
+              <SummaryFrame
+                setActiveDisplay={setActiveDisplay}
+                halfHeight={activeDisplay !== "full"}
+                summary={failedSummary ?? summary}
+                summarySections={failedSummary ? [] : summarySections}
+                onTimestampClick={handleTimestampSeek}
+                placeholder={summaryPlaceholder}
+              />
             </div>
-            {/* Fixed height: the charts frame sizes its tabs, not the other way round */}
-            <div className="w-full h-120 lg:col-start-1 lg:row-start-2">
-              <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
-            </div>
-            <div
-              className={`relative h-[500px] lg:h-auto lg:col-start-2 lg:row-start-1 ${
-                activeDisplay == "full" ? "lg:row-span-2" : ""
-              }`}
-            >
+          </div>
+          {!(activeDisplay == "full") && (
+            <div className="relative min-h-[450px] lg:min-h-0 lg:col-start-2 lg:row-start-2">
               <div className="h-full lg:absolute lg:inset-0">
-                <SummaryFrame
-                  setActiveDisplay={setActiveDisplay}
-                  halfHeight={activeDisplay !== "full"}
-                  summary={failedSummary ?? summary}
-                  summarySections={failedSummary ? [] : summarySections}
-                  onTimestampClick={handleTimestampSeek}
-                  placeholder={summaryPlaceholder}
+                <ChatFrame
+                  onClose={handleChatClose}
+                  messages={messages}
+                  setMessages={setMessages}
                 />
               </div>
             </div>
-            {!(activeDisplay == "full") && (
-              <div className="relative min-h-[450px] lg:min-h-0 lg:col-start-2 lg:row-start-2">
-                <div className="h-full lg:absolute lg:inset-0">
-                  <ChatFrame
-                    onClose={handleChatClose}
-                    setFullscreen={setFullscreen}
-                    messages={messages}
-                    setMessages={setMessages}
-                  />
-                </div>
-              </div>
-            )}
-          </main>
-        )}
+          )}
+        </main>
       </div>
-
-      {fullscreen && (
-        <FullChat
-          setFullscreen={setFullscreen}
-          onClose={handleChatClose}
-          messages={messages}
-          setMessages={setMessages}
-        />
-      )}
     </div>
   );
 }
