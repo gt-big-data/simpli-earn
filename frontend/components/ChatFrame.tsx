@@ -1,56 +1,119 @@
 "use client";
 
-import { Maximize2, X } from "lucide-react";
-import { useEffect, Dispatch, SetStateAction } from "react";
+import { Maximize2, Minimize2, X } from "lucide-react";
+import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
 import ChatBot, { Message } from "./ChatBot";
+import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
 interface ChatFrameProps {
-    onMinimizedChange: (minimized: boolean) => void;
-    minimized: boolean;
-    setFullscreen: Dispatch<SetStateAction<boolean>>;
+    /** fromFullscreen: the panel was a fullscreen overlay, so there is no docked slot to animate */
+    onClose: (fromFullscreen: boolean) => void;
     messages: Message[];
     setMessages: Dispatch<SetStateAction<Message[]>>;
-    fullscreen: boolean;
 }
 
-export default function ChatFrame({ onMinimizedChange, minimized, setFullscreen, messages, setMessages, fullscreen }: ChatFrameProps) {
-    
-    // Remove local minimized state since we're using props now
+// One SimpliChat panel for both the docked and fullscreen views. Fullscreen only changes this
+// element's layout (fixed over the page), so the chat, its draft and scroll position, and the
+// dashboard underneath all stay mounted.
+export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameProps) {
+    const [fullscreen, setFullscreen] = useState(false);
+    const panelRef = useRef<HTMLDivElement>(null);
+    // The panel's on-screen rect just before a toggle, used to animate from it (FLIP)
+    const fromRect = useRef<DOMRect | null>(null);
 
-  // Sync local UI with parent's minimized state
-  useEffect(() => {
-    if (minimized) {
-      setFullscreen(false);
-    }
-  }, [minimized, setFullscreen]);
+    const toggleFullscreen = () => {
+        fromRect.current = panelRef.current?.getBoundingClientRect() ?? null;
+        setFullscreen((current) => !current);
+    };
 
-  const handleMinimize = () => {
-    onMinimizedChange(true); // Notify parent to minimize
-  };
+    // After the layout switch, start the panel transformed back onto its old rect and animate to
+    // its new one, so it grows out of / shrinks back into place, scaling each axis independently
+    useLayoutEffect(() => {
+        const panel = panelRef.current;
+        const from = fromRect.current;
+        fromRect.current = null;
+        if (!panel || !from || prefersReducedMotion()) return;
 
-  const handleExpand = () => {
-    onMinimizedChange(false); // Notify parent
-    setFullscreen(true);
-  };
+        const to = panel.getBoundingClientRect();
+        const animation = panel.animate(
+            [
+                {
+                    transformOrigin: "top left",
+                    transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})`,
+                },
+                { transformOrigin: "top left", transform: "none" },
+            ],
+            { duration: MOTION_MS, easing: MOTION_EASING }
+        );
+        // Keep the panel above the page (footer included) while it shrinks back into its slot
+        panel.style.zIndex = "50";
+        animation.onfinish = animation.oncancel = () => {
+            panel.style.zIndex = "";
+        };
+    }, [fullscreen]);
 
-  if (minimized) {
-    return null; // Or render a minimized chat button
-  }
+    // While fullscreen: the page behind shouldn't scroll, and Escape returns to the docked view
+    useEffect(() => {
+        if (!fullscreen) return;
+        const root = document.documentElement;
+        const previousOverflow = root.style.overflow;
+        root.style.overflow = "hidden";
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key !== "Escape") return;
+            fromRect.current = panelRef.current?.getBoundingClientRect() ?? null;
+            setFullscreen(false);
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => {
+            root.style.overflow = previousOverflow;
+            window.removeEventListener("keydown", onKeyDown);
+        };
+    }, [fullscreen]);
 
     return (
-        <div className="surface h-full w-full rounded-2xl p-5 text-foreground">
-            <div className="relative h-full w-full">
-                <div className="flex justify-between">
-                    <button type="button" className="cursor-pointer text-foreground" aria-label="Expand chat" onClick={handleExpand}>
-                      <Maximize2 className="size-4" />
+        <>
+            {/* Covers the dashboard while fullscreen; fades rather than unmounting anything */}
+            <div
+                aria-hidden
+                className={`fixed inset-0 z-40 bg-background transition-opacity motion-reduce:transition-none ${
+                    fullscreen ? "opacity-100" : "pointer-events-none opacity-0"
+                }`}
+                style={{ transitionDuration: `${MOTION_MS}ms` }}
+            />
+            <div
+                ref={panelRef}
+                className={`surface flex flex-col overflow-hidden rounded-2xl text-foreground ${
+                    fullscreen ? "fixed inset-5 z-50" : "relative h-full w-full"
+                }`}
+            >
+                <div className="panel-header justify-between">
+                    <button
+                        type="button"
+                        className="cursor-pointer text-foreground"
+                        aria-label={fullscreen ? "Exit fullscreen" : "Expand chat"}
+                        onClick={toggleFullscreen}
+                    >
+                        {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
                     </button>
                     <h1 className="text-lg font-medium">SimpliChat</h1>
-                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={handleMinimize}>
-                      <X className="size-4" />
+                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={() => onClose(fullscreen)}>
+                        <X className="size-4" />
                     </button>
                 </div>
-                <ChatBot fullscreen={fullscreen} messages={messages} setMessages={setMessages}/>
+
+                {/* The sidebar sits before the chat in its own slot, so toggling it never remounts ChatBot */}
+                <div className={`flex min-h-0 w-full flex-1 ${fullscreen ? "border-t border-white/8" : ""}`}>
+                    {fullscreen && (
+                        <aside className="hidden w-1/4 border-r border-white/8 p-5 lg:block">
+                            <p className="mb-2"><b>New Chat +</b></p>
+                            <p>chat history</p>
+                        </aside>
+                    )}
+                    <div className={`min-h-0 min-w-0 flex-1 ${fullscreen ? "px-8 pt-5 pb-8" : "px-5 pb-5"}`}>
+                        <ChatBot messages={messages} setMessages={setMessages} viewKey={fullscreen ? "fullscreen" : "docked"} />
+                    </div>
+                </div>
             </div>
-        </div>
+        </>
     );
 }

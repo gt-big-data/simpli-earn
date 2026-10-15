@@ -293,16 +293,17 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     <div className="flex flex-col w-full h-full overflow-y-auto">
       {/* Controls bar */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
-        <span className="text-xs text-white/60 font-semibold whitespace-nowrap">
+        <label htmlFor="qoq-compare-with" className="field-label">
           Compare with:
-        </span>
+        </label>
         <select
+          id="qoq-compare-with"
           value={safeCompareId}
           onChange={handleDropdownChange}
-          className="bg-white/10 border border-white/25 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-white/40 flex-1"
+          className="field-select flex-1"
         >
           {dropdownOptions.map(([id, label]) => (
-            <option key={id} value={id} className="bg-gray-900 text-white">
+            <option key={id} value={id}>
               {label}
             </option>
           ))}

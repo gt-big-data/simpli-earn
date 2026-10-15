@@ -308,7 +308,7 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
 
       {/* Summary Stats */}
       {currentData.values && currentData.values.length > 0 && (
-        <div className="mt-4 mb-12 pb-8 grid grid-cols-3 gap-4 text-sm flex-shrink-0">
+        <div className="mt-4 grid grid-cols-3 gap-4 text-sm flex-shrink-0">
           {/* Range Panel */}
           <div className="p-4 border border-white/25 rounded-lg">
             <h3 className="font-bold mb-2">Range</h3>

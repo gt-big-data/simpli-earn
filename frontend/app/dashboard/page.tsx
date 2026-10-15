@@ -1,18 +1,18 @@
 "use client";
 
-import { Suspense, useCallback, useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import DashboardTab from "@/components/DashboardTab";
 import VideoFrame from "@/components/VideoFrame";
 import SummaryFrame from "@/components/SummaryFrame";
 import ChartsFrame from "@/components/ChartsFrame";
 import ChatFrame from "@/components/ChatFrame";
-import FullChat from "@/components/FullChat";
 import type { PipelineState } from "@/components/ChartsFrame";
 import type { Message } from "@/components/ChatBot";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { chatForAccount, startChat, updateMessages, type AccountChat } from "@/lib/account-chat";
 import { API_BASE_URL } from "@/lib/api-config";
+import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
 type SummarySection = {
   heading?: string | null;
@@ -130,11 +130,11 @@ function DashboardContent() {
         }
 
         if (data.summary) {
-          setSummary(data.summary.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"));
+          setSummary(data.summary);
           setSummarySections(
             (data.sections || []).map((section) => ({
               heading: section.heading ?? null,
-              text: section.text.replace(/\*\*(.*?)\*\*/g, "<b>$1</b>"),
+              text: section.text,
               bullet: section.bullet ?? false,
               timestamp: section.timestamp,
             }))
@@ -166,9 +166,15 @@ function DashboardContent() {
 
   const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
-  const [activeDisplay, setActiveDisplay] = useState("full");
-  const [chatMinimized, setChatMinimized] = useState(false);
-  const [fullscreen, setFullscreen] = useState(false);
+  // Summary alone (full height) vs summary + SimpliChat. chatClosing keeps the chat mounted while
+  // it animates closed.
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatClosing, setChatClosing] = useState(false);
+  const summaryPanelRef = useRef<HTMLDivElement>(null);
+  const chatPanelRef = useRef<HTMLDivElement>(null);
+  const chatAnimation = useRef<Animation | null>(null);
+  // Summary height just before a split change; set only when that change should animate
+  const summaryFromHeight = useRef<number | null>(null);
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
 
@@ -189,12 +195,42 @@ function DashboardContent() {
     [epoch]
   );
 
-  const handleChatMinimized = (isMinimized: boolean) => {
-    setChatMinimized(isMinimized);
-    if (isMinimized) {
-      setActiveDisplay("full");
-    }
+  const changeChatOpen = (open: boolean, animate: boolean) => {
+    // Only the side-by-side (lg+) layout animates; stacked, the chat just appears below
+    const animated = animate && !prefersReducedMotion() && window.matchMedia("(min-width: 1024px)").matches;
+    summaryFromHeight.current = animated ? summaryPanelRef.current?.getBoundingClientRect().height ?? null : null;
+    setChatClosing(!open && summaryFromHeight.current !== null);
+    setChatOpen(open);
   };
+  const handleChatOpen = () => changeChatOpen(true, true);
+  // Closing from fullscreen skips the animation: the panel is an overlay, not in its slot
+  const handleChatClose = (fromFullscreen: boolean) => changeChatOpen(false, !fromFullscreen);
+
+  // Animate the split: the summary's height moves between full and top-row, while the chat grows
+  // up from (or shrinks down to) the bottom edge it shares with the charts. Same timing for both,
+  // so the gap between them only ever eases between 0 and 40px and they never overlap.
+  useLayoutEffect(() => {
+    const from = summaryFromHeight.current;
+    summaryFromHeight.current = null;
+    const summary = summaryPanelRef.current;
+    if (from === null || !summary) return;
+
+    const timing = { duration: MOTION_MS, easing: MOTION_EASING };
+    summary.animate([{ height: `${from}px` }, { height: `${summary.getBoundingClientRect().height}px` }], timing);
+
+    const chat = chatPanelRef.current;
+    if (!chat) return;
+    chatAnimation.current?.cancel();
+    const hidden = { top: `${chat.getBoundingClientRect().height}px` };
+    const shown = { top: "0px" };
+    const animation = chat.animate(chatOpen ? [hidden, shown] : [shown, hidden], {
+      ...timing,
+      // Stay collapsed after closing until the chat unmounts
+      fill: chatOpen ? "none" : "forwards",
+    });
+    chatAnimation.current = animation;
+    if (!chatOpen) animation.onfinish = () => setChatClosing(false);
+  }, [chatOpen]);
 
   const handleTimestampSeek = (nextTimestamp: number) => {
     setTimestamp(nextTimestamp);
@@ -207,57 +243,48 @@ function DashboardContent() {
         <div className="flex justify-center">
           <DashboardTab />
         </div>
-        {!fullscreen && (
-          <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] xl:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
-            <div className="flex flex-col gap-[40px]">
-              <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
-              <div className="w-full grow min-h-[450px]">
-                <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
-              </div>
+        {/* Two rows shared by both columns: video | summary (top), charts | chat (bottom).
+            Only the left column sizes the rows; the right-hand panels fill their grid area
+            absolutely on lg+, so the columns stay aligned at the top and bottom. The dashboard
+            stays mounted while SimpliChat is fullscreen; ChatFrame overlays it. */}
+        <main className="grid grid-cols-1 lg:grid-cols-[62%_1fr] gap-[40px] px-[40px] pb-[30px] max-w-[1536px] m-auto">
+          <div className="lg:col-start-1 lg:row-start-1">
+            <VideoFrame timestamp={timestamp} seekNonce={seekNonce} />
+          </div>
+          {/* Fixed height: the charts frame sizes its tabs, not the other way round */}
+          <div className="w-full h-120 lg:col-start-1 lg:row-start-2">
+            <ChartsFrame onTimestampClick={handleTimestampSeek} pipeline={pipeline} />
+          </div>
+          <div
+            className={`relative h-[500px] lg:h-auto lg:col-start-2 lg:row-start-1 ${
+              chatOpen ? "" : "lg:row-span-2"
+            }`}
+          >
+            <div ref={summaryPanelRef} className="h-full lg:absolute lg:inset-0">
+              <SummaryFrame
+                onOpenChat={handleChatOpen}
+                halfHeight={chatOpen}
+                summary={failedSummary ?? summary}
+                summarySections={failedSummary ? [] : summarySections}
+                onTimestampClick={handleTimestampSeek}
+                placeholder={summaryPlaceholder}
+              />
             </div>
-            <div className="flex flex-col gap-[40px] -mt-[40px] sm:max-h-[1100px]">
-              <div
-                className={`h-[500px] ${
-                  activeDisplay == "full"
-                    ? "lg:h-[calc(34.875vw+542.1px)] 2xl:h-[1077.78px]"
-                    : "lg:h-[calc(0.34875*(100vw-80px)+80px)] 2xl:h-[587.78px]"
-                }`}
-              >
-                <SummaryFrame
-                  setActiveDisplay={setActiveDisplay}
-                  halfHeight={activeDisplay !== "full"}
-                  summary={failedSummary ?? summary}
-                  summarySections={failedSummary ? [] : summarySections}
-                  onTimestampClick={handleTimestampSeek}
-                  placeholder={summaryPlaceholder}
+          </div>
+          {(chatOpen || chatClosing) && (
+            <div className="relative min-h-[450px] lg:min-h-0 lg:col-start-2 lg:row-start-2">
+              {/* lg: height comes from inset-0 alone, so animating top resizes the panel from the bottom */}
+              <div ref={chatPanelRef} className="h-full lg:absolute lg:inset-0 lg:h-auto">
+                <ChatFrame
+                  onClose={handleChatClose}
+                  messages={messages}
+                  setMessages={setMessages}
                 />
               </div>
-              {!fullscreen && !(activeDisplay == "full") && (
-                <div className="grow min-h-[450px]">
-                  <ChatFrame
-                    onMinimizedChange={handleChatMinimized}
-                    minimized={chatMinimized}
-                    setFullscreen={setFullscreen}
-                    messages={messages}
-                    setMessages={setMessages}
-                    fullscreen={fullscreen}
-                  />
-                </div>
-              )}
             </div>
-          </main>
-        )}
+          )}
+        </main>
       </div>
-
-      {fullscreen && (
-        <FullChat
-          fullscreen={fullscreen}
-          setFullscreen={setFullscreen}
-          onMinimizedChange={handleChatMinimized}
-          messages={messages}
-          setMessages={setMessages}
-        />
-      )}
     </div>
   );
 }
