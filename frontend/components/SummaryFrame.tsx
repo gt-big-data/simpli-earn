@@ -56,7 +56,14 @@ export default function SummaryFrame({
     <div className="relative flex h-full w-full">
       {!halfHeight && (
         <div className="absolute right-3 bottom-3 z-40">
-          <button onClick={() => setActiveDisplay("half")} aria-label="Open chat">
+          {/* Same pill styling and hover as the timestamp buttons, so it reads as clickable */}
+          <button
+            type="button"
+            onClick={() => setActiveDisplay("half")}
+            aria-label="Open chat"
+            title="Open SimpliChat"
+            className="flex size-12 cursor-pointer items-center justify-center rounded-2xl border border-white/8 bg-pill text-brand transition-[background-color,border-color,transform] duration-150 hover:border-brand/50 hover:bg-accent active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none"
+          >
             <ChatIcon />
           </button>
         </div>
