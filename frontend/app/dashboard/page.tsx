@@ -203,9 +203,12 @@ function DashboardContent() {
   return (
     <div className="relative min-h-[calc(100vh-57px)] w-full bg-background">
       <div className="w-full h-full">
-        <div className="flex justify-center">
-          <DashboardTab />
-        </div>
+        {/* Fullscreen chat has its own exits (minimise, close), so it hides this */}
+        {!fullscreen && (
+          <div className="flex justify-center">
+            <DashboardTab />
+          </div>
+        )}
         {!fullscreen && (
           /* Two rows shared by both columns: video | summary (top), charts | chat (bottom).
              Only the left column sizes the rows; the right-hand panels fill their grid area
