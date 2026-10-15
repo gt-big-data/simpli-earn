@@ -111,7 +111,7 @@ export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameP
                         </aside>
                     )}
                     <div className={`min-h-0 min-w-0 flex-1 ${fullscreen ? "px-8 pt-5 pb-8" : "px-5 pb-5"}`}>
-                        <ChatBot messages={messages} setMessages={setMessages} />
+                        <ChatBot messages={messages} setMessages={setMessages} viewKey={fullscreen ? "fullscreen" : "docked"} />
                     </div>
                 </div>
             </div>

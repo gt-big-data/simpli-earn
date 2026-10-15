@@ -12,9 +12,12 @@ export type Message = ChatMessage;
 export default function ChatBot({
   messages,
   setMessages,
+  viewKey,
 }: {
   messages: Message[];
   setMessages: Dispatch<SetStateAction<Message[]>>;
+  /** Changes whenever the surrounding layout does (e.g. docked vs fullscreen) */
+  viewKey?: string;
 }) {
   const searchParams = useSearchParams();
   const dashboardId = searchParams.get("id") || null;
@@ -82,6 +85,13 @@ export default function ChatBot({
       await ask(userInput);
     }
   };
+
+  // A layout change resizes the message list, which would keep a stale scroll offset; always
+  // jump to the latest message instead, before paint so it lands before any view animation
+  useLayoutEffect(() => {
+    const container = messageContainerRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
+  }, [viewKey]);
 
   useEffect(() => {
     if (messageContainerRef.current) {
