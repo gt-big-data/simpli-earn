@@ -155,7 +155,8 @@ export default function ChatBot({
           type="button"
           aria-label="Send message"
           onClick={sendMessage}
-          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-[filter] hover:brightness-110"
+          disabled={!userInput.trim()}
+          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-[filter,opacity] enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Send className="size-4" />
         </button>
