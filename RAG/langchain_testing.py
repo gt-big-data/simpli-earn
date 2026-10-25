@@ -147,7 +147,13 @@ def answer_question(question: str, retriever, chat_history: list[tuple[str, str]
         "chat_history": history_text,
         "question": standalone_question,
     })
-    return {"answer": answer, "source_documents": source_documents}
+    # Record the actual successful model, before a later suggestion call/provider fallback.
+    model = getattr(llm, "model_name", None) or getattr(llm, "model", None)
+    module = type(llm).__module__
+    provider = "openai" if "openai" in module or hasattr(llm, "openai_api_key") else (
+        "gemini" if "google_genai" in module or hasattr(llm, "google_api_key") else None
+    )
+    return {"answer": answer, "source_documents": source_documents, "provider": provider, "model": model}
 
 
 def get_chat_response(user_input, retriever, chat_history: list[tuple[str, str]]):

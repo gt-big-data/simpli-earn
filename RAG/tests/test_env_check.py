@@ -4,7 +4,7 @@ import pytest
 
 import env_check
 
-BASE = {"GEMINI_API_KEY": "g", "SUPABASE_URL": "https://proj.supabase.co", "SUPABASE_KEY": "k", "ASSEMBLYAI_KEY": "a"}
+BASE = {"GEMINI_API_KEY": "g", "SUPABASE_URL": "https://proj.supabase.co", "SUPABASE_KEY": "k", "SUPABASE_ANON_KEY": "anon", "ASSEMBLYAI_KEY": "a"}
 
 
 def test_complete_gemini_only_config_is_valid():
@@ -15,6 +15,8 @@ def test_complete_gemini_only_config_is_valid():
     ({"GEMINI_API_KEY": ""}, "OPENAI_API_KEY or GEMINI_API_KEY"),
     ({"SUPABASE_URL": ""}, "Set SUPABASE_URL"),
     ({"SUPABASE_KEY": "  "}, "Set SUPABASE_KEY"),
+    ({"SUPABASE_ANON_KEY": ""}, "Set SUPABASE_ANON_KEY"),
+    ({"SUPABASE_ANON_KEY": "k"}, "must not be the service-role"),
     ({"SUPABASE_URL": "proj.supabase.co"}, "must be an http(s) URL"),
     ({"EMBEDDING_PROVIDER": "cohere"}, "EMBEDDING_PROVIDER must be"),
     ({"EMBEDDING_PROVIDER": "openai"}, "requires OPENAI_API_KEY"),
