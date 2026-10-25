@@ -17,7 +17,8 @@ Copy from `RAG/.env.example`, which marks every key as REQUIRED or optional. Req
 ```
 OPENAI_API_KEY=sk-your-key          # and/or GEMINI_API_KEY; either one alone is enough
 SUPABASE_URL=https://xxx.supabase.co
-SUPABASE_KEY=your-service-role-key  # Needed for chatbot + library integration
+SUPABASE_KEY=your-service-role-key  # Public transcripts/library operations
+SUPABASE_ANON_KEY=your-anon-key     # User JWT + RLS for saved chat
 ```
 
 The API prints any missing required value at startup.
@@ -50,6 +51,9 @@ The API URLs default to `localhost:8000` / `:8001`.
 
 Optional: `docs/migrations/001` through `003` add the home-worker job queue (only needed with
 `YOUTUBE_HOME_WORKER=1`), dashboard metadata, and summary/red-flag caching. The app runs without them.
+
+Apply `docs/migrations/004_chat_history.sql` for signed-in persistent chat.
+See [CHAT_HISTORY.md](docs/CHAT_HISTORY.md) for two-user RLS tests and local chat verification.
 
 For auth + settings setup details, see:
 - [docs/AUTH_IMPLEMENTATION_STEPS.md](docs/AUTH_IMPLEMENTATION_STEPS.md)

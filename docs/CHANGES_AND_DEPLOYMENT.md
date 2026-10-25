@@ -42,6 +42,12 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 ---
 
+## Persistent chat
+
+Apply `docs/migrations/004_chat_history.sql`, configure backend `SUPABASE_ANON_KEY` from
+Secret Manager `supabase-anon-key`, then deploy backend before frontend. See
+[CHAT_HISTORY.md](CHAT_HISTORY.md) for the migration, recovery behavior, and two-user RLS tests.
+
 ## How to deploy
 
 ### A. Supabase (once per project)
@@ -57,7 +63,7 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 
 **Secrets / env (typical):**
 
-- `OPENAI_API_KEY` and/or `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY`. See `RAG/.env.example`.
+- `OPENAI_API_KEY` and/or `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `SUPABASE_ANON_KEY` (saved chat), `ASSEMBLYAI_KEY`. See `RAG/.env.example`.
 - `cloudbuild.yaml` deploys with `--update-secrets`/`--update-env-vars`, so a key added by hand persists across deploys, e.g. Gemini:
   `gcloud run services update simpli-earn-backend --update-secrets GEMINI_API_KEY=gemini-api-key:latest`.
 - `DASHBOARD_ADMIN_EMAILS` / `DASHBOARD_ADMIN_USER_IDS`: who may force-reprocess a complete dashboard. Everyone else can create dashboards and retry incomplete ones; jobs never replace a complete analysis otherwise. Forcing is not available while `YOUTUBE_HOME_WORKER=1`.

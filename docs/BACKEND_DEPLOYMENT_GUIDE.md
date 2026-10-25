@@ -257,8 +257,11 @@ gcloud run deploy simpli-earn-backend \
   --allow-unauthenticated \
   --port 8080 \
   --timeout 300 \
-  --set-secrets "OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest,GEMINI_API_KEY=gemini-api-key:latest,YOUTUBE_API_KEY=youtube-api-key:latest"
+  --set-secrets "OPENAI_API_KEY=openai-api-key:latest,SUPABASE_URL=supabase-url:latest,SUPABASE_KEY=supabase-key:latest,SUPABASE_ANON_KEY=supabase-anon-key:latest,ASSEMBLYAI_KEY=assemblyai-key:latest,HF_TOKEN=hf-token:latest,GEMINI_API_KEY=gemini-api-key:latest,YOUTUBE_API_KEY=youtube-api-key:latest"
 ```
+
+For persistent SimpliChat, apply migration 004 and configure the `supabase-anon-key` secret
+before deploying this backend; deploy the frontend afterward. See [CHAT_HISTORY.md](CHAT_HISTORY.md).
 
 To avoid YouTube **429** on Cloud Run, enqueue jobs for a home worker instead of running `yt-dlp` in this service: add **`YOUTUBE_HOME_WORKER=1`** (plain env var or Secret Manager). Run the SQL in `docs/migrations/001_youtube_jobs.sql`, then run `scripts/home_youtube_worker.py` on a residential machine. Details: **[HOME_YOUTUBE_WORKER.md](./HOME_YOUTUBE_WORKER.md)**.
 
