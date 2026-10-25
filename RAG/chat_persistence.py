@@ -47,7 +47,11 @@ def user_chat_store(authorization: str | None):
         except (httpx.TransportError, AuthRetryableError) as exc:
             raise HTTPException(503, "Authentication service unavailable") from exc
         except Exception as exc:
-            raise HTTPException(401, "Invalid or expired session; sign in again") from exc
+            # Only a rejected token (Auth answers 401/403, e.g. bad_jwt) means re-authenticate;
+            # an Auth outage or rate limit must stay retryable for a still-signed-in user.
+            if getattr(exc, "status", None) in (401, 403):
+                raise HTTPException(401, "Invalid or expired session; sign in again") from exc
+            raise HTTPException(503, "Authentication service unavailable") from exc
         if not result or not result.user or not result.user.id:
             raise HTTPException(401, "Invalid or expired session; sign in again")
         yield ChatStore(client)

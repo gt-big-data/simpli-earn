@@ -268,7 +268,7 @@ def test_youtube_normalization_matches_all_catalog_videos():
     with pytest.raises(HTTPException): persistence.youtube_id("https://youtube.com.attacker.example/watch?v=5EVhGtYa1B0")
 
 
-@pytest.mark.parametrize("status,expected", [(401, 401), (503, 503)])
+@pytest.mark.parametrize("status,expected", [(401, 401), (403, 401), (500, 503), (429, 503), (503, 503)])
 def test_auth_server_failure_never_falls_back_to_guest(monkeypatch, status, expected):
     original = httpx.Client
 
