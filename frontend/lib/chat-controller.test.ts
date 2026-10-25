@@ -82,6 +82,26 @@ test("an old account's pending reply never changes a replacement controller", as
   assert.ok(!old.snapshot().messages.some(m => m.text === "Alice private answer"));
 });
 
+test("a signed-in account's late reply never reaches the next account's controller", async () => {
+  // Bob signing in, or Alice signing out and back in: each account change builds a new controller
+  for (const [nextAccount, nextSessions] of [["bob", [session("bob-s1")]], ["alice", [session("s1")]]] as const) {
+    const pending = deferred<ChatResult>(); let body = "";
+    const alice = new ChatController(source, repository().repo, async b => { body = b; return pending.promise; });
+    await alice.initialize();
+    const sending = alice.ask("Alice private question");
+    for (let i = 0; i < 10 && !body; i++) await Promise.resolve();
+    assert.ok(body, "the request was sent before the account changed");
+    alice.dispose();
+    const next = new ChatController(source, repository([...nextSessions]).repo, async b => reply(b));
+    await next.initialize();
+    pending.resolve(reply(body)); await sending;
+    assert.equal(next.snapshot().sessionId, nextSessions[0].id, nextAccount);
+    assert.deepEqual(next.snapshot().messages.map(m => m.id), ["greeting"], nextAccount);
+    assert.equal(next.snapshot().busy, false, nextAccount);
+    assert.ok(!alice.snapshot().messages.some(m => m.text === "answer"), nextAccount);
+  }
+});
+
 test("switching threads drops a late reply from the selected view and duplicate sends are disabled", async () => {
   const { repo } = repository([session("s1"), session("s2")]);
   const pending = deferred<ChatResult>(); let body = ""; let calls = 0;
