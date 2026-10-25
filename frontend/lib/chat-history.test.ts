@@ -5,10 +5,10 @@ import { test } from "node:test";
 import { historyFor, MAX_ANSWER_CHARS, MAX_HISTORY_TURNS, nextMessageId, type ChatMessage } from "./chat-history.ts";
 
 const SRC = "1|";
-const user = (id: number, text: string, source = SRC): ChatMessage => ({ id, sender: "user", text, source });
+const user = (id: number, text: string, source = SRC): ChatMessage => ({ id: String(id), sender: "user", text, source });
 const bot = (id: number, replyTo: number, text: string, source = SRC): ChatMessage =>
-  ({ id, sender: "bot", text, source, replyTo });
-const greeting: ChatMessage = { id: 1, sender: "bot", text: "Hi, I'm SimpliBot!" };
+  ({ id: String(id), sender: "bot", text, source, replyTo: String(replyTo) });
+const greeting: ChatMessage = { id: "greeting", sender: "bot", text: "Hi, I'm SimpliBot!" };
 
 test("pairs replies with their own question when sends overlap", () => {
   // user1, user2, bot1, bot2: the second question was sent before the first reply arrived
@@ -51,5 +51,5 @@ test("history is trimmed to the API's limits", () => {
 test("message ids are unique and never reuse the greeting's id", () => {
   const ids = new Set(Array.from({ length: 100 }, () => nextMessageId()));
   assert.equal(ids.size, 100);
-  assert.ok(!ids.has(1));
+  assert.ok(!ids.has("greeting"));
 });

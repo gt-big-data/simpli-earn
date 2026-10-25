@@ -5,7 +5,7 @@ import type { ChatMessage } from "./chat-history.ts";
  * transition replaces it with a fresh chat and a new epoch, so an earlier user's messages are
  * discarded, not just hidden, and a reply to a question asked in an earlier epoch is dropped.
  */
-export type AccountChat = { accountId: string | null; epoch: number; messages: ChatMessage[] };
+export type AccountChat = { accountId: string | null; epoch: number; messages: ChatMessage[]; dashboardKey?: string; sessionId?: string | null };
 
 export function startChat(accountId: string | null, initial: ChatMessage[], epoch = 0): AccountChat {
   return { accountId, epoch, messages: initial };
@@ -24,4 +24,10 @@ export function updateMessages(
 ): AccountChat {
   if (chat.epoch !== epoch) return chat;
   return { ...chat, messages: typeof update === "function" ? update(chat.messages) : update };
+}
+
+/** Changing a transcript/thread also invalidates callbacks captured by the previous selection. */
+export function chatForSelection(chat: AccountChat, dashboardKey: string, sessionId: string | null, initial: ChatMessage[]): AccountChat {
+  if (chat.dashboardKey === dashboardKey && chat.sessionId === sessionId) return chat;
+  return { ...chat, dashboardKey, sessionId, epoch: chat.epoch + 1, messages: initial };
 }

@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { chatForAccount, startChat, updateMessages, type AccountChat } from "./account-chat.ts";
+import { chatForAccount, chatForSelection, startChat, updateMessages, type AccountChat } from "./account-chat.ts";
 import type { ChatMessage } from "./chat-history.ts";
 
-const INITIAL: ChatMessage[] = [{ id: 1, sender: "bot", text: "Hi" }];
-const say = (id: number, text: string) => (messages: ChatMessage[]) => [...messages, { id, sender: "user", text }];
+const INITIAL: ChatMessage[] = [{ id: "greeting", sender: "bot", text: "Hi" }];
+const say = (id: number, text: string) => (messages: ChatMessage[]) => [...messages, { id: String(id), sender: "user", text }];
 
 /** Simulate renders: the dashboard calls chatForAccount with the signed-in account each render. */
 function render(chat: AccountChat, accountId: string | null) {
@@ -42,4 +42,16 @@ test("same account across renders keeps the chat and its identity", () => {
   let chat = startChat("alice", INITIAL);
   chat = updateMessages(chat, chat.epoch, say(2, "q"));
   assert.equal(render(chat, "alice"), chat);
+});
+
+test("a transcript or thread transition invalidates old message callbacks", () => {
+  let chat = chatForSelection(startChat("alice", INITIAL), "preloaded:1", "s1", INITIAL);
+  const oldEpoch = chat.epoch;
+  chat = chatForSelection(chat, "preloaded:1", "s2", INITIAL);
+  assert.equal(updateMessages(chat, oldEpoch, say(2, "late s1 answer")), chat);
+  const selected = chat;
+  assert.equal(chatForSelection(chat, "preloaded:1", "s2", INITIAL), selected);
+  chat = chatForSelection(chat, "preloaded:2", null, INITIAL);
+  assert.ok(chat.epoch > selected.epoch);
+  assert.deepEqual(chat.messages, INITIAL);
 });
