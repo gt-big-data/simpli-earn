@@ -74,7 +74,13 @@ BEGIN
        (OLD.id, OLD.user_id, OLD.dashboard_key, OLD.dashboard_id, OLD.video_identifier, OLD.created_at) THEN
         RAISE EXCEPTION 'Chat ownership and transcript are immutable' USING ERRCODE = '23514';
     END IF;
-    NEW.updated_at := clock_timestamp();
+    -- updated_at orders the history list by activity: a rename keeps its place, and only the
+    -- message-insert trigger below moves a chat up. Clients never choose the value.
+    IF NEW.title IS DISTINCT FROM OLD.title THEN
+        NEW.updated_at := OLD.updated_at;
+    ELSE
+        NEW.updated_at := clock_timestamp();
+    END IF;
     RETURN NEW;
 END;
 $$;

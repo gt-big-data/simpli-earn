@@ -53,8 +53,13 @@ SELECT pg_temp.assert_true((SELECT content = 'Full answer' AND sources->0->>'tex
 SELECT pg_temp.assert_true((SELECT updated_at >= created_at FROM public.chat_sessions), 'invoker timestamp trigger');
 SELECT pg_temp.denied($q$UPDATE public.chat_messages SET content='tampered'$q$);
 SELECT pg_temp.denied($q$DELETE FROM public.chat_messages$q$);
+SELECT updated_at AS before_rename FROM public.chat_sessions \gset
 UPDATE public.chat_sessions SET title='Renamed', updated_at='1900-01-01';
-SELECT pg_temp.assert_true((SELECT title='Renamed' AND updated_at > '2000-01-01' FROM public.chat_sessions), 'rename and server time');
+SELECT pg_temp.assert_true((SELECT title='Renamed' AND updated_at = :'before_rename' FROM public.chat_sessions),
+ 'rename keeps list position and ignores client time');
+INSERT INTO public.chat_messages (session_id,request_id,role,content) VALUES
+ ('20000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000004','user','Next question');
+SELECT pg_temp.assert_true((SELECT updated_at > :'before_rename' FROM public.chat_sessions), 'message insert still bumps');
 
 SET LOCAL request.jwt.claim.sub = '10000000-0000-0000-0000-000000000002';
 SELECT pg_temp.assert_true((SELECT count(*)=0 FROM public.chat_sessions), 'unfiltered sessions isolated');
@@ -83,7 +88,7 @@ SELECT pg_temp.denied('DELETE FROM public.chat_messages');
 SET LOCAL ROLE authenticated;
 SET LOCAL request.jwt.claim.sub = '10000000-0000-0000-0000-000000000001';
 SELECT pg_temp.assert_true((SELECT title='Renamed' FROM public.chat_sessions), 'cross-user mutations changed nothing');
-SELECT pg_temp.assert_true((SELECT count(*)=2 FROM public.chat_messages), 'cross-user inserts changed nothing');
+SELECT pg_temp.assert_true((SELECT count(*)=3 FROM public.chat_messages), 'cross-user inserts changed nothing');
 DELETE FROM public.chat_sessions WHERE id='20000000-0000-0000-0000-000000000001';
 SELECT pg_temp.assert_true((SELECT count(*)=0 FROM public.chat_messages), 'session cascade without message DELETE grant');
 INSERT INTO public.chat_sessions (id,dashboard_key,dashboard_id,title) VALUES

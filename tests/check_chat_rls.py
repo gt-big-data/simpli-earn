@@ -89,7 +89,11 @@ def main():
             changed = ok(request("PATCH", f"/rest/v1/chat_sessions?id=eq.{sid}", {
                 "title": "Renamed", "updated_at": "1900-01-01T00:00:00Z",
             }, alice))[0]
-            assert changed["title"] == "Renamed" and changed["updated_at"] >= before["updated_at"]
+            # A rename keeps the chat's place in the list (and ignores client time); a message moves it up
+            assert changed["title"] == "Renamed" and changed["updated_at"] == before["updated_at"]
+            ok(request("POST", "/rest/v1/chat_messages", {**question, "request_id": str(uuid4())}, alice))
+            after = ok(request("GET", f"/rest/v1/chat_sessions?id=eq.{sid}&select=updated_at", token=alice))[0]
+            assert after["updated_at"] > before["updated_at"]
             for table in ("chat_sessions", "chat_messages"):
                 denied(request("GET", f"/rest/v1/{table}?select=*"))
                 # Filtered: an unfiltered DELETE is rejected (400) before privileges are checked

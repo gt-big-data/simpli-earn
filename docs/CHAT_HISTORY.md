@@ -23,6 +23,8 @@ writes use a request-scoped client with the public key, the verified bearer toke
 session/refresh, and an owned/closed HTTP transport. They never use the global service-role client.
 RLS checks session ownership and message-parent ownership; messages have no update/delete grants.
 Deleting a session or account cascades its messages. No retention, pruning, or backfill is added.
+The history list is ordered by `updated_at`, which only a new message advances: renaming a chat
+keeps its place, and clients can never set the value themselves.
 
 Keys are `preloaded:<dashboard ID>` for bundled transcripts and `youtube:<video ID>` for custom
 videos. URL variants normalize to the same custom key. These namespaces deliberately stay
