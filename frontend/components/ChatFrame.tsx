@@ -28,6 +28,7 @@ export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
     const toggleFullscreen = () => {
         fromRect.current = panelRef.current?.getBoundingClientRect() ?? null;
         setFullscreen((current) => !current);
+        setHistoryOpen(false);
     };
 
     // After the layout switch, start the panel transformed back onto its old rect and animate to
@@ -66,6 +67,7 @@ export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
             if (e.key !== "Escape") return;
             fromRect.current = panelRef.current?.getBoundingClientRect() ?? null;
             setFullscreen(false);
+            setHistoryOpen(false);
         };
         window.addEventListener("keydown", onKeyDown);
         return () => {
@@ -90,22 +92,28 @@ export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
                     fullscreen ? "fixed inset-5 z-50" : "relative h-full w-full"
                 }`}
             >
-                <div className="panel-header justify-between">
-                    <button
-                        type="button"
-                        className="cursor-pointer text-foreground"
-                        aria-label={fullscreen ? "Exit fullscreen" : "Expand chat"}
-                        onClick={toggleFullscreen}
-                    >
-                        {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
-                    </button>
+                {/* Equal-width side groups keep the title centred whether or not the history button shows */}
+                <div className="panel-header">
+                    <div className="flex flex-1">
+                        <button
+                            type="button"
+                            className="cursor-pointer text-foreground"
+                            aria-label={fullscreen ? "Exit fullscreen" : "Expand chat"}
+                            onClick={toggleFullscreen}
+                        >
+                            {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+                        </button>
+                    </div>
                     <h1 className="text-lg font-medium">SimpliChat</h1>
-                    {!guest && controller && <button type="button" aria-label="Show chat history"
-                        aria-expanded={historyOpen} onClick={() => setHistoryOpen(value => !value)}
-                        className={`cursor-pointer ${fullscreen ? "lg:hidden" : ""}`}><History className="size-4" /></button>}
-                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={() => onClose(fullscreen)}>
-                        <X className="size-4" />
-                    </button>
+                    <div className="flex flex-1 items-center justify-end gap-4">
+                        {/* History is a fullscreen feature; below lg its sidebar becomes this popover */}
+                        {fullscreen && !guest && controller && <button type="button" aria-label="Show chat history"
+                            aria-expanded={historyOpen} onClick={() => setHistoryOpen(value => !value)}
+                            className="cursor-pointer text-foreground lg:hidden"><History className="size-4" /></button>}
+                        <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={() => onClose(fullscreen)}>
+                            <X className="size-4" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* The sidebar sits before the chat in its own slot, so toggling it never remounts ChatBot */}
@@ -115,13 +123,14 @@ export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
                             <ChatHistoryList controller={controller} state={state} />
                         </aside>
                     )}
-                    {historyOpen && !guest && controller && state && <aside
-                        className={`absolute inset-x-3 top-14 z-20 max-h-[70%] overflow-auto rounded-lg border border-white/15 bg-background p-4 shadow-xl ${fullscreen ? "lg:hidden" : ""}`}>
+                    {fullscreen && historyOpen && !guest && controller && state && <aside
+                        className="absolute inset-x-3 top-14 z-20 max-h-[70%] overflow-auto rounded-lg border border-white/15 bg-background p-4 shadow-xl lg:hidden">
                         <ChatHistoryList controller={controller} state={state} onSelect={() => setHistoryOpen(false)} />
                     </aside>}
                     <div className={`flex min-h-0 min-w-0 flex-1 flex-col gap-2 ${fullscreen ? "px-8 pt-5 pb-8" : "px-5 pb-5"}`}>
                         {guest && !loading && <p className="text-xs text-muted-foreground"><Link className="text-brand underline" href="/login">Sign in</Link> to save conversations.</p>}
-                        {loading && <p className="text-xs text-muted-foreground" role="status">Loading chat…</p>}
+                        {/* Auth only; a chat's own message load shows inside ChatBot */}
+                        {loading && !state?.loading && <p className="text-xs text-muted-foreground" role="status">Loading chat…</p>}
                         {(sourceError || state?.error) && <div className="text-xs text-red-300" role="alert">
                             {sourceError || state?.error}{" "}
                             {controller && <button type="button" className="cursor-pointer underline" disabled={state?.busy}
@@ -130,7 +139,7 @@ export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
                         {controller && state && <div className="min-h-0 flex-1">
                             <ChatBot key={`${controller.identity}:${state.sessionId ?? "draft"}`}
                                 messages={state.messages} ask={(text, requestId) => controller.ask(text, requestId)}
-                                disabled={loading || state.busy || state.loadFailed} pendingRequestId={state.pendingRequestId}
+                                disabled={loading || state.busy || state.loadFailed} loading={state.loading} pendingRequestId={state.pendingRequestId}
                                 viewKey={fullscreen ? "fullscreen" : "docked"} />
                         </div>}
                     </div>

@@ -69,7 +69,7 @@ export class ChatController {
     if (!this.repo) return;
     const selection = ++this.selection;
     const read = ++this.read;
-    this.set({ sessionId: id, messages: [], loading: true, busy: this.pending.has(id), pendingRequestId: this.pending.get(id) ?? null, error: null });
+    this.set({ sessionId: id, messages: [GREETING], loading: true, busy: this.pending.has(id), pendingRequestId: this.pending.get(id) ?? null, error: null });
     try {
       const messages = await this.repo.messages(id);
       if (read === this.read && selection === this.selection) this.set({ messages: mergeMessages(messages, this.state.messages), loading: false, loadFailed: false });

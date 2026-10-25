@@ -7,10 +7,12 @@ import { MAX_QUESTION_CHARS, type ChatMessage } from "@/lib/chat-history";
 
 export type Message = ChatMessage;
 
-export default function ChatBot({ messages, ask, disabled, pendingRequestId, viewKey }: {
+export default function ChatBot({ messages, ask, disabled, loading, pendingRequestId, viewKey }: {
   messages: Message[];
   ask: (text: string, retryRequestId?: string) => Promise<void>;
   disabled: boolean;
+  /** Saved messages are loading; shown in the list so nothing above it shifts */
+  loading?: boolean;
   pendingRequestId: string | null;
   viewKey?: string;
 }) {
@@ -41,13 +43,15 @@ export default function ChatBot({ messages, ask, disabled, pendingRequestId, vie
     if (container) container.scrollTop = container.scrollHeight;
   }, [viewKey]);
 
+  // A saved chat's history arrives in one batch after mount: jump to its end instead of
+  // smooth-scrolling through the whole transcript. Later messages scroll smoothly.
+  const historyShown = useRef(false);
   useEffect(() => {
-    if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTo({
-        top: messageContainerRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
+    const container = messageContainerRef.current;
+    if (!container) return;
+    const jump = !historyShown.current;
+    if (messages.length > 1) historyShown.current = true;
+    container.scrollTo({ top: container.scrollHeight, behavior: jump ? "auto" : "smooth" });
   }, [messages]);
 
   const handleSuggestionClick = (suggestion: string) => {
@@ -73,8 +77,9 @@ export default function ChatBot({ messages, ask, disabled, pendingRequestId, vie
         ref={messageContainerRef}
         style={{ scrollbarColor: "#ffffff9f #ffffff00" }}
       >
+        {/* Keyed by request, not id: a question's local id becomes its saved row id on reply */}
         {messages.map((message) => (
-          <div key={message.id}>
+          <div key={message.requestId ? `${message.sender}:${message.requestId}` : message.id}>
             <Message
               text={message.text}
               sender={message.sender}
@@ -95,6 +100,7 @@ export default function ChatBot({ messages, ask, disabled, pendingRequestId, vie
             )}
           </div>
         ))}
+        {loading && <p className="mt-2 text-xs text-muted-foreground" role="status">Loading messages…</p>}
       </div>
 
       {/* Equal padding on every side and items-end: the send button sits bottom-right in
