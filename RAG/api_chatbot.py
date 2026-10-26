@@ -2,7 +2,7 @@
 from fastapi import FastAPI, Query, Body, HTTPException, Header
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, model_validator
-from chat_persistence import user_chat_store, saved_response, youtube_id
+from chat_persistence import AnswerNotSaved, user_chat_store, saved_response, unsaved_response, youtube_id
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
 from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
 import os
@@ -549,7 +549,10 @@ def chat_endpoint(req: ChatRequest, authorization: Optional[str] = Header(None))
         question, answer = store.question(req.session_id, req.request_id, req.message)
         if answer is None:
             result = _chat_answer(req, saved=True)
-            answer = store.answer(req.session_id, req.request_id, result)
+            try:
+                answer = store.answer(req.session_id, req.request_id, result)
+            except AnswerNotSaved:
+                return unsaved_response(req.session_id, req.request_id, question, result)
         return saved_response(req.session_id, req.request_id, question, answer)
 
 

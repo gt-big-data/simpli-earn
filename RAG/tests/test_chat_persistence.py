@@ -27,6 +27,7 @@ class Database:
         self.rows = {}
         self.lock = Lock()
         self.fail_role = None
+        self.check_role = None  # role whose insert breaks a CHECK constraint (23514)
         self.starts = 0
 
     def client(self, owner):
@@ -44,6 +45,8 @@ class Database:
                         raise APIError({"code": "23505", "message": "duplicate key value"})
                     if db.fail_role == "user":
                         raise RuntimeError("database rejected write")
+                    if db.check_role == "user":
+                        raise APIError({"code": "23514", "message": "violates check constraint"})
                     db.starts += 1
                     db.sessions[p["p_session_id"]] = {
                         "id": p["p_session_id"], "user_id": owner, "dashboard_key": p["p_dashboard_key"],
@@ -73,6 +76,8 @@ class Database:
                 with db.lock:
                     if self.row:
                         row = self.row
+                        if db.check_role == row["role"] or len(row["content"]) > 50000:  # migration 004 caps
+                            raise APIError({"code": "23514", "message": "violates check constraint"})
                         parent = db.sessions.get(row["session_id"])
                         if not parent or parent["user_id"] != owner or db.fail_role == row["role"]:
                             raise RuntimeError("database rejected write")
@@ -272,6 +277,38 @@ def test_saved_path_transcript_error_is_not_an_answer(saved_client, monkeypatch)
     monkeypatch.setattr(api, "_resolve_chat_transcript", lambda *args: (None, "Error: missing transcript"))
     assert post(client).status_code == 422
     assert {row["role"] for row in db.rows.values()} == {"user"}
+
+
+def test_answer_over_a_storage_cap_is_returned_marked_unsaved(saved_client, monkeypatch):
+    client, db = saved_client
+    long_answer = "Revenue grew. " * 4000  # 56,000 characters: over the 50,000 content cap
+    monkeypatch.setattr(api, "answer_question", lambda *a, **k: {
+        "answer": long_answer, "source_documents": [], "provider": "gemini", "model": "gemini-3.1-flash-lite"})
+    request = str(uuid4())
+    result = post(client, request)
+    assert result.status_code == 200
+    body = result.json()
+    assert body["saved"] is False and body["not_saved_reason"]
+    assert body["response"] == long_answer and body["session_id"] == SESSION and body["request_id"] == request
+    assert body["user_message_id"] == db.rows[(SESSION, request, "user")]["id"]
+    assert "assistant_message_id" not in body
+    assert (SESSION, request, "assistant") not in db.rows
+
+
+def test_saved_answer_is_marked_saved(saved_client):
+    client, _ = saved_client
+    assert post(client).json()["saved"] is True
+
+
+@pytest.mark.parametrize("first_send", [False, True])
+def test_question_rejected_by_a_check_is_a_4xx_without_inference(saved_client, monkeypatch, first_send):
+    client, db = saved_client
+    db.check_role = "user"
+    monkeypatch.setattr(api, "_chat_answer", lambda *a, **k: pytest.fail("rejected question reached inference"))
+    session = str(uuid4()) if first_send else SESSION
+    result = post(client, session_id=session, **({"title": "Revenue?"} if first_send else {}))
+    assert result.status_code == 422 and "can't be saved" in result.json()["detail"]
+    assert not db.rows and (not first_send or session not in db.sessions)
 
 
 def test_question_save_failure_never_invokes_model(saved_client, monkeypatch):

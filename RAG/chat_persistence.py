@@ -57,14 +57,26 @@ def user_chat_store(authorization: str | None):
         yield ChatStore(client)
 
 
+class AnswerNotSaved(Exception):
+    """The generated answer breaks a storage limit, so no retry of the same answer could save it."""
+
+
+def _question_rejected() -> HTTPException:
+    return HTTPException(422, "This question can't be saved: it is empty or too long. Edit it and send again.")
+
+
 class ChatStore:
     def __init__(self, client):
         self.client = client
 
-    def _execute(self, query):
+    def _execute(self, query, on_check_violation: Exception | None = None):
         try:
             return query.execute().data or []
         except Exception as exc:
+            # A CHECK violation (23514: blank text, size caps) is deterministic, so "retry" would be
+            # wrong; callers that can hit one say what it means instead.
+            if on_check_violation is not None and getattr(exc, "code", None) == "23514":
+                raise on_check_violation from exc
             # Never send database details or credentials to the browser.
             raise HTTPException(503, "Chat history could not be saved or loaded; refresh and retry") from exc
 
@@ -90,7 +102,10 @@ class ChatStore:
         except Exception as exc:
             # A unique violation means the ID exists: a concurrent retry of this first send created
             # it (carry on), or it is another user's (the caller's lookup then 404s, as RLS hides it).
-            if getattr(exc, "code", None) != "23505":
+            code = getattr(exc, "code", None)
+            if code == "23514":
+                raise _question_rejected() from exc
+            if code != "23505":
                 raise HTTPException(503, "Chat history could not be saved or loaded; refresh and retry") from exc
 
     def messages(self, session_id: UUID, request_id: UUID) -> list[dict]:
@@ -104,7 +119,7 @@ class ChatStore:
             self._execute(self.client.table("chat_messages").upsert({
                 "session_id": str(session_id), "request_id": str(request_id),
                 "role": "user", "content": content,
-            }, on_conflict="session_id,request_id,role", ignore_duplicates=True))
+            }, on_conflict="session_id,request_id,role", ignore_duplicates=True), on_check_violation=_question_rejected())
             rows = self.messages(session_id, request_id)
             question = next((row for row in rows if row["role"] == "user"), None)
         if question is None:
@@ -118,7 +133,7 @@ class ChatStore:
             "session_id": str(session_id), "request_id": str(request_id), "role": "assistant",
             "content": result["response"], "sources": result["sources"],
             "suggestions": result["suggestions"], "provider": result["provider"], "model": result["model"],
-        }, on_conflict="session_id,request_id,role", ignore_duplicates=True))
+        }, on_conflict="session_id,request_id,role", ignore_duplicates=True), on_check_violation=AnswerNotSaved())
         rows = self.messages(session_id, request_id)
         answer = next((row for row in rows if row["role"] == "assistant"), None)
         if answer is None:
@@ -131,5 +146,17 @@ def saved_response(session_id: UUID, request_id: UUID, question: dict, answer: d
         "response": answer["content"], "sources": answer["sources"],
         "suggestions": answer["suggestions"], "provider": answer.get("provider"), "model": answer.get("model"),
         "session_id": str(session_id), "request_id": str(request_id),
-        "user_message_id": question["id"], "assistant_message_id": answer["id"],
+        "user_message_id": question["id"], "assistant_message_id": answer["id"], "saved": True,
+    }
+
+
+def unsaved_response(session_id: UUID, request_id: UUID, question: dict, result: dict) -> dict:
+    """A generated answer that breaks a storage limit: returned rather than lost, explicitly marked
+    unsaved (no assistant_message_id). Its question stays saved, so a later Retry can regenerate it."""
+    return {
+        "response": result["response"], "sources": result["sources"], "suggestions": result["suggestions"],
+        "provider": result["provider"], "model": result["model"],
+        "session_id": str(session_id), "request_id": str(request_id), "user_message_id": question["id"],
+        "saved": False,
+        "not_saved_reason": "This answer is too long to save to your history, so it won't be here after a reload.",
     }
