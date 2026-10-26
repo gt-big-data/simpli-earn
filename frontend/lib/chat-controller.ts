@@ -1,4 +1,4 @@
-import { chatBody, clipText, historyFor, MAX_QUESTION_CHARS, nextMessageId, type ChatMessage } from "./chat-history.ts";
+import { chatBody, chatTitle, clipText, historyFor, isBlank, MAX_QUESTION_CHARS, nextMessageId, type ChatMessage } from "./chat-history.ts";
 import type { ChatSource } from "./chat-source.ts";
 import type { ChatRepository, ChatSession } from "./chat-store.ts";
 
@@ -15,6 +15,8 @@ export type ChatResult = {
   response: string; suggestions?: string[]; sources?: ChatMessage["sources"];
   provider?: string | null; model?: string | null; session_id?: string; request_id?: string;
   user_message_id?: string; assistant_message_id?: string;
+  /** false: the answer was generated but breaks a storage limit; it comes back unsaved, never lost */
+  saved?: boolean; not_saved_reason?: string;
 };
 type Send = (body: string, token?: string) => Promise<ChatResult>;
 
@@ -130,7 +132,7 @@ export class ChatController {
     } catch (error) { this.set({ error: errorText(error) }); }
   }
   async ask(text: string, retryRequestId?: string) {
-    if (this.state.busy || this.state.loading || this.state.loadFailed || !text.trim() || this.disposed) return;
+    if (this.state.busy || this.state.loading || this.state.loadFailed || isBlank(text) || this.disposed) return;
     text = clipText(text, MAX_QUESTION_CHARS);
     const selection = this.selection;
     const requestId = retryRequestId ?? nextMessageId();
@@ -140,7 +142,7 @@ export class ChatController {
     // so a send that fails before the question saves leaves no empty chat behind.
     const sessionId = this.state.sessionId ?? (this.repo ? this.draftId : null);
     const isNew = !!sessionId && !this.state.sessionId;
-    if (isNew && !this.unsaved.has(sessionId)) this.unsaved.set(sessionId, this.repo!.draft(sessionId, clipText(text.trim(), 100)));
+    if (isNew && !this.unsaved.has(sessionId)) this.unsaved.set(sessionId, this.repo!.draft(sessionId, chatTitle(text)));
     const question: ChatMessage = existing ?? { id: nextMessageId(), requestId, sender: "user", text,
       sessionId: sessionId ?? undefined, source: this.source.key };
     if (sessionId) this.pending.set(sessionId, requestId);
@@ -164,8 +166,10 @@ export class ChatController {
         ...(sessionId ? { session_id: sessionId, request_id: requestId, ...(draft ? { title: draft.title } : {}) } : {}) });
       const result = await this.send(body, token);
       if (!result.response?.trim()) throw new Error("The server returned no answer. Retry this question.");
+      // Saved: both message IDs. Explicitly unsaved (saved: false): the question's ID only.
+      const unsavedAnswer = result.saved === false;
       if (this.repo && (result.session_id !== sessionId || result.request_id !== requestId ||
-        !result.user_message_id || !result.assistant_message_id)) {
+        !result.user_message_id || (!unsavedAnswer && !result.assistant_message_id))) {
         throw new Error("The backend did not confirm saving this answer. Deploy the chat-history backend, then refresh and retry.");
       }
       if (sessionId) this.unsaved.delete(sessionId);
@@ -173,7 +177,8 @@ export class ChatController {
         const answer: ChatMessage = { id: result.assistant_message_id ?? nextMessageId(), requestId,
           sessionId: sessionId ?? undefined, sender: "bot", text: result.response, source: this.source.key,
           replyTo: result.user_message_id ?? question.id, suggestions: result.suggestions ?? [],
-          sources: result.sources ?? [], provider: result.provider, model: result.model };
+          sources: result.sources ?? [], provider: result.provider, model: result.model,
+          ...(unsavedAnswer ? { notSaved: result.not_saved_reason || "This answer couldn't be saved to your history." } : {}) };
         const messages = this.state.messages.some(m => m.sender === "user" && m.requestId === requestId)
           ? this.state.messages : [...this.state.messages, question];
         this.set({ messages: mergeMessages([...messages.filter(m => !(m.sender === "bot" && m.requestId === requestId))

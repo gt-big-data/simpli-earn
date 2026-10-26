@@ -15,6 +15,8 @@ export type ChatMessage = {
   model?: string | null;
   createdAt?: string;
   error?: string;
+  /** Set on an answer the backend generated but could not store (it breaks a storage limit). */
+  notSaved?: string;
 };
 
 // Must match the RAG API's request limits (RAG/api_chatbot.py), which reject anything larger
@@ -60,7 +62,21 @@ export function historyFor(messages: ChatMessage[], source: string, sessionId?: 
 }
 
 export const MAX_BODY_BYTES = 1024 * 1024;
+/** First `limit` code points: never splits a surrogate pair (an emoji stays whole or is dropped). */
 export const clipText = (text: string, limit: number) => Array.from(text).slice(0, limit).join("");
+
+// JS whitespace plus the C0 separators and NEL, which the API (Python) and database (Postgres
+// regex \S) also count as blank: a question blank to either is never sent.
+const SPACE_RUNS = /[\s\x1c-\x1f\x85]+/g;
+export const isBlank = (text: string) => !text.replace(SPACE_RUNS, "");
+
+export const MAX_TITLE_CHARS = 100;
+/**
+ * A new chat's title from its first question: whitespace runs collapsed to single spaces, trimmed,
+ * clipped to 100 code points and trimmed again, so it is never blank when the question isn't.
+ */
+export const chatTitle = (question: string) =>
+  clipText(question.replace(SPACE_RUNS, " ").trim(), MAX_TITLE_CHARS).trim();
 
 /** Includes JSON escapes/UTF-8 bytes, without truncating the stored/displayed conversation. */
 export function chatBody(payload: Record<string, unknown> & { history: { question: string; answer: string }[] }) {

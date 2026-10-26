@@ -281,3 +281,43 @@ test("a new chat stays listed while its first send is pending, through a thread 
   assert.deepEqual(c.snapshot().sessions.map(s => s.id), [id, "s1"]);
   assert.equal(c.snapshot().sessionId, "s1");
 });
+
+test("a whitespace-only question is never sent; a new chat's title is the normalized question", async () => {
+  const { repo, db } = repository([]);
+  const titles: string[] = [];
+  const c = new ChatController(source, repo, async body => { titles.push(JSON.parse(body).title); save(db, body); return reply(body); });
+  await c.initialize();
+  await c.ask(" \n\t\u00a0 ");
+  await c.ask("\x1c\x85");
+  assert.equal(titles.length, 0);
+  assert.deepEqual(c.snapshot().messages.map(m => m.id), ["greeting"]);
+  assert.deepEqual(c.snapshot().sessions, []);
+  await c.ask(`  \n What   was revenue?${" Explain in detail.".repeat(30)}  `);
+  assert.equal(titles.length, 1);
+  assert.match(titles[0], /^What was revenue\? Explain in detail\./);
+  assert.equal(Array.from(titles[0]).length <= 100, true);
+  assert.equal(titles[0], titles[0].trim());
+  assert.equal(c.snapshot().sessions[0].title, titles[0]);
+});
+
+test("an answer the backend could not store is shown, marked unsaved, not dropped", async () => {
+  const { repo } = repository();
+  const c = new ChatController(source, repo, async body => {
+    const unsaved: ChatResult = { ...reply(body), response: "very long answer", saved: false, not_saved_reason: "Too long to save." };
+    delete unsaved.assistant_message_id;
+    return unsaved;
+  });
+  await c.initialize();
+  await c.ask("q");
+  const [question, answer] = c.snapshot().messages.slice(1);
+  assert.equal(answer.text, "very long answer");
+  assert.equal(answer.notSaved, "Too long to save.");
+  assert.equal(question.error, undefined);
+  assert.equal(c.snapshot().error, null);
+  // An old backend that neither saves nor says so is still an explicit error
+  const silent = new ChatController(source, repository().repo, async body => {
+    const silentReply = reply(body); delete silentReply.assistant_message_id; return silentReply;
+  });
+  await silent.initialize(); await silent.ask("q");
+  assert.match(silent.snapshot().error!, /did not confirm saving/);
+});
