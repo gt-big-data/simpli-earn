@@ -3,7 +3,7 @@
 import { Send } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Message from "./Message";
-import { MAX_QUESTION_CHARS, type ChatMessage } from "@/lib/chat-history";
+import { isBlank, MAX_QUESTION_CHARS, type ChatMessage } from "@/lib/chat-history";
 
 export type Message = ChatMessage;
 
@@ -30,7 +30,7 @@ export default function ChatBot({ messages, ask, disabled, loading, pendingReque
   }, [userInput]);
 
   const sendMessage = async () => {
-    if (!disabled && userInput.trim()) {
+    if (!disabled && !isBlank(userInput)) {
       setUserInput("");
       await ask(userInput);
     }
@@ -86,6 +86,7 @@ export default function ChatBot({ messages, ask, disabled, loading, pendingReque
               suggestions={disabled ? [] : message.suggestions}
               onSuggestionClick={handleSuggestionClick}
             />
+            {message.notSaved && <p className="mt-2 text-xs text-muted-foreground" role="note">{message.notSaved}</p>}
             {message.sender === "user" && message.requestId && !messages.some(
               reply => reply.sender === "bot" && reply.requestId === message.requestId
             ) && (
@@ -123,7 +124,7 @@ export default function ChatBot({ messages, ask, disabled, loading, pendingReque
           type="button"
           aria-label="Send message"
           onClick={sendMessage}
-          disabled={disabled || !userInput.trim()}
+          disabled={disabled || isBlank(userInput)}
           className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-[filter,opacity] enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Send className="size-4" />
