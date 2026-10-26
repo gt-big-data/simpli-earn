@@ -40,6 +40,15 @@ inaccessible session is 404; mismatched transcript or reusing a request ID for d
 is 409. Full answers, original sources `{chunk,source,text}`, suggestions and the actual answer
 provider/model are stored. The greeting and UI error/status text are not stored.
 
+New Chat is a browser-only draft until its first send. The browser picks the new chat's UUID
+and sends it as `session_id` with `title` (the first question, at most 100 characters); `/chat`
+then creates the chat and its first question in one transaction (`chat_start` in migration 004,
+run under the caller's JWT). A send that fails before the question saves (backend unreachable,
+bad token, unknown transcript) therefore leaves no chat behind. Retries reuse both IDs, so a
+lost response never creates a second chat; another user's chat ID returns 404. `title` without
+an existing or new chat, or on a guest request, is 422. The list shows the new chat while its
+first send is pending, and drops it again if that send created nothing.
+
 The backend saves the question, generates the complete JSON answer, then saves the assistant
 row before HTTP 200. Success adds `session_id`, `request_id`, `user_message_id`, and
 `assistant_message_id` to the response. A duplicate request returns the previously saved

@@ -9,6 +9,7 @@ import httpx
 import pytest
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
+from postgrest.exceptions import APIError
 
 import api_chatbot as api
 import chat_persistence as persistence
@@ -26,9 +27,34 @@ class Database:
         self.rows = {}
         self.lock = Lock()
         self.fail_role = None
+        self.starts = 0
 
     def client(self, owner):
         db = self
+
+        class Start:
+            """migration 004's chat_start: chat and first question commit together or not at all."""
+            def __init__(self, params):
+                self.params = params
+
+            def execute(self):
+                p = self.params
+                with db.lock:
+                    if p["p_session_id"] in db.sessions:
+                        raise APIError({"code": "23505", "message": "duplicate key value"})
+                    if db.fail_role == "user":
+                        raise RuntimeError("database rejected write")
+                    db.starts += 1
+                    db.sessions[p["p_session_id"]] = {
+                        "id": p["p_session_id"], "user_id": owner, "dashboard_key": p["p_dashboard_key"],
+                        "dashboard_id": p["p_dashboard_id"], "video_identifier": p["p_video_identifier"],
+                        "title": p["p_title"],
+                    }
+                    db.rows[(p["p_session_id"], p["p_request_id"], "user")] = {
+                        "id": str(uuid4()), "session_id": p["p_session_id"], "request_id": p["p_request_id"],
+                        "role": "user", "content": p["p_content"], "sources": [], "suggestions": [],
+                    }
+                return SimpleNamespace(data=None)
 
         class Query:
             def __init__(self, table):
@@ -60,7 +86,11 @@ class Database:
                             and all(row.get(k) == v for k, v in self.filters.items())]
                     return SimpleNamespace(data=rows)
 
-        return SimpleNamespace(table=lambda table: Query(table))
+        def rpc(name, params):
+            assert name == "chat_start"
+            return Start(params)
+
+        return SimpleNamespace(table=lambda table: Query(table), rpc=rpc)
 
 
 @pytest.fixture
@@ -69,6 +99,8 @@ def saved_client(monkeypatch, gemini_only):
 
     @contextmanager
     def store(header):
+        if header == "Bearer outage":
+            raise HTTPException(503, "Authentication service unavailable")
         if header not in ("Bearer alice", "Bearer bob"):
             raise HTTPException(401, "Invalid or expired session")
         yield persistence.ChatStore(db.client(ALICE if header == "Bearer alice" else BOB))
@@ -98,6 +130,73 @@ def test_saved_answer_and_metadata_are_committed_before_success(saved_client):
     assert answer["suggestions"] == response["suggestions"]
     assert response["provider"] == "gemini"
     assert response["model"] == "gemini-3.1-flash-lite"
+
+
+@pytest.mark.parametrize("source,key,locator", [
+    ({"id": "1"}, "preloaded:1", ("1", None)),
+    ({"id": None, "video_url": "https://youtu.be/5EVhGtYa1B0?si=x"}, "youtube:5EVhGtYa1B0", (None, "5EVhGtYa1B0")),
+])
+def test_first_send_creates_the_chat_with_its_question(saved_client, monkeypatch, source, key, locator):
+    client, db = saved_client
+    monkeypatch.setattr(api, "_resolve_chat_transcript", lambda *args: (api.STATIC_TRANSCRIPTS["1"], None))
+    chat, request = str(uuid4()), str(uuid4())
+    response = post(client, request, session_id=chat, title="  Revenue?  ", **source)
+    assert response.status_code == 200 and response.json()["session_id"] == chat
+    assert db.sessions[chat] == {"id": chat, "user_id": ALICE, "dashboard_key": key, "dashboard_id": locator[0],
+                                 "video_identifier": locator[1], "title": "Revenue?"}
+    assert sorted(role for sid, _, role in db.rows if sid == chat) == ["assistant", "user"]
+
+
+@pytest.mark.parametrize("failure,status", [("bad token", 401), ("auth outage", 503), ("unknown dashboard", 422),
+                                            ("unsupported video", 422), ("question save", 503)])
+def test_first_send_failing_before_its_question_saves_leaves_no_chat(saved_client, monkeypatch, failure, status):
+    client, db = saved_client
+    monkeypatch.setattr(api, "_chat_answer", lambda *a, **k: pytest.fail("inference before the question saved"))
+    args = {"bad token": {"token": "expired"}, "auth outage": {"token": "outage"},
+            "unknown dashboard": {"id": "unknown"}, "unsupported video": {"video_url": "https://example.com/v"},
+            "question save": {}}[failure]
+    if failure == "question save":
+        db.fail_role = "user"
+    chat = str(uuid4())
+    assert post(client, session_id=chat, title="Revenue?", **args).status_code == status
+    assert chat not in db.sessions and not db.rows
+
+
+def test_retried_first_send_reuses_one_chat(saved_client, monkeypatch):
+    # The first attempt saves the chat and question, then inference fails; retries send the title again.
+    client, db = saved_client
+    chat, request = str(uuid4()), str(uuid4())
+    original = api._chat_answer
+
+    def unavailable(*args, **kwargs):
+        raise HTTPException(503, "AI unavailable")
+
+    monkeypatch.setattr(api, "_chat_answer", unavailable)
+    assert post(client, request, session_id=chat, title="Revenue?").status_code == 503
+    assert chat in db.sessions and (chat, request, "user") in db.rows
+    monkeypatch.setattr(api, "_chat_answer", original)
+    first = post(client, request, session_id=chat, title="Revenue?")
+    assert first.status_code == 200
+    assert post(client, request, session_id=chat, title="Revenue?").json() == first.json()
+    assert db.starts == 1 and len(db.rows) == 2
+
+
+def test_concurrent_first_sends_create_one_chat(saved_client):
+    client, db = saved_client
+    chat, request = str(uuid4()), str(uuid4())
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        responses = list(executor.map(lambda _: post(client, request, session_id=chat, title="Revenue?"), range(3)))
+    assert all(response.status_code == 200 for response in responses)
+    assert db.starts == 1 and len(db.rows) == 2
+    assert len({response.json()["assistant_message_id"] for response in responses}) == 1
+
+
+def test_first_send_cannot_claim_another_users_chat_id(saved_client, monkeypatch):
+    client, db = saved_client
+    monkeypatch.setattr(api, "_chat_answer", lambda *a, **k: pytest.fail("inference in another user's chat"))
+    before = dict(db.sessions[OTHER])
+    assert post(client, session_id=OTHER, title="Mine now").status_code == 404
+    assert db.sessions[OTHER] == before and not db.rows
 
 
 @pytest.mark.parametrize("token,session,status", [(None, SESSION, 401), ("expired", SESSION, 401),
@@ -223,6 +322,8 @@ def test_uuid_pair_and_signed_in_protocol(saved_client):
     assert client.post("/chat", json={"message": "q", "session_id": SESSION}).status_code == 422
     assert post(client, request_id="invalid").status_code == 422
     assert client.post("/chat", json={"message": "q", "id": "1"}, headers={"Authorization": "Bearer alice"}).status_code == 422
+    assert client.post("/chat", json={"message": "q", "id": "1", "title": "guest"}).status_code == 422
+    assert post(client, session_id=str(uuid4()), title="   ").status_code == 422
 
 
 def test_actual_sdk_forwards_separate_jwts_and_closes_transports(monkeypatch):

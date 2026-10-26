@@ -28,6 +28,10 @@ export class ChatController {
   private listRevision = 0;
   private disposed = false;
   private pending = new Map<string, string>();
+  /** New chats listed before /chat has confirmed creating them; their sends carry `title`. */
+  private unsaved = new Map<string, ChatSession>();
+  /** ID the draft's first send creates; kept after a failed first send, so a retry reuses it. */
+  private draftId = nextMessageId();
   readonly source: ChatSource;
   private repo: ChatRepository | null;
   private send: Send;
@@ -54,7 +58,7 @@ export class ChatController {
     try {
       const sessions = await this.repo.sessions();
       if (read !== this.read || listRevision !== this.listRevision || selection !== this.selection || this.disposed) return;
-      this.set({ sessions });
+      this.set({ sessions: this.withUnsaved(sessions) });
       if (sessions.length) await this.select(sessions[0].id);
       else this.set({ loading: false, error: null, loadFailed: false });
     } catch (error) {
@@ -62,7 +66,7 @@ export class ChatController {
     }
   }
   newChat() {
-    this.selection++; this.read++;
+    this.selection++; this.read++; this.draftId = nextMessageId();
     this.set({ sessionId: null, messages: [GREETING], busy: false, pendingRequestId: null, loading: false, error: null, loadFailed: false });
   }
   async select(id: string) {
@@ -88,10 +92,10 @@ export class ChatController {
       const sessions = await this.repo.sessions();
       const messages = id && sessions.some(s => s.id === id) ? await this.repo.messages(id) : null;
       if (read !== this.read || listRevision !== this.listRevision || selection !== this.selection || this.disposed || this.state.busy) return;
-      this.set({ sessions, error: null, loadFailed: false });
+      this.set({ sessions: this.withUnsaved(sessions), error: null, loadFailed: false });
       if (id && messages) {
         this.set({ messages: mergeMessages(messages, this.state.messages), loading: false });
-      } else if (id) {
+      } else if (id && !this.unsaved.has(id)) {
         if (sessions.length) await this.select(sessions[0].id); else this.newChat();
       }
     } catch (error) {
@@ -100,6 +104,7 @@ export class ChatController {
   }
   async rename(id: string, title: string) {
     if (!this.repo || !title.trim()) return;
+    if (this.unsaved.has(id)) return this.set({ error: UNSAVED_EDIT });
     this.listRevision++;
     try {
       await this.repo.rename(id, title);
@@ -111,6 +116,7 @@ export class ChatController {
   }
   async remove(id: string) {
     if (!this.repo) return;
+    if (this.unsaved.has(id)) return this.set({ error: UNSAVED_EDIT });
     this.listRevision++;
     try {
       await this.repo.remove(id);
@@ -130,43 +136,40 @@ export class ChatController {
     const requestId = retryRequestId ?? nextMessageId();
     const before = this.state.messages;
     const existing = before.find(m => m.sender === "user" && m.requestId === requestId);
+    // A new chat is listed right away, but only /chat creates it, together with this question,
+    // so a send that fails before the question saves leaves no empty chat behind.
+    const sessionId = this.state.sessionId ?? (this.repo ? this.draftId : null);
+    const isNew = !!sessionId && !this.state.sessionId;
+    if (isNew && !this.unsaved.has(sessionId)) this.unsaved.set(sessionId, this.repo!.draft(sessionId, clipText(text.trim(), 100)));
     const question: ChatMessage = existing ?? { id: nextMessageId(), requestId, sender: "user", text,
-      sessionId: this.state.sessionId ?? undefined, source: this.source.key };
-    let sessionId = this.state.sessionId;
+      sessionId: sessionId ?? undefined, source: this.source.key };
     if (sessionId) this.pending.set(sessionId, requestId);
     this.read++; // Invalidate a focus refresh already in flight.
     this.set({ busy: true, pendingRequestId: requestId, error: null,
-      messages: existing ? before.map(m => m === existing ? { ...m, error: undefined } : m) : [...before, question] });
+      ...(isNew ? { sessionId, sessions: [this.unsaved.get(sessionId)!, ...this.state.sessions.filter(s => s.id !== sessionId)] } : {}),
+      messages: (existing ? before.map(m => m === existing ? { ...m, error: undefined } : m) : [...before, question])
+        .map(m => isNew && m.requestId === requestId ? { ...m, sessionId } : m) });
     try {
       let token: string | undefined;
       if (this.repo) {
         token = await this.repo.token();
         if (this.disposed) return;
-        if (!sessionId) {
-          this.listRevision++;
-          const session = await this.repo.create(text);
-          sessionId = session.id;
-          if (this.disposed) return;
-          this.listRevision++;
-          this.set({ sessions: [session, ...this.state.sessions] });
-          if (selection === this.selection) this.set({ sessionId,
-            messages: this.state.messages.map(m => m.requestId === requestId ? { ...m, sessionId: session.id } : m) });
-        }
       }
       // A retry gets only turns preceding its original question, never its own/later answer.
       const index = before.findIndex(m => m.sender === "user" && m.requestId === requestId);
       const context = index < 0 ? before : before.slice(0, index);
+      const draft = sessionId ? this.unsaved.get(sessionId) : undefined;
       const body = chatBody({ message: text, id: this.source.id, video_url: this.source.video_url,
         history: historyFor(context, this.source.key),
-        ...(sessionId ? { session_id: sessionId, request_id: requestId } : {}) });
-      if (sessionId) this.pending.set(sessionId, requestId);
+        ...(sessionId ? { session_id: sessionId, request_id: requestId, ...(draft ? { title: draft.title } : {}) } : {}) });
       const result = await this.send(body, token);
       if (!result.response?.trim()) throw new Error("The server returned no answer. Retry this question.");
       if (this.repo && (result.session_id !== sessionId || result.request_id !== requestId ||
         !result.user_message_id || !result.assistant_message_id)) {
         throw new Error("The backend did not confirm saving this answer. Deploy the chat-history backend, then refresh and retry.");
       }
-      if ((sessionId ? this.state.sessionId === sessionId : selection === this.selection) && !this.disposed) {
+      if (sessionId) this.unsaved.delete(sessionId);
+      if (this.viewing(sessionId, selection) && !this.disposed) {
         const answer: ChatMessage = { id: result.assistant_message_id ?? nextMessageId(), requestId,
           sessionId: sessionId ?? undefined, sender: "bot", text: result.response, source: this.source.key,
           replyTo: result.user_message_id ?? question.id, suggestions: result.suggestions ?? [],
@@ -182,21 +185,50 @@ export class ChatController {
         const listRevision = ++this.listRevision;
         try {
           const sessions = await this.repo.sessions();
-          if (listRevision === this.listRevision) this.set({ sessions });
+          if (listRevision === this.listRevision) this.set({ sessions: this.withUnsaved(sessions) });
         } catch (error) {
           // The answer is already saved; a list-refresh error must not mark its question failed.
           if (listRevision === this.listRevision) this.set({ error: errorText(error) });
         }
       }
     } catch (error) {
-      if (sessionId ? this.state.sessionId === sessionId : selection === this.selection) this.set({ error: errorText(error), messages: this.state.messages.map(m =>
+      if (sessionId && this.unsaved.has(sessionId)) await this.settleUnsaved(sessionId);
+      if (this.viewing(sessionId, selection)) this.set({ error: errorText(error), messages: this.state.messages.map(m =>
         m.sender === "user" && m.requestId === requestId ? { ...m, error: errorText(error) } : m) });
     } finally {
       if (sessionId && this.pending.get(sessionId) === requestId) this.pending.delete(sessionId);
-      if (sessionId ? this.state.sessionId === sessionId : selection === this.selection) this.set({ busy: false, pendingRequestId: null });
+      if (this.viewing(sessionId, selection)) this.set({ busy: false, pendingRequestId: null });
     }
   }
+
+  /** Whether a send's chat is still on screen; a first send that created nothing is the draft again. */
+  private viewing(sessionId: string | null, selection: number) {
+    if (!sessionId) return selection === this.selection;
+    return this.state.sessionId === sessionId || (this.state.sessionId === null && this.draftId === sessionId);
+  }
+  /** A list read from the server, plus new chats it doesn't have yet; a chat it lists is no longer unsaved. */
+  private withUnsaved(sessions: ChatSession[]) {
+    for (const session of sessions) this.unsaved.delete(session.id);
+    return [...this.unsaved.values(), ...sessions.filter(s => !this.unsaved.has(s.id))];
+  }
+  /**
+   * After a failed first send: if /chat never created the chat, unlist it and turn the view back
+   * into the draft (question and error kept, same IDs for a retry). If the list can't be read,
+   * whether it exists is unknown, so it stays listed and a retry sends its title again.
+   */
+  private async settleUnsaved(id: string) {
+    const listRevision = ++this.listRevision;
+    try {
+      const sessions = await this.repo!.sessions();
+      if (listRevision !== this.listRevision || this.disposed) return;
+      const exists = sessions.some(s => s.id === id);
+      if (!exists) this.unsaved.delete(id);
+      this.set({ sessions: this.withUnsaved(sessions), ...(!exists && this.state.sessionId === id ? { sessionId: null } : {}) });
+    } catch { /* see above */ }
+  }
 }
+
+const UNSAVED_EDIT = "Wait for this chat's first answer before renaming or deleting it.";
 
 function mergeMessages(remote: ChatMessage[], local: ChatMessage[]) {
   const key = (m: ChatMessage) => m.requestId ? `${m.sender}:${m.requestId}` : m.id;

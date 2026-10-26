@@ -83,6 +83,8 @@ SELECT pg_temp.denied('DELETE FROM public.chat_sessions');
 SELECT pg_temp.denied($q$INSERT INTO public.chat_messages (session_id,request_id,role,content)
  VALUES ('20000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000002','user','anon')$q$);
 SELECT pg_temp.denied($q$UPDATE public.chat_messages SET content='anon'$q$);
+SELECT pg_temp.denied($q$SELECT public.chat_start('20000000-0000-0000-0000-000000000009','preloaded:1','1',NULL,'anon',
+ '30000000-0000-0000-0000-000000000009','anon')$q$);
 SELECT pg_temp.denied('DELETE FROM public.chat_messages');
 
 SET LOCAL ROLE authenticated;
@@ -91,6 +93,23 @@ SELECT pg_temp.assert_true((SELECT title='Renamed' FROM public.chat_sessions), '
 SELECT pg_temp.assert_true((SELECT count(*)=3 FROM public.chat_messages), 'cross-user inserts changed nothing');
 DELETE FROM public.chat_sessions WHERE id='20000000-0000-0000-0000-000000000001';
 SELECT pg_temp.assert_true((SELECT count(*)=0 FROM public.chat_messages), 'session cascade without message DELETE grant');
+SELECT public.chat_start('20000000-0000-0000-0000-000000000004','preloaded:1','1',NULL,'Started',
+ '30000000-0000-0000-0000-000000000005','First question');
+SELECT pg_temp.assert_true((SELECT count(*)=1 FROM public.chat_sessions
+ WHERE id='20000000-0000-0000-0000-000000000004' AND title='Started' AND user_id=auth.uid())
+ AND (SELECT count(*)=1 FROM public.chat_messages WHERE session_id='20000000-0000-0000-0000-000000000004' AND role='user'),
+ 'chat_start creates the chat with its question');
+SELECT pg_temp.denied($q$SELECT public.chat_start('20000000-0000-0000-0000-000000000005','preloaded:1','1',NULL,'Empty',
+ '30000000-0000-0000-0000-000000000006',' ')$q$, '23514');
+SELECT pg_temp.assert_true(NOT EXISTS (SELECT FROM public.chat_sessions WHERE id='20000000-0000-0000-0000-000000000005'),
+ 'chat_start is all-or-nothing');
+SET LOCAL request.jwt.claim.sub = '10000000-0000-0000-0000-000000000002';
+SELECT pg_temp.denied($q$SELECT public.chat_start('20000000-0000-0000-0000-000000000004','preloaded:1','1',NULL,'Bob claims',
+ '30000000-0000-0000-0000-000000000007','Mine?')$q$, '23505');
+SET LOCAL request.jwt.claim.sub = '10000000-0000-0000-0000-000000000001';
+SELECT pg_temp.assert_true((SELECT title='Started' FROM public.chat_sessions WHERE id='20000000-0000-0000-0000-000000000004')
+ AND (SELECT count(*)=1 FROM public.chat_messages WHERE session_id='20000000-0000-0000-0000-000000000004'),
+ 'another user cannot take a chat ID');
 INSERT INTO public.chat_sessions (id,dashboard_key,dashboard_id,title) VALUES
  ('20000000-0000-0000-0000-000000000003','preloaded:2','2','Account cascade');
 INSERT INTO public.chat_messages (session_id,request_id,role,content) VALUES

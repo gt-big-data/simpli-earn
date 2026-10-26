@@ -178,6 +178,9 @@ class ChatRequest(BaseModel):
     history: list[ChatTurn] = Field(default_factory=list, max_length=CHAT_HISTORY_MAX_TURNS)
     session_id: Optional[uuid.UUID] = None
     request_id: Optional[uuid.UUID] = None
+    # Set on a new chat's first send (the browser picks session_id): the chat is created together
+    # with its first question, so a send that fails before that never leaves an empty chat.
+    title: Optional[str] = Field(default=None, max_length=100)
 
     @model_validator(mode="after")
     def validate_saved_request(self):
@@ -185,6 +188,12 @@ class ChatRequest(BaseModel):
             raise ValueError("session_id and request_id must be provided together")
         if not self.message.strip():
             raise ValueError("message must not be blank")
+        if self.title is not None:
+            if self.session_id is None:
+                raise ValueError("title is only for a saved chat's first send")
+            self.title = self.title.strip()
+            if not self.title:
+                raise ValueError("title must not be blank")
         return self
 
 
@@ -518,17 +527,23 @@ def chat_endpoint(req: ChatRequest, authorization: Optional[str] = Header(None))
     with user_chat_store(authorization) as store:
         if req.session_id is None:
             raise HTTPException(422, "Signed-in chat requires session_id and request_id")
-        session = store.session(req.session_id)
+        # Validate the transcript before any write, so a bad locator cannot create a chat
         if req.video_url:
             video_id = youtube_id(req.video_url)
-            dashboard_key = f"youtube:{video_id}"
+            dashboard_key, locator = f"youtube:{video_id}", {"dashboard_id": None, "video_identifier": video_id}
             req = req.model_copy(update={"id": None, "video_url": f"https://www.youtube.com/watch?v={video_id}"})
         else:
             dashboard_id = req.id or "1"
             if dashboard_id not in STATIC_TRANSCRIPTS:
                 raise HTTPException(422, "Unknown preloaded dashboard")
-            dashboard_key = f"preloaded:{dashboard_id}"
+            dashboard_key, locator = f"preloaded:{dashboard_id}", {"dashboard_id": dashboard_id, "video_identifier": None}
             req = req.model_copy(update={"id": dashboard_id})
+        session = store.find_session(req.session_id)
+        if session is None:
+            if req.title is None:
+                raise HTTPException(404, "Chat session not found")
+            store.start(req.session_id, dashboard_key, locator, req.title, req.request_id, req.message)
+            session = store.session(req.session_id)
         if session["dashboard_key"] != dashboard_key:
             raise HTTPException(409, "This conversation belongs to another transcript")
         question, answer = store.question(req.session_id, req.request_id, req.message)

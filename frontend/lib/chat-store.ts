@@ -14,7 +14,8 @@ export type MessageRow = {
 export interface ChatRepository {
   sessions(): Promise<ChatSession[]>;
   messages(id: string): Promise<ChatMessage[]>;
-  create(title: string): Promise<ChatSession>;
+  /** A not-yet-saved chat for the list; /chat creates the real row with its first question. */
+  draft(id: string, title: string): ChatSession;
   rename(id: string, title: string): Promise<void>;
   remove(id: string): Promise<void>;
   token(): Promise<string>;
@@ -63,12 +64,10 @@ export function createChatRepository(client: SupabaseClient, accountId: string, 
       });
       return messagesFromRows(rows, source.key);
     },
-    async create(title) {
-      const { data, error } = await client.from("chat_sessions").insert({
-        user_id: accountId, dashboard_key: source.key, dashboard_id: source.id,
-        video_identifier: source.videoId, title: clipText(title.trim(), 100),
-      }).select().single();
-      check(error); return data as ChatSession;
+    draft(id, title) {
+      const now = new Date().toISOString();
+      return { id, user_id: accountId, dashboard_key: source.key, dashboard_id: source.id,
+        video_identifier: source.videoId, title, created_at: now, updated_at: now };
     },
     async rename(id, title) {
       const { data, error } = await client.from("chat_sessions").update({ title: clipText(title.trim(), 100) })

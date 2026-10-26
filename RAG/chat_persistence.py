@@ -68,11 +68,30 @@ class ChatStore:
             # Never send database details or credentials to the browser.
             raise HTTPException(503, "Chat history could not be saved or loaded; refresh and retry") from exc
 
-    def session(self, session_id: UUID) -> dict:
+    def find_session(self, session_id: UUID) -> dict | None:
         rows = self._execute(self.client.table("chat_sessions").select("*").eq("id", str(session_id)))
-        if not rows:
+        return rows[0] if rows else None
+
+    def session(self, session_id: UUID) -> dict:
+        session = self.find_session(session_id)
+        if session is None:
             raise HTTPException(404, "Chat session not found")
-        return rows[0]
+        return session
+
+    def start(self, session_id: UUID, dashboard_key: str, locator: dict, title: str,
+              request_id: UUID, content: str) -> None:
+        """Create a chat and its first question in one transaction (migration 004's chat_start)."""
+        try:
+            self.client.rpc("chat_start", {
+                "p_session_id": str(session_id), "p_dashboard_key": dashboard_key,
+                "p_dashboard_id": locator["dashboard_id"], "p_video_identifier": locator["video_identifier"],
+                "p_title": title, "p_request_id": str(request_id), "p_content": content,
+            }).execute()
+        except Exception as exc:
+            # A unique violation means the ID exists: a concurrent retry of this first send created
+            # it (carry on), or it is another user's (the caller's lookup then 404s, as RLS hides it).
+            if getattr(exc, "code", None) != "23505":
+                raise HTTPException(503, "Chat history could not be saved or loaded; refresh and retry") from exc
 
     def messages(self, session_id: UUID, request_id: UUID) -> list[dict]:
         return self._execute(self.client.table("chat_messages").select("*")

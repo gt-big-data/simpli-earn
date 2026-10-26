@@ -107,7 +107,26 @@ $$;
 CREATE TRIGGER chat_message_parent BEFORE INSERT ON public.chat_messages
     FOR EACH ROW EXECUTE FUNCTION public.chat_message_parent();
 
+-- A new chat's first send: the session and its first question commit together, so a send that
+-- fails before the question is saved never leaves an empty chat. Invoker rights: the same grants,
+-- RLS policies and triggers apply as for the two direct inserts. The caller picks the session ID,
+-- so a retried first send is idempotent; an existing ID fails with a unique violation (23505).
+CREATE FUNCTION public.chat_start(
+    p_session_id uuid, p_dashboard_key text, p_dashboard_id text, p_video_identifier text,
+    p_title text, p_request_id uuid, p_content text
+) RETURNS void
+LANGUAGE plpgsql SECURITY INVOKER SET search_path = '' AS $$
+BEGIN
+    INSERT INTO public.chat_sessions (id, dashboard_key, dashboard_id, video_identifier, title)
+        VALUES (p_session_id, p_dashboard_key, p_dashboard_id, p_video_identifier, p_title);
+    INSERT INTO public.chat_messages (session_id, request_id, role, content)
+        VALUES (p_session_id, p_request_id, 'user', p_content);
+END;
+$$;
+
 REVOKE ALL ON FUNCTION public.chat_session_updated_at(), public.chat_message_parent()
     FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON FUNCTION public.chat_start(uuid, text, text, text, text, uuid, text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.chat_start(uuid, text, text, text, text, uuid, text) TO authenticated;
 -- These are trigger functions, not client-callable RPCs. Trigger invocation needs no EXECUTE grant.
 COMMIT;

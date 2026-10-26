@@ -100,6 +100,20 @@ def main():
                 denied(request("DELETE", f"/rest/v1/{table}?id=not.is.null"))
             denied(request("POST", "/rest/v1/chat_messages", question))
             denied(request("POST", "/rest/v1/chat_sessions", {"dashboard_key": "preloaded:1", "dashboard_id": "1", "title": "anon"}))
+            # First send of a new chat: chat and question together, or nothing
+            started = str(uuid4())
+            start = {"p_session_id": started, "p_dashboard_key": "preloaded:1", "p_dashboard_id": "1",
+                     "p_video_identifier": None, "p_title": "Started", "p_request_id": str(uuid4()), "p_content": "First?"}
+            ok(request("POST", "/rest/v1/rpc/chat_start", start, alice))
+            chat = lambda: ok(request("GET", f"/rest/v1/chat_sessions?id=eq.{started}&select=title", token=alice))
+            started_messages = lambda: ok(request("GET", f"/rest/v1/chat_messages?session_id=eq.{started}&select=role", token=alice))
+            assert chat() == [{"title": "Started"}] and started_messages() == [{"role": "user"}]
+            assert request("POST", "/rest/v1/rpc/chat_start", {**start, "p_title": "Bob claims"}, bob).status_code == 409
+            assert chat() == [{"title": "Started"}] and started_messages() == [{"role": "user"}]
+            empty = str(uuid4())
+            assert not request("POST", "/rest/v1/rpc/chat_start", {**start, "p_session_id": empty, "p_content": " "}, alice).is_success
+            assert ok(request("GET", f"/rest/v1/chat_sessions?id=eq.{empty}&select=id", token=alice)) == []
+            denied(request("POST", "/rest/v1/rpc/chat_start", {**start, "p_session_id": str(uuid4())}))
             ok(request("DELETE", f"/rest/v1/chat_sessions?id=eq.{sid}", token=alice))
             assert ok(request("GET", f"/rest/v1/chat_messages?session_id=eq.{sid}&select=*", token=alice)) == []
             # Admin is used only for fixture lifecycle and observing account-deletion cascades.
