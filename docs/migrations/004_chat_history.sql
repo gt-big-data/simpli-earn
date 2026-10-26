@@ -7,7 +7,7 @@ CREATE TABLE public.chat_sessions (
     dashboard_key text NOT NULL,
     dashboard_id text,
     video_identifier text,
-    title text NOT NULL CHECK (length(btrim(title)) BETWEEN 1 AND 100),
+    title text NOT NULL CHECK (title ~ '\S' AND length(title) <= 100),
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now(),
     CHECK (
@@ -27,12 +27,15 @@ CREATE TABLE public.chat_messages (
     session_id uuid NOT NULL REFERENCES public.chat_sessions(id) ON DELETE CASCADE,
     request_id uuid NOT NULL,
     role text NOT NULL CHECK (role IN ('user', 'assistant')),
-    content text NOT NULL CHECK (length(btrim(content)) > 0),
-    sources jsonb NOT NULL DEFAULT '[]'::jsonb CHECK (jsonb_typeof(sources) = 'array'),
-    suggestions jsonb NOT NULL DEFAULT '[]'::jsonb CHECK (jsonb_typeof(suggestions) = 'array'),
+    content text NOT NULL CHECK (content ~ '\S' AND length(content) <= 50000),
+    sources jsonb NOT NULL DEFAULT '[]'::jsonb
+        CHECK (jsonb_typeof(sources) = 'array' AND octet_length(sources::text) <= 65536),
+    suggestions jsonb NOT NULL DEFAULT '[]'::jsonb
+        CHECK (jsonb_typeof(suggestions) = 'array' AND octet_length(suggestions::text) <= 16384),
     provider text,
     model text,
-    created_at timestamptz NOT NULL DEFAULT now(),
+    -- clock_timestamp, not now(): a question and its answer saved in one transaction keep their order
+    created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
     UNIQUE (session_id, request_id, role),
     CHECK (role <> 'user' OR length(content) <= 2000)
 );
@@ -74,12 +77,13 @@ BEGIN
        (OLD.id, OLD.user_id, OLD.dashboard_key, OLD.dashboard_id, OLD.video_identifier, OLD.created_at) THEN
         RAISE EXCEPTION 'Chat ownership and transcript are immutable' USING ERRCODE = '23514';
     END IF;
-    -- updated_at orders the history list by activity: a rename keeps its place, and only the
-    -- message-insert trigger below moves a chat up. Clients never choose the value.
-    IF NEW.title IS DISTINCT FROM OLD.title THEN
-        NEW.updated_at := OLD.updated_at;
+    -- updated_at orders the history list by activity, so only a new message moves a chat. The
+    -- message-insert trigger below is the only nested caller; any direct client UPDATE (a rename,
+    -- an unchanged title, or an explicit updated_at) keeps the chat where it is.
+    IF pg_trigger_depth() > 1 THEN
+        NEW.updated_at := clock_timestamp();  -- fired by the message-insert trigger
     ELSE
-        NEW.updated_at := clock_timestamp();
+        NEW.updated_at := OLD.updated_at;     -- direct client UPDATE: never moves a chat
     END IF;
     RETURN NEW;
 END;
@@ -90,7 +94,9 @@ CREATE TRIGGER chat_session_updated_at BEFORE UPDATE ON public.chat_sessions
 CREATE FUNCTION public.chat_message_parent() RETURNS trigger
 LANGUAGE plpgsql SECURITY INVOKER SET search_path = '' AS $$
 BEGIN
-    -- Also locks the parent against deletion until this insert commits. Invoker RLS applies.
+    -- Bumps the chat's updated_at (see chat_session_updated_at, which needs this nested call and
+    -- the authenticated UPDATE grant on updated_at) and locks the parent against deletion until
+    -- this insert commits. Invoker RLS applies.
     UPDATE public.chat_sessions SET updated_at = clock_timestamp() WHERE id = NEW.session_id;
     IF NOT FOUND THEN
         RAISE EXCEPTION 'Chat session not found' USING ERRCODE = '42501';
@@ -109,8 +115,9 @@ CREATE TRIGGER chat_message_parent BEFORE INSERT ON public.chat_messages
 
 -- A new chat's first send: the session and its first question commit together, so a send that
 -- fails before the question is saved never leaves an empty chat. Invoker rights: the same grants,
--- RLS policies and triggers apply as for the two direct inserts. The caller picks the session ID,
--- so a retried first send is idempotent; an existing ID fails with a unique violation (23505).
+-- RLS policies and triggers apply as for the two direct inserts. The caller picks the session ID.
+-- Not idempotent at the SQL level: calling it again with an existing ID raises a unique violation
+-- (23505), which the backend turns into the already-saved chat (and its answer, if any).
 CREATE FUNCTION public.chat_start(
     p_session_id uuid, p_dashboard_key text, p_dashboard_id text, p_video_identifier text,
     p_title text, p_request_id uuid, p_content text
@@ -124,9 +131,9 @@ BEGIN
 END;
 $$;
 
+-- Trigger functions, not client-callable RPCs. Trigger invocation needs no EXECUTE grant.
 REVOKE ALL ON FUNCTION public.chat_session_updated_at(), public.chat_message_parent()
     FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.chat_start(uuid, text, text, text, text, uuid, text) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.chat_start(uuid, text, text, text, text, uuid, text) TO authenticated;
--- These are trigger functions, not client-callable RPCs. Trigger invocation needs no EXECUTE grant.
 COMMIT;
