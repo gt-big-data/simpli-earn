@@ -15,16 +15,24 @@ History survives reload/sign-out; signing out clears the visible messages and dr
 3. On Cloud Run, create/configure Secret Manager secret `supabase-anon-key` and grant the service
    account access. `cloudbuild.yaml` attaches it as `SUPABASE_ANON_KEY`. No new frontend variables.
 4. Deploy the backend before the frontend. A saved answer is successful only when `/chat`
-   acknowledges both saved message IDs. An old backend produces an explicit error, never a false
-   saved answer. Roll back application revisions without dropping the chat tables.
+   acknowledges both saved message IDs, or says `saved: false` explicitly. An old backend produces
+   an explicit error, never a false saved answer. Roll back application revisions without dropping the chat tables.
 
 Browser session CRUD/reads use the existing Supabase client and its user JWT. Backend chat
 writes use a request-scoped client with the public key, the verified bearer token, no local auth
 session/refresh, and an owned/closed HTTP transport. They never use the global service-role client.
 RLS checks session ownership and message-parent ownership; messages have no update/delete grants.
 Deleting a session or account cascades its messages. No retention, pruning, or backfill is added.
-The history list is ordered by `updated_at`, which only a new message advances: renaming a chat
-keeps its place, and clients can never set the value themselves.
+The history list is ordered by `updated_at`, which only a new message advances (the
+message-insert trigger's nested update): any direct client UPDATE, whether a rename, an unchanged
+title or an explicit `updated_at`, keeps the chat where it is. Messages get `created_at =
+clock_timestamp()`, so a question and answer saved in one transaction keep their order.
+
+Stored text is capped by CHECK constraints: titles 1–100 characters, questions 2,000, answers
+50,000, `sources` 64 KiB and `suggestions` 16 KiB of JSON, and no title or message may be blank.
+Measured against real data (2026-10-26): the largest possible `sources` over every bundled
+transcript is 2.3 KB (4 chunks of at most 500 characters), suggestions about 200 bytes, and
+answers deliberately pushed to be long about 1,000 characters.
 
 Keys are `preloaded:<dashboard ID>` for bundled transcripts and `youtube:<video ID>` for custom
 videos. URL variants normalize to the same custom key. These namespaces deliberately stay
@@ -50,9 +58,12 @@ an existing or new chat, or on a guest request, is 422. The list shows the new c
 first send is pending, and drops it again if that send created nothing.
 
 The backend saves the question, generates the complete JSON answer, then saves the assistant
-row before HTTP 200. Success adds `session_id`, `request_id`, `user_message_id`, and
-`assistant_message_id` to the response. A duplicate request returns the previously saved
-answer. Concurrent retries may duplicate inference work but save only one question/answer pair.
+row before HTTP 200. Success adds `session_id`, `request_id`, `user_message_id`,
+`assistant_message_id` and `saved: true` to the response. A duplicate request returns the
+previously saved answer. A question that breaks a CHECK (blank, too long) is a 422 and never
+reaches the model. An answer that breaks a storage cap is still returned, as HTTP 200 with
+`saved: false`, `not_saved_reason` and no `assistant_message_id`: the browser shows it marked
+unsaved, and after a reload its question shows "No saved answer yet" with Retry. Concurrent retries may duplicate inference work but save only one question/answer pair.
 
 The controller belongs to the dashboard, so panel close/fullscreen does not cancel generation.
 Browser disconnection can still allow the backend to finish saving. Process termination,
