@@ -1,0 +1,14 @@
+{
+  "name": "simpli-earn",
+  "private": true,
+  "description": "Local full-stack launcher for RAG, sentiment, and frontend",
+  "scripts": {
+    "dev": "node scripts/dev-all.mjs",
+    "dev:rag": "node scripts/dev-all.mjs --only rag",
+    "dev:sentiment": "node scripts/dev-all.mjs --only sentiment",
+    "dev:frontend": "node scripts/dev-all.mjs --only frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

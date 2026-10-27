@@ -50,11 +50,24 @@ cd ..
 
 ## Run the App
 
-Start each service in a separate terminal.
+### One command (Mac + Windows)
+
+From the repo root (after creating `venv` and installing frontend deps):
+
+```bash
+npm install          # once — installs the local launcher (concurrently)
+npm run dev          # starts RAG :8000, Sentiment :8001, Frontend :3000
+```
+
+Open `http://localhost:3000`. Press Ctrl+C to stop all three.
+
+`./run-local.sh` does the same on Mac/Linux (runs `npm run dev`).
+
+### Or start each service separately
 
 1) **RAG API** (port 8000)
 ```bash
-source venv/bin/activate
+source venv/bin/activate   # Windows: venv\Scripts\activate
 cd RAG
 uvicorn api_chatbot:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -71,8 +84,6 @@ uvicorn api:app --reload --host 0.0.0.0 --port 8001
 cd frontend
 npm run dev
 ```
-
-Open `http://localhost:3000`.
 
 ## Tests
 
