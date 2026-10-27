@@ -2,8 +2,10 @@
 /**
  * Cross-platform local launcher: RAG (8000) + Sentiment (8001) + Frontend (3000).
  *
- *   npm run dev          — quiet backends + clear URL banner
- *   npm run dev:verbose  — full logs from all services
+ * Prefer:
+ *   ./start-app              — quiet backends + clear URL banner
+ *   ./start-app --verbose    — full logs from all services
+ * Windows: start-app.cmd [--verbose]
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -39,7 +41,7 @@ function printBanner() {
   console.log(green(bold(line)));
   console.log(dim("  Ctrl+C stops all services"));
   if (!verbose) {
-    console.log(dim("  Quiet mode (backends hidden). Full logs: npm run dev:verbose"));
+    console.log(dim("  Quiet mode (backends hidden). Full logs: ./start-app --verbose"));
   } else {
     console.log(dim("  Verbose mode — showing all service logs"));
   }

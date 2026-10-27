@@ -52,18 +52,24 @@ cd ..
 
 ### One command (Mac + Windows)
 
-From the repo root (after creating `venv` and installing frontend deps):
+From the repo root (after creating `venv` and installing frontend deps once):
 
 ```bash
 npm install          # once — installs the local launcher (concurrently)
-npm run dev          # starts RAG :8000, Sentiment :8001, Frontend :3000
+./start-app          # Mac/Linux — RAG :8000, Sentiment :8001, Frontend :3000
+start-app.cmd        # Windows
 ```
 
 Open `http://localhost:3000` (printed in a banner at startup). Press Ctrl+C to stop all three.
 
-Quiet by default (backend logs hidden). For full logs: `npm run dev:verbose`.
+Quiet by default (backend logs hidden). For full logs:
 
-`./run-local.sh` does the same on Mac/Linux (runs `npm run dev`).
+```bash
+./start-app --verbose      # Mac/Linux
+start-app.cmd --verbose    # Windows
+```
+
+`./run-local.sh` still works as an alias for `./start-app`.
 
 ### Or start each service separately
 

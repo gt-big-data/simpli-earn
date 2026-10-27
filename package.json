@@ -3,6 +3,8 @@
   "private": true,
   "description": "Local full-stack launcher for RAG, sentiment, and frontend",
   "scripts": {
+    "start-app": "node scripts/dev-all.mjs",
+    "start-app:verbose": "node scripts/dev-all.mjs --verbose",
     "dev": "node scripts/dev-all.mjs",
     "dev:verbose": "node scripts/dev-all.mjs --verbose",
     "dev:rag": "node scripts/dev-all.mjs --only rag --verbose",
