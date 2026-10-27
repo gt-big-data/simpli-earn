@@ -14,18 +14,64 @@ interface SentimentDataPoint {
   ma_specificity_0_1: number | null;
 }
 
+export interface RedFlagHistoricalPattern {
+  direction: "down" | "flat" | "up";
+  hit_rate: number;
+  sample_size: number;
+  summary: string;
+}
+
 export interface RedFlag {
   sentence_index: number;
   quote: string;
   category: string;
   severity: "high" | "medium" | "low";
   description: string;
+  historical_pattern?: RedFlagHistoricalPattern;
+}
+
+export interface RedFlagPrediction {
+  expected_next_open?: "down" | "flat" | "up" | null;
+  reason?: string;
+  window?: string;
+  threshold_pct?: number;
+  flag_volume?: {
+    count?: number;
+    high?: number;
+    medium?: number;
+    low?: number;
+    weighted_score?: number;
+    level?: string;
+    summary?: string;
+  };
+  actual_next_open?: {
+    next_open_pct?: number;
+    direction?: "down" | "flat" | "up";
+    ticker?: string;
+    date?: string;
+  };
+  strategy?: {
+    mode?: string;
+    action?: string;
+    instrument?: string | null;
+    timing?: string;
+    ticker?: string;
+    thesis?: string;
+    retrospective?: {
+      direction_correct?: boolean;
+      actual_direction?: string;
+      actual_next_open_pct?: number;
+      note?: string;
+    } | null;
+    disclaimer?: string;
+  };
 }
 
 interface SentimentGraphProps {
   relevanceData: SentimentDataPoint[];
   specificityData: SentimentDataPoint[];
   redFlags?: RedFlag[];
+  redFlagPrediction?: RedFlagPrediction | null;
   onTimestampClick: (timestamp: number) => void;
 }
 
@@ -69,7 +115,7 @@ const wrapForTooltip = (text: string, maxCharsPerLine = 48): string[] => {
   return lines;
 };
 
-const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specificityData, redFlags = [], onTimestampClick }) => {
+const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specificityData, redFlags = [], redFlagPrediction = null, onTimestampClick }) => {
   // Extract data, using -1_1 scale for both relevance and specificity
   const relevanceValues = relevanceData.map(row => row['relevance_-1_1']);
   const specificityValues = specificityData.map(row => row['specificity_-1_1']);
@@ -165,6 +211,10 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
 
   const options = {
     responsive: true,
+    interaction: {
+      mode: "index" as const,
+      intersect: false,
+    },
     plugins: {
       legend: {
         display: true,
@@ -181,23 +231,51 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
         padding: 12,
         titleFont: { size: 13 },
         bodyFont: { size: 12 },
+        footerFont: { size: 11, weight: "bold" as const },
+        footerColor: "rgba(129, 209, 141, 0.95)",
+        // At a red-flag index, only show the flag tooltip (history was getting clipped
+        // under long Relevance + quote lines).
+        filter: (item: { dataIndex: number; dataset: { label?: string }; raw: unknown }) => {
+          const si = sentenceIndices[item.dataIndex];
+          const flagHere = redFlagBySentence.has(si);
+          if (flagHere) {
+            return item.dataset.label === "Red Flags" && item.raw != null;
+          }
+          return item.dataset.label !== "Red Flags";
+        },
         callbacks: {
-          label: (ctx: { dataIndex: number; datasetIndex: number; dataset: { label?: string } }) => {
+          label: (ctx: { dataIndex: number; dataset: { label?: string } }) => {
             if (ctx.dataset.label === "Red Flags") {
               const si = sentenceIndices[ctx.dataIndex];
               const flag = redFlagBySentence.get(si);
               if (flag) {
                 const header = `⚠️ ${flag.category.replace(/_/g, " ")} (${flag.severity})`;
+                // History near the top so it isn't clipped under the quote
+                const hist = flag.historical_pattern
+                  ? wrapForTooltip(`History: ${flag.historical_pattern.summary}`)
+                  : ["History: not enough past calls for this category yet"];
                 const quoteLines = wrapForTooltip(flag.quote);
                 if (quoteLines.length > 0) {
                   quoteLines[0] = `"${quoteLines[0]}`;
                   quoteLines[quoteLines.length - 1] = `${quoteLines[quoteLines.length - 1]}"`;
                 }
                 const descLines = wrapForTooltip(flag.description);
-                return [header, ...quoteLines, ...descLines];
+                return [header, ...hist, ...quoteLines, ...descLines];
               }
             }
             return undefined;
+          },
+          footer: (items: { dataIndex: number; dataset: { label?: string } }[]) => {
+            const rf = items.find((i) => i.dataset.label === "Red Flags");
+            if (!rf) return "";
+            const flag = redFlagBySentence.get(sentenceIndices[rf.dataIndex]);
+            const p = flag?.historical_pattern;
+            if (!p) return "";
+            const dir =
+              p.direction === "down" ? "↓ next open"
+                : p.direction === "up" ? "↑ next open"
+                  : "→ flat open";
+            return `${dir} · hit rate ${(p.hit_rate * 100).toFixed(0)}% (n=${p.sample_size})`;
           },
         },
       },
@@ -279,9 +357,49 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
 
   ChartJS.register(verticalLinePlugin);
 
+  const expected = redFlagPrediction?.expected_next_open;
+  const actual = redFlagPrediction?.actual_next_open;
+  const strategy = redFlagPrediction?.strategy;
+  const volume = redFlagPrediction?.flag_volume;
+  const predLabel =
+    expected === "down" ? "lean down at next open"
+      : expected === "up" ? "lean up at next open"
+        : expected === "flat" ? "lean flat at next open"
+          : null;
+  const actionLabel =
+    strategy?.action === "buy_put" ? "Buy PUT (paper)"
+      : strategy?.action === "buy_call" ? "Buy CALL (paper)"
+        : strategy?.action === "no_trade" ? "No trade"
+          : null;
+
   return (
-    <div className="flex w-full h-full box-border pl-6 pr-6 py-2">
-      <div className="w-full h-full">
+    <div className="flex flex-col w-full h-full box-border pl-6 pr-6 py-2 gap-1">
+      {(predLabel || strategy) && (
+        <div className="shrink-0 text-[11px] font-montserrat text-white/75 space-y-0.5">
+          {predLabel && (
+            <p>
+              Predictive signal: flags {predLabel}
+              {volume?.summary ? ` · ${volume.summary}` : ""}
+              {actual?.next_open_pct != null && actual.direction
+                ? ` · actual next open: ${actual.next_open_pct > 0 ? "+" : ""}${actual.next_open_pct.toFixed(2)}% (${actual.direction})`
+                : ""}
+            </p>
+          )}
+          {actionLabel && (
+            <p className="text-white/85">
+              <span className="text-[#81D18D] font-semibold">{actionLabel}</span>
+              {strategy?.thesis ? ` — ${strategy.thesis}` : ""}
+            </p>
+          )}
+          {strategy?.retrospective?.note && (
+            <p className={strategy.retrospective.direction_correct ? "text-[#81D18D]/70" : "text-red-300/80"}>
+              {strategy.retrospective.direction_correct ? "✓" : "✗"} {strategy.retrospective.note}
+            </p>
+          )}
+          <p className="text-white/45">Hover a red triangle for category history · paper strategy only</p>
+        </div>
+      )}
+      <div className="w-full flex-1 min-h-0">
         <Line data={chartData} options={options} />
       </div>
     </div>

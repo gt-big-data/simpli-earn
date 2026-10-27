@@ -7,7 +7,7 @@ import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import QoQComparison from "./QoQComparison";
 import { useSearchParams } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
-import type { RedFlag } from "./SentimentGraph";
+import type { RedFlag, RedFlagPrediction } from "./SentimentGraph";
 
 // Dashboard configurations - now only for ticker and date
 const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
@@ -123,8 +123,14 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   // No flags until the processing job has produced the sentiment files
   const redFlagsKey =
     (dashboardId || redFlagsVideoUrl) && !pipelineStatus ? `${dashboardId ?? ""}|${redFlagsVideoUrl ?? ""}` : null;
-  const [redFlagsResult, setRedFlagsResult] = useState<{ key: string; flags: RedFlag[] } | null>(null);
+  const [redFlagsResult, setRedFlagsResult] = useState<{
+    key: string;
+    flags: RedFlag[];
+    prediction: RedFlagPrediction | null;
+  } | null>(null);
   const redFlags = redFlagsKey && redFlagsResult?.key === redFlagsKey ? redFlagsResult.flags : NO_RED_FLAGS;
+  const redFlagPrediction =
+    redFlagsKey && redFlagsResult?.key === redFlagsKey ? redFlagsResult.prediction : null;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Set when the video exists but relevance/specificity CSVs are not ready yet (user pipeline in progress). */
@@ -219,8 +225,18 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
       }),
     })
       .then((res) => res.json())
-      .then((rfData) => { if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: rfData.red_flags || [] }); })
-      .catch(() => { if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: [] }); });
+      .then((rfData) => {
+        if (!cancelled) {
+          setRedFlagsResult({
+            key: redFlagsKey,
+            flags: rfData.red_flags || [],
+            prediction: rfData.prediction || null,
+          });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: [], prediction: null });
+      });
     return () => { cancelled = true; };
   }, [redFlagsKey, dashboardId, redFlagsVideoUrl]);
 
@@ -386,6 +402,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
                   relevanceData={sentimentData.relevance}
                   specificityData={sentimentData.specificity}
                   redFlags={redFlags}
+                  redFlagPrediction={redFlagPrediction}
                   onTimestampClick={onTimestampClick}
                 />
               ) : (

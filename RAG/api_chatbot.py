@@ -809,6 +809,27 @@ def _normalize_video_id(dashboard_id: Optional[str], video_url: Optional[str]) -
     return VIDEO_ID_MAPPINGS.get(str(dashboard_id or "")) if dashboard_id else None
 
 
+def _enrich_red_flag_response(flags: list, dashboard_id: Optional[str], cached: bool = False) -> dict:
+    """Attach historical next-open patterns (yfinance hit-rates) to flags for predictive UI."""
+    from red_flag_prediction import PRELOADED_CALLS, enrich_flags
+
+    meta = PRELOADED_CALLS.get(str(dashboard_id or ""), {})
+    try:
+        enriched, prediction = enrich_flags(
+            flags,
+            dashboard_id=str(dashboard_id) if dashboard_id else None,
+            ticker=meta.get("ticker"),
+            date=meta.get("date"),
+        )
+    except Exception as e:
+        print(f"Red flag prediction enrich error: {e}")
+        return {"red_flags": flags, "cached": cached} if cached else {"red_flags": flags}
+    out = {"red_flags": enriched, "prediction": prediction}
+    if cached:
+        out["cached"] = True
+    return out
+
+
 @app.post("/red-flags")
 def get_red_flags(data: dict = Body(...)):
     """Detect red flags in earnings call transcript. Returns list of {sentence_index, quote, category, severity, description}."""
@@ -834,7 +855,7 @@ def get_red_flags(data: dict = Body(...)):
 
         saved = result.data[0].get("red_flags")
         if saved and isinstance(saved.get("flags"), list):
-            return {"red_flags": saved["flags"], "cached": True}
+            return _enrich_red_flag_response(saved["flags"], dashboard_id, cached=True)
 
         rel_file = result.data[0].get("relevance_filename")
         if not rel_file:
@@ -883,7 +904,7 @@ Only include genuine concerns. Be conservative - max 12 flags. Use sentence_inde
                 }).eq("video_identifier", video_id).execute()
             except Exception as e:
                 print(f"Failed to save red flags for {video_id}: {e}")
-        return {"red_flags": flags}
+        return _enrich_red_flag_response(flags, dashboard_id)
     except Exception as e:
         print(f"Red flags error: {e}")
         return {"red_flags": [], "error": str(e)}
