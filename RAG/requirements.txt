@@ -14,7 +14,8 @@ langchain-community>=0.4.2,<0.5
 faiss-cpu>=1.15,<2
 youtube_transcript_api==1.2.4
 pytube==15.0.0
-supabase>=2.0.0
+supabase>=2.31,<3
+httpx>=0.27,<0.29
 
 # Dashboard generation + analytics scripts
 assemblyai>=0.30.0

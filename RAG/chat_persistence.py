@@ -1,0 +1,162 @@
+"""Private chat storage. Every operation uses the caller's JWT, never the service-role client."""
+
+from contextlib import contextmanager
+import os
+import re
+from urllib.parse import urlparse, parse_qs
+from uuid import UUID
+
+import httpx
+from fastapi import HTTPException
+from supabase import AuthRetryableError, ClientOptions, create_client
+
+
+def youtube_id(url: str) -> str:
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").lower()
+    parts = parsed.path.strip("/").split("/")
+    value = ""
+    if parsed.scheme in ("https", "http"):
+        if host == "youtu.be":
+            value = parts[0]
+        elif host in ("youtube.com", "www.youtube.com", "m.youtube.com"):
+            if parsed.path == "/watch":
+                value = parse_qs(parsed.query).get("v", [""])[0]
+            elif len(parts) == 2 and parts[0] in ("embed", "live", "shorts"):
+                value = parts[1]
+    if not re.fullmatch(r"[A-Za-z0-9_-]{11}", value):
+        raise HTTPException(422, "Provide a supported YouTube URL")
+    return value
+
+
+@contextmanager
+def user_chat_store(authorization: str | None):
+    scheme, _, token = (authorization or "").partition(" ")
+    if scheme.lower() != "bearer" or not token.strip():
+        raise HTTPException(401, "Sign in to save conversations")
+    url, key = os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_ANON_KEY")
+    if not url or not key:
+        raise HTTPException(503, "Saved chat is unavailable: configure SUPABASE_ANON_KEY")
+    with httpx.Client(timeout=30) as transport:
+        client = create_client(url, key, options=ClientOptions(
+            headers={"Authorization": f"Bearer {token.strip()}"},
+            auto_refresh_token=False, persist_session=False, httpx_client=transport,
+        ))
+        try:
+            result = client.auth.get_user(token.strip())
+        except (httpx.TransportError, AuthRetryableError) as exc:
+            raise HTTPException(503, "Authentication service unavailable") from exc
+        except Exception as exc:
+            # Only a rejected token (Auth answers 401/403, e.g. bad_jwt) means re-authenticate;
+            # an Auth outage or rate limit must stay retryable for a still-signed-in user.
+            if getattr(exc, "status", None) in (401, 403):
+                raise HTTPException(401, "Invalid or expired session; sign in again") from exc
+            raise HTTPException(503, "Authentication service unavailable") from exc
+        if not result or not result.user or not result.user.id:
+            raise HTTPException(401, "Invalid or expired session; sign in again")
+        yield ChatStore(client)
+
+
+class AnswerNotSaved(Exception):
+    """The generated answer breaks a storage limit, so no retry of the same answer could save it."""
+
+
+def _question_rejected() -> HTTPException:
+    return HTTPException(422, "This question can't be saved: it is empty or too long. Edit it and send again.")
+
+
+class ChatStore:
+    def __init__(self, client):
+        self.client = client
+
+    def _execute(self, query, on_check_violation: Exception | None = None):
+        try:
+            return query.execute().data or []
+        except Exception as exc:
+            # A CHECK violation (23514: blank text, size caps) is deterministic, so "retry" would be
+            # wrong; callers that can hit one say what it means instead.
+            if on_check_violation is not None and getattr(exc, "code", None) == "23514":
+                raise on_check_violation from exc
+            # Never send database details or credentials to the browser.
+            raise HTTPException(503, "Chat history could not be saved or loaded; refresh and retry") from exc
+
+    def find_session(self, session_id: UUID) -> dict | None:
+        rows = self._execute(self.client.table("chat_sessions").select("*").eq("id", str(session_id)))
+        return rows[0] if rows else None
+
+    def session(self, session_id: UUID) -> dict:
+        session = self.find_session(session_id)
+        if session is None:
+            raise HTTPException(404, "Chat session not found")
+        return session
+
+    def start(self, session_id: UUID, dashboard_key: str, locator: dict, title: str,
+              request_id: UUID, content: str) -> None:
+        """Create a chat and its first question in one transaction (migration 004's chat_start)."""
+        try:
+            self.client.rpc("chat_start", {
+                "p_session_id": str(session_id), "p_dashboard_key": dashboard_key,
+                "p_dashboard_id": locator["dashboard_id"], "p_video_identifier": locator["video_identifier"],
+                "p_title": title, "p_request_id": str(request_id), "p_content": content,
+            }).execute()
+        except Exception as exc:
+            # A unique violation means the ID exists: a concurrent retry of this first send created
+            # it (carry on), or it is another user's (the caller's lookup then 404s, as RLS hides it).
+            code = getattr(exc, "code", None)
+            if code == "23514":
+                raise _question_rejected() from exc
+            if code != "23505":
+                raise HTTPException(503, "Chat history could not be saved or loaded; refresh and retry") from exc
+
+    def messages(self, session_id: UUID, request_id: UUID) -> list[dict]:
+        return self._execute(self.client.table("chat_messages").select("*")
+                             .eq("session_id", str(session_id)).eq("request_id", str(request_id)))
+
+    def question(self, session_id: UUID, request_id: UUID, content: str) -> tuple[dict, dict | None]:
+        rows = self.messages(session_id, request_id)
+        question = next((row for row in rows if row["role"] == "user"), None)
+        if question is None:
+            self._execute(self.client.table("chat_messages").upsert({
+                "session_id": str(session_id), "request_id": str(request_id),
+                "role": "user", "content": content,
+            }, on_conflict="session_id,request_id,role", ignore_duplicates=True), on_check_violation=_question_rejected())
+            rows = self.messages(session_id, request_id)
+            question = next((row for row in rows if row["role"] == "user"), None)
+        if question is None:
+            raise HTTPException(503, "Question was not saved; refresh and retry")
+        if question["content"] != content:
+            raise HTTPException(409, "This request ID already belongs to another question")
+        return question, next((row for row in rows if row["role"] == "assistant"), None)
+
+    def answer(self, session_id: UUID, request_id: UUID, result: dict) -> dict:
+        self._execute(self.client.table("chat_messages").upsert({
+            "session_id": str(session_id), "request_id": str(request_id), "role": "assistant",
+            "content": result["response"], "sources": result["sources"],
+            "suggestions": result["suggestions"], "provider": result["provider"], "model": result["model"],
+        }, on_conflict="session_id,request_id,role", ignore_duplicates=True), on_check_violation=AnswerNotSaved())
+        rows = self.messages(session_id, request_id)
+        answer = next((row for row in rows if row["role"] == "assistant"), None)
+        if answer is None:
+            raise HTTPException(503, "Answer was not saved; refresh and retry")
+        return answer
+
+
+def saved_response(session_id: UUID, request_id: UUID, question: dict, answer: dict) -> dict:
+    return {
+        "response": answer["content"], "sources": answer["sources"],
+        "suggestions": answer["suggestions"], "provider": answer.get("provider"), "model": answer.get("model"),
+        "session_id": str(session_id), "request_id": str(request_id),
+        "user_message_id": question["id"], "assistant_message_id": answer["id"], "saved": True,
+    }
+
+
+def unsaved_response(session_id: UUID, request_id: UUID, question: dict, result: dict) -> dict:
+    """A generated answer that breaks a storage limit: returned rather than lost, explicitly marked
+    unsaved (no assistant_message_id). Its question stays saved, so a later Retry can regenerate it."""
+    return {
+        "response": result["response"], "sources": result["sources"], "suggestions": result["suggestions"],
+        "provider": result["provider"], "model": result["model"],
+        "session_id": str(session_id), "request_id": str(request_id), "user_message_id": question["id"],
+        "saved": False,
+        "not_saved_reason": "This answer is too long to save to your history, so it won't be here after a reload.",
+    }

@@ -1,22 +1,26 @@
 "use client";
 
-import { Maximize2, Minimize2, X } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
-import ChatBot, { Message } from "./ChatBot";
+import { History, Maximize2, Minimize2, X } from "lucide-react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Link from "next/link";
+import ChatBot from "./ChatBot";
+import ChatHistoryList from "./ChatHistoryList";
+import type { useChatController } from "@/lib/use-chat-controller";
 import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
 interface ChatFrameProps {
     /** fromFullscreen: the panel was a fullscreen overlay, so there is no docked slot to animate */
     onClose: (fromFullscreen: boolean) => void;
-    messages: Message[];
-    setMessages: Dispatch<SetStateAction<Message[]>>;
+    chat: ReturnType<typeof useChatController>;
 }
 
 // One SimpliChat panel for both the docked and fullscreen views. Fullscreen only changes this
 // element's layout (fixed over the page), so the chat, its draft and scroll position, and the
 // dashboard underneath all stay mounted.
-export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameProps) {
+export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
     const [fullscreen, setFullscreen] = useState(false);
+    const [historyOpen, setHistoryOpen] = useState(false);
+    const { controller, state, guest, loading, sourceError } = chat;
     const panelRef = useRef<HTMLDivElement>(null);
     // The panel's on-screen rect just before a toggle, used to animate from it (FLIP)
     const fromRect = useRef<DOMRect | null>(null);
@@ -24,6 +28,7 @@ export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameP
     const toggleFullscreen = () => {
         fromRect.current = panelRef.current?.getBoundingClientRect() ?? null;
         setFullscreen((current) => !current);
+        setHistoryOpen(false);
     };
 
     // After the layout switch, start the panel transformed back onto its old rect and animate to
@@ -62,6 +67,7 @@ export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameP
             if (e.key !== "Escape") return;
             fromRect.current = panelRef.current?.getBoundingClientRect() ?? null;
             setFullscreen(false);
+            setHistoryOpen(false);
         };
         window.addEventListener("keydown", onKeyDown);
         return () => {
@@ -86,31 +92,56 @@ export default function ChatFrame({ onClose, messages, setMessages }: ChatFrameP
                     fullscreen ? "fixed inset-5 z-50" : "relative h-full w-full"
                 }`}
             >
-                <div className="panel-header justify-between">
-                    <button
-                        type="button"
-                        className="cursor-pointer text-foreground"
-                        aria-label={fullscreen ? "Exit fullscreen" : "Expand chat"}
-                        onClick={toggleFullscreen}
-                    >
-                        {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
-                    </button>
+                {/* Equal-width side groups keep the title centred whether or not the history button shows */}
+                <div className="panel-header">
+                    <div className="flex flex-1">
+                        <button
+                            type="button"
+                            className="cursor-pointer text-foreground"
+                            aria-label={fullscreen ? "Exit fullscreen" : "Expand chat"}
+                            onClick={toggleFullscreen}
+                        >
+                            {fullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+                        </button>
+                    </div>
                     <h1 className="text-lg font-medium">SimpliChat</h1>
-                    <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={() => onClose(fullscreen)}>
-                        <X className="size-4" />
-                    </button>
+                    <div className="flex flex-1 items-center justify-end gap-4">
+                        {/* History is a fullscreen feature; below lg its sidebar becomes this popover */}
+                        {fullscreen && !guest && controller && <button type="button" aria-label="Show chat history"
+                            aria-expanded={historyOpen} onClick={() => setHistoryOpen(value => !value)}
+                            className="cursor-pointer text-foreground lg:hidden"><History className="size-4" /></button>}
+                        <button type="button" className="cursor-pointer text-foreground" aria-label="Close chat" onClick={() => onClose(fullscreen)}>
+                            <X className="size-4" />
+                        </button>
+                    </div>
                 </div>
 
                 {/* The sidebar sits before the chat in its own slot, so toggling it never remounts ChatBot */}
                 <div className={`flex min-h-0 w-full flex-1 ${fullscreen ? "border-t border-white/8" : ""}`}>
-                    {fullscreen && (
-                        <aside className="hidden w-1/4 border-r border-white/8 p-5 lg:block">
-                            <p className="mb-2"><b>New Chat +</b></p>
-                            <p>chat history</p>
+                    {fullscreen && !guest && controller && state && (
+                        <aside className="hidden w-1/4 min-w-48 border-r border-white/8 p-5 lg:block">
+                            <ChatHistoryList controller={controller} state={state} />
                         </aside>
                     )}
-                    <div className={`min-h-0 min-w-0 flex-1 ${fullscreen ? "px-8 pt-5 pb-8" : "px-5 pb-5"}`}>
-                        <ChatBot messages={messages} setMessages={setMessages} viewKey={fullscreen ? "fullscreen" : "docked"} />
+                    {fullscreen && historyOpen && !guest && controller && state && <aside
+                        className="absolute inset-x-3 top-14 z-20 max-h-[70%] overflow-auto rounded-lg border border-white/15 bg-background p-4 shadow-xl lg:hidden">
+                        <ChatHistoryList controller={controller} state={state} onSelect={() => setHistoryOpen(false)} />
+                    </aside>}
+                    <div className={`flex min-h-0 min-w-0 flex-1 flex-col gap-2 ${fullscreen ? "px-8 pt-5 pb-8" : "px-5 pb-5"}`}>
+                        {guest && !loading && <p className="text-xs text-muted-foreground"><Link className="text-brand underline" href="/login">Sign in</Link> to save conversations.</p>}
+                        {/* Auth only; a chat's own message load shows inside ChatBot */}
+                        {loading && !state?.loading && <p className="text-xs text-muted-foreground" role="status">Loading chat…</p>}
+                        {(sourceError || state?.error) && <div className="text-xs text-red-300" role="alert">
+                            {sourceError || state?.error}{" "}
+                            {controller && <button type="button" className="cursor-pointer underline" disabled={state?.busy}
+                                onClick={() => void controller.refresh()}>Refresh</button>}
+                        </div>}
+                        {controller && state && <div className="min-h-0 flex-1">
+                            <ChatBot key={`${controller.identity}:${state.sessionId ?? "draft"}`}
+                                messages={state.messages} ask={(text, requestId) => controller.ask(text, requestId)}
+                                disabled={loading || state.busy || state.loadFailed} loading={state.loading} pendingRequestId={state.pendingRequestId}
+                                viewKey={fullscreen ? "fullscreen" : "docked"} />
+                        </div>}
                     </div>
                 </div>
             </div>
