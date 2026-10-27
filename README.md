@@ -59,7 +59,9 @@ npm install          # once — installs the local launcher (concurrently)
 npm run dev          # starts RAG :8000, Sentiment :8001, Frontend :3000
 ```
 
-Open `http://localhost:3000`. Press Ctrl+C to stop all three.
+Open `http://localhost:3000` (printed in a banner at startup). Press Ctrl+C to stop all three.
+
+Quiet by default (backend logs hidden). For full logs: `npm run dev:verbose`.
 
 `./run-local.sh` does the same on Mac/Linux (runs `npm run dev`).
 

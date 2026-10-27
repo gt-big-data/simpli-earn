@@ -4,8 +4,9 @@
   "description": "Local full-stack launcher for RAG, sentiment, and frontend",
   "scripts": {
     "dev": "node scripts/dev-all.mjs",
-    "dev:rag": "node scripts/dev-all.mjs --only rag",
-    "dev:sentiment": "node scripts/dev-all.mjs --only sentiment",
+    "dev:verbose": "node scripts/dev-all.mjs --verbose",
+    "dev:rag": "node scripts/dev-all.mjs --only rag --verbose",
+    "dev:sentiment": "node scripts/dev-all.mjs --only sentiment --verbose",
     "dev:frontend": "node scripts/dev-all.mjs --only frontend"
   },
   "devDependencies": {
