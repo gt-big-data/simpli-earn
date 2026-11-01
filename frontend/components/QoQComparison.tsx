@@ -222,6 +222,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
 
     const options = {
       responsive: true,
+      animation: false as const,
       maintainAspectRatio: false,
       plugins: {
         legend: {
@@ -258,7 +259,7 @@ export default function QoQComparison({ currentId, compareId, setCompareId }: Qo
     };
 
     return (
-      <div className="w-full px-4" style={{ height: "200px" }}>
+      <div className="chart-fade-in w-full px-4" style={{ height: "200px" }}>
         <Bar data={chartData} options={options} />
       </div>
     );

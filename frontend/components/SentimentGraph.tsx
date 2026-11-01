@@ -165,6 +165,7 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
 
   const options = {
     responsive: true,
+    animation: false as const,
     plugins: {
       legend: {
         display: true,
@@ -281,7 +282,7 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
 
   return (
     <div className="flex w-full h-full box-border pl-6 pr-6 py-2">
-      <div className="w-full h-full">
+      <div className="chart-fade-in w-full h-full">
         <Line data={chartData} options={options} />
       </div>
     </div>
