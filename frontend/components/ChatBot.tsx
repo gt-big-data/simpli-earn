@@ -1,28 +1,21 @@
 "use client";
 
 import { Send } from "lucide-react";
-import { Dispatch, SetStateAction, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Message from "./Message";
-import { useSearchParams } from "next/navigation";
-import { API_BASE_URL } from "@/lib/api-config";
-import { historyFor, MAX_QUESTION_CHARS, nextMessageId, type ChatMessage } from "@/lib/chat-history";
+import { isBlank, MAX_QUESTION_CHARS, type ChatMessage } from "@/lib/chat-history";
 
 export type Message = ChatMessage;
 
-export default function ChatBot({
-  messages,
-  setMessages,
-  viewKey,
-}: {
+export default function ChatBot({ messages, ask, disabled, loading, pendingRequestId, viewKey }: {
   messages: Message[];
-  setMessages: Dispatch<SetStateAction<Message[]>>;
-  /** Changes whenever the surrounding layout does (e.g. docked vs fullscreen) */
+  ask: (text: string, retryRequestId?: string) => Promise<void>;
+  disabled: boolean;
+  /** Saved messages are loading; shown in the list so nothing above it shifts */
+  loading?: boolean;
+  pendingRequestId: string | null;
   viewKey?: string;
 }) {
-  const searchParams = useSearchParams();
-  const dashboardId = searchParams.get("id") || null;
-  const videoUrl = searchParams.get("video_url") || null;
-
   const [userInput, setUserInput] = useState("");
 
   const messageContainerRef = useRef<HTMLDivElement>(null);
@@ -36,51 +29,8 @@ export default function ChatBot({
     input.style.height = `${input.scrollHeight}px`;
   }, [userInput]);
 
-  const source = `${dashboardId ?? ""}|${videoUrl ?? ""}`;
-
-  const ask = async (text: string) => {
-    // `messages` is the list before this question is added; unanswered questions are left out
-    const history = historyFor(messages, source);
-    const questionId = nextMessageId();
-    setMessages((prev) => [...prev, { id: questionId, sender: "user", text, source }]);
-    try {
-      const res = await fetch(`${API_BASE_URL}/chat`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: text,
-          id: dashboardId,
-          video_url: videoUrl,
-          history,
-        }),
-      });
-
-      const data = await res.json();
-      const botMessage: Message = {
-        id: nextMessageId(),
-        sender: "bot", // Explicitly set to "bot"
-        text: data.response || "⚠️ No response from server.",
-        suggestions: data.suggestions || [], // Include suggestions from API
-        source,
-        replyTo: questionId,
-      };
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      const errorMessage: Message = {
-        id: nextMessageId(),
-        sender: "bot", // Explicitly set to "bot"
-        text: "⚠️ Failed to connect to server. Check API is running.",
-        replyTo: questionId,
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-      console.error("Error sending message:", error);
-    }
-  };
-
   const sendMessage = async () => {
-    if (userInput.trim()) {
+    if (!disabled && !isBlank(userInput)) {
       setUserInput("");
       await ask(userInput);
     }
@@ -93,19 +43,21 @@ export default function ChatBot({
     if (container) container.scrollTop = container.scrollHeight;
   }, [viewKey]);
 
+  // A saved chat's history arrives in one batch after mount: jump to its end instead of
+  // smooth-scrolling through the whole transcript. Later messages scroll smoothly.
+  const historyShown = useRef(false);
   useEffect(() => {
-    if (messageContainerRef.current) {
-      messageContainerRef.current.scrollTo({
-        top: messageContainerRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
+    const container = messageContainerRef.current;
+    if (!container) return;
+    const jump = !historyShown.current;
+    if (messages.length > 1) historyShown.current = true;
+    container.scrollTo({ top: container.scrollHeight, behavior: jump ? "auto" : "smooth" });
   }, [messages]);
 
   const handleSuggestionClick = (suggestion: string) => {
     // Send the suggestion as the user's next question
     setUserInput("");
-    void ask(suggestion);
+    if (!disabled) void ask(suggestion);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -125,15 +77,31 @@ export default function ChatBot({
         ref={messageContainerRef}
         style={{ scrollbarColor: "#ffffff9f #ffffff00" }}
       >
+        {/* Keyed by request, not id: a question's local id becomes its saved row id on reply */}
         {messages.map((message) => (
-          <Message
-            key={message.id}
-            text={message.text}
-            sender={message.sender}
-            suggestions={message.suggestions}
-            onSuggestionClick={handleSuggestionClick}
-          />
+          <div key={message.requestId ? `${message.sender}:${message.requestId}` : message.id}>
+            <Message
+              text={message.text}
+              sender={message.sender}
+              suggestions={disabled ? [] : message.suggestions}
+              onSuggestionClick={handleSuggestionClick}
+            />
+            {message.notSaved && <p className="mt-2 text-xs text-muted-foreground" role="note">{message.notSaved}</p>}
+            {message.sender === "user" && message.requestId && !messages.some(
+              reply => reply.sender === "bot" && reply.requestId === message.requestId
+            ) && (
+              <div className="mt-2 text-xs text-muted-foreground" aria-live="polite">
+                {pendingRequestId === message.requestId ? "Generating answer…" : (
+                  <><span>{message.error || "No saved answer yet."}</span>{" "}
+                    <button type="button" className="cursor-pointer text-brand underline disabled:opacity-40"
+                      disabled={disabled} onClick={() => void ask(message.text, message.requestId)}>Retry</button>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         ))}
+        {loading && <p className="mt-2 text-xs text-muted-foreground" role="status">Loading messages…</p>}
       </div>
 
       {/* Equal padding on every side and items-end: the send button sits bottom-right in
@@ -145,6 +113,7 @@ export default function ChatBot({
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
           placeholder="Message RAG Chatbot"
+          disabled={disabled}
           maxLength={MAX_QUESTION_CHARS}
           onKeyDown={handleKeyDown}
           style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
@@ -155,7 +124,7 @@ export default function ChatBot({
           type="button"
           aria-label="Send message"
           onClick={sendMessage}
-          disabled={!userInput.trim()}
+          disabled={disabled || isBlank(userInput)}
           className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-[filter,opacity] enabled:hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40"
         >
           <Send className="size-4" />

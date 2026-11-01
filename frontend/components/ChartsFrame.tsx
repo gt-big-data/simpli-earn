@@ -8,16 +8,7 @@ import QoQComparison from "./QoQComparison";
 import { useSearchParams } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
 import type { RedFlag } from "./SentimentGraph";
-
-// Dashboard configurations - now only for ticker and date
-const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
-  "1": { ticker: "AAPL", date: "2/2/25" },
-  "2": { ticker: "CVS", date: "11/6/24" },
-  "3": { ticker: "GOOGL", date: "2/4/25" },
-  "4": { ticker: "SHEL", date: "1/30/25" },
-  "5": { ticker: "TSLA", date: "1/29/25" },
-  "6": { ticker: "WMT", date: "2/20/25" }
-};
+import { PRELOADED_DASHBOARDS } from "@/lib/dashboards";
 
 /** Status of a custom-link processing job (null when there is none / it finished) */
 export type PipelineState = { status: string; error?: string };
@@ -89,7 +80,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   const ticker = searchParams.get("ticker"); // Get ticker from URL params
   
   const videoUrlParam = searchParams.get("video_url");
-  const preloadedConfig = dashboardId ? dashboardConfigs[dashboardId] : null;
+  const preloadedConfig = dashboardId ? PRELOADED_DASHBOARDS[dashboardId] : null;
 
   // For custom videos, look up the ticker and call date (YouTube upload date) from the RAG API
   // (re-fetched when the processing job's status changes, since the job fills in the metadata)

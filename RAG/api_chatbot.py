@@ -1,7 +1,8 @@
 # api_chatbot.py
-from fastapi import FastAPI, Query, Body, HTTPException
+from fastapi import FastAPI, Query, Body, HTTPException, Header
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
+from chat_persistence import AnswerNotSaved, user_chat_store, saved_response, unsaved_response, youtube_id
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
 from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
 import os
@@ -48,8 +49,7 @@ try:
 except ImportError as e:
     print(f"Warning: Could not import dashboard creation endpoint: {e}")
 
-# Largest request body accepted by any endpoint. A full /chat request (20 turns at the field limits)
-# is well under 512 KB; nothing else sends more than a few KB.
+# Largest request body accepted by any endpoint, including JSON escaping and UTF-8 expansion.
 MAX_REQUEST_BODY_BYTES = int(os.getenv("MAX_REQUEST_BODY_BYTES", str(1024 * 1024)))
 
 
@@ -176,6 +176,25 @@ class ChatRequest(BaseModel):
     # Earlier turns of this conversation about this transcript, oldest first. The browser sends
     # them, so the API keeps no per-user state and any instance can answer a follow-up.
     history: list[ChatTurn] = Field(default_factory=list, max_length=CHAT_HISTORY_MAX_TURNS)
+    session_id: Optional[uuid.UUID] = None
+    request_id: Optional[uuid.UUID] = None
+    # Set on a new chat's first send (the browser picks session_id): the chat is created together
+    # with its first question, so a send that fails before that never leaves an empty chat.
+    title: Optional[str] = Field(default=None, max_length=100)
+
+    @model_validator(mode="after")
+    def validate_saved_request(self):
+        if (self.session_id is None) != (self.request_id is None):
+            raise ValueError("session_id and request_id must be provided together")
+        if not self.message.strip():
+            raise ValueError("message must not be blank")
+        if self.title is not None:
+            if self.session_id is None:
+                raise ValueError("title is only for a saved chat's first send")
+            self.title = self.title.strip()
+            if not self.title:
+                raise ValueError("title must not be blank")
+        return self
 
 
 def chat_history_from_request(turns: list[ChatTurn]) -> list[tuple[str, str]]:
@@ -502,14 +521,51 @@ def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optiona
 
 
 @app.post("/chat")
-def chat_endpoint(req: ChatRequest):
+def chat_endpoint(req: ChatRequest, authorization: Optional[str] = Header(None)):
+    if req.session_id is None and not authorization:
+        return _chat_answer(req)
+    with user_chat_store(authorization) as store:
+        if req.session_id is None:
+            raise HTTPException(422, "Signed-in chat requires session_id and request_id")
+        # Validate the transcript before any write, so a bad locator cannot create a chat
+        if req.video_url:
+            video_id = youtube_id(req.video_url)
+            dashboard_key, locator = f"youtube:{video_id}", {"dashboard_id": None, "video_identifier": video_id}
+            req = req.model_copy(update={"id": None, "video_url": f"https://www.youtube.com/watch?v={video_id}"})
+        else:
+            dashboard_id = req.id or "1"
+            if dashboard_id not in STATIC_TRANSCRIPTS:
+                raise HTTPException(422, "Unknown preloaded dashboard")
+            dashboard_key, locator = f"preloaded:{dashboard_id}", {"dashboard_id": dashboard_id, "video_identifier": None}
+            req = req.model_copy(update={"id": dashboard_id})
+        session = store.find_session(req.session_id)
+        if session is None:
+            if req.title is None:
+                raise HTTPException(404, "Chat session not found")
+            store.start(req.session_id, dashboard_key, locator, req.title, req.request_id, req.message)
+            session = store.session(req.session_id)
+        if session["dashboard_key"] != dashboard_key:
+            raise HTTPException(409, "This conversation belongs to another transcript")
+        question, answer = store.question(req.session_id, req.request_id, req.message)
+        if answer is None:
+            result = _chat_answer(req, saved=True)
+            try:
+                answer = store.answer(req.session_id, req.request_id, result)
+            except AnswerNotSaved:
+                return unsaved_response(req.session_id, req.request_id, question, result)
+        return saved_response(req.session_id, req.request_id, question, answer)
+
+
+def _chat_answer(req: ChatRequest, saved: bool = False):
     source_key = _chat_source_key(req)
     if not source_key:
-        return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
+        return {"response": "âŒ No transcript loaded. Provide video_url or valid id.", "error": True}
 
     transcript_path, error = _resolve_chat_transcript(req, source_key)
     if error:
-        return {"response": error}
+        if saved:
+            raise HTTPException(422, "Transcript unavailable; refresh the dashboard and retry")
+        return {"response": error, "error": True}
     history = chat_history_from_request(req.history)
 
     chat_prompt = ChatPromptTemplate.from_template(
@@ -539,7 +595,9 @@ def chat_endpoint(req: ChatRequest):
     try:
         response = run_with_fallback(_invoke)
     except Exception as e:
-        raise HTTPException(status_code=503, detail=f"AI service error: {e}")
+        raise HTTPException(status_code=503, detail="AI service unavailable; retry this question") from e
+    if not response.get("answer", "").strip():
+        raise HTTPException(status_code=503, detail="AI service returned no answer; retry this question")
 
     recent_history = [{"question": q, "answer": a} for q, a in history + [(req.message, response["answer"])]]
 
@@ -568,7 +626,8 @@ def chat_endpoint(req: ChatRequest):
         "response": response["answer"],
         "suggestions": suggestions,
         "sources": sources,
-        "provider": get_active_provider(),
+        "provider": response.get("provider"),
+        "model": response.get("model"),
     }
 
 
