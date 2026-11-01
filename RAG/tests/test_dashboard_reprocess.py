@@ -90,9 +90,25 @@ def test_admin_can_force_reprocess(app_client, monkeypatch, env):
     assert started[0][3] == "force"
 
 
-def test_invalid_token_is_rejected(app_client):
+def test_invalid_token_cannot_force_reprocess(app_client, monkeypatch):
     client, _, started = app_client
-    assert post(client, URL, {"Authorization": "Bearer forged"}).status_code == 401 and started == []
+    monkeypatch.setattr(endpoint, "_existing_analysis", lambda _vid: COMPLETE)
+    assert post(client, {**URL, "force": True}, {"Authorization": "Bearer forged"}).status_code == 401 and started == []
+
+
+@pytest.mark.parametrize("row", [None, INCOMPLETE, COMPLETE])
+def test_plain_uploads_never_check_the_token(app_client, monkeypatch, row):
+    # A signed-in user's browser always sends its token; a stale one or an auth outage must not
+    # block an ordinary upload
+    client, sb, _ = app_client
+    monkeypatch.setattr(endpoint, "_existing_analysis", lambda _vid: row)
+
+    def auth_down(_token):
+        raise AssertionError("token checked on a plain upload")
+
+    sb.auth.get_user = auth_down
+
+    assert post(client, URL, {"Authorization": "Bearer expired"}).status_code == 200
 
 
 def test_home_worker_queues_plain_jobs_and_refuses_force(app_client, monkeypatch):

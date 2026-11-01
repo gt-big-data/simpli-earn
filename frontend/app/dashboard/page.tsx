@@ -12,6 +12,7 @@ import type { Message } from "@/components/ChatBot";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { chatForAccount, startChat, updateMessages, type AccountChat } from "@/lib/account-chat";
 import { API_BASE_URL } from "@/lib/api-config";
+import { readJobStatus } from "@/lib/job-status";
 import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
 type SummarySection = {
@@ -69,16 +70,15 @@ function DashboardContent() {
       try {
         const res = await fetch(`${API_BASE_URL}/dashboard/job-status/${encodeURIComponent(jobId)}`);
         if (cancelled) return;
-        // 404: API restarted and forgot the in-memory job; just try loading whatever exists
-        if (res.status === 404) return finish();
-        const data = await res.json();
+        const data = res.ok ? await res.json().catch(() => null) : null;
         if (cancelled) return;
-        if (data.status === "completed") return finish();
-        if (data.status === "failed") {
-          setPipeline({ status: "failed", error: data.error || "Unknown error" });
+        const result = readJobStatus(res.status, data);
+        if (result.kind === "done") return finish();
+        if (result.kind === "failed") {
+          setPipeline({ status: "failed", error: result.error });
           return;
         }
-        setPipeline({ status: data.status });
+        if (result.kind === "waiting") setPipeline({ status: result.status });
       } catch {
         // API briefly unreachable; keep polling
       }

@@ -3,6 +3,7 @@ from fastapi import FastAPI, Query, Body, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from transcript_retrieval import get_video_transcript, get_video_transcript_entries, save_transcript_as_txt, extract_video_id
+from youtube_ids import extract_video_id as parse_video_id
 from langchain_testing import initialize_retrieval, answer_question, generate_follow_up_questions
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -34,11 +35,11 @@ try:
     supabase_key = os.getenv("SUPABASE_KEY")
     if supabase_url and supabase_key:
         supabase = create_client(supabase_url, supabase_key)
-        print("âœ… Supabase connected")
+        print("✅ Supabase connected")
     else:
-        print("âš ï¸  Supabase not configured")
+        print("⚠️  Supabase not configured")
 except Exception as e:
-    print(f"âš ï¸  Failed to initialize Supabase: {e}")
+    print(f"⚠️  Failed to initialize Supabase: {e}")
 
 app = FastAPI()
 
@@ -441,9 +442,24 @@ def _chat_source_key(req: ChatRequest) -> Optional[str]:
     return None
 
 
-# Transcripts are public call data, so local copies are shared across conversations
+# Transcripts are public call data, so local copies are shared across conversations.
+# _chat_transcripts holds final ones (the pipeline's transcript, or a preloaded call). YouTube captions
+# only stand in until the pipeline's transcript exists, so a call chatted about while it is still
+# processing switches to that transcript once it lands.
 _chat_transcripts: dict[str, str] = {}
+_caption_transcripts: dict[str, str] = {}
 _chat_transcripts_lock = threading.Lock()
+
+
+def _cached_transcript(cache: dict[str, str], source_key: str) -> Optional[str]:
+    with _chat_transcripts_lock:
+        path = cache.get(source_key)
+    return path if path and os.path.exists(path) else None
+
+
+def _remember_transcript(cache: dict[str, str], source_key: str, path: str) -> None:
+    with _chat_transcripts_lock:
+        cache[source_key] = path
 
 
 def _write_atomically(path: str, text: str) -> None:
@@ -456,15 +472,12 @@ def _write_atomically(path: str, text: str) -> None:
 
 def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optional[str], Optional[str]]:
     """Return (local transcript path, error response text)."""
-    with _chat_transcripts_lock:
-        cached = _chat_transcripts.get(source_key)
-    if cached and os.path.exists(cached):
+    cached = _cached_transcript(_chat_transcripts, source_key)
+    if cached:
         return cached, None
 
     if req.video_url:
-        video_id = None
-        if "v=" in req.video_url:
-            video_id = req.video_url.split("v=")[1].split("&")[0]
+        video_id = parse_video_id(req.video_url)
 
         transcript_path = None
         if video_id and supabase:
@@ -473,7 +486,7 @@ def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optiona
                 if result.data and len(result.data) > 0:
                     transcript_filename = result.data[0].get("transcript_filename")
                     if transcript_filename:
-                        print(f"ðŸ“¥ Downloading transcript from Supabase: {transcript_filename}")
+                        print(f"📥 Downloading transcript from Supabase: {transcript_filename}")
                         transcript_data = supabase.storage.from_("transcripts").download(transcript_filename)
                         transcript_text = transcript_data.decode("utf-8")
 
@@ -481,23 +494,27 @@ def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optiona
                         os.makedirs(upload_dir, exist_ok=True)
                         transcript_path = os.path.join(upload_dir, f"transcript_{video_id}.txt")
                         _write_atomically(transcript_path, transcript_text)
-                        print(f"âœ… Transcript saved locally: {transcript_path}")
+                        print(f"✅ Transcript saved locally: {transcript_path}")
             except Exception as e:
-                print(f"âš ï¸  Failed to load transcript from Supabase: {e}")
+                print(f"⚠️  Failed to load transcript from Supabase: {e}")
 
         if not transcript_path:
-            print("ðŸ“¥ Fetching transcript from YouTube...")
+            captions = _cached_transcript(_caption_transcripts, source_key)
+            if captions:
+                return captions, None
+            print("📥 Fetching transcript from YouTube...")
             transcript = get_video_transcript(req.video_url)
             if "Error:" in transcript:
                 return None, transcript
-            transcript_path = save_transcript_in_uploads(req.video_url, transcript)
+            captions = save_transcript_in_uploads(req.video_url, transcript)
+            _remember_transcript(_caption_transcripts, source_key, captions)
+            return captions, None
     elif req.id in STATIC_TRANSCRIPTS:
         transcript_path = STATIC_TRANSCRIPTS[req.id]
     else:
-        return None, "âŒ Unknown dashboard ID or missing transcript."
+        return None, "❌ Unknown dashboard ID or missing transcript."
 
-    with _chat_transcripts_lock:
-        _chat_transcripts[source_key] = transcript_path
+    _remember_transcript(_chat_transcripts, source_key, transcript_path)
     return transcript_path, None
 
 
@@ -505,7 +522,7 @@ def _resolve_chat_transcript(req: ChatRequest, source_key: str) -> tuple[Optiona
 def chat_endpoint(req: ChatRequest):
     source_key = _chat_source_key(req)
     if not source_key:
-        return {"response": "âŒ No transcript loaded. Provide video_url or valid id."}
+        return {"response": "❌ No transcript loaded. Provide video_url or valid id."}
 
     transcript_path, error = _resolve_chat_transcript(req, source_key)
     if error:
@@ -578,7 +595,7 @@ def generate_summary(id: str = Query("1")):
     from static_summaries import STATIC_SUMMARIES
 
     if id not in STATIC_TRANSCRIPTS:
-        return {"summary": "âŒ Unknown dashboard ID or missing transcript.", "provider": None}
+        return {"summary": "❌ Unknown dashboard ID or missing transcript.", "provider": None}
 
     if id in STATIC_SUMMARIES and STATIC_SUMMARIES[id]:
         sections = build_summary_sections(STATIC_SUMMARIES[id], [])
@@ -590,7 +607,7 @@ def generate_summary(id: str = Query("1")):
         }
 
     return {
-        "summary": "âŒ Static summary not yet generated. Run from project root: python scripts/populate_preloaded_summaries.py",
+        "summary": "❌ Static summary not yet generated. Run from project root: python scripts/populate_preloaded_summaries.py",
         "provider": None,
     }
 
@@ -599,7 +616,7 @@ def generate_summary(id: str = Query("1")):
 def generate_summary_from_youtube(data: dict = Body(...)):
     video_url = data.get("video_url")
     if not video_url:
-        return {"summary": "âŒ No video URL provided."}
+        return {"summary": "❌ No video URL provided."}
 
     video_id = extract_video_id(video_url)
 
@@ -659,15 +676,15 @@ def generate_summary_from_youtube(data: dict = Body(...)):
         try:
             transcript_filename = analysis_row.get("transcript_filename")
             if transcript_filename:
-                print(f"ðŸ“¥ Downloading transcript from Supabase: {transcript_filename}")
+                print(f"📥 Downloading transcript from Supabase: {transcript_filename}")
                 transcript_data = supabase.storage.from_("transcripts").download(transcript_filename)
                 transcript_text = transcript_data.decode("utf-8")
-                print(f"âœ… Transcript loaded from Supabase ({len(transcript_text)} chars)")
+                print(f"✅ Transcript loaded from Supabase ({len(transcript_text)} chars)")
         except Exception as e:
-            print(f"âš ï¸  Failed to load transcript from Supabase: {e}")
+            print(f"⚠️  Failed to load transcript from Supabase: {e}")
 
     if not transcript_text:
-        print("ðŸ“¥ Fetching transcript from YouTube...")
+        print("📥 Fetching transcript from YouTube...")
         if not transcript_entries:
             return {"summary": "Error: Failed to fetch transcript timestamps from YouTube."}
 
@@ -678,7 +695,7 @@ def generate_summary_from_youtube(data: dict = Body(...)):
             with open(transcript_path, "r", encoding="utf-8") as f:
                 transcript_text = f.read()
         except Exception as e:
-            return {"summary": f"âŒ Failed to read transcript: {str(e)}"}
+            return {"summary": f"❌ Failed to read transcript: {str(e)}"}
 
     post_summary_prompt = PromptTemplate(
         input_variables=["transcript"],
@@ -802,11 +819,7 @@ VIDEO_ID_MAPPINGS = {
 
 
 def _normalize_video_id(dashboard_id: Optional[str], video_url: Optional[str]) -> Optional[str]:
-    if video_url and "v=" in video_url:
-        return video_url.split("v=")[1].split("&")[0]
-    if video_url and "youtu.be/" in video_url:
-        return video_url.split("youtu.be/")[1].split("?")[0]
-    return VIDEO_ID_MAPPINGS.get(str(dashboard_id or "")) if dashboard_id else None
+    return parse_video_id(video_url) or (VIDEO_ID_MAPPINGS.get(str(dashboard_id)) if dashboard_id else None)
 
 
 @app.post("/red-flags")

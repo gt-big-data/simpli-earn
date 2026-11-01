@@ -22,6 +22,8 @@ from pathlib import Path
 import io
 import csv
 
+from youtube_ids import extract_video_id
+
 # Load environment variables
 try:
     from dotenv import load_dotenv
@@ -115,23 +117,11 @@ class VideoSentimentResponse(BaseModel):
 
 
 # Helper functions
-def extract_youtube_video_id(url: str) -> Optional[str]:
-    """Extract YouTube video ID from various URL formats."""
-    import re
-    patterns = [
-        r'(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)',
-    ]
-    for pattern in patterns:
-        match = re.search(pattern, url)
-        if match:
-            return match.group(1)
-    return None
-
 def normalize_video_identifier(dashboard_id: Optional[str], video_url: Optional[str]) -> Optional[str]:
     """Normalize to YouTube video ID format (without video_ prefix to match database)."""
     # First try video_url
     if video_url:
-        video_id = extract_youtube_video_id(video_url)
+        video_id = extract_video_id(video_url)
         if video_id:
             return video_id  # Return raw ID without prefix
     

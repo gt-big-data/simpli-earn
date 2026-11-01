@@ -7,6 +7,7 @@ import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import QoQComparison from "./QoQComparison";
 import { useSearchParams } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
+import { knownTicker } from "@/lib/ticker";
 import type { RedFlag } from "./SentimentGraph";
 
 // Dashboard configurations - now only for ticker and date
@@ -111,7 +112,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   }, [videoInfoKey, videoUrlParam]);
 
   // A ticker typed by the user (URL param) wins over the detected one
-  const customTicker = ticker && ticker !== "N/A" ? ticker.toUpperCase() : videoInfo?.ticker;
+  const customTicker = knownTicker(ticker) ?? knownTicker(videoInfo?.ticker);
   const config = preloadedConfig
     ?? (customTicker && videoInfo?.date ? { ticker: customTicker, date: videoInfo.date } : null);
 
