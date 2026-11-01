@@ -1,13 +1,12 @@
 .pageContainer {
-  background-color: black;
+  background-color: transparent;
   min-height: 100vh;
-  color: white;
-  font-family: 'Montserrat', sans-serif;
+  color: var(--foreground);
 }
 
 .mainContent {
   padding: 20px;
-  margin-top: 80px;
+  margin-top: 7rem;
 }
 
 .heroSection {
@@ -19,8 +18,9 @@
 }
 
 .heroSection h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 3rem;
+  font-weight: 300;
+  letter-spacing: -0.025em;
   margin-bottom: 20px;
 }
 
@@ -33,18 +33,18 @@
   line-height: 1.8;
   font-weight: 300;
   margin-bottom: 1.5rem;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  color: var(--muted-foreground);
 }
 
 .orgLink {
-  color: #81D18D;
+  color: var(--brand);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color 0.15s ease;
 }
 
 .orgLink:hover {
-  color: #5da769;
-  text-decoration: underline;
+  color: var(--foreground);
 }
 
 .teamSection {
@@ -53,18 +53,19 @@
 
 .teamSection h2 {
   text-align: center;
-  font-size: 2rem;
+  font-size: 2.25rem;
   margin-bottom: 30px;
-  font-weight: 600;
+  font-weight: 300;
+  letter-spacing: -0.025em;
 }
 
 .teamSubheading {
   text-align: center;
   font-size: 1.35rem;
-  font-weight: 600;
+  font-weight: 500;
   margin-top: 2.5rem;
   margin-bottom: 1.25rem;
-  color: rgba(255, 255, 255, 0.92);
+  color: var(--foreground);
 }
 
 .teamSubheading:first-of-type {
@@ -81,20 +82,21 @@
 }
 
 .teamCard {
-  background-color: #1a1a1a;
-  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(18px);
+  border-radius: 1rem;
   padding: 20px;
   text-align: center;
-  border: 1px solid #333;
 }
 
 .profileImage {
   width: 150px;
   height: 150px;
-  border-radius: 10px;
+  border-radius: 0.75rem;
   overflow: hidden;
   margin: 0 auto 20px;
-  border: 2px solid #81D18D;
+  border: 1px solid var(--border);
 }
 
 .profileImage img {
@@ -105,13 +107,13 @@
 }
 
 .teamCard h3 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   margin-bottom: 10px;
   font-weight: 500;
 }
 
 .role {
-  color: #81D18D;
+  color: var(--brand);
   margin-bottom: 15px;
   font-weight: 400;
 }
@@ -120,20 +122,26 @@
   margin-bottom: 20px;
   line-height: 1.5;
   font-weight: 300;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
 }
 
 .socialIcons {
   display: flex;
   justify-content: center;
   gap: 15px;
+  color: var(--foreground);
 }
 
-.socialIcons img {
-  width: 24px;
-  filter: brightness(0) invert(1); /* Make icons white */
+.socialIcons a {
+  color: var(--foreground);
+  transition: color 0.15s ease;
 }
 
-/* Responsive adjustments */
+.socialIcons a:hover {
+  color: var(--brand);
+}
+
 @media (max-width: 900px) {
   .teamGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -144,11 +152,11 @@
   .teamGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .heroSection h1 {
-    font-size: 2rem;
+    font-size: 2.25rem;
   }
-  
+
   .teamSection h2 {
     font-size: 1.8rem;
   }

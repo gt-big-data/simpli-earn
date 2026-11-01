@@ -9,7 +9,7 @@ interface WatchlistWidgetProps {
 export default function WatchlistWidget({  }: WatchlistWidgetProps) {
   return (
     <DashboardWidget title="Watchlist" widgetId="watchlist">
-      <div className="flex-1 flex items-center justify-center text-gray-500 text-sm">
+      <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
         <p>Your tracked tickers will appear here.</p>
       </div>
     </DashboardWidget>

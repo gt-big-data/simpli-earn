@@ -1,5 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
+import LogoMark from "@/components/LogoMark";
+import PointCloud from "@/components/PointCloud";
 
 export default function AuthLayout({
   children,
@@ -7,12 +8,16 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[url(/bg.svg)] bg-cover px-4 pt-20 pb-12">
-      <Link href="/" className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-        <Image src="/logo.png" alt="SimpliEarn" width={28} height={28} />
-        <span className="text-xl font-medium text-white">SimpliEarn</span>
+    <div className="relative flex min-h-screen flex-col items-center px-4 pt-20 pb-12">
+      <PointCloud />
+      <Link
+        href="/"
+        className="absolute top-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 no-underline"
+      >
+        <LogoMark className="size-7" />
+        <span className="text-[1.65rem] font-light tracking-tight text-brand">SimpliEarn</span>
       </Link>
-      <div className="w-full max-w-md flex-1 flex flex-col justify-center">{children}</div>
+      <div className="relative z-10 flex w-full max-w-md flex-1 flex-col justify-center">{children}</div>
     </div>
   );
 }

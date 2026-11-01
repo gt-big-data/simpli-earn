@@ -1,8 +1,6 @@
 "use client";
 
-import Image from "next/image";
 import ChatIcon from "./ChatIcon";
-import { Dispatch, SetStateAction } from "react";
 
 interface SummarySection {
   heading?: string | null;
@@ -12,7 +10,7 @@ interface SummarySection {
 }
 
 interface SummaryFrameProps {
-  setActiveDisplay: Dispatch<SetStateAction<string>>;
+  onOpenChat: () => void;
   halfHeight?: boolean;
   summary: string;
   summarySections?: SummarySection[];
@@ -22,24 +20,26 @@ interface SummaryFrameProps {
 }
 
 export default function SummaryFrame({
-  setActiveDisplay,
+  onOpenChat,
   halfHeight = false,
   summary,
   summarySections = [],
   onTimestampClick,
   placeholder = null,
 }: SummaryFrameProps) {
-  const parseToJSX = (htmlString: string, inline = false) => {
-    const parts = htmlString.split(/(<b>.*?<\/b>)/g);
+  // Renders the model's markdown bold (**text**) as <b>. Applied to headings, bullet text and
+  // the plain summary alike; any unpaired ** left over from generation is dropped.
+  const parseToJSX = (markdown: string, inline = false) => {
+    const parts = markdown.split(/(\*\*.+?\*\*)/g);
     const Wrapper = inline ? "span" : "div";
 
     return (
       <Wrapper className={inline ? "" : "w-full min-w-0"}>
         {parts.map((part, index) => {
-          if (part.startsWith("<b>") && part.endsWith("</b>")) {
-            return <b key={index}>{part.replace(/<b>|<\/b>/g, "")}</b>;
+          if (part.length > 4 && part.startsWith("**") && part.endsWith("**")) {
+            return <b key={index}>{part.slice(2, -2)}</b>;
           }
-          return <span key={index}>{part}</span>;
+          return <span key={index}>{part.replaceAll("**", "")}</span>;
         })}
       </Wrapper>
     );
@@ -54,28 +54,28 @@ export default function SummaryFrame({
   return (
     <div className="relative flex h-full w-full">
       {!halfHeight && (
-        <>
-          <div
-            className="absolute -right-[1px] -bottom-[1px] z-40 flex items-end"
-            style={{ shapeOutside: "inset(calc(100% - 110px) 0 0)" }}
+        <div className="absolute right-3 bottom-3 z-40">
+          {/* Same pill styling and hover as the timestamp buttons, so it reads as clickable */}
+          <button
+            type="button"
+            onClick={onOpenChat}
+            aria-label="Open chat"
+            title="Open SimpliChat"
+            className="flex size-12 cursor-pointer items-center justify-center rounded-2xl border border-white/8 bg-pill text-brand transition-[background-color,border-color,transform] duration-150 hover:border-brand/50 hover:bg-accent active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none"
           >
-            <Image src="/inset-corner.svg" alt="" width={144} height={144} />
-          </div>
-          <div className="absolute bottom-0 right-0">
-            <button onClick={() => setActiveDisplay("half")}>
-              <ChatIcon />
-            </button>
-          </div>
-        </>
+            <ChatIcon />
+          </button>
+        </div>
       )}
-      <div
-        className="relative mt-[40px] max-h-[84vmax] w-full overflow-auto rounded-[30px] border border-white/25 bg-white/4 font-montserrat text-white"
-        style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
-      >
-        <h1 className="flex justify-center items-start pt-8 font-bold text-lg font-montserrat">
-          Summary
-        </h1>
-        <div className="w-full px-8 pt-4 pb-8">
+      <div className="surface relative flex w-full min-h-0 flex-col overflow-hidden rounded-2xl text-foreground">
+        {/* Pinned header, same padding and title style as the SimpliChat panel */}
+        <div className="panel-header justify-center">
+          <h1 className="text-lg font-medium">Summary</h1>
+        </div>
+        <div
+          className="min-h-0 w-full flex-1 overflow-auto px-8 pb-8"
+          style={{ scrollbarColor: "#ffffff9f #ffffff0f" }}
+        >
           {placeholder ? (
             <div className="flex w-full flex-col gap-4" aria-busy="true">
               <p className="text-center text-[16px] text-white/70">{placeholder}</p>
@@ -109,7 +109,9 @@ export default function SummaryFrame({
                                 const t = section.timestamp;
                                 if (typeof t === "number") onTimestampClick(t);
                               }}
-                              className="ml-2 inline-flex h-[40px] min-w-[78px] items-center justify-center rounded-full border border-white/20 bg-[#232323] px-4 align-middle text-[18px] font-medium leading-none text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition hover:bg-[#2d2d2d]"
+                              title="Jump to this moment in the video"
+                              aria-label={`Jump to ${formatTimestamp(section.timestamp)} in the video`}
+                              className="ml-2 inline-flex h-8 min-w-[4.5rem] cursor-pointer items-center justify-center rounded-[10px] border border-white/8 bg-pill px-2.5 align-middle text-sm font-medium leading-none text-foreground transition-[background-color,border-color,color,transform] duration-150 hover:border-brand/50 hover:bg-accent hover:text-brand active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand motion-reduce:transition-none"
                             >
                               {formatTimestamp(section.timestamp)}
                             </button>

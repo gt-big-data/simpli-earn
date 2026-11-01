@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Start SimpliEarn locally: RAG (:8000) + Sentiment (:8001) + Frontend (:3000).
+# Usage:
+#   ./start-app
+#   ./start-app --verbose
+set -e
+cd "$(dirname "$0")"
+
+if [ ! -d "venv" ]; then
+  echo "❌ venv not found. Run:"
+  echo "  python3 -m venv venv && source venv/bin/activate"
+  echo "  pip install -r RAG/requirements.txt -r sentiment/requirements.txt"
+  exit 1
+fi
+
+if [ ! -d "node_modules" ]; then
+  echo "📦 Installing root launcher deps..."
+  npm install
+fi
+
+if [ ! -d "frontend/node_modules" ]; then
+  echo "📦 Installing frontend deps..."
+  (cd frontend && npm install)
+fi
+
+exec node scripts/dev-all.mjs "$@"

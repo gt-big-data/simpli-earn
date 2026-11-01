@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Urbanist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 import { AuthProvider } from "@/lib/auth/AuthContext";
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
+const urbanist = Urbanist({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-urbanist",
 });
 
 export const metadata: Metadata = {
@@ -23,12 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} antialiased`}>
+      <body className={`${urbanist.variable} ${urbanist.className} antialiased`}>
         <AuthProvider>
-          {children}
+          <div className="relative z-10">
+            {children}
+            <Footer />
+            <ScrollToTop />
+          </div>
           <Analytics />
-          <Footer />
-          <ScrollToTop />
         </AuthProvider>
       </body>
     </html>

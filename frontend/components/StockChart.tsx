@@ -264,7 +264,7 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
       <div className="w-full flex-shrink-0" style={{ height: '400px' }}>
         <Line data={chartData} options={options} />
       </div>
-      <div className="mt-4 mb-12 pb-8 grid grid-cols-3 gap-3 text-sm flex-shrink-0">
+      <div className="mt-4 grid grid-cols-3 gap-3 text-sm flex-shrink-0">
         {chartView === '48h-close' ? (
           <>
             <div className="p-3 border border-white/25 rounded-lg min-w-0">

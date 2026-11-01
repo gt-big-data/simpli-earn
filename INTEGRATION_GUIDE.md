@@ -242,7 +242,7 @@ npm run dev
 ```env
 SUPABASE_URL=https://ciknjcwcbghtouqupnbr.supabase.co
 SUPABASE_KEY=your_service_role_key
-ASSEMBLYAI_KEY=4c9131d7252a4a9f9872c315b2547c37
+ASSEMBLYAI_KEY=your_assembly_ai_key
 ```
 
 **In `RAG/.env`:**
