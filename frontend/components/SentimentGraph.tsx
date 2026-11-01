@@ -231,8 +231,12 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
         padding: 12,
         titleFont: { size: 13 },
         bodyFont: { size: 12 },
-        footerFont: { size: 11, weight: "bold" as const },
-        footerColor: "rgba(129, 209, 141, 0.95)",
+        bodyColor: "rgba(255, 255, 255, 0.85)",
+        // History lives in the footer so it reads as a distinct stat block, not more quote text
+        footerFont: { size: 12, weight: "bold" as const },
+        footerColor: "rgba(129, 209, 141, 1)",
+        footerMarginTop: 10,
+        footerSpacing: 3,
         // At a red-flag index, only show the flag tooltip (history was getting clipped
         // under long Relevance + quote lines).
         filter: (item: { dataIndex: number; dataset: { label?: string }; raw: unknown }) => {
@@ -250,17 +254,14 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
               const flag = redFlagBySentence.get(si);
               if (flag) {
                 const header = `⚠️ ${flag.category.replace(/_/g, " ")} (${flag.severity})`;
-                // History near the top so it isn't clipped under the quote
-                const hist = flag.historical_pattern
-                  ? wrapForTooltip(`History: ${flag.historical_pattern.summary}`)
-                  : ["History: not enough past calls for this category yet"];
                 const quoteLines = wrapForTooltip(flag.quote);
                 if (quoteLines.length > 0) {
                   quoteLines[0] = `"${quoteLines[0]}`;
                   quoteLines[quoteLines.length - 1] = `${quoteLines[quoteLines.length - 1]}"`;
                 }
                 const descLines = wrapForTooltip(flag.description);
-                return [header, ...hist, ...quoteLines, ...descLines];
+                // Quote + description only — historical stats go in the green footer
+                return [header, ...quoteLines, ...descLines];
               }
             }
             return undefined;
@@ -270,12 +271,19 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
             if (!rf) return "";
             const flag = redFlagBySentence.get(sentenceIndices[rf.dataIndex]);
             const p = flag?.historical_pattern;
-            if (!p) return "";
+            if (!p) {
+              return ["────────────", "📊 History: not enough past calls yet"];
+            }
             const dir =
               p.direction === "down" ? "↓ next open"
                 : p.direction === "up" ? "↑ next open"
                   : "→ flat open";
-            return `${dir} · hit rate ${(p.hit_rate * 100).toFixed(0)}% (n=${p.sample_size})`;
+            const rate = `${(p.hit_rate * 100).toFixed(0)}%`;
+            return [
+              "────────────",
+              `📊 HISTORY  ${dir} · ${rate} hit rate (n=${p.sample_size})`,
+              ...wrapForTooltip(p.summary, 44),
+            ];
           },
         },
       },
