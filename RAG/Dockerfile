@@ -5,6 +5,9 @@ FROM python:3.11-slim
 
 WORKDIR /app/RAG
 
+# yt-dlp needs a JS runtime or YouTube returns 403s
+COPY --from=denoland/deno:bin-2.9.8 /deno /usr/local/bin/deno
+
 COPY RAG/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt fastapi uvicorn
 
