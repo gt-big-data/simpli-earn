@@ -18,7 +18,7 @@ and shows the defaults. Never commit the filled-in files.
 
 | File | Copy from | Required |
 | --- | --- | --- |
-| `RAG/.env` | `RAG/.env.example` | `OPENAI_API_KEY` **or** `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `ASSEMBLYAI_KEY` for dashboard creation (may live in `sentiment/.env`) |
+| `RAG/.env` | `RAG/.env.example` | `OPENAI_API_KEY` **or** `GEMINI_API_KEY` (either alone works), `SUPABASE_URL`, `SUPABASE_KEY` (service role), `SUPABASE_ANON_KEY` (saved chat RLS), `ASSEMBLYAI_KEY` for dashboard creation (may live in `sentiment/.env`) |
 | `sentiment/.env` | `sentiment/.env.example` | `SUPABASE_URL`, `SUPABASE_KEY` (service role) |
 | `frontend/.env.local` | `frontend/.env.example` | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (anon key), `SUPABASE_SERVICE_ROLE_KEY` (account deletion); `NEXT_PUBLIC_API_URL` / `NEXT_PUBLIC_SENTIMENT_API_URL` for any deployed build |
 
@@ -28,6 +28,8 @@ Both APIs report missing or malformed required settings when they start; with `S
 
 The SQL in `docs/migrations/001`–`003` is optional: the app runs without it. 001 is needed only for the
 home-worker queue (`YOUTUBE_HOME_WORKER=1`); 002 and 003 add chart metadata and summary/red-flag caching.
+Migration `004_chat_history.sql` is required for signed-in persistent chat. See
+[chat history setup and security tests](docs/CHAT_HISTORY.md).
 
 ## Install Dependencies
 
