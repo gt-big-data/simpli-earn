@@ -49,7 +49,8 @@ This document summarizes notable updates to the SimpliEarn repo and how to roll 
 1. Optionally, in **Supabase Dashboard → SQL**, run (the app works without them; 001 is required only for the home worker):
    - [`001_youtube_jobs.sql`](./migrations/001_youtube_jobs.sql) (home-worker queue),
    - [`002_video_analyses_metadata.sql`](./migrations/002_video_analyses_metadata.sql) (chart ticker/date),
-   - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags).
+   - [`003_video_analyses_summary_red_flags.sql`](./migrations/003_video_analyses_summary_red_flags.sql) (cached summaries and red flags),
+   - [`004_red_flag_history.sql`](./migrations/004_red_flag_history.sql) (predictive red-flag call outcomes / hit-rate history).
 2. Confirm buckets **`transcripts`** and **`sentiment`** exist and policies match your app (unchanged by this doc).
 3. Ensure **`video_analyses`** table still matches your app (unchanged here).
 

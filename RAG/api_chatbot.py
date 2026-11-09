@@ -35,6 +35,11 @@ try:
     if supabase_url and supabase_key:
         supabase = create_client(supabase_url, supabase_key)
         print("âœ… Supabase connected")
+        try:
+            from red_flag_prediction import configure_supabase
+            configure_supabase(supabase)
+        except Exception as cfg_err:
+            print(f"âš ï¸  Red flag history Supabase wiring skipped: {cfg_err}")
     else:
         print("âš ï¸  Supabase not configured")
 except Exception as e:

@@ -3,6 +3,9 @@ Predictive layer for red flags: after-hours call → next trading open.
 
 Uses the same yfinance stack as stock charts. Builds a simple historical
 hit-rate table per flag category from preloaded calls (+ live updates).
+
+History is persisted to Supabase table `red_flag_call_outcomes` when a client
+is configured; falls back to RAG/data/red_flag_hit_rates.json otherwise.
 """
 
 from __future__ import annotations
@@ -18,6 +21,10 @@ import yfinance as yf
 
 THRESHOLD_PCT = 0.5  # |move| < 0.5% => flat
 SEED_PATH = os.path.join(os.path.dirname(__file__), "data", "red_flag_hit_rates.json")
+TABLE = "red_flag_call_outcomes"
+
+# Injected by api_chatbot (or tests). None → JSON-only mode.
+_supabase: Any = None
 
 # Same ticker/date mapping as frontend ChartsFrame (earnings day; treat as after-hours)
 PRELOADED_CALLS: Dict[str, Dict[str, str]] = {
@@ -110,6 +117,12 @@ def get_next_open_move(ticker: str, earnings_date_str: str) -> Optional[Dict[str
         return None
 
 
+def configure_supabase(client: Any) -> None:
+    """Wire the shared Supabase client used by the RAG API."""
+    global _supabase
+    _supabase = client
+
+
 def _default_seed() -> Dict[str, Any]:
     return {
         "threshold_pct": THRESHOLD_PCT,
@@ -139,6 +152,99 @@ def save_seed(data: Dict[str, Any]) -> None:
         json.dump(data, f, indent=2)
 
 
+def _row_to_call(row: Dict[str, Any]) -> Dict[str, Any]:
+    cats = row.get("categories") or []
+    if isinstance(cats, str):
+        try:
+            cats = json.loads(cats)
+        except Exception:
+            cats = []
+    return {
+        "ticker": row.get("ticker"),
+        "date": row.get("earnings_date"),
+        "categories": list(cats),
+        "categories_source": row.get("categories_source"),
+        "next_open_pct": row.get("next_open_pct"),
+        "direction": row.get("direction"),
+        "prior_close": row.get("prior_close"),
+        "next_open": row.get("next_open"),
+        "next_open_date": row.get("next_open_date"),
+    }
+
+
+def _call_to_row(call_key: str, call: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        "call_key": str(call_key),
+        "ticker": call.get("ticker"),
+        "earnings_date": call.get("date"),
+        "categories": list(call.get("categories") or []),
+        "categories_source": call.get("categories_source"),
+        "next_open_pct": call.get("next_open_pct"),
+        "direction": call.get("direction"),
+        "prior_close": call.get("prior_close"),
+        "next_open": call.get("next_open"),
+        "next_open_date": call.get("next_open_date"),
+        "updated_at": datetime.now().isoformat(),
+    }
+
+
+def load_history_from_supabase() -> Optional[Dict[str, Any]]:
+    """Return history dict from Supabase, or None if unavailable/empty/error."""
+    if _supabase is None:
+        return None
+    try:
+        result = _supabase.table(TABLE).select("*").execute()
+    except Exception as e:
+        print(f"Red flag history Supabase load failed (using JSON seed): {e}")
+        return None
+    rows = getattr(result, "data", None) or []
+    if not rows:
+        return None
+    data = _default_seed()
+    for row in rows:
+        key = row.get("call_key")
+        if not key:
+            continue
+        data["calls"][str(key)] = _row_to_call(row)
+    rebuild_category_rates(data)
+    return data
+
+
+def save_history_to_supabase(data: Dict[str, Any]) -> bool:
+    """Upsert all call outcomes. Returns True on success."""
+    if _supabase is None:
+        return False
+    calls = data.get("calls") or {}
+    if not calls:
+        return False
+    rows = [_call_to_row(k, v) for k, v in calls.items()]
+    try:
+        _supabase.table(TABLE).upsert(rows, on_conflict="call_key").execute()
+        return True
+    except Exception as e:
+        print(f"Red flag history Supabase save failed: {e}")
+        return False
+
+
+def load_history() -> Dict[str, Any]:
+    """Prefer Supabase; fall back to local JSON seed. Seed Supabase once if empty."""
+    remote = load_history_from_supabase()
+    if remote is not None:
+        return remote
+    local = load_seed()
+    if local.get("calls") and _supabase is not None:
+        # First run after migration: push seed so other environments share history
+        if save_history_to_supabase(local):
+            print("Seeded red_flag_call_outcomes from local JSON")
+    return local
+
+
+def save_history(data: Dict[str, Any]) -> None:
+    """Write local JSON cache always; upsert Supabase when configured."""
+    save_seed(data)
+    save_history_to_supabase(data)
+
+
 def rebuild_category_rates(data: Dict[str, Any]) -> Dict[str, Any]:
     counts: Dict[str, Dict[str, int]] = defaultdict(lambda: {"down": 0, "flat": 0, "up": 0})
     for call in data.get("calls", {}).values():
@@ -166,7 +272,7 @@ def rebuild_category_rates(data: Dict[str, Any]) -> Dict[str, Any]:
 
 def ensure_call_outcomes(data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Fill next-open outcomes for preloaded calls (fetch via yfinance if missing)."""
-    data = data or load_seed()
+    data = data or load_history()
     changed = False
     for dashboard_id, meta in PRELOADED_CALLS.items():
         existing = data["calls"].get(dashboard_id)
@@ -194,19 +300,19 @@ def ensure_call_outcomes(data: Optional[Dict[str, Any]] = None) -> Dict[str, Any
         changed = True
     if changed:
         rebuild_category_rates(data)
-        save_seed(data)
+        save_history(data)
     return data
 
 
-def update_call_categories(dashboard_id: str, categories: List[str]) -> None:
-    """When live flags arrive for a preloaded call, replace bootstrap categories."""
-    if not dashboard_id or dashboard_id not in PRELOADED_CALLS:
+def update_call_categories(call_key: str, categories: List[str]) -> None:
+    """When live flags arrive, replace bootstrap categories for that call key."""
+    if not call_key:
         return
     cats = sorted({c for c in categories if c})
     if not cats:
         return
     data = ensure_call_outcomes()
-    call = data["calls"].get(dashboard_id)
+    call = data["calls"].get(str(call_key))
     if not call:
         return
     if set(call.get("categories") or []) == set(cats):
@@ -214,7 +320,44 @@ def update_call_categories(dashboard_id: str, categories: List[str]) -> None:
     call["categories"] = cats
     call["categories_source"] = "live_red_flags"
     rebuild_category_rates(data)
-    save_seed(data)
+    save_history(data)
+
+
+def record_call_outcome(
+    call_key: str,
+    ticker: str,
+    date: str,
+    categories: Optional[List[str]] = None,
+    move: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Upsert a call outcome (preloaded or custom video) into history."""
+    if not call_key or not ticker or not date:
+        return
+    data = ensure_call_outcomes()
+    key = str(call_key)
+    existing = data["calls"].get(key) or {}
+    move = move or get_next_open_move(ticker, date)
+    cats = sorted({c for c in (categories or existing.get("categories") or []) if c})
+    if not move and existing.get("direction") is None:
+        return
+    row = {
+        "ticker": ticker.upper(),
+        "date": date,
+        "categories": cats or list(existing.get("categories") or []),
+        "categories_source": (
+            "live_red_flags" if categories else existing.get("categories_source")
+        ),
+        "next_open_pct": (move or {}).get("next_open_pct", existing.get("next_open_pct")),
+        "direction": (move or {}).get("direction", existing.get("direction")),
+        "prior_close": (move or {}).get("prior_close", existing.get("prior_close")),
+        "next_open": (move or {}).get("next_open", existing.get("next_open")),
+        "next_open_date": (move or {}).get("next_open_date", existing.get("next_open_date")),
+    }
+    if existing == row:
+        return
+    data["calls"][key] = row
+    rebuild_category_rates(data)
+    save_history(data)
 
 
 def pattern_for_category(category: str, data: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
@@ -424,9 +567,16 @@ def enrich_flags(
     """Attach historical_pattern to each flag + call-level prediction/strategy."""
     data = ensure_call_outcomes()
     cats = [f.get("category") for f in flags if f.get("category")]
-    if dashboard_id:
-        update_call_categories(dashboard_id, cats)
-        data = load_seed()
+    call_key = str(dashboard_id) if dashboard_id else None
+    if call_key and cats:
+        if call_key in PRELOADED_CALLS or call_key in data.get("calls", {}):
+            update_call_categories(call_key, cats)
+        elif ticker and date:
+            record_call_outcome(call_key, ticker, date, categories=cats)
+        data = load_history()
+    elif call_key and ticker and date and call_key not in data.get("calls", {}):
+        record_call_outcome(call_key, ticker, date, categories=cats)
+        data = load_history()
 
     enriched = []
     for f in flags:
