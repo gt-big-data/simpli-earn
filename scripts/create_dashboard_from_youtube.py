@@ -253,6 +253,47 @@ class DashboardCreator:
             print(f"❌ pytube also failed: {e}")
             return None
             
+    def fetch_youtube_captions(self, youtube_url):
+        """
+        Fast path: pull YouTube's existing transcript (captions) instead of downloading
+        audio and running AssemblyAI. Returns transcript text, or None if unavailable.
+
+        Reuses RAG/transcript_retrieval.py (youtube_transcript_api is already a project
+        dependency). For earnings calls that already have captions this skips the
+        audio download + AssemblyAI transcription, cutting several minutes off the job.
+
+        Disable by setting CAPTIONS_FIRST=0 to force the audio->AssemblyAI path.
+        """
+        if os.getenv("CAPTIONS_FIRST", "1").strip().lower() in ("0", "false", "no", "off"):
+            print("⏭️  CAPTIONS_FIRST disabled; using audio + AssemblyAI path")
+            return None
+
+        print("📝 Trying YouTube captions (fast path)...")
+        try:
+            from transcript_retrieval import get_video_transcript
+        except ImportError as e:
+            print(f"⚠️  Captions module unavailable ({e}); falling back to AssemblyAI")
+            return None
+
+        try:
+            transcript_text = get_video_transcript(youtube_url)
+        except Exception as e:
+            print(f"⚠️  Caption fetch raised ({e}); falling back to AssemblyAI")
+            return None
+
+        # get_video_transcript returns "Error: ..." on failure (e.g. captions disabled)
+        if not transcript_text or transcript_text.startswith("Error:"):
+            print(f"⚠️  No usable captions ({transcript_text}); falling back to AssemblyAI")
+            return None
+
+        # Guard against trivially short/empty caption tracks that would hurt sentiment analysis
+        if len(transcript_text.strip()) < 200:
+            print("⚠️  Captions too short to be a real transcript; falling back to AssemblyAI")
+            return None
+
+        print(f"✅ Captions retrieved ({len(transcript_text)} characters) — skipping audio + AssemblyAI")
+        return transcript_text
+
     def transcribe_with_assemblyai(self, audio_file):
         """Transcribe audio using AssemblyAI"""
         print("🎤 Transcribing with AssemblyAI...")
@@ -492,16 +533,19 @@ class DashboardCreator:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         identifier = f"{ticker.lower()}_{video_id}_{timestamp}"
         
-        # Download audio
-        audio_file = self.download_audio(youtube_url)
-        if not audio_file:
-            return False
-            
-        # Transcribe with AssemblyAI
-        transcript_text = self.transcribe_with_assemblyai(audio_file)
+        # Fast path: use existing YouTube captions when available (skips audio + AssemblyAI).
+        transcript_text = self.fetch_youtube_captions(youtube_url)
+
+        # Fallback path: download audio and transcribe with AssemblyAI only when captions failed.
         if not transcript_text:
-            self.cleanup()
-            return False
+            audio_file = self.download_audio(youtube_url)
+            if not audio_file:
+                return False
+
+            transcript_text = self.transcribe_with_assemblyai(audio_file)
+            if not transcript_text:
+                self.cleanup()
+                return False
             
         # Save transcript
         transcript_filename = self.save_transcript(transcript_text, identifier)
