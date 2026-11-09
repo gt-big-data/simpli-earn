@@ -35,6 +35,10 @@ def check_environment(env=None) -> tuple[list[str], list[str]]:
             errors.append(f"Set {name} (custom dashboards, transcripts, summaries and red flags use Supabase)")
     if get("SUPABASE_URL") and not _is_http_url(get("SUPABASE_URL")):
         errors.append(f"SUPABASE_URL must be an http(s) URL, got {get('SUPABASE_URL')!r}")
+    if not get("SUPABASE_ANON_KEY"):
+        errors.append("Set SUPABASE_ANON_KEY (saved chat uses the public project key and user JWT for RLS)")
+    elif get("SUPABASE_ANON_KEY") == get("SUPABASE_KEY"):
+        errors.append("SUPABASE_ANON_KEY must not be the service-role SUPABASE_KEY")
 
     home_worker = get("YOUTUBE_HOME_WORKER").lower() in ("1", "true", "yes", "on")
     if not home_worker and not get("ASSEMBLYAI_KEY"):
