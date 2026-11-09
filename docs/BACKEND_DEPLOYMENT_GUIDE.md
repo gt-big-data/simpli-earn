@@ -231,7 +231,7 @@ const response = await fetch(`${API_BASE_URL}/summary`);
 ### Prerequisites
 
 - `gcloud` CLI installed and authenticated
-- Project set: `gcloud config set project simpliearn-452813`
+- Project set: `gcloud config set project gen-lang-client-0593746393`
 
 ### Full deployment (all services)
 
@@ -245,13 +245,13 @@ Build **from the repository root** (not `RAG/`). The image includes `RAG/`, `scr
 
 ```bash
 # Build (Docker)
-docker build -f RAG/Dockerfile -t gcr.io/simpliearn-452813/simpli-earn-backend:latest .
-docker push gcr.io/simpliearn-452813/simpli-earn-backend:latest
+docker build -f RAG/Dockerfile -t us-central1-docker.pkg.dev/gen-lang-client-0593746393/simpli-earn/simpli-earn-backend:latest .
+docker push us-central1-docker.pkg.dev/gen-lang-client-0593746393/simpli-earn/simpli-earn-backend:latest
 
 # Or use Cloud Build with the same context as cloudbuild.yaml (submit from repo root).
 # Deploy to Cloud Run
 gcloud run deploy simpli-earn-backend \
-  --image gcr.io/simpliearn-452813/simpli-earn-backend:1ccbc92 \
+  --image us-central1-docker.pkg.dev/gen-lang-client-0593746393/simpli-earn/simpli-earn-backend:1ccbc92 \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
@@ -269,11 +269,11 @@ To avoid YouTube **429** on Cloud Run, enqueue jobs for a home worker instead of
 
 ```bash
 # Build
-gcloud builds submit --tag gcr.io/simpliearn-452813/simpli-earn-sentiment:latest sentiment
+gcloud builds submit --tag us-central1-docker.pkg.dev/gen-lang-client-0593746393/simpli-earn/simpli-earn-sentiment:latest sentiment
 
 # Deploy to Cloud Run
 gcloud run deploy simpli-earn-sentiment \
-  --image gcr.io/simpliearn-452813/simpli-earn-sentiment:latest \
+  --image us-central1-docker.pkg.dev/gen-lang-client-0593746393/simpli-earn/simpli-earn-sentiment:latest \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
@@ -315,13 +315,13 @@ Example: `OPENAI_API_KEY=openai-api-key:latest` means:
 1. Create secret:
 
 ```bash
-echo -n "your-actual-value" | gcloud secrets create my-secret-name --data-file=- --project=simpliearn-452813
+echo -n "your-actual-value" | gcloud secrets create my-secret-name --data-file=- --project=gen-lang-client-0593746393
 ```
 
 1. Grant access:
 
 ```bash
-gcloud projects add-iam-policy-binding simpliearn-452813 \
+gcloud projects add-iam-policy-binding gen-lang-client-0593746393 \
   --member="serviceAccount:976485872075-compute@developer.gserviceaccount.com" \
   --role="roles/secretmanager.secretAccessor"
 ```
@@ -335,7 +335,7 @@ gcloud projects add-iam-policy-binding simpliearn-452813 \
 ### Update existing secret
 
 ```bash
-echo -n "new-value" | gcloud secrets versions add openai-api-key --data-file=- --project=simpliearn-452813
+echo -n "new-value" | gcloud secrets versions add openai-api-key --data-file=- --project=gen-lang-client-0593746393
 ```
 
 ---

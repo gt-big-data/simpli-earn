@@ -15,6 +15,7 @@ RAG/__pycache__/
 RAG/faiss_indices/
 google-cloud-sdk
 venv
+node_modules/
 RAG/models/
 **/__pycache__/
 # Stray nested Next caches (should not live under frontend/apps)
