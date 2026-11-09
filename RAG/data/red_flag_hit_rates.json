@@ -1,0 +1,137 @@
+{
+  "threshold_pct": 0.5,
+  "window": "after-hours call \u2192 next trading open",
+  "calls": {
+    "1": {
+      "ticker": "AAPL",
+      "date": "2/2/25",
+      "categories": [
+        "guidance_change",
+        "margin_pressure",
+        "regulatory_legal"
+      ],
+      "next_open_pct": -2.547,
+      "direction": "down",
+      "prior_close": 234.2997,
+      "next_open": 228.333,
+      "next_open_date": "2025-02-03"
+    },
+    "4": {
+      "ticker": "SHEL",
+      "date": "1/30/25",
+      "categories": [
+        "vague_evasive",
+        "guidance_change"
+      ],
+      "next_open_pct": 0.63,
+      "direction": "up",
+      "prior_close": 62.2809,
+      "next_open": 62.6734,
+      "next_open_date": "2025-01-31"
+    },
+    "6": {
+      "ticker": "WMT",
+      "date": "2/20/25",
+      "categories": [
+        "margin_pressure",
+        "guidance_change"
+      ],
+      "next_open_pct": -0.7,
+      "direction": "down",
+      "prior_close": 95.679,
+      "next_open": 95.0097,
+      "next_open_date": "2025-02-21"
+    },
+    "2": {
+      "ticker": "CVS",
+      "date": "11/6/24",
+      "categories": [
+        "guidance_change",
+        "margin_pressure"
+      ],
+      "next_open_pct": -0.519,
+      "direction": "down",
+      "prior_close": 57.7339,
+      "next_open": 57.4341,
+      "next_open_date": "2024-11-07"
+    },
+    "3": {
+      "ticker": "GOOGL",
+      "date": "2/4/25",
+      "categories": [
+        "margin_pressure",
+        "regulatory_legal",
+        "debt_leverage"
+      ],
+      "next_open_pct": -7.418,
+      "direction": "down",
+      "prior_close": 205.1758,
+      "next_open": 189.9551,
+      "next_open_date": "2025-02-05"
+    },
+    "5": {
+      "ticker": "TSLA",
+      "date": "1/29/25",
+      "categories": [
+        "vague_evasive",
+        "guidance_change",
+        "other"
+      ],
+      "next_open_pct": 5.572,
+      "direction": "up",
+      "prior_close": 389.1,
+      "next_open": 410.78,
+      "next_open_date": "2025-01-30"
+    }
+  },
+  "by_category": {
+    "guidance_change": {
+      "down": 3,
+      "flat": 0,
+      "up": 2,
+      "n": 5,
+      "dominant": "down",
+      "hit_rate": 0.6
+    },
+    "margin_pressure": {
+      "down": 4,
+      "flat": 0,
+      "up": 0,
+      "n": 4,
+      "dominant": "down",
+      "hit_rate": 1.0
+    },
+    "regulatory_legal": {
+      "down": 2,
+      "flat": 0,
+      "up": 0,
+      "n": 2,
+      "dominant": "down",
+      "hit_rate": 1.0
+    },
+    "vague_evasive": {
+      "down": 0,
+      "flat": 0,
+      "up": 2,
+      "n": 2,
+      "dominant": "up",
+      "hit_rate": 1.0
+    },
+    "debt_leverage": {
+      "down": 1,
+      "flat": 0,
+      "up": 0,
+      "n": 1,
+      "dominant": "down",
+      "hit_rate": 1.0
+    },
+    "other": {
+      "down": 0,
+      "flat": 0,
+      "up": 1,
+      "n": 1,
+      "dominant": "up",
+      "hit_rate": 1.0
+    }
+  }
+}
