@@ -78,6 +78,46 @@ JSON UTF-8 size is checked against 1 MiB, dropping oldest context pairs as neces
 and displayed text is not clipped. `CHAT_MAX_TURNS` can lower the backend context window; if
 `MAX_REQUEST_BODY_BYTES` is lowered below the default, the browser may receive a 413.
 
+## All chats across dashboards
+
+The fullscreen history (sidebar, or the History popover below `lg`) has two tabs: this
+dashboard's chats (labelled with its ticker, e.g. "AAPL chats") and "All chats", which lists the
+account's chats on every dashboard with a ticker tag on each. All chats reads `chat_sessions`
+without the `dashboard_key` filter (RLS still limits it to the user's rows) and merges this
+dashboard's live list into it, so a new message moves its chat at once; other dashboards' chats
+update on refresh, window focus or reopening the tab.
+
+A chat is bound to its transcript: every `/chat` request carries the dashboard's transcript and
+history for that transcript only. So opening another dashboard's chat from All chats is a route
+change, never an in-place load: the page navigates to that dashboard with `?chat=<session id>`
+added (`/dashboard?id=…` or `?video_url=…&ticker=…`), and that chat opens first. A `?chat=` the
+dashboard doesn't list (deleted, or another dashboard's) falls back to its newest chat. Opening
+a `?chat=` link, including on a fresh page load, also opens the SimpliChat panel.
+
+The dashboard page stays mounted across that navigation, so fullscreen, the selected tab, and the
+search query, ticker filters and sort survive it. A new controller is created for the new
+transcript, so the unsent message box text is lost, the list reloads (briefly showing "Loading
+history…") and its scroll position resets. An answer still generating on the old dashboard is
+not shown, but the backend still saves it. Search, filters and sort reset on a page reload.
+
+Ticker tags come from `frontend/lib/dashboards.ts`: preloaded dashboards use its
+`PRELOADED_DASHBOARDS` map (shared with the charts), custom calls use the library's
+`metadata.ticker`, and a ticker from the URL wins for the current dashboard. Tickers are trimmed
+and upper-cased; blank or `N/A` counts as unknown. A chat with no ticker is tagged "Video" (a
+custom YouTube call) or "Other", never blank. The landing page's `public/data/mock-calls.json`
+is a separate ticker source and is not merged in; keep it in step by hand when adding a
+preloaded dashboard. A test fails if a dashboard in `preloaded_videos.json` has no ticker.
+
+Limitations:
+
+- Search (Fuse.js, in the browser) covers chat titles or tickers only, not message text; the list
+  doesn't load messages, and searching them would need a query per chat.
+- All chats reads every chat in pages of 200, with no cap or "load more". Fine at current volume;
+  a very large history loads in full before it can be searched.
+- Switching to All chats re-reads the list each time (the previous list stays on screen meanwhile).
+- The list query embeds `chat_messages(count)` so chats can be sorted by length; it uses the
+  existing SELECT grants and RLS, with no schema change.
+
 ## Local verification
 
 Run Next.js on 3000, RAG on 8000, with the same dev Supabase project/key configuration. Bundled
@@ -235,6 +275,8 @@ Manual checks with two separate browser sessions:
 - Stop the API or interrupt generation; verify Retry and no false saved success. Verify a late
   response never appears in a different selected thread/account.
 - Verify >20 saved pairs remain readable while only bounded recent context reaches `/chat`.
+- With chats on two dashboards, open one of the other dashboard's from All chats in fullscreen:
+  the URL gains `?chat=`, that chat opens, and the tab, search, filters and sort are unchanged.
 
 Repeat the two-account smoke test on the hosted build after the backend deployment blocker is
 resolved. Do not claim the hosted path or Supabase REST suite passed based on local SQL/unit tests.

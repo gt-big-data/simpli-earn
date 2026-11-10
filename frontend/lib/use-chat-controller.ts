@@ -8,7 +8,8 @@ import { ChatController, type ChatResult } from "./chat-controller";
 import { chatSource } from "./chat-source";
 import { createChatRepository } from "./chat-store";
 
-export function useChatController(id: string | null, videoUrl: string | null, open: boolean) {
+/** `preferredChat`: the chat to open first (the dashboard's ?chat=, set by links from "All chats"). */
+export function useChatController(id: string | null, videoUrl: string | null, open: boolean, preferredChat: string | null = null) {
   const { user, loading } = useAuth();
   const accountId = user?.id ?? null;
   const source = useMemo(() => {
@@ -32,9 +33,9 @@ export function useChatController(id: string | null, videoUrl: string | null, op
   useEffect(() => {
     if (!controller || loading) return;
     controller.activate();
-    void controller.initialize();
+    void controller.initialize(preferredChat);
     return () => controller.dispose();
-  }, [controller, loading]);
+  }, [controller, loading, preferredChat]);
   useEffect(() => {
     if (!controller || loading || !open) return;
     const refresh = () => { void controller.refresh(); };

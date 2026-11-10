@@ -4,7 +4,7 @@ import { History, Maximize2, Minimize2, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ChatBot from "./ChatBot";
-import ChatHistoryList from "./ChatHistoryList";
+import ChatHistoryList, { DEFAULT_HISTORY_VIEW, type HistoryView } from "./ChatHistoryList";
 import type { useChatController } from "@/lib/use-chat-controller";
 import { MOTION_EASING, MOTION_MS, prefersReducedMotion } from "@/lib/motion";
 
@@ -20,6 +20,9 @@ interface ChatFrameProps {
 export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
     const [fullscreen, setFullscreen] = useState(false);
     const [historyOpen, setHistoryOpen] = useState(false);
+    // Tab, search and filters: shared by the sidebar and the small-screen popover, and kept when an
+    // "All chats" link changes dashboard
+    const [historyView, setHistoryView] = useState<HistoryView>(DEFAULT_HISTORY_VIEW);
     const { controller, state, guest, loading, sourceError } = chat;
     const panelRef = useRef<HTMLDivElement>(null);
     // The panel's on-screen rect just before a toggle, used to animate from it (FLIP)
@@ -120,12 +123,13 @@ export default function ChatFrame({ onClose, chat }: ChatFrameProps) {
                 <div className={`flex min-h-0 w-full flex-1 ${fullscreen ? "border-t border-white/8" : ""}`}>
                     {fullscreen && !guest && controller && state && (
                         <aside className="hidden w-1/4 min-w-48 border-r border-white/8 p-5 lg:block">
-                            <ChatHistoryList controller={controller} state={state} />
+                            <ChatHistoryList controller={controller} state={state} view={historyView} onViewChange={setHistoryView} />
                         </aside>
                     )}
                     {fullscreen && historyOpen && !guest && controller && state && <aside
-                        className="absolute inset-x-3 top-14 z-20 max-h-[70%] overflow-auto rounded-lg border border-white/15 bg-background p-4 shadow-xl lg:hidden">
-                        <ChatHistoryList controller={controller} state={state} onSelect={() => setHistoryOpen(false)} />
+                        className="absolute inset-x-3 top-14 z-20 flex max-h-[70%] flex-col rounded-lg border border-white/15 bg-background p-4 shadow-xl lg:hidden">
+                        <ChatHistoryList controller={controller} state={state} view={historyView} onViewChange={setHistoryView}
+                            onSelect={() => setHistoryOpen(false)} />
                     </aside>}
                     <div className={`flex min-h-0 min-w-0 flex-1 flex-col gap-2 ${fullscreen ? "px-8 pt-5 pb-8" : "px-5 pb-5"}`}>
                         {guest && !loading && <p className="text-xs text-muted-foreground"><Link className="text-brand underline" href="/login">Sign in</Link> to save conversations.</p>}

@@ -4,6 +4,8 @@ import { ChatController, type ChatResult } from "./chat-controller.ts";
 import { chatSource } from "./chat-source.ts";
 import type { ChatRepository, ChatSession } from "./chat-store.ts";
 import type { ChatMessage } from "./chat-history.ts";
+import { chatHref, dashboardLabel, dashboardTicker, everyChat, normalizeTicker, PRELOADED_DASHBOARDS } from "./dashboards.ts";
+import { readFileSync } from "node:fs";
 
 const source = chatSource("1", null);
 const session = (id: string): ChatSession => ({ id, user_id: "alice", dashboard_key: source.key,
@@ -14,14 +16,18 @@ function deferred<T>() {
   const promise = new Promise<T>((yes, no) => { resolve = yes; reject = no; });
   return { promise, resolve, reject };
 }
-function repository(initial = [session("s1")]) {
-  const db = { sessions: [...initial] };
+function repository(initial = [session("s1")], others: ChatSession[] = []) {
+  const db = { sessions: [...initial], others: [...others] };
   const messages = new Map<string, ChatMessage[]>();
   const repo: ChatRepository = {
-    sessions: async () => db.sessions, messages: async id => messages.get(id) ?? [],
+    sessions: async () => db.sessions, allSessions: async () => [...db.sessions, ...db.others],
+    messages: async id => messages.get(id) ?? [],
     draft: (id, title) => ({ ...session(id), title }),
-    token: async () => "alice-jwt", rename: async (id, title) => { db.sessions = db.sessions.map(s => s.id === id ? { ...s, title } : s); },
-    remove: async id => { db.sessions = db.sessions.filter(s => s.id !== id); },
+    token: async () => "alice-jwt", rename: async (id, title) => {
+      const retitle = (s: ChatSession) => s.id === id ? { ...s, title } : s;
+      db.sessions = db.sessions.map(retitle); db.others = db.others.map(retitle);
+    },
+    remove: async id => { db.sessions = db.sessions.filter(s => s.id !== id); db.others = db.others.filter(s => s.id !== id); },
   };
   return { repo, messages, db };
 }
@@ -320,4 +326,73 @@ test("an answer the backend could not store is shown, marked unsaved, not droppe
   });
   await silent.initialize(); await silent.ask("q");
   assert.match(silent.snapshot().error!, /did not confirm saving/);
+});
+
+const elsewhere = (id: string, updated_at: string): ChatSession => ({ ...session(id), dashboard_key: "youtube:dQw4w9WgXcQ",
+  dashboard_id: null, video_identifier: "dQw4w9WgXcQ", updated_at });
+
+test("a link from All chats opens its chat; an unknown or deleted one falls back to the newest", async () => {
+  const { repo } = repository([session("s1"), session("s2")]);
+  const linked = new ChatController(source, repo, async body => reply(body));
+  await linked.initialize("s2");
+  assert.equal(linked.snapshot().sessionId, "s2");
+  const stale = new ChatController(source, repo, async body => reply(body));
+  await stale.initialize("gone");
+  assert.equal(stale.snapshot().sessionId, "s1");
+});
+
+test("All chats: read on demand, kept current by refresh, rename and delete, merged newest first", async () => {
+  const other = elsewhere("o1", "2026-10-26");
+  const { repo, db } = repository([session("s1")], [other]);
+  const c = new ChatController(source, repo, async body => reply(body));
+  await c.initialize();
+  assert.equal(c.snapshot().allSessions, null); // not read until "All chats" is shown
+  await c.loadAll();
+  assert.deepEqual(c.snapshot().allSessions!.map(s => s.id), ["s1", "o1"]);
+  assert.deepEqual(everyChat(c.snapshot().sessions, c.snapshot().allSessions!, source.key).map(s => s.id), ["o1", "s1"]);
+  await c.rename("o1", "renamed elsewhere");
+  assert.equal(c.snapshot().allSessions!.find(s => s.id === "o1")!.title, "renamed elsewhere");
+  assert.equal(c.snapshot().sessionId, "s1"); // renaming another dashboard's chat doesn't change this one
+  db.others.push(elsewhere("o2", "2026-10-27"));
+  await c.refresh(); await new Promise(resolve => setImmediate(resolve));
+  assert.ok(c.snapshot().allSessions!.some(s => s.id === "o2"));
+  await c.remove("o1");
+  assert.ok(!c.snapshot().allSessions!.some(s => s.id === "o1"));
+  assert.equal(c.snapshot().sessionId, "s1");
+});
+
+test("All chats lists this dashboard's unsaved new chat once, from the live list", () => {
+  const draft = { ...session("draft"), updated_at: "2026-10-31T00:00:00.000Z" };
+  const stale = { ...session("s1"), title: "old title" };
+  const merged = everyChat([draft, { ...session("s1"), title: "new title" }], [stale, elsewhere("o1", "2026-10-28")], source.key);
+  assert.deepEqual(merged.map(s => s.id), ["draft", "o1", "s1"]);
+  assert.equal(merged.find(s => s.id === "s1")!.title, "new title");
+});
+
+test("dashboard labels and links cover preloaded and custom calls", () => {
+  const custom = elsewhere("o1", "2026-10-26");
+  assert.equal(dashboardTicker(session("s1"), new Map()), "AAPL");
+  assert.equal(dashboardTicker(custom, new Map()), null);
+  assert.equal(dashboardTicker(custom, new Map([["dQw4w9WgXcQ", "NFLX"]])), "NFLX");
+  assert.equal(chatHref(session("s1"), "AAPL"), "/dashboard?id=1&chat=s1");
+  const href = new URL(chatHref(custom, "NFLX"), "http://x");
+  assert.equal(chatSource(null, href.searchParams.get("video_url")).key, custom.dashboard_key);
+  assert.equal(href.searchParams.get("ticker"), "NFLX");
+  assert.equal(href.searchParams.get("chat"), "o1");
+  assert.equal(new URL(chatHref(custom, null), "http://x").searchParams.has("ticker"), false);
+});
+
+test("every preloaded catalog dashboard has a ticker; unresolved chats get a named tag, never a blank", () => {
+  const catalog = JSON.parse(readFileSync(new URL("./preloaded_videos.json", import.meta.url), "utf8")) as Record<string, unknown>;
+  for (const id of Object.keys(catalog)) {
+    const ref = { dashboard_id: id, video_identifier: null };
+    assert.equal(dashboardLabel(ref, dashboardTicker(ref, new Map())), PRELOADED_DASHBOARDS[id]?.ticker, `dashboard ${id}`);
+  }
+  const video = { dashboard_id: null, video_identifier: "dQw4w9WgXcQ" };
+  for (const raw of [undefined, "", "   ", "N/A", " n/a "]) {
+    assert.equal(normalizeTicker(raw), null);
+    assert.equal(dashboardLabel(video, dashboardTicker(video, new Map([["dQw4w9WgXcQ", raw ?? ""]]))), "Video");
+  }
+  assert.equal(dashboardLabel({ dashboard_id: "999", video_identifier: null }, dashboardTicker({ dashboard_id: "999", video_identifier: null }, new Map())), "Other");
+  assert.equal(normalizeTicker(" nflx "), "NFLX");
 });
