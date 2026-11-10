@@ -99,7 +99,7 @@ npm run dev
 
 ```bash
 pip install -r RAG/requirements-dev.txt -r sentiment/requirements-dev.txt
-(cd RAG && pytest tests) && (cd sentiment && pytest tests)
+(cd RAG && pytest tests) && (cd sentiment && pytest tests) && (cd scripts && pytest tests)
 cd frontend && npm test && npm run lint && npm run build
 ```
 
