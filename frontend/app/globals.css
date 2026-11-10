@@ -195,6 +195,21 @@ body {
   white-space: nowrap;
 }
 
+/* Chart mount: a quick fade instead of Chart.js's default grow-from-axis animation, which
+   reads as bouncy on a finance dashboard. Charts set `animation: false` and wrap in this */
+.chart-fade-in {
+  animation: chart-fade-in 200ms ease-out;
+}
+
+@keyframes chart-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-fade-in {
+    animation: none;
 /* Scrolls by wheel, touch and keyboard, with no visible or space-taking scrollbar */
 @utility scrollbar-none {
   scrollbar-width: none;

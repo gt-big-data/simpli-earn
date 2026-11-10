@@ -211,6 +211,7 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
 
   const options = {
     responsive: true,
+    animation: false as const,
     interaction: {
       mode: "index" as const,
       intersect: false,
@@ -407,7 +408,7 @@ const SentimentGraph: React.FC<SentimentGraphProps> = ({ relevanceData, specific
           <p className="text-white/45">Hover a red triangle for category history · paper strategy only</p>
         </div>
       )}
-      <div className="w-full flex-1 min-h-0">
+      <div className="chart-fade-in w-full flex-1 min-h-0">
         <Line data={chartData} options={options} />
       </div>
     </div>
