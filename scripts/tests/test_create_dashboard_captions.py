@@ -141,3 +141,62 @@ def test_pipeline_falls_back_to_audio_and_assemblyai_without_captions(creator, m
     assert creator.process_youtube_video("https://youtu.be/abc", ticker_override="AAPL") is True
     assert calls == {"download": 1, "assemblyai": 1}  # fell back exactly once each
     assert saved["transcript_filename"] == "t.txt"
+
+
+# --- punctuation gate: unpunctuated auto-captions go to AssemblyAI ------------
+
+UNPUNCTUATED = "so revenue grew in the quarter and we expect margins to improve next year " * 20
+
+
+def test_unpunctuated_captions_fall_back(creator, monkeypatch):
+    monkeypatch.delenv("CAPTIONS_FIRST", raising=False)
+    _stub_transcript_retrieval(monkeypatch, returns=UNPUNCTUATED)
+    assert creator.fetch_youtube_captions("https://youtu.be/abc") is None
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        (LONG_TRANSCRIPT, True),
+        (UNPUNCTUATED, False),
+        ("", False),
+        # Decimals and tickers are not sentence ends, same as the sentiment splitter
+        ("gross margin was 46.9% and EPS was 2.40 " * 30, False),
+        # One sentence end per 40 words is the limit; 41 is over it
+        (("word " * 39) + "end. ", True),
+        (("word " * 40) + "end. ", False),
+        ("Revenue grew! Did margins hold? Yes.", True),
+    ],
+)
+def test_captions_are_punctuated(text, expected):
+    assert MODULE.captions_are_punctuated(text) is expected
+
+
+# --- fallback failures: single attempt, temp folder always cleaned -----------
+
+
+def test_download_failure_cleans_up_without_retrying(creator, monkeypatch):
+    calls, _ = _wire_pipeline(creator, monkeypatch, captions=None)
+    cleaned = []
+    monkeypatch.setattr(creator, "download_audio", lambda url: calls.__setitem__("download", calls["download"] + 1))
+    monkeypatch.setattr(creator, "cleanup", lambda: cleaned.append(True))
+
+    assert creator.process_youtube_video("https://youtu.be/abc", ticker_override="AAPL") is False
+    assert calls == {"download": 1, "assemblyai": 0}
+    assert cleaned
+
+
+def test_assemblyai_failure_cleans_up_without_retrying(creator, monkeypatch):
+    calls, _ = _wire_pipeline(creator, monkeypatch, captions=None)
+    cleaned = []
+
+    def failing_transcribe(audio):
+        calls["assemblyai"] += 1
+        return None
+
+    monkeypatch.setattr(creator, "transcribe_with_assemblyai", failing_transcribe)
+    monkeypatch.setattr(creator, "cleanup", lambda: cleaned.append(True))
+
+    assert creator.process_youtube_video("https://youtu.be/abc", ticker_override="AAPL") is False
+    assert calls == {"download": 1, "assemblyai": 1}
+    assert cleaned

@@ -14,6 +14,7 @@ Usage:
 """
 
 import os
+import re
 import sys
 import json
 import shutil
@@ -46,6 +47,28 @@ class DashboardWriteConflict(Exception):
 
 # A dashboard whose row lacks any of these is incomplete and may be repaired by a later job
 INCOMPLETE_IF_MISSING = ("transcript_filename", "relevance_filename", "specificity_filename")
+
+# Captions averaging more words than this per sentence are treated as unpunctuated. Spoken
+# earnings-call sentences run ~15-25 words; YouTube auto-captions often have no punctuation at all.
+MAX_CAPTION_WORDS_PER_SENTENCE = 40
+
+# Same boundary the sentiment step's fallback splitter uses (sentiment/text_insights_*.py), so a
+# decimal like "46.9%" is not counted as a sentence end.
+_SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
+
+
+def captions_are_punctuated(text: str, max_words_per_sentence: int = MAX_CAPTION_WORDS_PER_SENTENCE) -> bool:
+    """
+    True when caption text has enough sentence-ending punctuation to be split into sentences.
+
+    Sentiment scores, the graph and red flags are all per sentence. Unpunctuated auto-captions
+    would collapse into a few giant "sentences", so those calls are sent to AssemblyAI instead.
+    """
+    words = len(text.split())
+    if words == 0:
+        return False
+    sentence_ends = len(_SENTENCE_END.findall(text))
+    return sentence_ends > 0 and words / sentence_ends <= max_words_per_sentence
 
 
 class DashboardCreator:
@@ -288,6 +311,10 @@ class DashboardCreator:
         # Guard against trivially short/empty caption tracks that would hurt sentiment analysis
         if len(transcript_text.strip()) < 200:
             print("⚠️  Captions too short to be a real transcript; falling back to AssemblyAI")
+            return None
+
+        if not captions_are_punctuated(transcript_text):
+            print("⚠️  Captions lack sentence punctuation (likely auto-generated); falling back to AssemblyAI")
             return None
 
         print(f"✅ Captions retrieved ({len(transcript_text)} characters) — skipping audio + AssemblyAI")
@@ -535,24 +562,17 @@ class DashboardCreator:
         transcript_text = self.fetch_youtube_captions(youtube_url)
 
         # Fallback path: download audio and transcribe with AssemblyAI only when captions failed.
-        # Download audio
-        audio_file = self.download_audio(youtube_url)
-        if not audio_file:
-            self.cleanup()
-            return False
-            
-        # Transcribe with AssemblyAI
-        transcript_text = self.transcribe_with_assemblyai(audio_file)
         if not transcript_text:
             audio_file = self.download_audio(youtube_url)
             if not audio_file:
+                self.cleanup()
                 return False
 
             transcript_text = self.transcribe_with_assemblyai(audio_file)
             if not transcript_text:
                 self.cleanup()
                 return False
-            
+
         # Save transcript
         transcript_filename = self.save_transcript(transcript_text, identifier)
         if not transcript_filename:
