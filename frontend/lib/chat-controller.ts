@@ -10,6 +10,8 @@ export type ChatState = {
   sessions: ChatSession[]; sessionId: string | null; messages: ChatMessage[];
   loading: boolean; busy: boolean; pendingRequestId: string | null; error: string | null;
   loadFailed: boolean;
+  /** Chats on every dashboard, for "All chats"; null until loadAll() first reads them. */
+  allSessions: ChatSession[] | null;
 };
 export type ChatResult = {
   response: string; suggestions?: string[]; sources?: ChatMessage["sources"];
@@ -28,6 +30,7 @@ export class ChatController {
   private selection = 0;
   private read = 0;
   private listRevision = 0;
+  private allRevision = 0;
   private disposed = false;
   private pending = new Map<string, string>();
   /** New chats listed before /chat has confirmed creating them; their sends carry `title`. */
@@ -40,7 +43,7 @@ export class ChatController {
   constructor(source: ChatSource, repo: ChatRepository | null, send: Send) {
     this.source = source; this.repo = repo; this.send = send;
     this.state = { sessions: [], sessionId: null, messages: [GREETING], loading: !!repo,
-      busy: false, pendingRequestId: null, error: null, loadFailed: false };
+      busy: false, pendingRequestId: null, error: null, loadFailed: false, allSessions: null };
   }
   snapshot = () => this.state;
   subscribe = (listener: () => void) => { this.listeners.add(listener); return () => { this.listeners.delete(listener); }; };
@@ -49,10 +52,11 @@ export class ChatController {
     this.state = { ...this.state, ...update };
     this.listeners.forEach(listener => listener());
   }
-  dispose() { this.disposed = true; this.read++; this.selection++; this.listRevision++; }
+  dispose() { this.disposed = true; this.read++; this.selection++; this.listRevision++; this.allRevision++; }
   activate() { this.disposed = false; }
 
-  async initialize() {
+  /** Opens `preferred` when this dashboard lists it (a link from "All chats"), else the newest chat. */
+  async initialize(preferred?: string | null) {
     if (!this.repo) return;
     const read = ++this.read;
     const listRevision = ++this.listRevision;
@@ -61,7 +65,8 @@ export class ChatController {
       const sessions = await this.repo.sessions();
       if (read !== this.read || listRevision !== this.listRevision || selection !== this.selection || this.disposed) return;
       this.set({ sessions: this.withUnsaved(sessions) });
-      if (sessions.length) await this.select(sessions[0].id);
+      const open = sessions.find(s => s.id === preferred) ?? sessions[0];
+      if (open) await this.select(open.id);
       else this.set({ loading: false, error: null, loadFailed: false });
     } catch (error) {
       if (read === this.read && listRevision === this.listRevision && selection === this.selection) this.set({ loading: false, loadFailed: true, error: errorText(error) });
@@ -85,6 +90,7 @@ export class ChatController {
   }
   async refresh() {
     if (!this.repo || this.state.busy || this.state.loading) return;
+    if (this.state.allSessions) void this.loadAll();
     if (!this.state.sessionId && !this.state.sessions.length) return this.initialize();
     const selection = this.selection;
     const read = ++this.read;
@@ -104,14 +110,26 @@ export class ChatController {
       if (read === this.read && listRevision === this.listRevision && selection === this.selection) this.set({ error: errorText(error) });
     }
   }
+  /** Reads every dashboard's chats; refresh() keeps them current once read. */
+  async loadAll() {
+    if (!this.repo) return;
+    const revision = ++this.allRevision;
+    try {
+      const allSessions = await this.repo.allSessions();
+      if (revision === this.allRevision) this.set({ allSessions });
+    } catch (error) {
+      if (revision === this.allRevision) this.set({ error: errorText(error) });
+    }
+  }
   async rename(id: string, title: string) {
     if (!this.repo || !title.trim()) return;
     if (this.unsaved.has(id)) return this.set({ error: UNSAVED_EDIT });
     this.listRevision++;
     try {
       await this.repo.rename(id, title);
-      this.listRevision++;
-      this.set({ sessions: this.state.sessions.map(s => s.id === id ? { ...s, title: clipText(title.trim(), 100) } : s) });
+      this.listRevision++; this.allRevision++;
+      const retitle = (s: ChatSession) => s.id === id ? { ...s, title: clipText(title.trim(), 100) } : s;
+      this.set({ sessions: this.state.sessions.map(retitle), allSessions: this.state.allSessions?.map(retitle) ?? null });
       await this.refresh();
     }
     catch (error) { this.set({ error: errorText(error) }); }
@@ -123,9 +141,9 @@ export class ChatController {
     try {
       await this.repo.remove(id);
       if (this.disposed) return;
-      this.listRevision++;
+      this.listRevision++; this.allRevision++;
       const sessions = this.state.sessions.filter(s => s.id !== id);
-      this.set({ sessions });
+      this.set({ sessions, allSessions: this.state.allSessions?.filter(s => s.id !== id) ?? null });
       if (this.state.sessionId === id) {
         if (sessions.length) await this.select(sessions[0].id); else this.newChat();
       }

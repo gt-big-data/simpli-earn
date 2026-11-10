@@ -157,8 +157,8 @@ function DashboardContent() {
   const failedSummary = pipeline?.status === "failed" ? `❌ Processing this call failed:\n${pipeline.error}` : null;
 
   // Summary alone (full height) vs summary + SimpliChat. chatClosing keeps the chat mounted while
-  // it animates closed.
-  const [chatOpen, setChatOpen] = useState(false);
+  // it animates closed. A link to a chat (?chat=, from "All chats") opens with SimpliChat showing.
+  const [chatOpen, setChatOpen] = useState(() => !!searchParams.get("chat"));
   const [chatClosing, setChatClosing] = useState(false);
   const summaryPanelRef = useRef<HTMLDivElement>(null);
   const chatPanelRef = useRef<HTMLDivElement>(null);
@@ -168,7 +168,7 @@ function DashboardContent() {
   const [timestamp, setTimestamp] = useState<number>(0);
   const [seekNonce, setSeekNonce] = useState(0);
 
-  const chat = useChatController(searchParams.get("id"), searchParams.get("video_url"), chatOpen);
+  const chat = useChatController(searchParams.get("id"), searchParams.get("video_url"), chatOpen, searchParams.get("chat"));
 
   const changeChatOpen = (open: boolean, animate: boolean) => {
     // Only the side-by-side (lg+) layout animates; stacked, the chat just appears below
