@@ -5,9 +5,22 @@ import type { SectorPreferenceSlug } from '@/lib/auth/constants'
 
 export const runtime = 'nodejs'
 
-const CACHE_TTL_MS = 15 * 60 * 1000
 const MAX_ARTICLES = 12
-const cache = new Map<string, { expiresAt: number; articles: IndustryArticle[] }>()
+// A new sign-in refreshes the digest, but no more often than this
+const MIN_REFRESH_INTERVAL_MS = 24 * 60 * 60 * 1000
+// Digests kept per user; older ones are pruned after each new fetch
+const DIGESTS_KEPT_PER_USER = 20
+// Bump when the provider query or article normalization changes, so stored digests are not reused
+const QUERY_VERSION = '18d-v2'
+
+// Concurrent requests for the same user and sectors (e.g. two tabs right after login) share one fetch
+const inFlight = new Map<string, Promise<ProviderResult>>()
+
+type ProviderResult =
+  | { ok: true; articles: IndustryArticle[] }
+  | { ok: false; status: number; error: string }
+
+type StoredDigest = { articles: IndustryArticle[]; created_at: string }
 
 type IndustryArticle = {
   title: string
@@ -140,43 +153,7 @@ function normalizeArticles(payload: unknown, selectedSectors: SectorPreferenceSl
   return normalized
 }
 
-export async function GET() {
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('sector_preferences')
-    .eq('id', user.id)
-    .single()
-
-  if (profileError) {
-    console.error('Industry news profile lookup failed:', profileError.message)
-    return NextResponse.json({ error: 'Unable to load preferences' }, { status: 500 })
-  }
-
-  const validSlugs = new Set(Object.keys(SECTOR_TERMS))
-  const preferences = Array.isArray(profile.sector_preferences)
-    ? profile.sector_preferences.filter((slug): slug is SectorPreferenceSlug =>
-      typeof slug === 'string' && validSlugs.has(slug))
-    : []
-  if (!preferences.length) return NextResponse.json({ articles: [], sectors: [] })
-
-  const cacheKey = `18d-v2:${[...new Set(preferences)].sort().join(',')}`
-  const cached = cache.get(cacheKey)
-  if (cached && cached.expiresAt > Date.now()) {
-    return NextResponse.json({ articles: cached.articles, sectors: preferences, cached: true })
-  }
-
-  const apiKey = process.env.NEWSAPI_AI_KEY
-  if (!apiKey) {
-    console.error('NEWSAPI_AI_KEY is not configured')
-    return NextResponse.json({ error: 'Industry news is not configured' }, { status: 503 })
-  }
-
+async function fetchFromProvider(preferences: SectorPreferenceSlug[], apiKey: string): Promise<ProviderResult> {
   const keywords = [...new Set(preferences.flatMap((slug) => SECTOR_TERMS[slug]))]
   const today = new Date()
   const startDate = new Date(today.getTime() - 18 * 24 * 60 * 60 * 1000)
@@ -218,27 +195,133 @@ export async function GET() {
 
     if (!response.ok) {
       console.error('NewsAPI.ai request failed:', response.status)
-      const stale = cache.get(cacheKey)
-      if (stale?.articles.length) return NextResponse.json({ articles: stale.articles, sectors: preferences, cached: true })
-      return NextResponse.json({ error: 'News provider request failed' }, { status: 502 })
+      return { ok: false, status: 502, error: 'News provider request failed' }
     }
 
     const payload: unknown = await response.json()
     const providerError = asText(asRecord(payload).error)
     if (providerError) {
       console.error('NewsAPI.ai query rejected:', providerError)
-      const stale = cache.get(cacheKey)
-      if (stale?.articles.length) return NextResponse.json({ articles: stale.articles, sectors: preferences, cached: true })
-      return NextResponse.json({ error: 'News provider rejected the search query' }, { status: 502 })
+      return { ok: false, status: 502, error: 'News provider rejected the search query' }
     }
-    const articles = normalizeArticles(payload, preferences)
-
-    cache.set(cacheKey, { articles, expiresAt: Date.now() + CACHE_TTL_MS })
-    return NextResponse.json({ articles, sectors: preferences, cached: false })
+    return { ok: true, articles: normalizeArticles(payload, preferences) }
   } catch (error) {
     console.error('Industry news request error:', error instanceof Error ? error.message : 'Unknown error')
-    const stale = cache.get(cacheKey)
-    if (stale?.articles.length) return NextResponse.json({ articles: stale.articles, sectors: preferences, cached: true })
-    return NextResponse.json({ error: 'Unable to load industry news' }, { status: 502 })
+    return { ok: false, status: 502, error: 'Unable to load industry news' }
   }
+}
+
+/** Refresh only on a sign-in newer than the digest, and at most once per MIN_REFRESH_INTERVAL_MS. */
+function digestIsCurrent(digest: StoredDigest, lastSignInAt: string | undefined, now: number): boolean {
+  const createdAt = Date.parse(digest.created_at)
+  if (Number.isNaN(createdAt)) return false
+  if (now - createdAt < MIN_REFRESH_INTERVAL_MS) return true
+  const signedInAt = lastSignInAt ? Date.parse(lastSignInAt) : NaN
+  // Same session as the digest: keep it until the user signs in again
+  return !Number.isNaN(signedInAt) && signedInAt <= createdAt
+}
+
+export async function GET() {
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('sector_preferences')
+    .eq('id', user.id)
+    .single()
+
+  if (profileError) {
+    console.error('Industry news profile lookup failed:', profileError.message)
+    return NextResponse.json({ error: 'Unable to load preferences' }, { status: 500 })
+  }
+
+  const validSlugs = new Set(Object.keys(SECTOR_TERMS))
+  const preferences = Array.isArray(profile.sector_preferences)
+    ? profile.sector_preferences.filter((slug): slug is SectorPreferenceSlug =>
+      typeof slug === 'string' && validSlugs.has(slug))
+    : []
+  if (!preferences.length) return NextResponse.json({ articles: [], sectors: [] })
+
+  const sectors = [...new Set(preferences)].sort()
+  const sectorKey = `${QUERY_VERSION}:${sectors.join(',')}`
+
+  // Latest stored digest for these sectors. A read error (e.g. migration 006 not run) falls through
+  // to a live fetch so the widget still works, just without the per-user reuse.
+  const { data: latestRow, error: readError } = await supabase
+    .from('user_news_digests')
+    .select('articles, created_at')
+    .eq('user_id', user.id)
+    .eq('sector_key', sectorKey)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  if (readError) console.error('Industry news digest lookup failed:', readError.message)
+  const latest = (latestRow as StoredDigest | null) ?? null
+
+  if (latest && digestIsCurrent(latest, user.last_sign_in_at, Date.now())) {
+    return NextResponse.json({ articles: latest.articles, sectors: preferences, cached: true, generatedAt: latest.created_at })
+  }
+
+  const apiKey = process.env.NEWSAPI_AI_KEY
+  if (!apiKey) {
+    console.error('NEWSAPI_AI_KEY is not configured')
+    if (latest) return NextResponse.json({ articles: latest.articles, sectors: preferences, cached: true, generatedAt: latest.created_at })
+    return NextResponse.json({ error: 'Industry news is not configured' }, { status: 503 })
+  }
+
+  const flightKey = `${user.id}:${sectorKey}`
+  let pending = inFlight.get(flightKey)
+  const ownsFetch = !pending
+  if (!pending) {
+    pending = fetchFromProvider(sectors, apiKey)
+    inFlight.set(flightKey, pending)
+  }
+  let result: ProviderResult
+  try {
+    result = await pending
+  } finally {
+    if (ownsFetch) inFlight.delete(flightKey)
+  }
+
+  if (!result.ok) {
+    // Serve the previous digest, however old, rather than an error
+    if (latest) return NextResponse.json({ articles: latest.articles, sectors: preferences, cached: true, generatedAt: latest.created_at })
+    return NextResponse.json({ error: result.error }, { status: result.status })
+  }
+
+  let generatedAt = new Date().toISOString()
+  if (ownsFetch && !readError) {
+    const { data: inserted, error: insertError } = await supabase
+      .from('user_news_digests')
+      .insert({ user_id: user.id, sector_key: sectorKey, sectors, articles: result.articles })
+      .select('created_at')
+      .single()
+    if (insertError) {
+      console.error('Industry news digest save failed:', insertError.message)
+    } else {
+      generatedAt = inserted.created_at
+      await pruneOldDigests(supabase, user.id)
+    }
+  }
+
+  return NextResponse.json({ articles: result.articles, sectors: preferences, cached: false, generatedAt })
+}
+
+async function pruneOldDigests(supabase: Awaited<ReturnType<typeof createClient>>, userId: string) {
+  const { data: stale, error } = await supabase
+    .from('user_news_digests')
+    .select('id')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .range(DIGESTS_KEPT_PER_USER, DIGESTS_KEPT_PER_USER + 99)
+  if (error || !stale?.length) return
+  const { error: deleteError } = await supabase
+    .from('user_news_digests')
+    .delete()
+    .in('id', stale.map((row: { id: string }) => row.id))
+  if (deleteError) console.error('Industry news digest prune failed:', deleteError.message)
 }
