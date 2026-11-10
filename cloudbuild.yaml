@@ -267,7 +267,7 @@ substitutions:
   _SUPABASE_ANON_KEY: ''
 
 # Timeout for the entire build
-timeout: '1800s'
+timeout: '3600s'
 
 # Build options
 options:

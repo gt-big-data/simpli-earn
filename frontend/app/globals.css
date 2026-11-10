@@ -210,6 +210,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .chart-fade-in {
     animation: none;
+  }
+}
+
 /* Scrolls by wheel, touch and keyboard, with no visible or space-taking scrollbar */
 @utility scrollbar-none {
   scrollbar-width: none;
