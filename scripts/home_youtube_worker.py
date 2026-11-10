@@ -16,6 +16,8 @@ Usage (from repo root, venv active):
 Env:
   HOME_YOUTUBE_POLL_SEC   — seconds between idle polls (default 15)
   HOME_YOUTUBE_ONCE       — if 1, process at most one job then exit (good for cron)
+  HOME_YOUTUBE_SCRIPT_TIMEOUT_SEC — per-job limit (default 7200); "running" jobs older than this
+                            plus a margin are marked failed (e.g. the worker was killed mid-job)
 """
 
 import os
@@ -25,8 +27,14 @@ import subprocess
 from pathlib import Path
 from typing import Optional, Tuple, Dict, Any
 
+FINISH_ATTEMPTS = 4
+STALE_MARGIN_SEC = 600
+
 # Repo root (parent of scripts/)
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "RAG"))
+
+from youtube_ids import extract_video_id
 
 
 def load_env() -> None:
@@ -47,16 +55,6 @@ def get_supabase():
         print("❌ SUPABASE_URL and SUPABASE_KEY required")
         sys.exit(1)
     return create_client(url, key)
-
-
-def extract_video_id(youtube_url: str) -> Optional[str]:
-    if "v=" in youtube_url:
-        return youtube_url.split("v=")[1].split("&")[0]
-    if "youtu.be/" in youtube_url:
-        return youtube_url.split("youtu.be/")[1].split("?")[0]
-    if "youtube.com/live/" in youtube_url:
-        return youtube_url.split("youtube.com/live/")[1].split("?")[0]
-    return None
 
 
 def claim_one_pending(sb) -> Optional[Dict[str, Any]]:
@@ -86,6 +84,10 @@ def claim_one_pending(sb) -> Optional[Dict[str, Any]]:
     return row
 
 
+def script_timeout_sec() -> int:
+    return int(os.getenv("HOME_YOUTUBE_SCRIPT_TIMEOUT_SEC", "7200"))
+
+
 def run_pipeline(youtube_url: str, ticker: Optional[str]) -> Tuple[int, str, str]:
     script = ROOT / "scripts" / "create_dashboard_from_youtube.py"
     cmd = [sys.executable, str(script), youtube_url]
@@ -98,10 +100,11 @@ def run_pipeline(youtube_url: str, ticker: Optional[str]) -> Tuple[int, str, str
         cwd=str(ROOT),
         capture_output=True,
         text=True,
-        timeout=int(os.getenv("HOME_YOUTUBE_SCRIPT_TIMEOUT_SEC", "7200")),
+        timeout=script_timeout_sec(),
     )
     out = (proc.stdout or "") + "\n" + (proc.stderr or "")
-    return proc.returncode, out, (proc.stderr or proc.stdout or "")[:2000]
+    # Keep the tail: the failing step is printed last, after the progress banner
+    return proc.returncode, out, out.strip()[-2000:]
 
 
 def finish_job(sb, job_id: str, success: bool, video_id: Optional[str], error: Optional[str]) -> None:
@@ -114,7 +117,41 @@ def finish_job(sb, job_id: str, success: bool, video_id: Optional[str], error: O
         "video_id": video_id,
         "error": error[:5000] if error else None,
     }
-    sb.table("youtube_jobs").update(payload).eq("id", job_id).execute()
+    # A lost write would leave the job "running" forever, so retry; fail_stale_jobs is the backstop
+    for attempt in range(FINISH_ATTEMPTS):
+        try:
+            sb.table("youtube_jobs").update(payload).eq("id", job_id).execute()
+            return
+        except Exception as e:
+            print(f"⚠️  Could not record job {job_id} as {payload['status']} (attempt {attempt + 1}): {e}")
+            if attempt + 1 < FINISH_ATTEMPTS:
+                time.sleep(2 ** attempt)
+    print(f"❌ Giving up on recording job {job_id}; it will be marked failed once it goes stale")
+
+
+def fail_stale_jobs(sb) -> None:
+    """Mark "running" jobs that outlived the script timeout as failed (worker killed, write lost)."""
+    from datetime import datetime, timedelta, timezone
+
+    cutoff = datetime.now(timezone.utc) - timedelta(seconds=script_timeout_sec() + STALE_MARGIN_SEC)
+    try:
+        res = (
+            sb.table("youtube_jobs")
+            .update({
+                "status": "failed",
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "error": "Processing stopped without finishing (worker restarted or timed out). Submit the link again.",
+            })
+            .eq("status", "running")
+            .lt("created_at", cutoff.isoformat())
+            .execute()
+        )
+    except Exception as e:
+        # Never let the sweep block processing new jobs
+        print(f"⚠️  Could not check for stale jobs: {e}")
+        return
+    for row in res.data or []:
+        print(f"⚠️  Marked stale job {row.get('id')} as failed")
 
 
 def process_one(sb) -> bool:
@@ -126,8 +163,17 @@ def process_one(sb) -> bool:
     url = row["youtube_url"]
     ticker = row.get("ticker")
     print(f"\n{'='*60}\n🏠 Claimed job {job_id}\n📹 {url}\n💹 ticker={ticker!r}\n{'='*60}")
-    code, combined, err_snip = run_pipeline(url, ticker)
     vid = extract_video_id(url)
+    try:
+        code, combined, err_snip = run_pipeline(url, ticker)
+    except subprocess.TimeoutExpired:
+        print(f"❌ Pipeline timed out after {script_timeout_sec()}s")
+        finish_job(sb, job_id, False, vid, f"Processing timeout ({script_timeout_sec() // 60} minutes)")
+        return True
+    except Exception as e:
+        print(f"❌ Pipeline could not run: {e}")
+        finish_job(sb, job_id, False, vid, str(e))
+        return True
     if code == 0:
         print("✅ Pipeline finished OK")
         finish_job(sb, job_id, True, vid, None)
@@ -148,6 +194,7 @@ def main() -> None:
 
     while True:
         try:
+            fail_stale_jobs(sb)
             did = process_one(sb)
             if once:
                 break

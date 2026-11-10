@@ -161,6 +161,7 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
 
   const getOptions = () => ({
     responsive: true,
+    animation: false as const,
     maintainAspectRatio: false,
     plugins: {
       legend: {
@@ -261,7 +262,7 @@ const StockChart: React.FC<StockChartProps> = ({ ticker, date }) => {
 
   return (
     <div className="flex flex-col w-full h-full box-border p-6 overflow-auto">
-      <div className="w-full flex-shrink-0" style={{ height: '400px' }}>
+      <div className="chart-fade-in w-full flex-shrink-0" style={{ height: '400px' }}>
         <Line data={chartData} options={options} />
       </div>
       <div className="mt-4 grid grid-cols-3 gap-3 text-sm flex-shrink-0">

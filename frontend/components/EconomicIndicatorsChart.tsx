@@ -213,6 +213,7 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
 
   const options = {
     responsive: true,
+    animation: false as const,
     maintainAspectRatio: false,
     plugins: {
       legend: {
@@ -302,7 +303,7 @@ const EconomicIndicatorsChart: React.FC<EconomicIndicatorsChartProps> = ({
     <div className="flex flex-col w-full h-full box-border p-6 overflow-auto">
 
       {/* Chart */}
-      <div className="w-full flex-shrink-0" style={{ height: '400px' }}>
+      <div className="chart-fade-in w-full flex-shrink-0" style={{ height: '400px' }}>
         <Line data={chartData} options={options} />
       </div>
 

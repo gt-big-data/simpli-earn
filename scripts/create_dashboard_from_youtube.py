@@ -16,7 +16,9 @@ Usage:
 import os
 import sys
 import json
+import shutil
 import subprocess
+import tempfile
 from datetime import datetime
 from pathlib import Path
 import requests
@@ -25,6 +27,8 @@ import time
 # Add parent directories to path for imports
 sys.path.append(str(Path(__file__).parent.parent / "RAG"))
 sys.path.append(str(Path(__file__).parent.parent / "sentiment"))
+
+from youtube_ids import extract_video_id
 
 try:
     from supabase import create_client
@@ -57,10 +61,11 @@ class DashboardCreator:
         
         aai.settings.api_key = os.getenv("ASSEMBLYAI_KEY")
         
-        # Set up directories
+        # Set up directories. Jobs run concurrently and cleanup removes the job's folder, so each
+        # job gets its own: a shared one would delete another job's audio mid-download.
         self.base_dir = Path(__file__).parent.parent
-        self.temp_dir = self.base_dir / "temp_processing"
-        self.temp_dir.mkdir(exist_ok=True)
+        (self.base_dir / "temp_processing").mkdir(exist_ok=True)
+        self.temp_dir = Path(tempfile.mkdtemp(prefix="job_", dir=self.base_dir / "temp_processing"))
         
     def load_env(self):
         """Load environment variables from .env files"""
@@ -79,13 +84,7 @@ class DashboardCreator:
                 
     def extract_video_id(self, url):
         """Extract YouTube video ID from URL"""
-        if "v=" in url:
-            return url.split("v=")[1].split("&")[0]
-        elif "youtu.be/" in url:
-            return url.split("youtu.be/")[1].split("?")[0]
-        elif "youtube.com/live/" in url:
-            return url.split("youtube.com/live/")[1].split("?")[0]
-        return None
+        return extract_video_id(url)
         
     def get_youtube_metadata(self, video_id):
         """Get video metadata from YouTube Data API"""
@@ -484,8 +483,7 @@ class DashboardCreator:
         print("🧹 Cleaning up temporary files...")
         
         try:
-            for file in self.temp_dir.glob("*"):
-                file.unlink()
+            shutil.rmtree(self.temp_dir)
             print("✅ Cleanup complete")
         except Exception as e:
             print(f"⚠️  Cleanup warning: {e}")
@@ -537,6 +535,14 @@ class DashboardCreator:
         transcript_text = self.fetch_youtube_captions(youtube_url)
 
         # Fallback path: download audio and transcribe with AssemblyAI only when captions failed.
+        # Download audio
+        audio_file = self.download_audio(youtube_url)
+        if not audio_file:
+            self.cleanup()
+            return False
+            
+        # Transcribe with AssemblyAI
+        transcript_text = self.transcribe_with_assemblyai(audio_file)
         if not transcript_text:
             audio_file = self.download_audio(youtube_url)
             if not audio_file:
@@ -567,7 +573,18 @@ class DashboardCreator:
         
         # Cleanup
         self.cleanup()
-        
+
+        # The row above keeps the transcript usable (summary, chat) and stays incomplete, so submitting
+        # the link again repairs it. The job itself must fail: the dashboard would otherwise wait for
+        # sentiment charts that are never coming.
+        missing = [kind for kind in ('relevance', 'specificity') if not sentiment_filenames.get(f'{kind}_filename')]
+        if success and missing:
+            print(f"\n{'='*60}")
+            print(f"❌ Sentiment analysis failed ({', '.join(missing)}). "
+                  "The transcript was saved; submit the link again to retry the analysis.")
+            print(f"{'='*60}\n")
+            return False
+
         if success:
             print(f"\n{'='*60}")
             print(f"✅ SUCCESS! Dashboard entry created")

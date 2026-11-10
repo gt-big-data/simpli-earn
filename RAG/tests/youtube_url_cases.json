@@ -1,0 +1,21 @@
+[
+  ["https://www.youtube.com/watch?v=dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://youtube.com/watch?v=dC9yOuhiNrk&t=120s", "dC9yOuhiNrk"],
+  ["https://www.youtube.com/watch?feature=shared&v=dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://m.youtube.com/watch?v=dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://music.youtube.com/watch?v=dC9yOuhiNrk&list=RD", "dC9yOuhiNrk"],
+  ["https://youtu.be/dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://youtu.be/dC9yOuhiNrk?si=AbC123&t=42", "dC9yOuhiNrk"],
+  ["https://www.youtube.com/live/dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://youtube.com/live/dC9yOuhiNrk?si=AbC123", "dC9yOuhiNrk"],
+  ["https://www.youtube.com/embed/dC9yOuhiNrk?start=10", "dC9yOuhiNrk"],
+  ["https://www.youtube-nocookie.com/embed/dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://www.youtube.com/shorts/dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["https://www.youtube.com/v/dC9yOuhiNrk", "dC9yOuhiNrk"],
+  ["  https://youtu.be/dC9yOuhiNrk  ", "dC9yOuhiNrk"],
+  ["https://www.youtube.com/watch?v=a-b_C", "a-b_C"],
+  ["https://www.youtube.com/watch?list=PL123", null],
+  ["https://www.youtube.com/@AppleInvestors", null],
+  ["https://example.com/page?ev=dC9yOuhiNrk", null],
+  ["", null]
+]
