@@ -8,6 +8,7 @@ import mockCalls from "@/public/data/mock-calls.json";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
+import { knownTicker } from "@/lib/ticker";
 import { createClient } from "@/lib/supabase/client";
 
 interface LibraryVideo {
@@ -219,7 +220,8 @@ export default function Home() {
             {libraryVideos.map((video) => {
               const metadata = video.metadata || {};
               const title = metadata.title || "Earnings Call";
-              const ticker = metadata.ticker || "N/A";
+              const ticker = knownTicker(metadata.ticker);
+              const tickerLabel = ticker ?? "N/A";
               const uploadDate = metadata.upload_date || video.created_at;
               const formattedDate = new Date(uploadDate).toLocaleDateString("en-US");
               
@@ -230,15 +232,15 @@ export default function Home() {
                   onMouseEnter={() => setHoveredVideoId(video.video_identifier)}
                   onMouseLeave={() => setHoveredVideoId(null)}
                 >
-                  <Link href={`/dashboard/?video_url=https://youtube.com/watch?v=${video.video_identifier}&ticker=${ticker}`}>
+                  <Link href={`/dashboard/?video_url=https://youtube.com/watch?v=${video.video_identifier}${ticker ? `&ticker=${ticker}` : ""}`}>
                     <div className="rounded-2xl border border-white/8 bg-black/20 p-3 text-left transition-colors hover:bg-white/5">
                       <div className="flex h-[150px] w-full items-center justify-center rounded-xl bg-accent">
                         <div className="p-4 text-center">
-                          <h3 className="text-2xl font-light text-brand">{ticker}</h3>
+                          <h3 className="text-2xl font-light text-brand">{tickerLabel}</h3>
                           <p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{title}</p>
                         </div>
                       </div>
-                      <h4 className="mt-3 text-lg font-medium">{ticker}</h4>
+                      <h4 className="mt-3 text-lg font-medium">{tickerLabel}</h4>
                       <p className="text-sm text-muted-foreground">{formattedDate}</p>
                     </div>
                   </Link>

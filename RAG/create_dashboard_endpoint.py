@@ -2,7 +2,9 @@
 API endpoint to trigger dashboard creation from YouTube URL.
 
 Modes:
-- Default: run create_dashboard_from_youtube.py as a background subprocess (in-memory job status).
+- Default: run create_dashboard_from_youtube.py as a background subprocess. Job status is kept in
+  memory and mirrored to Supabase youtube_jobs, so a status poll that reaches another Cloud Run
+  instance still finds the job.
 - YOUTUBE_HOME_WORKER=1: insert a row into Supabase youtube_jobs; a machine at home (residential IP)
   runs scripts/home_youtube_worker.py to execute yt-dlp + the rest of the pipeline.
 """
@@ -17,9 +19,11 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 
+from youtube_ids import extract_video_id
+
 router = APIRouter()
 
-# In-memory jobs when not using home worker
+# Jobs this instance is running (also mirrored to youtube_jobs, see _save_job)
 jobs: dict[str, dict[str, Any]] = {}
 
 _supabase = None
@@ -119,16 +123,6 @@ def _dashboard_project_root() -> Path:
     return Path(__file__).resolve().parent.parent
 
 
-def _extract_video_id(youtube_url: str) -> Optional[str]:
-    if "v=" in youtube_url:
-        return youtube_url.split("v=")[1].split("&")[0]
-    if "youtu.be/" in youtube_url:
-        return youtube_url.split("youtu.be/")[1].split("?")[0]
-    if "youtube.com/live/" in youtube_url:
-        return youtube_url.split("youtube.com/live/")[1].split("?")[0]
-    return None
-
-
 _ANALYSIS_FILES = ("transcript_filename", "relevance_filename", "specificity_filename")
 
 
@@ -152,20 +146,51 @@ def _existing_analysis(video_id: Optional[str]) -> Optional[dict]:
     return res.data[0] if res.data else None
 
 
+def _save_job(job: dict) -> None:
+    """
+    Mirror an in-process job to youtube_jobs so any instance can answer its status poll. It is
+    stored as "running" while queued: a "pending" row would be claimed by a home worker.
+    Best effort: if the write fails, polls that reach this instance still work.
+    """
+    sb = _get_supabase()
+    if not sb:
+        return
+    row = {
+        "id": job["job_id"],
+        "youtube_url": job["youtube_url"],
+        "ticker": job.get("ticker"),
+        "status": "running" if job["status"] == "pending" else job["status"],
+        "video_id": job.get("video_id"),
+        "error": job.get("error"),
+        "completed_at": job.get("completed_at"),
+    }
+    try:
+        sb.table("youtube_jobs").upsert(row).execute()
+    except Exception as e:
+        print(f"[dashboard] could not save job {job['job_id']} to youtube_jobs: {e}")
+
+
+def _update_job(job_id: str, **fields) -> None:
+    jobs[job_id].update(fields)
+    _save_job(jobs[job_id])
+
+
+def _finish_job(job_id: str, status: str, error: Optional[str] = None, video_id: Optional[str] = None) -> None:
+    _update_job(job_id, status=status, error=error, video_id=video_id, completed_at=datetime.now().isoformat())
+
+
 def run_dashboard_creation(
     job_id: str, youtube_url: str, ticker: Optional[str] = None, write_mode: str = "safe"
 ):
     """Run the dashboard creation script in background (local / Cloud Run with YouTube access)."""
-    jobs[job_id]["status"] = "running"
+    _update_job(job_id, status="running")
 
     try:
         project_root = _dashboard_project_root()
         script_path = project_root / "scripts" / "create_dashboard_from_youtube.py"
 
         if not script_path.is_file():
-            jobs[job_id]["status"] = "failed"
-            jobs[job_id]["error"] = f"Dashboard script missing: {script_path}"
-            jobs[job_id]["completed_at"] = datetime.now().isoformat()
+            _finish_job(job_id, "failed", error=f"Dashboard script missing: {script_path}")
             return
 
         cmd = [sys.executable, str(script_path), youtube_url]
@@ -183,25 +208,17 @@ def run_dashboard_creation(
         )
 
         if result.returncode == 0:
-            jobs[job_id]["status"] = "completed"
-            jobs[job_id]["completed_at"] = datetime.now().isoformat()
-            jobs[job_id]["video_id"] = _extract_video_id(youtube_url)
+            _finish_job(job_id, "completed", video_id=extract_video_id(youtube_url))
         else:
-            jobs[job_id]["status"] = "failed"
             # Keep the tail: the failing step is printed last, after the progress banner
             err_msg = ((result.stdout or "") + (result.stderr or "")).strip()[-1500:] or "Unknown error"
-            jobs[job_id]["error"] = err_msg
-            jobs[job_id]["completed_at"] = datetime.now().isoformat()
+            _finish_job(job_id, "failed", error=err_msg)
             print(f"[dashboard] Job {job_id} FAILED (exit {result.returncode}):\n{result.stderr or result.stdout}")
 
     except subprocess.TimeoutExpired:
-        jobs[job_id]["status"] = "failed"
-        jobs[job_id]["error"] = "Processing timeout (30 minutes)"
-        jobs[job_id]["completed_at"] = datetime.now().isoformat()
+        _finish_job(job_id, "failed", error="Processing timeout (30 minutes)")
     except Exception as e:
-        jobs[job_id]["status"] = "failed"
-        jobs[job_id]["error"] = str(e)
-        jobs[job_id]["completed_at"] = datetime.now().isoformat()
+        _finish_job(job_id, "failed", error=str(e))
 
 
 @router.post("/create-dashboard", response_model=dict)
@@ -217,8 +234,7 @@ async def create_dashboard(
     Jobs create the dashboard or repair an incomplete one, never replacing a complete analysis;
     `force` on a complete dashboard needs an admin (DASHBOARD_ADMIN_*) and replaces it.
     """
-    user = _request_user(authorization)
-    video_id = _extract_video_id(request.youtube_url)
+    video_id = extract_video_id(request.youtube_url)
     existing = _existing_analysis(video_id)
     complete = bool(existing) and all(existing.get(k) for k in _ANALYSIS_FILES)
     if complete and not request.force:
@@ -231,6 +247,9 @@ async def create_dashboard(
         }
     write_mode = "safe"
     if complete:
+        # Only replacing a complete dashboard needs to know who is asking. Plain uploads never check
+        # the token, so a Supabase auth hiccup cannot turn a signed-in user's upload into a 401.
+        user = _request_user(authorization)
         if not _is_admin(user):
             if user is None:
                 raise HTTPException(status_code=401, detail="Sign in as an admin to reprocess an existing dashboard")
@@ -272,7 +291,7 @@ async def create_dashboard(
 
     # Same video already processing (e.g. submitted twice): reuse that job
     for job in jobs.values():
-        if job["status"] in ("pending", "running") and _extract_video_id(job["youtube_url"]) == video_id:
+        if job["status"] in ("pending", "running") and extract_video_id(job["youtube_url"]) == video_id:
             return {
                 "job_id": job["job_id"],
                 "status": job["status"],
@@ -286,11 +305,13 @@ async def create_dashboard(
         "job_id": job_id,
         "status": "pending",
         "youtube_url": request.youtube_url,
+        "ticker": request.ticker,
         "video_id": None,
         "error": None,
         "created_at": datetime.now().isoformat(),
         "completed_at": None,
     }
+    _save_job(jobs[job_id])
     background_tasks.add_task(run_dashboard_creation, job_id, request.youtube_url, request.ticker, write_mode)
 
     return {
@@ -304,22 +325,26 @@ async def create_dashboard(
 
 @router.get("/job-status/{job_id}", response_model=JobStatus)
 async def get_job_status(job_id: str):
-    """Get status of dashboard creation job (memory or Supabase youtube_jobs)."""
-    if _youtube_home_worker_enabled():
-        sb = _get_supabase()
-        if not sb:
-            raise HTTPException(status_code=503, detail="Supabase not configured")
-        try:
-            res = sb.table("youtube_jobs").select("*").eq("id", job_id).limit(1).execute()
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=str(e)) from e
-        if not res.data:
-            raise HTTPException(status_code=404, detail="Job not found")
-        return _row_to_job_status(res.data[0])
+    """Get status of dashboard creation job (this instance's memory, else Supabase youtube_jobs)."""
+    if job_id in jobs:
+        return jobs[job_id]
 
-    if job_id not in jobs:
+    sb = _get_supabase()
+    if not sb:
+        if _youtube_home_worker_enabled():
+            raise HTTPException(status_code=503, detail="Supabase not configured")
         raise HTTPException(status_code=404, detail="Job not found")
-    return jobs[job_id]
+    try:
+        uuid.UUID(job_id)  # youtube_jobs.id is a uuid; anything else cannot be a job
+    except ValueError:
+        raise HTTPException(status_code=404, detail="Job not found")
+    try:
+        res = sb.table("youtube_jobs").select("*").eq("id", job_id).limit(1).execute()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return _row_to_job_status(res.data[0])
 
 
 @router.get("/jobs", response_model=list[JobStatus])

@@ -8,6 +8,8 @@ import numpy as np
 import pytz
 import json
 
+from youtube_ids import extract_video_id as parse_video_id
+
 # Load environment variables from .env file
 load_dotenv()
 api_key = os.getenv("YOUTUBE_API_KEY")
@@ -31,14 +33,7 @@ KNOWN_COMPANIES = {
 
 def extract_video_id(youtube_link):
     """Extract the video ID from a YouTube URL"""
-    if "v=" in youtube_link:
-        return youtube_link.split("v=")[1].split("&")[0]
-    elif "youtu.be/" in youtube_link:
-        return youtube_link.split("youtu.be/")[1].split("?")[0]
-    elif "youtube.com/live/" in youtube_link:
-        return youtube_link.split("youtube.com/live/")[1].split("?")[0]
-    else:
-        return youtube_link
+    return parse_video_id(youtube_link) or youtube_link
     
 def get_youtube_metadata(video_id):
     """Get upload date and title of a YouTube video"""
