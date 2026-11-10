@@ -7,17 +7,9 @@ import EconomicIndicatorsChart from "./EconomicIndicatorsChart";
 import QoQComparison from "./QoQComparison";
 import { useSearchParams } from "next/navigation";
 import { API_BASE_URL, SENTIMENT_API_BASE_URL } from "@/lib/api-config";
-import type { RedFlag } from "./SentimentGraph";
-
-// Dashboard configurations - now only for ticker and date
-const dashboardConfigs: Record<string, { ticker: string; date: string }> = {
-  "1": { ticker: "AAPL", date: "2/2/25" },
-  "2": { ticker: "CVS", date: "11/6/24" },
-  "3": { ticker: "GOOGL", date: "2/4/25" },
-  "4": { ticker: "SHEL", date: "1/30/25" },
-  "5": { ticker: "TSLA", date: "1/29/25" },
-  "6": { ticker: "WMT", date: "2/20/25" }
-};
+import { knownTicker } from "@/lib/ticker";
+import type { RedFlag, RedFlagPrediction } from "./SentimentGraph";
+import { PRELOADED_DASHBOARDS } from "@/lib/dashboards";
 
 /** Status of a custom-link processing job (null when there is none / it finished) */
 export type PipelineState = { status: string; error?: string };
@@ -89,7 +81,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   const ticker = searchParams.get("ticker"); // Get ticker from URL params
   
   const videoUrlParam = searchParams.get("video_url");
-  const preloadedConfig = dashboardId ? dashboardConfigs[dashboardId] : null;
+  const preloadedConfig = dashboardId ? PRELOADED_DASHBOARDS[dashboardId] : null;
 
   // For custom videos, look up the ticker and call date (YouTube upload date) from the RAG API
   // (re-fetched when the processing job's status changes, since the job fills in the metadata)
@@ -111,7 +103,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   }, [videoInfoKey, videoUrlParam]);
 
   // A ticker typed by the user (URL param) wins over the detected one
-  const customTicker = ticker && ticker !== "N/A" ? ticker.toUpperCase() : videoInfo?.ticker;
+  const customTicker = knownTicker(ticker) ?? knownTicker(videoInfo?.ticker);
   const config = preloadedConfig
     ?? (customTicker && videoInfo?.date ? { ticker: customTicker, date: videoInfo.date } : null);
 
@@ -123,8 +115,14 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
   // No flags until the processing job has produced the sentiment files
   const redFlagsKey =
     (dashboardId || redFlagsVideoUrl) && !pipelineStatus ? `${dashboardId ?? ""}|${redFlagsVideoUrl ?? ""}` : null;
-  const [redFlagsResult, setRedFlagsResult] = useState<{ key: string; flags: RedFlag[] } | null>(null);
+  const [redFlagsResult, setRedFlagsResult] = useState<{
+    key: string;
+    flags: RedFlag[];
+    prediction: RedFlagPrediction | null;
+  } | null>(null);
   const redFlags = redFlagsKey && redFlagsResult?.key === redFlagsKey ? redFlagsResult.flags : NO_RED_FLAGS;
+  const redFlagPrediction =
+    redFlagsKey && redFlagsResult?.key === redFlagsKey ? redFlagsResult.prediction : null;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** Set when the video exists but relevance/specificity CSVs are not ready yet (user pipeline in progress). */
@@ -219,8 +217,18 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
       }),
     })
       .then((res) => res.json())
-      .then((rfData) => { if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: rfData.red_flags || [] }); })
-      .catch(() => { if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: [] }); });
+      .then((rfData) => {
+        if (!cancelled) {
+          setRedFlagsResult({
+            key: redFlagsKey,
+            flags: rfData.red_flags || [],
+            prediction: rfData.prediction || null,
+          });
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setRedFlagsResult({ key: redFlagsKey, flags: [], prediction: null });
+      });
     return () => { cancelled = true; };
   }, [redFlagsKey, dashboardId, redFlagsVideoUrl]);
 
@@ -331,13 +339,13 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
         
         {/* View Selector for Indicators Tab - positioned below tabs */}
         {activeTab === "stock" && config && (
-          <div className="flex justify-end items-center px-6 pt-2 pb-2">
-            <label htmlFor="indicator-view" className="field-label mr-2">View:</label>
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10">
+            <label htmlFor="indicator-view" className="field-label">View:</label>
             <select
               value={indicatorView}
               onChange={(e) => setIndicatorView(e.target.value as IndicatorView)}
               id="indicator-view"
-              className="field-select"
+              className="field-select flex-1"
             >
               <option value="stock">Stock</option>
               <option value="VIX">VIX (Volatility Index)</option>
@@ -422,6 +430,7 @@ export default function ChartsFrame({ onTimestampClick, pipeline = null }: Chart
                   relevanceData={sentimentData.relevance}
                   specificityData={sentimentData.specificity}
                   redFlags={redFlags}
+                  redFlagPrediction={redFlagPrediction}
                   onTimestampClick={onTimestampClick}
                 />
               ) : (

@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import preloadedVideos from "@/lib/preloaded_videos.json";
+import { extractVideoId } from "@/lib/youtube";
 
 interface VideoFrameProps {
   timestamp: number;
@@ -61,9 +62,9 @@ export default function VideoFrame({ timestamp, seekNonce }: VideoFrameProps) {
       title = PRELOADED_VIDEOS[dashboardId].title;
     }
 
-    const videoIdMatch = finalVideoUrl.match(/(?:[?&]v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
-    return videoIdMatch
-      ? { videoId: videoIdMatch[1], videoTitle: title || "" }
+    const videoId = extractVideoId(finalVideoUrl);
+    return videoId
+      ? { videoId, videoTitle: title || "" }
       : { videoId: null, videoTitle: "Loading..." };
   }, [searchParams]);
 

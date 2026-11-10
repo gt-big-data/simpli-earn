@@ -36,6 +36,7 @@ Optional:
 - `HOME_YOUTUBE_POLL_SEC` (default `15`) — sleep when idle.
 - `HOME_YOUTUBE_ONCE=1` — process one job then exit (for **cron**).
 - `HOME_YOUTUBE_SCRIPT_TIMEOUT_SEC` — max seconds per pipeline run (default `7200`).
+  Jobs still `running` 10 minutes past this (the worker was killed mid-job, or its final status write was lost) are marked `failed` on the worker's next poll.
 
 ## 4. Frontend
 
@@ -43,7 +44,7 @@ No code changes required. The home page still polls `GET /dashboard/job-status/{
 
 ## 5. Local RAG without worker
 
-Unset `YOUTUBE_HOME_WORKER` (or set to `0`). Behavior returns to **in-memory jobs + subprocess** on the same machine as uvicorn.
+Unset `YOUTUBE_HOME_WORKER` (or set to `0`). Behavior returns to **subprocess jobs** on the same machine as uvicorn. Their status is also written to `youtube_jobs` (as `running`, never `pending`, so a worker would not claim them), so a status poll that reaches another Cloud Run instance still finds the job.
 
 ## Security
 

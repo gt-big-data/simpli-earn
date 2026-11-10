@@ -1,15 +1,11 @@
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from youtube_ids import extract_video_id as parse_video_id
+
 
 def extract_video_id(video_url):
-    """Extract the YouTube video ID from a supported URL."""
-    if "v=" in video_url:
-        return video_url.split("v=")[-1].split("&")[0]
-    if "youtu.be/" in video_url:
-        return video_url.split("youtu.be/")[-1].split("?")[0]
-    if "youtube.com/live/" in video_url:
-        return video_url.split("youtube.com/live/")[-1].split("?")[0]
-    return video_url
+    """Extract the YouTube video ID from a supported URL; anything else is taken to be a bare ID."""
+    return parse_video_id(video_url) or video_url
 
 
 def get_video_transcript_entries(video_url):
