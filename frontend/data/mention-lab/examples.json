@@ -1,0 +1,446 @@
+[
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   7,
+   6,
+   12,
+   8,
+   6,
+   3
+  ]
+ },
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "iPhone",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   24,
+   32,
+   25,
+   24,
+   18,
+   20
+  ]
+ },
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "China",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   9,
+   7,
+   12,
+   8,
+   3,
+   5
+  ]
+ },
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "Vision Pro",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   4,
+   10,
+   5,
+   7,
+   7,
+   3
+  ]
+ },
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "services",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   20,
+   19,
+   25,
+   24,
+   21,
+   24
+  ]
+ },
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "margin",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   14,
+   10,
+   8,
+   17,
+   9,
+   18
+  ]
+ },
+ {
+  "company": "Apple",
+  "ticker": "AAPL",
+  "word": "supply chain",
+  "calls": [
+   "Q4 FY2023",
+   "Q1 FY2024",
+   "Q2 FY2024",
+   "Q3 FY2024",
+   "Q4 FY2024",
+   "Q1 FY2025"
+  ],
+  "counts": [
+   2,
+   0,
+   1,
+   0,
+   0,
+   0
+  ]
+ },
+ {
+  "company": "CVS Health",
+  "ticker": "CVS",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   2
+  ]
+ },
+ {
+  "company": "CVS Health",
+  "ticker": "CVS",
+  "word": "services",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   8
+  ]
+ },
+ {
+  "company": "CVS Health",
+  "ticker": "CVS",
+  "word": "margin",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   23
+  ]
+ },
+ {
+  "company": "CVS Health",
+  "ticker": "CVS",
+  "word": "supply chain",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   3
+  ]
+ },
+ {
+  "company": "Alphabet",
+  "ticker": "GOOG",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   64
+  ]
+ },
+ {
+  "company": "Alphabet",
+  "ticker": "GOOG",
+  "word": "services",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   8
+  ]
+ },
+ {
+  "company": "Alphabet",
+  "ticker": "GOOG",
+  "word": "margin",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   6
+  ]
+ },
+ {
+  "company": "Meta Platforms",
+  "ticker": "META",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   82
+  ]
+ },
+ {
+  "company": "Meta Platforms",
+  "ticker": "META",
+  "word": "China",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   1
+  ]
+ },
+ {
+  "company": "Meta Platforms",
+  "ticker": "META",
+  "word": "services",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   4
+  ]
+ },
+ {
+  "company": "Meta Platforms",
+  "ticker": "META",
+  "word": "margin",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   2
+  ]
+ },
+ {
+  "company": "Meta Platforms",
+  "ticker": "META",
+  "word": "supply chain",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   1
+  ]
+ },
+ {
+  "company": "Shell",
+  "ticker": "SHEL",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   1
+  ]
+ },
+ {
+  "company": "Shell",
+  "ticker": "SHEL",
+  "word": "China",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   6
+  ]
+ },
+ {
+  "company": "Shell",
+  "ticker": "SHEL",
+  "word": "margin",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   5
+  ]
+ },
+ {
+  "company": "Shell",
+  "ticker": "SHEL",
+  "word": "supply chain",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   1
+  ]
+ },
+ {
+  "company": "Tesla",
+  "ticker": "TSLA",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   14
+  ]
+ },
+ {
+  "company": "Tesla",
+  "ticker": "TSLA",
+  "word": "China",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   10
+  ]
+ },
+ {
+  "company": "Tesla",
+  "ticker": "TSLA",
+  "word": "tariff",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   2
+  ]
+ },
+ {
+  "company": "Tesla",
+  "ticker": "TSLA",
+  "word": "margin",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   4
+  ]
+ },
+ {
+  "company": "Tesla",
+  "ticker": "TSLA",
+  "word": "supply chain",
+  "calls": [
+   "Q4 2024"
+  ],
+  "counts": [
+   2
+  ]
+ },
+ {
+  "company": "Walmart",
+  "ticker": "WMT",
+  "word": "AI / artificial intelligence",
+  "calls": [
+   "Q4 FY2025"
+  ],
+  "counts": [
+   3
+  ]
+ },
+ {
+  "company": "Walmart",
+  "ticker": "WMT",
+  "word": "China",
+  "calls": [
+   "Q4 FY2025"
+  ],
+  "counts": [
+   6
+  ]
+ },
+ {
+  "company": "Walmart",
+  "ticker": "WMT",
+  "word": "services",
+  "calls": [
+   "Q4 FY2025"
+  ],
+  "counts": [
+   5
+  ]
+ },
+ {
+  "company": "Walmart",
+  "ticker": "WMT",
+  "word": "tariff",
+  "calls": [
+   "Q4 FY2025"
+  ],
+  "counts": [
+   4
+  ]
+ },
+ {
+  "company": "Walmart",
+  "ticker": "WMT",
+  "word": "margin",
+  "calls": [
+   "Q4 FY2025"
+  ],
+  "counts": [
+   20
+  ]
+ },
+ {
+  "company": "Walmart",
+  "ticker": "WMT",
+  "word": "supply chain",
+  "calls": [
+   "Q4 FY2025"
+  ],
+  "counts": [
+   9
+  ]
+ }
+]

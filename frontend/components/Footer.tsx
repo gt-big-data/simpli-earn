@@ -11,6 +11,9 @@ export default function Footer() {
           <a href="/about" className="text-sm text-brand no-underline transition-colors hover:text-foreground">
             About Us
           </a>
+          <a href="/research" className="text-sm text-brand no-underline transition-colors hover:text-foreground">
+            Research
+          </a>
           <a href="/faq" className="text-sm text-brand no-underline transition-colors hover:text-foreground">
             FAQ&rsquo;s
           </a>

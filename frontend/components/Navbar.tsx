@@ -44,8 +44,10 @@ const NavBar = () => {
     };
   }, [ref]);
 
-  const navLinkClass =
-    "text-sm font-normal whitespace-nowrap text-foreground no-underline transition-colors hover:text-brand";
+  const navLinkClass = (href: string) =>
+    `text-sm font-normal whitespace-nowrap no-underline transition-colors hover:text-brand ${
+      pathname === href || pathname.startsWith(`${href}/`) ? "text-brand" : "text-foreground"
+    }`;
 
   return (
     <nav className="fixed top-5 left-1/2 z-[1000] flex w-auto -translate-x-1/2 flex-nowrap items-center gap-5 border border-white/8 bg-[rgba(17,20,19,0.72)] px-5 py-2.5 backdrop-blur-xl rounded-2xl md:gap-6">
@@ -57,13 +59,16 @@ const NavBar = () => {
       </Link>
 
       <div className="hidden shrink-0 items-center gap-5 md:flex md:gap-6">
-        <Link href="/about" className={navLinkClass}>
+        <Link href="/about" className={navLinkClass("/about")}>
           About Us
         </Link>
-        <Link href="/faq" className={navLinkClass}>
+        <Link href="/research" className={navLinkClass("/research")}>
+          Research
+        </Link>
+        <Link href="/faq" className={navLinkClass("/faq")}>
           FAQs
         </Link>
-        <Link href="mailto:simpliearnbdbi@gmail.com" className={navLinkClass}>
+        <Link href="mailto:simpliearnbdbi@gmail.com" className={navLinkClass("mailto:simpliearnbdbi@gmail.com")}>
           Contact
         </Link>
       </div>
@@ -108,6 +113,9 @@ const NavBar = () => {
         >
           <Link href="/about" className="font-normal text-foreground no-underline hover:text-brand">
             About Us
+          </Link>
+          <Link href="/research" className="font-normal text-foreground no-underline hover:text-brand">
+            Research
           </Link>
           <Link href="/faq" className="font-normal text-foreground no-underline hover:text-brand">
             FAQs

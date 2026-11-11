@@ -1,0 +1,529 @@
+{
+ "source": "eventdist out/results.json (python -m eventdist demo, data to 16 Oct 2026)",
+ "lambda": {
+  "rows": 80000,
+  "calls_from": "2022-01-06",
+  "calls_to": "2026-10-20",
+  "k1": [
+   {
+    "bucket": "(0.0, 0.05]",
+    "n": 56709,
+    "poisson": 0.0488,
+    "nb_model": 0.0607,
+    "realized": 0.0544
+   },
+   {
+    "bucket": "(0.15, 0.3]",
+    "n": 3878,
+    "poisson": 0.2514,
+    "nb_model": 0.3077,
+    "realized": 0.2439
+   },
+   {
+    "bucket": "(0.3, 0.5]",
+    "n": 4566,
+    "poisson": 0.4157,
+    "nb_model": 0.4107,
+    "realized": 0.3423
+   },
+   {
+    "bucket": "(0.5, 0.7]",
+    "n": 3409,
+    "poisson": 0.6074,
+    "nb_model": 0.5425,
+    "realized": 0.4779
+   },
+   {
+    "bucket": "(0.7, 0.85]",
+    "n": 2866,
+    "poisson": 0.7686,
+    "nb_model": 0.6694,
+    "realized": 0.6015
+   },
+   {
+    "bucket": "(0.85, 0.95]",
+    "n": 2412,
+    "poisson": 0.8929,
+    "nb_model": 0.7834,
+    "realized": 0.7276
+   },
+   {
+    "bucket": "(0.95, 1.0]",
+    "n": 6160,
+    "poisson": 0.9878,
+    "nb_model": 0.942,
+    "realized": 0.9091
+   }
+  ],
+  "brier_k1": {
+   "poisson": 0.093,
+   "nb_model": 0.0881
+  },
+  "k3": [
+   {
+    "bucket": "(0.0, 0.05]",
+    "n": 65961,
+    "poisson": 0.002,
+    "nb_model": 0.0037,
+    "realized": 0.018
+   },
+   {
+    "bucket": "(0.05, 0.15]",
+    "n": 3075,
+    "poisson": 0.0882,
+    "nb_model": 0.0967,
+    "realized": 0.147
+   },
+   {
+    "bucket": "(0.15, 0.3]",
+    "n": 2392,
+    "poisson": 0.197,
+    "nb_model": 0.1781,
+    "realized": 0.209
+   },
+   {
+    "bucket": "(0.3, 0.5]",
+    "n": 2251,
+    "poisson": 0.3858,
+    "nb_model": 0.3038,
+    "realized": 0.3363
+   },
+   {
+    "bucket": "(0.5, 0.7]",
+    "n": 1370,
+    "poisson": 0.6071,
+    "nb_model": 0.4576,
+    "realized": 0.462
+   },
+   {
+    "bucket": "(0.7, 0.85]",
+    "n": 1137,
+    "poisson": 0.7808,
+    "nb_model": 0.5898,
+    "realized": 0.5444
+   },
+   {
+    "bucket": "(0.85, 0.95]",
+    "n": 1116,
+    "poisson": 0.9035,
+    "nb_model": 0.712,
+    "realized": 0.6747
+   },
+   {
+    "bucket": "(0.95, 1.0]",
+    "n": 2698,
+    "poisson": 0.9901,
+    "nb_model": 0.9019,
+    "realized": 0.8958
+   }
+  ],
+  "brier_k3": {
+   "poisson": 0.0469,
+   "nb_model": 0.0432
+  },
+  "k10": [
+   {
+    "bucket": "(0.0, 0.05]",
+    "n": 76706,
+    "poisson": 0.0004,
+    "nb_model": 0.0013,
+    "realized": 0.0051
+   },
+   {
+    "bucket": "(0.05, 0.15]",
+    "n": 856,
+    "poisson": 0.0886,
+    "nb_model": 0.1275,
+    "realized": 0.1554
+   },
+   {
+    "bucket": "(0.15, 0.3]",
+    "n": 537,
+    "poisson": 0.2196,
+    "nb_model": 0.2101,
+    "realized": 0.2365
+   },
+   {
+    "bucket": "(0.3, 0.5]",
+    "n": 467,
+    "poisson": 0.4022,
+    "nb_model": 0.3039,
+    "realized": 0.3233
+   },
+   {
+    "bucket": "(0.5, 0.7]",
+    "n": 354,
+    "poisson": 0.6043,
+    "nb_model": 0.4059,
+    "realized": 0.4492
+   },
+   {
+    "bucket": "(0.7, 0.85]",
+    "n": 261,
+    "poisson": 0.7708,
+    "nb_model": 0.5047,
+    "realized": 0.5134
+   },
+   {
+    "bucket": "(0.85, 0.95]",
+    "n": 249,
+    "poisson": 0.9056,
+    "nb_model": 0.611,
+    "realized": 0.6787
+   },
+   {
+    "bucket": "(0.95, 1.0]",
+    "n": 570,
+    "poisson": 0.9903,
+    "nb_model": 0.8209,
+    "realized": 0.8649
+   }
+  ],
+  "brier_k10": {
+   "poisson": 0.0128,
+   "nb_model": 0.0118
+  }
+ },
+ "kalshi": {
+  "markets": 4971,
+  "events": 367,
+  "companies": 178,
+  "first_call": "2025-03-20",
+  "last_call": "2026-10-16",
+  "yes_rate": 0.5349,
+  "median_spread": 0.03,
+  "excluded_uncertain_call_date": 858,
+  "calibration": [
+   {
+    "bucket": "(-0.001, 0.05]",
+    "n": 50.0,
+    "price": 0.034,
+    "realized": 0.0,
+    "buy_yes_pnl": -0.0614,
+    "buy_no_pnl": 0.0092
+   },
+   {
+    "bucket": "(0.05, 0.1]",
+    "n": 155.0,
+    "price": 0.0798,
+    "realized": 0.0387,
+    "buy_yes_pnl": -0.0714,
+    "buy_no_pnl": 0.0112
+   },
+   {
+    "bucket": "(0.1, 0.2]",
+    "n": 533.0,
+    "price": 0.1525,
+    "realized": 0.1107,
+    "buy_yes_pnl": -0.0822,
+    "buy_no_pnl": 0.0054
+   },
+   {
+    "bucket": "(0.2, 0.3]",
+    "n": 444.0,
+    "price": 0.251,
+    "realized": 0.223,
+    "buy_yes_pnl": -0.0757,
+    "buy_no_pnl": -0.0187
+   },
+   {
+    "bucket": "(0.3, 0.4]",
+    "n": 453.0,
+    "price": 0.3489,
+    "realized": 0.3488,
+    "buy_yes_pnl": -0.0515,
+    "buy_no_pnl": -0.0509
+   },
+   {
+    "bucket": "(0.4, 0.5]",
+    "n": 403.0,
+    "price": 0.4499,
+    "realized": 0.3896,
+    "buy_yes_pnl": -0.1582,
+    "buy_no_pnl": -0.0372
+   },
+   {
+    "bucket": "(0.5, 0.6]",
+    "n": 449.0,
+    "price": 0.5549,
+    "realized": 0.4833,
+    "buy_yes_pnl": -0.1304,
+    "buy_no_pnl": 0.0126
+   },
+   {
+    "bucket": "(0.6, 0.7]",
+    "n": 496.0,
+    "price": 0.6505,
+    "realized": 0.5786,
+    "buy_yes_pnl": -0.1218,
+    "buy_no_pnl": 0.0216
+   },
+   {
+    "bucket": "(0.7, 0.8]",
+    "n": 575.0,
+    "price": 0.7517,
+    "realized": 0.6974,
+    "buy_yes_pnl": -0.1003,
+    "buy_no_pnl": 0.007
+   },
+   {
+    "bucket": "(0.8, 0.9]",
+    "n": 686.0,
+    "price": 0.8523,
+    "realized": 0.8484,
+    "buy_yes_pnl": -0.0367,
+    "buy_no_pnl": -0.0325
+   },
+   {
+    "bucket": "(0.9, 0.95]",
+    "n": 433.0,
+    "price": 0.9272,
+    "realized": 0.9307,
+    "buy_yes_pnl": -0.0215,
+    "buy_no_pnl": -0.0285
+   },
+   {
+    "bucket": "(0.95, 1.0]",
+    "n": 294.0,
+    "price": 0.9711,
+    "realized": 0.9864,
+    "buy_yes_pnl": -0.003,
+    "buy_no_pnl": -0.0359
+   }
+  ],
+  "taker_rules": {
+   "buy NO, price >= 0.90": {
+    "contracts": 747,
+    "events": 280,
+    "mean": -0.0341,
+    "t": -4.1429
+   },
+   "buy YES, price <= 0.10": {
+    "contracts": 205,
+    "events": 120,
+    "mean": -0.0689,
+    "t": -4.9171
+   },
+   "buy NO, price 0.40-0.80": {
+    "contracts": 1931,
+    "events": 364,
+    "mean": 0.0022,
+    "t": 0.1783
+   },
+   "buy NO, price 0.05-0.30": {
+    "contracts": 1135,
+    "events": 328,
+    "mean": -0.0032,
+    "t": -0.3057
+   }
+  },
+  "maker": {
+   "all": {
+    "contracts": 4197,
+    "events": 367,
+    "mean": 0.0366,
+    "t": 5.1159
+   },
+   "before_2026_04": {
+    "contracts": 1480,
+    "events": 149,
+    "mean": 0.0447,
+    "t": 3.8523
+   },
+   "from_2026_04": {
+    "contracts": 2717,
+    "events": 218,
+    "mean": 0.0322,
+    "t": 3.5455
+   },
+   "price_above_0.90": {
+    "contracts": 727,
+    "events": 276,
+    "mean": -0.0092,
+    "t": -1.1227
+   }
+  },
+  "maker_by_month": [
+   {
+    "month": "2025-03",
+    "contracts": 18,
+    "pnl": 0.0624
+   },
+   {
+    "month": "2025-07",
+    "contracts": 32,
+    "pnl": 0.0311
+   },
+   {
+    "month": "2025-08",
+    "contracts": 81,
+    "pnl": 0.0214
+   },
+   {
+    "month": "2025-09",
+    "contracts": 52,
+    "pnl": 0.0364
+   },
+   {
+    "month": "2025-10",
+    "contracts": 248,
+    "pnl": 0.0711
+   },
+   {
+    "month": "2025-11",
+    "contracts": 126,
+    "pnl": 0.0951
+   },
+   {
+    "month": "2025-12",
+    "contracts": 138,
+    "pnl": 0.0366
+   },
+   {
+    "month": "2026-01",
+    "contracts": 181,
+    "pnl": 0.0155
+   },
+   {
+    "month": "2026-02",
+    "contracts": 359,
+    "pnl": 0.0634
+   },
+   {
+    "month": "2026-03",
+    "contracts": 245,
+    "pnl": 0.0005
+   },
+   {
+    "month": "2026-04",
+    "contracts": 456,
+    "pnl": 0.0477
+   },
+   {
+    "month": "2026-05",
+    "contracts": 357,
+    "pnl": 0.062
+   },
+   {
+    "month": "2026-06",
+    "contracts": 238,
+    "pnl": 0.0387
+   },
+   {
+    "month": "2026-07",
+    "contracts": 492,
+    "pnl": 0.0368
+   },
+   {
+    "month": "2026-08",
+    "contracts": 751,
+    "pnl": 0.0166
+   },
+   {
+    "month": "2026-09",
+    "contracts": 253,
+    "pnl": 0.0099
+   },
+   {
+    "month": "2026-10",
+    "contracts": 170,
+    "pnl": 0.008
+   }
+  ],
+  "maker_by_model_quintile": [
+   {
+    "quintile": 1,
+    "mean_edge": -0.0047,
+    "contracts": 701,
+    "events": 242,
+    "mean": -0.0005,
+    "t": -0.0341
+   },
+   {
+    "quintile": 2,
+    "mean_edge": 0.0256,
+    "contracts": 700,
+    "events": 222,
+    "mean": 0.0352,
+    "t": 2.0686
+   },
+   {
+    "quintile": 3,
+    "mean_edge": 0.0451,
+    "contracts": 700,
+    "events": 226,
+    "mean": -0.0016,
+    "t": -0.1086
+   },
+   {
+    "quintile": 4,
+    "mean_edge": 0.0748,
+    "contracts": 700,
+    "events": 230,
+    "mean": 0.0439,
+    "t": 2.5222
+   },
+   {
+    "quintile": 5,
+    "mean_edge": 0.1358,
+    "contracts": 701,
+    "events": 177,
+    "mean": 0.0847,
+    "t": 4.2992
+   }
+  ],
+  "maker_model_filtered": {
+   "model below mid by > 0.0": {
+    "contracts": 3175,
+    "events": 298,
+    "mean": 0.0369,
+    "t": 4.372
+   },
+   "model below mid by > 0.02": {
+    "contracts": 2670,
+    "events": 298,
+    "mean": 0.042,
+    "t": 4.5026
+   },
+   "model below mid by > 0.04": {
+    "contracts": 1886,
+    "events": 258,
+    "mean": 0.0504,
+    "t": 4.3558
+   }
+  }
+ },
+ "llm": {
+  "markets": 1564,
+  "events": 121,
+  "first_call": "2026-07-15",
+  "market mid": {
+   "brier": 0.1847,
+   "logloss": 0.5477,
+   "mean_p": 0.4788
+  },
+  "LLM": {
+   "brier": 0.2296,
+   "logloss": 0.6527,
+   "mean_p": 0.4205
+  },
+  "model: base rates": {
+   "brier": 0.185,
+   "logloss": 0.5476,
+   "mean_p": 0.4314
+  },
+  "stacking": {
+   "weight_market": 1.0209,
+   "t_market": 14.9076,
+   "weight_llm": 0.0257,
+   "t_llm": 0.3183
+  },
+  "taker_on_llm_edge_5c": {
+   "contracts": 1041,
+   "events": 121,
+   "mean": -0.0162,
+   "t": -1.2432
+  }
+ },
+ "llm_backend": "cache:claude-opus-5-5 zero-shot, blind to price and outcome (scored 2026-10-19)"
+}

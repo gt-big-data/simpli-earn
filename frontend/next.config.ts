@@ -21,5 +21,12 @@ export default function config(phase: string): NextConfig {
       );
     }
   }
-  return {};
+  return {
+    async redirects() {
+      return [
+        { source: "/insights", destination: "/research", permanent: false },
+        { source: "/insights/:path*", destination: "/research/:path*", permanent: false },
+      ];
+    },
+  };
 }
