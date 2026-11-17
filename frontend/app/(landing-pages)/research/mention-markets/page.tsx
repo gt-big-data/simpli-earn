@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Stat, Tex } from "@/components/mention-lab/ui";
 import { findings, pde } from "@/lib/mention-lab/data";
-import { insights } from "@/lib/insights";
+import { mentionMarketsInsight } from "@/lib/insights";
 
 export const metadata: Metadata = {
-  title: `${insights[0].title} | SimpliEarn`,
+  title: `${mentionMarketsInsight.title} | SimpliEarn`,
 };
 
 const c = (x: number) => `${x >= 0 ? "+" : "−"}${Math.abs(100 * x).toFixed(1)}¢`;
