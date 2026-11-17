@@ -1,5 +1,6 @@
+import { networkInterfaces } from "node:os";
 import type { NextConfig } from "next";
-import { PHASE_PRODUCTION_BUILD } from "next/constants";
+import { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } from "next/constants";
 
 // Inlined into client code at build time; a production build without them talks to localhost.
 const BUILD_TIME_PUBLIC_ENV = [
@@ -22,6 +23,12 @@ export default function config(phase: string): NextConfig {
     }
   }
   return {
+    // The Network URL printed by next dev must also be able to load its client runtime.
+    allowedDevOrigins: phase === PHASE_DEVELOPMENT_SERVER
+      ? Object.values(networkInterfaces()).flatMap(entries =>
+          (entries ?? []).filter(ip => ip.family === "IPv4" && !ip.internal).map(ip => ip.address)
+        )
+      : undefined,
     async redirects() {
       return [
         { source: "/insights", destination: "/research", permanent: false },

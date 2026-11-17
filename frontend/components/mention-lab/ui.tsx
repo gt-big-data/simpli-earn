@@ -2,7 +2,7 @@ import katex from "katex";
 
 /** LaTeX, rendered to HTML at render time (works in server and client components). */
 export function Tex({ children, block = false }: { children: string; block?: boolean }) {
-  const html = katex.renderToString(children, { displayMode: block, throwOnError: false, output: "html" });
+  const html = katex.renderToString(children, { displayMode: block, throwOnError: false, output: "htmlAndMathml" });
   return block ? (
     <div className="my-4 overflow-x-auto overflow-y-hidden py-1" dangerouslySetInnerHTML={{ __html: html }} />
   ) : (
